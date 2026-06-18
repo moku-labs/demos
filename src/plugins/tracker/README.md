@@ -7,9 +7,6 @@ composed Cloudflare resource plugins: **D1** (source of truth), **KV** (board in
 (async activity feed), **R2/storage** (attachments), and **Durable Objects** (live WebSocket
 fan-out via the Board DO). Env-first API — every method takes the per-request `env` first.
 
-> Skeleton placeholder. Config table, API reference, events table, and usage are completed during
-> the Wave 1 build.
-
 ## Dependencies
 
 `d1Plugin`, `kvPlugin`, `queuesPlugin`, `storagePlugin`, `durableObjectsPlugin` (framework instances).
