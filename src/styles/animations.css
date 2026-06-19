@@ -1,0 +1,50 @@
+/**
+ * Keyframes shared across components. Kept small: an enter for cards/columns and a one-shot pulse
+ * for freshly-arrived activity entries (the live worker feed). Components reference these by name;
+ * the reduced-motion kill-switch lives in `utilities.css`.
+ */
+
+/* Subtle rise + fade for cards and columns entering the board. */
+@keyframes enter-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide-in from the leading edge — used for newly appended activity log lines. */
+@keyframes enter-slide {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* One-shot accent wash flagging a brand-new activity entry (the worker just fired). */
+@keyframes activity-pulse {
+  0% {
+    background: var(--accent-soft);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+/* Soft breathing glow on the live-feed status indicator. */
+@keyframes live-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}

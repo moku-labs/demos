@@ -1,21 +1,21 @@
 /**
- * @file BoardListPage — the home page; lists boards (hydrated by islands at runtime).
+ * @file BoardListPage — the home page shell. Static markup is just the island mount point; the
+ * `board-list` island fills `[data-component="board-list"]` with the live board list + create form.
  */
 
 /**
- * Renders the board-list page shell.
+ * Render the board-list page shell.
  *
- * @returns The board-list page.
+ * @returns The board-list page section (the `main > section` swap region).
  * @example
  * ```tsx
- * <BoardListPage />
+ * route("/").render(() => <BoardListPage />);
  * ```
  */
 export function BoardListPage() {
   return (
     <section data-page="board-list">
-      <h1>Boards</h1>
-      <ul data-board-list />
+      <div data-component="board-list" />
     </section>
   );
 }

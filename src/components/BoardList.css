@@ -1,0 +1,144 @@
+/**
+ * BoardList — the home page's live content: a create-board form and a responsive grid of board
+ * summary cards. Scoped to `[data-component="board-list"]`; the island renders this fragment in.
+ */
+@scope ([data-component="board-list"]) {
+  :scope {
+    display: block;
+    animation: enter-rise var(--duration-enter) var(--ease-out-expo) both;
+  }
+
+  /* — Header: title + inline create-board form — */
+  header[data-board-list-header] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+
+  header[data-board-list-header] h1 {
+    letter-spacing: -0.02em;
+  }
+
+  form[data-create-board] {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  input[data-create-board-input] {
+    min-width: min(260px, 60vw);
+  }
+
+  form[data-create-board] button {
+    padding: var(--space-2) var(--space-4);
+    color: var(--text-on-accent);
+    background: var(--accent);
+    border-radius: var(--radius-md);
+    white-space: nowrap;
+    box-shadow: var(--shadow-sm);
+    transition:
+      background-color var(--duration-fast) var(--ease-out-expo),
+      transform var(--duration-fast) var(--ease-out-expo),
+      box-shadow var(--duration-fast) var(--ease-out-expo);
+
+    &:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  /* — Grid of board cards — */
+  ul[data-board-list] {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-4);
+  }
+
+  li[data-board-summary] {
+    display: flex;
+  }
+
+  a[data-board-link] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: 116px;
+    padding: var(--space-4);
+    color: var(--text-primary);
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition:
+      border-color var(--duration-normal) var(--ease-out-expo),
+      transform var(--duration-normal) var(--ease-out-expo),
+      box-shadow var(--duration-normal) var(--ease-out-expo),
+      background-color var(--duration-normal) var(--ease-out-expo);
+
+    /* Accent rail that slides in on hover — the clickable affordance. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 3px;
+      background: var(--accent);
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform var(--duration-normal) var(--ease-out-expo);
+    }
+
+    &:hover {
+      color: var(--text-primary);
+      transform: translateY(-2px);
+      border-color: var(--border-strong);
+      background: var(--surface-raised);
+      box-shadow: var(--shadow-md);
+    }
+
+    &:hover::before {
+      transform: scaleY(1);
+    }
+  }
+
+  span[data-board-name] {
+    font-size: var(--text-lg);
+    font-weight: 620;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  span[data-board-meta] {
+    margin-top: auto;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.01em;
+  }
+
+  @media (max-width: 600px) {
+    header[data-board-list-header] {
+      align-items: stretch;
+    }
+
+    form[data-create-board] {
+      flex-wrap: wrap;
+    }
+
+    input[data-create-board-input] {
+      flex: 1;
+    }
+
+    ul[data-board-list] {
+      grid-template-columns: 1fr;
+    }
+  }
+}

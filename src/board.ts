@@ -1,54 +1,126 @@
 /**
  * @file Board Durable Object — one instance per board id; the live WebSocket fan-out hub.
  *
- * Accepts WebSocket upgrades on /ws/board/{id} (forwarded by the server endpoint), keeps the
- * connection set via the hibernation API, and on POST /broadcast pushes a BoardPatch to all
- * connected sockets. NOT the persistence authority — D1 is (the tracker plugin owns persistence).
+ * Accepts WebSocket upgrades on `/ws/board/{id}` (forwarded by the `/ws/*` server endpoint), keeps
+ * the connection set via the Cloudflare **hibernation** API (so the instance can be evicted between
+ * events without dropping sockets), and on `POST /broadcast` pushes a {@link BoardPatch} to every
+ * connected socket. It is NOT the persistence authority — D1 is (the `tracker` plugin owns writes);
+ * the DO only fans out the live patches `tracker` produces.
  */
 import { defineDurableObject } from "@moku-labs/worker";
 import type { BoardPatch } from "./lib/types";
 
+/** Keepalive frame a client may send; the DO answers with {@link PONG}. */
+const PING = "ping";
+/** Keepalive reply sent in response to a {@link PING} frame. */
+const PONG = "pong";
+
 /**
- * The Board Durable Object class the Cloudflare runtime instantiates.
+ * The Board Durable Object class the Cloudflare runtime instantiates (one per board id).
+ *
+ * Connection state lives entirely in the hibernation manager (`this.ctx.getWebSockets()`), never in
+ * instance fields — an in-memory set would not survive hibernation eviction.
+ *
+ * @example
+ * ```ts
+ * // wrangler.jsonc binds BOARD -> Board; the worker forwards upgrades + broadcasts to it.
+ * export { Board } from "./board";
+ * ```
  */
 export class Board extends defineDurableObject("Board") {
   /**
-   * Routes DO requests: WebSocket upgrade (client connect) or POST /broadcast (fan-out).
+   * Routes a DO request: a WebSocket upgrade (a client connecting) or `POST /broadcast` (fan-out).
    *
-   * @param _request - The incoming DO request.
+   * @param request - The incoming DO request (an upgrade or a broadcast).
+   * @returns The `101` upgrade response, an acknowledgement, or `404` for anything else.
    * @example
    * ```ts
-   * stub.fetch("https://do/broadcast", { method: "POST", body: JSON.stringify(patch) });
+   * await stub.fetch("https://do/broadcast", { method: "POST", body: JSON.stringify(patch) });
    * ```
    */
-  async fetch(_request: Request): Promise<Response> {
-    throw new Error("not implemented");
+  async fetch(request: Request): Promise<Response> {
+    if (request.headers.get("upgrade") === "websocket") {
+      return this.accept();
+    }
+
+    const url = new URL(request.url);
+    if (request.method === "POST" && url.pathname.endsWith("/broadcast")) {
+      const patch = (await request.json()) as BoardPatch;
+      this.broadcast(patch);
+      return new Response("ok");
+    }
+
+    return new Response("not found", { status: 404 });
   }
 
   /**
-   * Hibernation hook — a connected client sent a frame.
+   * Completes a WebSocket upgrade: accepts the server end into the hibernation manager and returns
+   * the client end to the caller with status `101`.
    *
-   * @param _webSocket - The sending socket.
-   * @param _message - The received frame.
+   * @returns The `101 Switching Protocols` response carrying the client socket.
    * @example
    * ```ts
-   * // invoked by the runtime when a connected client posts a frame
+   * if (request.headers.get("upgrade") === "websocket") return this.accept();
    * ```
    */
-  async webSocketMessage(_webSocket: WebSocket, _message: string | ArrayBuffer): Promise<void> {
-    throw new Error("not implemented");
+  private accept(): Response {
+    const { 0: client, 1: server } = new WebSocketPair();
+    this.ctx.acceptWebSocket(server);
+    return new Response(undefined, { status: 101, webSocket: client });
   }
 
   /**
-   * Broadcasts a patch to every connected socket. Filled in build.
+   * Hibernation hook — a connected client sent a frame. The board is server-authoritative, so the
+   * only client frame honoured is a `"ping"` keepalive, answered with `"pong"`.
    *
-   * @param _patch - The patch to fan out.
+   * @param webSocket - The socket the frame arrived on.
+   * @param message - The received frame (string or binary).
+   * @example
+   * ```ts
+   * socket.send("ping"); // -> the DO replies "pong"
+   * ```
+   */
+  async webSocketMessage(webSocket: WebSocket, message: string | ArrayBuffer): Promise<void> {
+    if (message === PING) {
+      webSocket.send(PONG);
+    }
+  }
+
+  /**
+   * Hibernation hook — a client disconnected. The hibernation manager drops the socket from
+   * `getWebSockets()` automatically; this closes the server end cleanly to release it.
+   *
+   * @param webSocket - The closing socket.
+   * @param code - The close code reported by the runtime.
+   * @param reason - The close reason reported by the runtime.
+   * @example
+   * ```ts
+   * // invoked by the runtime when a tab closes or navigates away
+   * ```
+   */
+  async webSocketClose(webSocket: WebSocket, code: number, reason: string): Promise<void> {
+    webSocket.close(code, reason);
+  }
+
+  /**
+   * Fans a patch out to every connected socket. Per-socket failures are isolated so one dead
+   * connection cannot block delivery to the rest of the board's tabs.
+   *
+   * @param patch - The realtime patch frame to deliver to all clients.
    * @example
    * ```ts
    * board.broadcast({ type: "card.deleted", cardId });
    * ```
    */
-  broadcast(_patch: BoardPatch): void {
-    throw new Error("not implemented");
+  broadcast(patch: BoardPatch): void {
+    const frame = JSON.stringify(patch);
+    for (const socket of this.ctx.getWebSockets()) {
+      try {
+        socket.send(frame);
+      } catch {
+        // A socket can race into a closed state between enumeration and send — skip it; the
+        // hibernation manager will reap it and webSocketClose handles cleanup.
+      }
+    }
   }
 }

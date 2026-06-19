@@ -4,8 +4,8 @@
  * `fetch` branches `/api/*` + `/ws/*` to the server router (the tracker endpoints) and serves
  * everything else from Cloudflare Static Assets (`env.ASSETS`, the built web client). `queue` drains
  * the activity queue through the late-bound app closure (D8). The Board DO class is re-exported so
- * the runtime can instantiate it. The endpoint table ships `/health` + one representative route here;
- * the remaining routes from app-spec.md are added in the Wave 2 build.
+ * the runtime can instantiate it. Endpoint handlers stay thin: read params/body, call the tracker
+ * api, return a `Response` — the worker primitives (D1, KV, Queues, R2, DO) fire inside `tracker`.
  */
 
 import type { WorkerEnv } from "@moku-labs/worker";
@@ -18,8 +18,20 @@ import {
   queuesPlugin,
   storagePlugin
 } from "@moku-labs/worker";
-import type { ActivityMessage } from "./lib/types";
+import type {
+  ActivityMessage,
+  CardMove,
+  CardPatch,
+  NewBoard,
+  NewCard,
+  NewColumn
+} from "./lib/types";
 import { trackerPlugin } from "./plugins/tracker";
+
+/** Default attachment filename when the upload omits the `x-filename` header. */
+const DEFAULT_FILENAME = "upload.bin";
+/** Default attachment content type when the upload omits one. */
+const DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
 export const app = createApp({
   config: { name: "tracker", stage: "production", compatibilityDate: "2026-06-17" },
@@ -48,8 +60,109 @@ export const app = createApp({
     server: {
       endpoints: [
         endpoint("/health").get(() => new Response("ok")),
+
+        // Boards
         endpoint("/api/boards").get(async ctx =>
           Response.json(await ctx.require(trackerPlugin).listBoards(ctx.env))
+        ),
+        endpoint("/api/boards").post(async ctx => {
+          const input = (await ctx.request.json()) as NewBoard;
+          return Response.json(await ctx.require(trackerPlugin).createBoard(ctx.env, input), {
+            status: 201
+          });
+        }),
+        endpoint("/api/boards/{id}").get(async ctx => {
+          const snapshot = await ctx.require(trackerPlugin).getBoard(ctx.env, ctx.params.id ?? "");
+          if (!snapshot) return new Response("not found", { status: 404 });
+          return Response.json(snapshot);
+        }),
+        endpoint("/api/boards/{id}/activity").get(async ctx =>
+          Response.json(await ctx.require(trackerPlugin).listActivity(ctx.env, ctx.params.id ?? ""))
+        ),
+
+        // Columns
+        endpoint("/api/boards/{id}/columns").post(async ctx => {
+          const input = (await ctx.request.json()) as NewColumn;
+          const column = await ctx
+            .require(trackerPlugin)
+            .createColumn(ctx.env, ctx.params.id ?? "", input);
+          return Response.json(column, { status: 201 });
+        }),
+
+        // Cards
+        endpoint("/api/boards/{id}/cards").post(async ctx => {
+          const { columnId, ...input } = (await ctx.request.json()) as NewCard & {
+            columnId: string;
+          };
+          const card = await ctx
+            .require(trackerPlugin)
+            .createCard(ctx.env, ctx.params.id ?? "", columnId, input);
+          return Response.json(card, { status: 201 });
+        }),
+        endpoint("/api/boards/{id}/cards/{cid}").patch(async ctx => {
+          const patch = (await ctx.request.json()) as CardPatch;
+          const card = await ctx
+            .require(trackerPlugin)
+            .updateCard(ctx.env, ctx.params.id ?? "", ctx.params.cid ?? "", patch);
+          return Response.json(card);
+        }),
+        endpoint("/api/boards/{id}/cards/{cid}").delete(async ctx => {
+          await ctx
+            .require(trackerPlugin)
+            .deleteCard(ctx.env, ctx.params.id ?? "", ctx.params.cid ?? "");
+          return Response.json({ ok: true });
+        }),
+        endpoint("/api/boards/{id}/cards/{cid}/move").post(async ctx => {
+          const move = (await ctx.request.json()) as CardMove;
+          const card = await ctx
+            .require(trackerPlugin)
+            .moveCard(ctx.env, ctx.params.id ?? "", ctx.params.cid ?? "", move);
+          return Response.json(card);
+        }),
+
+        // Attachments (R2 blob + D1 metadata)
+        endpoint("/api/boards/{id}/cards/{cid}/attachments").post(async ctx => {
+          const filename = ctx.request.headers.get("x-filename") ?? DEFAULT_FILENAME;
+          const contentType = ctx.request.headers.get("content-type") ?? DEFAULT_CONTENT_TYPE;
+          const fileBody = await ctx.request.arrayBuffer();
+          const attachment = await ctx
+            .require(trackerPlugin)
+            .addAttachment(ctx.env, ctx.params.id ?? "", ctx.params.cid ?? "", {
+              filename,
+              contentType,
+              body: fileBody
+            });
+          return Response.json(attachment, { status: 201 });
+        }),
+        endpoint("/api/attachments/{id}").get(async ctx => {
+          // R2 stores no content type (D8) — read it from D1, then stream the blob with that header.
+          const meta = await ctx
+            .require(d1Plugin)
+            .first<{ key: string; content_type: string; filename: string }>(
+              ctx.env,
+              "SELECT key, content_type, filename FROM attachments WHERE id = ?",
+              ctx.params.id ?? ""
+            );
+          if (!meta) return new Response("not found", { status: 404 });
+          const object = await ctx.require(trackerPlugin).getAttachmentBody(ctx.env, meta.key);
+          if (!object) return new Response("not found", { status: 404 });
+          // Force download (never inline-render) so an uploaded HTML/SVG cannot execute as stored
+          // XSS in the worker origin; strip header-breaking characters from the filename.
+          const safeName = meta.filename.replaceAll(/["\r\n]/g, "");
+          return new Response(object.body, {
+            headers: {
+              "content-type": meta.content_type,
+              "content-disposition": `attachment; filename="${safeName}"`
+            }
+          });
+        }),
+
+        // Live channel: forward the upgrade to the per-board Durable Object.
+        endpoint("/ws/board/{id}").get(ctx =>
+          ctx
+            .require(durableObjectsPlugin)
+            .get(ctx.env, "board", ctx.params.id ?? "")
+            .fetch(ctx.request)
         )
       ]
     }

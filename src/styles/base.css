@@ -1,0 +1,166 @@
+/**
+ * Element defaults + page wrappers. The page `<section>`/`<main>` wrappers carry `data-page` (no
+ * `data-component`), so they are styled here rather than in a scoped component sheet. The `board`
+ * page is the 2-column shell: a flex-growing board area + a fixed-ish activity sidebar that drops
+ * below the board on narrow screens.
+ */
+body {
+  background: var(--surface-page);
+  color: var(--text-body);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  font-feature-settings: "cv11", "ss01";
+  background-image:
+    radial-gradient(1100px 480px at 78% -8%, var(--accent-soft), transparent 70%),
+    radial-gradient(820px 420px at 8% 0%, color-mix(in srgb, var(--violet-500) 8%, transparent), transparent 72%);
+  background-attachment: fixed;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-primary);
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: -0.011em;
+}
+
+h1 {
+  font-size: var(--text-2xl);
+}
+
+h2 {
+  font-size: var(--text-lg);
+}
+
+h3 {
+  font-size: var(--text-base);
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--accent);
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+/* — Form primitives (shared baseline; component sheets refine within their scope) — */
+input,
+textarea {
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    box-shadow var(--duration-fast) var(--ease-out-expo),
+    background-color var(--duration-fast) var(--ease-out-expo);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-faint);
+}
+
+input:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+button {
+  font-weight: 550;
+  letter-spacing: 0.005em;
+}
+
+:where(code, kbd, samp) {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+/* — Page: board list (home) — */
+section[data-page="board-list"] {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+  padding: var(--space-6) var(--space-5) var(--space-8);
+}
+
+/* — Page: board (2-column board + activity sidebar) — */
+section[data-page="board"] {
+  display: flex;
+  gap: var(--space-5);
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: var(--space-5) var(--space-5) var(--space-6);
+}
+
+section[data-page="board"] [data-component="board"] {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+section[data-page="board"] [data-component="activity-panel"] {
+  flex: 0 0 clamp(260px, 24vw, 340px);
+  position: sticky;
+  top: var(--space-4);
+  align-self: stretch;
+}
+
+@media (max-width: 900px) {
+  section[data-page="board"] {
+    flex-direction: column;
+  }
+
+  section[data-page="board"] [data-component="activity-panel"] {
+    flex-basis: auto;
+    width: 100%;
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  section[data-page="board-list"] {
+    padding: var(--space-5) var(--space-3) var(--space-6);
+  }
+
+  section[data-page="board"] {
+    padding: var(--space-4) var(--space-3) var(--space-5);
+    gap: var(--space-4);
+  }
+}
+
+/* — Page: not-found (own <main>, standalone 404.html) — */
+main[data-page="not-found"] {
+  display: grid;
+  place-content: center;
+  gap: var(--space-3);
+  min-height: 100dvh;
+  padding: var(--space-6);
+  text-align: center;
+}
+
+main[data-page="not-found"] h1 {
+  font-family: var(--font-mono);
+  font-size: clamp(3rem, 12vw, 5.5rem);
+  color: var(--accent);
+  letter-spacing: -0.03em;
+}
+
+main[data-page="not-found"] p {
+  color: var(--text-muted);
+}

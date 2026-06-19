@@ -1,0 +1,145 @@
+/**
+ * ActivityPanel — the live worker feed, styled like a terminal/log stream: monospace, a leading
+ * status dot per entry keyed off `data-kind`, newest lines pulse in. Scoped to
+ * `[data-component="activity-panel"]`. The per-kind hues come from semantic status tokens.
+ */
+@scope ([data-component="activity-panel"]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - var(--space-8));
+    background: var(--surface-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  /* — Header: title + live-feed subtitle with a breathing dot — */
+  header[data-activity-header] {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-sunken);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  header[data-activity-header] h2 {
+    font-size: var(--text-sm);
+    font-weight: 620;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+
+  p[data-activity-sub] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+
+    /* Pulsing "live" indicator — signals the stream is connected. */
+    &::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: var(--radius-pill);
+      background: var(--status-created);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--status-created) 22%, transparent);
+      animation: live-blink 1.8s var(--ease-in) infinite;
+    }
+  }
+
+  /* — The log stream — */
+  ul[data-activity-list] {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: var(--space-2);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-default) transparent;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-default);
+      border-radius: var(--radius-pill);
+    }
+  }
+
+  /* — One log line — dot + summary + timestamp — */
+  li[data-activity-entry] {
+    --kind: var(--text-muted);
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+    border-radius: var(--radius-sm);
+    border-left: 2px solid var(--kind);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: 1.45;
+    /* Newest entries pulse in (island prepends them); one-shot, then settles transparent. */
+    animation:
+      enter-slide var(--duration-normal) var(--ease-out-expo) both,
+      activity-pulse 1.4s var(--ease-in) both;
+
+    /* Leading status dot, colored per kind. */
+    &::before {
+      content: "";
+      position: absolute;
+      left: var(--space-2);
+      top: 0.62em;
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-pill);
+      background: var(--kind);
+      box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--kind) 24%, transparent);
+    }
+  }
+
+  /* Per-kind hue: drives both the dot and the left border via the local --kind var. */
+  li[data-activity-entry][data-kind="card.created"] {
+    --kind: var(--status-created);
+  }
+  li[data-activity-entry][data-kind="card.moved"] {
+    --kind: var(--status-moved);
+  }
+  li[data-activity-entry][data-kind="card.updated"] {
+    --kind: var(--status-updated);
+  }
+  li[data-activity-entry][data-kind="card.deleted"] {
+    --kind: var(--status-deleted);
+  }
+  li[data-activity-entry][data-kind="column.created"] {
+    --kind: var(--status-column);
+  }
+  li[data-activity-entry][data-kind="attachment.added"] {
+    --kind: var(--status-attachment);
+  }
+
+  span[data-activity-summary] {
+    color: var(--text-body);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  time[data-activity-time] {
+    color: var(--text-faint);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 900px) {
+    :scope {
+      max-height: 340px;
+    }
+  }
+}
