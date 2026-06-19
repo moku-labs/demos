@@ -4,8 +4,8 @@
  * Durable Object broadcasts the `activity` patch (closing the proof loop's async half).
  */
 import { describe, expect, it, vi } from "vitest";
+import worker from "../../src/cloudflare/worker";
 import type { ActivityMessage } from "../../src/lib/types";
-import worker from "../../src/worker";
 import { makeExecCtx, makeFakeEnv } from "./_cf-fakes";
 
 /** Build a one-message MessageBatch carrying an activity body, with spy ack/retry. */

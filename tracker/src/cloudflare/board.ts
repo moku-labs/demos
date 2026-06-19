@@ -8,7 +8,7 @@
  * the DO only fans out the live patches `tracker` produces.
  */
 import { defineDurableObject } from "@moku-labs/worker";
-import type { BoardPatch } from "./lib/types";
+import type { BoardPatch } from "../lib/types";
 
 /** Keepalive frame a client may send; the DO answers with {@link PONG}. */
 const PING = "ping";

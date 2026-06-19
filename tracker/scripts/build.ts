@@ -2,7 +2,7 @@
  * @file Web-client build entry — bundles the SPA to `dist/client` via the web app's `cli.build()`.
  *
  * This produces only the static client (HTML shell + content-hashed `assets/*`). The Cloudflare
- * Worker (`src/worker.ts`) is bundled separately by wrangler at deploy/dev time; `wrangler.jsonc`'s
+ * Worker (`src/cloudflare/worker.ts`) is bundled separately by wrangler at deploy/dev time; `wrangler.jsonc`'s
  * `assets.directory` points at the `dist/client` this script writes. Run via `bun run build`.
  */
 import { app } from "../src/app";

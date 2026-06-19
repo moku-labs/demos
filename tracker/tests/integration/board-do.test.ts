@@ -5,7 +5,7 @@
  * `101` WebSocket-upgrade path needs the Cloudflare runtime and is covered by manual/e2e, not here.
  */
 import { describe, expect, it, vi } from "vitest";
-import { Board } from "../../src/board";
+import { Board } from "../../src/cloudflare/board";
 import type { BoardPatch } from "../../src/lib/types";
 
 /** A fake hibernation-managed socket pair plus the `DurableObjectState` exposing them. */

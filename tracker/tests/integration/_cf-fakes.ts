@@ -5,7 +5,7 @@
  * The worker is env-first: every plugin resolves its binding from `env` and calls the raw
  * Cloudflare API (`DB.prepare(...).bind(...).first()`, `KV.get`, `Queue.send`, `R2.put/get`,
  * `DO.idFromName(...).get(...).fetch(...)`). These fakes record those calls so a test can drive
- * the real `app` (from `src/worker.ts`) through an endpoint and assert which primitives fired.
+ * the real `server` (from `src/server.ts`) through an endpoint and assert which primitives fired.
  */
 import { vi } from "vitest";
 

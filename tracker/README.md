@@ -40,15 +40,17 @@ A change in one tab reaches every other tab over the Durable Object's WebSocket,
 
 ## Architecture
 
-One Cloudflare Worker serves both sides. `src/worker.ts` branches every request:
+One Cloudflare Worker serves both sides. `src/cloudflare/worker.ts` (the thin Cloudflare adapter) branches every request:
 
-- `/api/*` and `/ws/*` → `app.server.handle(...)` (the `tracker` endpoints + the Board DO upgrade)
+- `/api/*` and `/ws/*` → `server.server.handle(...)` (the `tracker` endpoints + the Board DO upgrade)
 - everything else → `env.ASSETS.fetch(...)` — the built web client (Cloudflare **Static Assets**)
 
 ```
 src/
-  worker.ts        Worker entry — createApp(@moku-labs/worker) + CF default export { fetch, queue }
-  board.ts         Board Durable Object — WebSocket hibernation + fan-out
+  server.ts        Worker app — createApp(@moku-labs/worker): plugins + endpoints (Moku composition)
+  cloudflare/      Cloudflare glue (the only platform-coupled code):
+    worker.ts      Worker entry — CF default export { fetch, queue }, connects the runtime to server.ts
+    board.ts       Board Durable Object — WebSocket hibernation + fan-out
   schema.sql       D1 schema (reference; applied copy in migrations/0001_init.sql)
   plugins/tracker/ Custom Layer-3 plugin — the board domain orchestrator over D1/KV/Queues/R2/DO
 
@@ -61,7 +63,7 @@ src/
   styles/          main.css (@layer) + tokens/reset/base/components/animations/utilities
 ```
 
-The client and server graphs never cross at runtime — a [bundle-safety test](tests/integration/bundle-safety.test.ts) statically asserts the browser entry never imports `@moku-labs/worker`, `worker.ts`, `board.ts`, or the `tracker` plugin.
+The client and server graphs never cross at runtime — a [bundle-safety test](tests/integration/bundle-safety.test.ts) statically asserts the browser entry never imports `@moku-labs/worker`, `server.ts`, `cloudflare/worker.ts`, `cloudflare/board.ts`, or the `tracker` plugin.
 
 ## Develop
 

@@ -7,7 +7,7 @@
  * `ctx.require`, and return a `Response`. Every D1 / KV / Queues / R2 / Durable-Object side effect
  * lives inside those plugins, never here.
  *
- * `src/worker.ts` consumes this array as `server: { endpoints }` and `app.server.handle` dispatches it
+ * `src/server.ts` consumes this array as `server: { endpoints }` and `server.server.handle` dispatches it
  * (most-specific path wins). Each comment states three things:
  *   • expects — path params / request body / headers the handler reads
  *   • does    — the one-line action (the header line after the method + path)
@@ -26,7 +26,7 @@ const DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
 /**
  * The Tracker endpoint table, grouped by resource. Wired into the worker app via `server: { endpoints }`
- * and dispatched by `app.server.handle`. See the file header for the per-endpoint comment convention.
+ * and dispatched by `server.server.handle`. See the file header for the per-endpoint comment convention.
  *
  * @example
  * ```ts

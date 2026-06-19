@@ -1,9 +1,9 @@
 /**
  * @file Bundle-safety (web Rule R3) — statically crawls the browser entry's runtime import graph and
- * asserts it never reaches the worker graph. A value import of `@moku-labs/worker`, `src/worker.ts`,
- * `src/board.ts`, or the `tracker` plugin would drag Cloudflare-only runtime code (and its node:fs
- * dependency) into the client bundle. Type-only imports are erased by the bundler, so they are
- * ignored — only value edges are followed.
+ * asserts it never reaches the worker graph. A value import of `@moku-labs/worker`, `src/server.ts`,
+ * `src/cloudflare/worker.ts`, `src/cloudflare/board.ts`, or the `tracker` plugin would drag
+ * Cloudflare-only runtime code (and its node:fs dependency) into the client bundle. Type-only imports
+ * are erased by the bundler, so they are ignored — only value edges are followed.
  */
 import { existsSync, readFileSync, statSync } from "node:fs";
 // eslint-disable-next-line unicorn/import-style -- named path helpers read clearer than path.*
@@ -76,14 +76,19 @@ describe("bundle safety (R3): browser graph excludes the worker graph", () => {
     expect(files.size).toBeGreaterThan(5);
   });
 
-  it("never reaches src/worker.ts, src/board.ts, or the tracker plugin", () => {
-    // Exact root paths — src/islands/board.ts (the board island) is a legitimate browser module and
-    // must NOT be confused with src/board.ts (the Durable Object).
-    const workerEntry = resolve(SRC, "worker.ts");
-    const boardDo = resolve(SRC, "board.ts");
+  it("never reaches server.ts, cloudflare/worker.ts, cloudflare/board.ts, or the tracker plugin", () => {
+    // Exact paths — src/islands/board.ts (the board island) is a legitimate browser module and must
+    // NOT be confused with src/cloudflare/board.ts (the Durable Object).
+    const serverEntry = resolve(SRC, "server.ts");
+    const workerEntry = resolve(SRC, "cloudflare", "worker.ts");
+    const boardDo = resolve(SRC, "cloudflare", "board.ts");
     const trackerDir = resolve(SRC, "plugins", "tracker");
     const forbidden = [...files].filter(
-      file => file === workerEntry || file === boardDo || file.startsWith(`${trackerDir}/`)
+      file =>
+        file === serverEntry ||
+        file === workerEntry ||
+        file === boardDo ||
+        file.startsWith(`${trackerDir}/`)
     );
     expect(forbidden).toEqual([]);
   });

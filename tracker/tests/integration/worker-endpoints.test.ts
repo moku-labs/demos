@@ -4,7 +4,8 @@
  * Queue enqueue, Durable Object broadcast) and that non-API paths fall through to Static Assets.
  */
 import { describe, expect, it } from "vitest";
-import worker, { app } from "../../src/worker";
+import worker from "../../src/cloudflare/worker";
+import { server } from "../../src/server";
 import { makeExecCtx, makeFakeEnv } from "./_cf-fakes";
 
 /**
@@ -16,13 +17,13 @@ function fetchWorker(env: Record<string, unknown>, input: string, init?: Request
 }
 
 describe("worker endpoints (proof loop)", () => {
-  it("exposes the composed tracker api on the app", () => {
-    expect(typeof app.tracker.createCard).toBe("function");
+  it("exposes the composed tracker api on the server", () => {
+    expect(typeof server.tracker.createCard).toBe("function");
   });
 
   it("GET /health (liveness probe) returns ok through the default fetch", async () => {
     // /health is a server endpoint reached through the worker's default fetch — the route guard
-    // forwards it to app.server.handle alongside /api + /ws (it does not fall through to ASSETS).
+    // forwards it to server.server.handle alongside /api + /ws (it does not fall through to ASSETS).
     const { env, spies } = makeFakeEnv();
     const res = await fetchWorker(env, "https://tracker.dev/health");
     expect(res.status).toBe(200);
