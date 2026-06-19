@@ -1,13 +1,13 @@
 /**
- * @file SiteLayout — persistent chrome wrapping every page. The header sits OUTSIDE `main > section`
- * so it survives SPA navigation; `{children}` (a page's `<section>`) IS the swap region the router
- * replaces on navigation (default swapSelector `"main > section"`).
+ * @file SiteLayout — persistent chrome wrapping every page. The layout owns `<main> > <section>`
+ * (the default swapSelector `"main > section"`); the header sits OUTSIDE it so it survives SPA
+ * navigation, while `{children}` (a page's content) is what the router swaps inside the `<section>`.
  */
 import type { ComponentChildren } from "preact";
 
 /** SiteLayout props. */
 export interface SiteLayoutProps {
-  /** Page content rendered into the swap region (a page's `<section>`). */
+  /** Page content rendered into the `main > section` swap region this layout owns. */
   children: ComponentChildren;
 }
 
@@ -33,7 +33,9 @@ export function SiteLayout({ children }: SiteLayoutProps) {
         </a>
         <p data-tagline>Real-time kanban, proving @moku-labs/worker</p>
       </header>
-      <main data-main>{children}</main>
+      <main data-main>
+        <section>{children}</section>
+      </main>
     </div>
   );
 }

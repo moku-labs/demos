@@ -1,8 +1,8 @@
 /**
- * Element defaults + page wrappers. The page `<section>`/`<main>` wrappers carry `data-page` (no
- * `data-component`), so they are styled here rather than in a scoped component sheet. The `board`
- * page is the 2-column shell: a flex-growing board area + a fixed-ish activity sidebar that drops
- * below the board on narrow screens.
+ * Element defaults + page wrappers. Each page renders a `data-page` wrapper (no `data-component`)
+ * into the layout's `main > section` swap region, so the page-scoped layout is styled here rather
+ * than in a scoped component sheet. The `board` page is the 2-column shell: a flex-growing board
+ * area + a fixed-ish activity sidebar that drops below the board on narrow screens.
  */
 body {
   background: var(--surface-page);
@@ -91,7 +91,7 @@ button {
 }
 
 /* — Page: board list (home) — */
-section[data-page="board-list"] {
+[data-page="board-list"] {
   width: 100%;
   max-width: 1180px;
   margin-inline: auto;
@@ -99,7 +99,7 @@ section[data-page="board-list"] {
 }
 
 /* — Page: board (2-column board + activity sidebar) — */
-section[data-page="board"] {
+[data-page="board"] {
   display: flex;
   gap: var(--space-5);
   align-items: flex-start;
@@ -109,12 +109,12 @@ section[data-page="board"] {
   padding: var(--space-5) var(--space-5) var(--space-6);
 }
 
-section[data-page="board"] [data-component="board"] {
+[data-page="board"] [data-component="board"] {
   flex: 1 1 auto;
   min-width: 0;
 }
 
-section[data-page="board"] [data-component="activity-panel"] {
+[data-page="board"] [data-component="activity-panel"] {
   flex: 0 0 clamp(260px, 24vw, 340px);
   position: sticky;
   top: var(--space-4);
@@ -122,11 +122,11 @@ section[data-page="board"] [data-component="activity-panel"] {
 }
 
 @media (max-width: 900px) {
-  section[data-page="board"] {
+  [data-page="board"] {
     flex-direction: column;
   }
 
-  section[data-page="board"] [data-component="activity-panel"] {
+  [data-page="board"] [data-component="activity-panel"] {
     flex-basis: auto;
     width: 100%;
     position: static;
@@ -134,11 +134,11 @@ section[data-page="board"] [data-component="activity-panel"] {
 }
 
 @media (max-width: 600px) {
-  section[data-page="board-list"] {
+  [data-page="board-list"] {
     padding: var(--space-5) var(--space-3) var(--space-6);
   }
 
-  section[data-page="board"] {
+  [data-page="board"] {
     padding: var(--space-4) var(--space-3) var(--space-5);
     gap: var(--space-4);
   }
