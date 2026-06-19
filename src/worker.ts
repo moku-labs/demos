@@ -83,12 +83,12 @@ export const app = createApp({
           });
         }),
         endpoint("/api/boards/{id}").get(async ctx => {
-          const snapshot = await ctx.require(trackerPlugin).getBoard(ctx.env, ctx.params.id ?? "");
+          const snapshot = await ctx.require(trackerPlugin).getBoard(ctx.env, ctx.params.id);
           if (!snapshot) return new Response("not found", { status: 404 });
           return Response.json(snapshot);
         }),
         endpoint("/api/boards/{id}/activity").get(async ctx =>
-          Response.json(await ctx.require(trackerPlugin).listActivity(ctx.env, ctx.params.id ?? ""))
+          Response.json(await ctx.require(trackerPlugin).listActivity(ctx.env, ctx.params.id))
         ),
 
         // Columns
@@ -96,7 +96,7 @@ export const app = createApp({
           const input = (await ctx.request.json()) as NewColumn;
           const column = await ctx
             .require(trackerPlugin)
-            .createColumn(ctx.env, ctx.params.id ?? "", input);
+            .createColumn(ctx.env, ctx.params.id, input);
           return Response.json(column, { status: 201 });
         }),
 
@@ -107,27 +107,25 @@ export const app = createApp({
           };
           const card = await ctx
             .require(trackerPlugin)
-            .createCard(ctx.env, ctx.params.id ?? "", columnId, input);
+            .createCard(ctx.env, ctx.params.id, columnId, input);
           return Response.json(card, { status: 201 });
         }),
         endpoint("/api/boards/{id}/cards/{cid}").patch(async ctx => {
           const patch = (await ctx.request.json()) as CardPatch;
           const card = await ctx
             .require(trackerPlugin)
-            .updateCard(ctx.env, ctx.params.id ?? "", ctx.params.cid ?? "", patch);
+            .updateCard(ctx.env, ctx.params.id, ctx.params.cid, patch);
           return Response.json(card);
         }),
         endpoint("/api/boards/{id}/cards/{cid}").delete(async ctx => {
-          await ctx
-            .require(trackerPlugin)
-            .deleteCard(ctx.env, ctx.params.id ?? "", ctx.params.cid ?? "");
+          await ctx.require(trackerPlugin).deleteCard(ctx.env, ctx.params.id, ctx.params.cid);
           return Response.json({ ok: true });
         }),
         endpoint("/api/boards/{id}/cards/{cid}/move").post(async ctx => {
           const move = (await ctx.request.json()) as CardMove;
           const card = await ctx
             .require(trackerPlugin)
-            .moveCard(ctx.env, ctx.params.id ?? "", ctx.params.cid ?? "", move);
+            .moveCard(ctx.env, ctx.params.id, ctx.params.cid, move);
           return Response.json(card);
         }),
 
@@ -138,7 +136,7 @@ export const app = createApp({
           const fileBody = await ctx.request.arrayBuffer();
           const attachment = await ctx
             .require(trackerPlugin)
-            .addAttachment(ctx.env, ctx.params.id ?? "", ctx.params.cid ?? "", {
+            .addAttachment(ctx.env, ctx.params.id, ctx.params.cid, {
               filename,
               contentType,
               body: fileBody
@@ -152,7 +150,7 @@ export const app = createApp({
             .first<{ key: string; content_type: string; filename: string }>(
               ctx.env,
               "SELECT key, content_type, filename FROM attachments WHERE id = ?",
-              ctx.params.id ?? ""
+              ctx.params.id
             );
           if (!meta) return new Response("not found", { status: 404 });
           const object = await ctx.require(trackerPlugin).getAttachmentBody(ctx.env, meta.key);
@@ -170,10 +168,7 @@ export const app = createApp({
 
         // Live channel: forward the upgrade to the per-board Durable Object.
         endpoint("/ws/board/{id}").get(ctx =>
-          ctx
-            .require(durableObjectsPlugin)
-            .get(ctx.env, "board", ctx.params.id ?? "")
-            .fetch(ctx.request)
+          ctx.require(durableObjectsPlugin).get(ctx.env, "board", ctx.params.id).fetch(ctx.request)
         )
       ]
     }
