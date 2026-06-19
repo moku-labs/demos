@@ -12,10 +12,13 @@
   "observability": { "enabled": true },
 
   // Built web client (HTML shell + hashed assets). `worker.ts` falls through to `env.ASSETS.fetch`
-  // for any non-`/api`, non-`/ws` path.
+  // for any non-`/api`, non-`/ws` path. `not_found_handling: single-page-application` serves the root
+  // `index.html` for any unmatched path (e.g. a client-only board route `/b/{id}`, which @moku-labs/web
+  // renders on the client in `mode: "spa"`); the SPA boots and renders the matched route from the URL.
   "assets": {
     "directory": "./dist/client",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
   },
 
   // D1 — durable source of truth (boards, columns, cards, activity, attachment metadata).
