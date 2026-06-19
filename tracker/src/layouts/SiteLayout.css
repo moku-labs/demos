@@ -1,0 +1,78 @@
+/**
+ * SiteLayout — the persistent chrome that survives SPA navigation. A sticky top header carrying the
+ * "Tracker" wordmark + tagline, over the swap region (`main > section`). Scoped to
+ * `[data-component="site-layout"]`; inner selectors target its `data-*` hooks only.
+ */
+@scope ([data-component="site-layout"]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  /* Sticky engineered header bar — thin border, blurred translucent surface. */
+  header[data-site-header] {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-5);
+    background: var(--surface-overlay);
+    border-bottom: 1px solid var(--border-subtle);
+    backdrop-filter: saturate(140%) blur(10px);
+  }
+
+  a[data-brand] {
+    --dot: 9px;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-primary);
+    font-weight: 720;
+    font-size: var(--text-lg);
+    letter-spacing: -0.02em;
+    transition: opacity var(--duration-fast) var(--ease-out-expo);
+
+    /* Accent "live" dot before the wordmark — the engineered signature. */
+    &::before {
+      content: "";
+      width: var(--dot);
+      height: var(--dot);
+      border-radius: var(--radius-pill);
+      background: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+      animation: live-blink 2.4s var(--ease-in) infinite;
+    }
+
+    &:hover {
+      color: var(--text-primary);
+      opacity: 0.82;
+    }
+  }
+
+  p[data-tagline] {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.01em;
+  }
+
+  main[data-main] {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (max-width: 600px) {
+    header[data-site-header] {
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-3);
+    }
+
+    p[data-tagline] {
+      display: none;
+    }
+  }
+}

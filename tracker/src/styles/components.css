@@ -1,0 +1,10 @@
+/**
+ * Components aggregator — `@import`s every colocated, `@scope`d component sheet. No rules of its own.
+ * Adding a component = create `Foo.tsx` + `Foo.css`, then add one `@import` line here.
+ */
+@import "../layouts/SiteLayout.css";
+@import "../components/BoardList.css";
+@import "../components/BoardView.css";
+@import "../components/ColumnView.css";
+@import "../components/CardView.css";
+@import "../components/ActivityPanel.css";

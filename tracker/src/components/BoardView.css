@@ -1,0 +1,74 @@
+/**
+ * BoardView — the board's live content: a header (title + add-column form) over a horizontal,
+ * scrollable row of columns. Scoped to `[data-component="board"]`; the island renders this fragment
+ * into the board host (the column children self-scope via `[data-component="column"]`).
+ */
+@scope ([data-component="board"]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-height: 0;
+  }
+
+  /* — Board header — */
+  header[data-board-header] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  h1[data-board-title] {
+    font-size: var(--text-xl);
+    letter-spacing: -0.02em;
+  }
+
+  form[data-add-column] {
+    display: flex;
+  }
+
+  input[data-add-column-input] {
+    min-width: min(220px, 60vw);
+    font-size: var(--text-sm);
+  }
+
+  /* — Horizontal scrolling column track — */
+  div[data-columns] {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: var(--space-3);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+    scroll-snap-type: x proximity;
+
+    &::-webkit-scrollbar {
+      height: 9px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-default);
+      border-radius: var(--radius-pill);
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: var(--border-strong);
+    }
+  }
+
+  @media (max-width: 600px) {
+    header[data-board-header] {
+      align-items: stretch;
+    }
+
+    form[data-add-column],
+    input[data-add-column-input] {
+      flex: 1;
+      width: 100%;
+    }
+  }
+}
