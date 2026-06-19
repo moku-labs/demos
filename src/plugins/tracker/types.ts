@@ -2,8 +2,7 @@
  * @file tracker plugin — type definitions.
  */
 
-import type { PluginCtx } from "@moku-labs/core";
-import type { Server, WorkerEnv, WorkerEvents } from "@moku-labs/worker";
+import type { Server, WorkerEnv, WorkerPluginCtx } from "@moku-labs/worker";
 import type {
   Activity,
   ActivityEntry,
@@ -82,7 +81,8 @@ export type KvApi = {
 };
 
 /**
- * tracker plugin context: own config/state/emit over WorkerEvents & TrackerEvents, plus the
+ * tracker plugin context: own config/state/emit over WorkerEvents & TrackerEvents (via the
+ * framework's `WorkerPluginCtx` alias, which pre-merges the global `WorkerEvents`), plus the
  * framework cross-plugin resolver.
  *
  * `Server.RequireFn` is the worker package's own generic `require` type — calling
@@ -92,7 +92,7 @@ export type KvApi = {
  * type-checks without a cast (a five-overload `require` would not be assignable here).
  */
 // eslint-disable-next-line unicorn/prevent-abbreviations -- TrackerCtx is the canonical name per spec/15 §4
-export type TrackerCtx = PluginCtx<Config, Record<string, never>, WorkerEvents & TrackerEvents> & {
+export type TrackerCtx = WorkerPluginCtx<Config, Record<string, never>, TrackerEvents> & {
   /** Resolve a dependency plugin's env-first api (d1 / kv / queues / storage / durableObjects). */
   require: Server.RequireFn;
 };
