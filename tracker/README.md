@@ -67,13 +67,13 @@ The client and server graphs never cross at runtime — a [bundle-safety test](t
 
 ```sh
 bun install
-bun run dev          # builds the web client → dist/client, then `wrangler dev` (worker + assets + D1/DO/Queue/R2 locally)
+bun run dev          # build client → apply local D1 migrations → `wrangler dev` (worker + assets + D1/DO/Queue/R2)
 ```
 
-`wrangler dev` runs the full app locally (Miniflare emulates D1/DO/Queues/KV/R2). Apply the schema to the local D1 first:
+`bun run dev` is self-contained: it builds the web client, applies the D1 migrations to the **local** Miniflare database, then starts `wrangler dev` (Miniflare emulates D1/DO/Queues/KV/R2). Without the migration step the local D1 has no tables and the first `/api/boards` request fails with `D1_ERROR: no such table: boards` — so it is wired into `dev`. The migration step is idempotent; run it on its own any time with:
 
 ```sh
-bunx wrangler d1 migrations apply tracker --local
+bun run migrate:local   # = wrangler d1 migrations apply tracker --local
 ```
 
 ### Scripts
@@ -82,7 +82,8 @@ bunx wrangler d1 migrations apply tracker --local
 |---|---|
 | `bun run build` | Build the web client → `dist/client` (via `app.cli.build()`) |
 | `bun run build:worker` | `wrangler deploy --dry-run` — bundle + validate the worker offline |
-| `bun run dev` | Build the client, then `wrangler dev` (full local app) |
+| `bun run dev` | Build the client, apply local D1 migrations, then `wrangler dev` (full local app) |
+| `bun run migrate:local` / `migrate:remote` | Apply D1 migrations to the local Miniflare DB / the remote Cloudflare DB |
 | `bun run deploy` | Build the client, then `wrangler deploy` |
 | `bun run typecheck` | `tsc --noEmit` |
 | `bun run lint` / `lint:fix` | Biome + ESLint |
@@ -112,6 +113,6 @@ CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) validates every PR (ty
 
 ## Stack
 
-`@moku-labs/web` 1.12.4 · `@moku-labs/worker` 0.1.4 · Preact · Cloudflare Workers (D1 · Durable Objects · Queues · KV · R2 · Static Assets) · Bun · Vitest · Biome · ESLint.
+`@moku-labs/web` 1.13.0 · `@moku-labs/worker` 0.3.0 · Preact · Cloudflare Workers (D1 · Durable Objects · Queues · KV · R2 · Static Assets) · Bun · Vitest · Biome · ESLint.
 
 This is a Layer-3 Moku consumer app: it composes existing frameworks via `createApp` and never depends on `@moku-labs/core`.
