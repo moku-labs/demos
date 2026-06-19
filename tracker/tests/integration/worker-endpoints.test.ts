@@ -20,17 +20,14 @@ describe("worker endpoints (proof loop)", () => {
     expect(typeof app.tracker.createCard).toBe("function");
   });
 
-  it("GET /health (server endpoint) returns ok", async () => {
-    // /health is a server endpoint; the default fetch only forwards /api + /ws, so reach it via
-    // app.server.handle directly (a bare /health request otherwise falls through to ASSETS).
-    const { env } = makeFakeEnv();
-    const res = await app.server.handle(
-      new Request("https://tracker.dev/health"),
-      env as never,
-      makeExecCtx()
-    );
+  it("GET /health (liveness probe) returns ok through the default fetch", async () => {
+    // /health is a server endpoint reached through the worker's default fetch — the route guard
+    // forwards it to app.server.handle alongside /api + /ws (it does not fall through to ASSETS).
+    const { env, spies } = makeFakeEnv();
+    const res = await fetchWorker(env, "https://tracker.dev/health");
     expect(res.status).toBe(200);
     expect(await res.text()).toBe("ok");
+    expect(spies.assetsFetch).not.toHaveBeenCalled();
   });
 
   it("GET /api/boards lists boards (KV miss → D1 fallback)", async () => {
