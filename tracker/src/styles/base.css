@@ -144,23 +144,8 @@ section[data-page="board"] [data-component="activity-panel"] {
   }
 }
 
-/* — Page: not-found (own <main>, standalone 404.html) — */
-main[data-page="not-found"] {
-  display: grid;
-  place-content: center;
-  gap: var(--space-3);
-  min-height: 100dvh;
-  padding: var(--space-6);
-  text-align: center;
-}
-
-main[data-page="not-found"] h1 {
-  font-family: var(--font-mono);
-  font-size: clamp(3rem, 12vw, 5.5rem);
-  color: var(--accent);
-  letter-spacing: -0.03em;
-}
-
-main[data-page="not-found"] p {
-  color: var(--text-muted);
-}
+/*
+ * Note: the not-found page (src/404.html) is a standalone file served verbatim by Cloudflare Static
+ * Assets — the framework does NOT inject this bundle into it — so its styling is inlined there, not
+ * here. The SPA itself has no not-found route, so no `data-page="not-found"` rules live in this sheet.
+ */
