@@ -23,7 +23,7 @@ import type {
 
 /*
  * Raw D1 row shapes — snake_case columns exactly as stored in the tracker schema (see
- * `src/schema.sql`). The mappers in `helpers.ts` translate these to the camelCase domain objects
+ * `db/schema.sql`). The mappers in `helpers.ts` translate these to the camelCase domain objects
  * from `lib/types`. Typing the rows here lets `d1.query`/`d1.first` and the mappers stay fully
  * typed end-to-end: no `Record<string, unknown>` and no per-field `as` casts. The DB schema is
  * known, so the row shape is known.

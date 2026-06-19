@@ -51,7 +51,6 @@ src/
   cloudflare/      Cloudflare glue (the only platform-coupled code):
     worker.ts      Worker entry — CF default export { fetch, queue }, connects the runtime to server.ts
     board.ts       Board Durable Object — WebSocket hibernation + fan-out
-  schema.sql       D1 schema (reference; applied copy in migrations/0001_init.sql)
   plugins/tracker/ Custom Layer-3 plugin — the board domain orchestrator over D1/KV/Queues/R2/DO
 
   app.ts           Web client — Node build composition (@moku-labs/web; mode "spa")
@@ -61,6 +60,12 @@ src/
   components/      Preact views (+ colocated @scope CSS)
   lib/             api.ts (REST client) · realtime.ts (WebSocket manager) · types.ts (shared types)
   styles/          main.css (@layer) + tokens/reset/base/components/animations/utilities
+```
+
+```
+db/
+  migrations/0001_init.sql   Applied D1 migration — wrangler d1 migrations apply (wrangler.jsonc → migrations_dir)
+  schema.sql                 Human-readable D1 schema reference (kept in sync with the migration)
 ```
 
 The client and server graphs never cross at runtime — a [bundle-safety test](tests/integration/bundle-safety.test.ts) statically asserts the browser entry never imports `@moku-labs/worker`, `server.ts`, `cloudflare/worker.ts`, `cloudflare/board.ts`, or the `tracker` plugin.
