@@ -1,0 +1,10 @@
+# OS
+.DS_Store
+
+# Dependencies / build output (each demo also ignores its own)
+**/node_modules/
+**/dist/
+**/.wrangler/
+
+# Logs
+*.log
