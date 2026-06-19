@@ -15,9 +15,9 @@ import type { Api, TrackerCtx, TrackerEvents } from "../../types";
 /** Loose async mock signature: variadic args so `.mock.calls[i][j]` introspects, caller-chosen resolved type. */
 type AsyncMock<R> = (...args: unknown[]) => Promise<R>;
 
-/** Build a fake env object for tests (WorkerEnv is Record<string, unknown>). */
-function makeEnv() {
-  return { DB: "fake-db", BOARDS_KV: "fake-kv" } as Record<string, unknown>;
+/** Build a fake env object for tests. */
+function makeEnv(): WorkerEnv {
+  return { DB: "fake-db", BOARDS_KV: "fake-kv" };
 }
 
 /** Stub DurableObjectStub with a recording fetch (loose arg types so call introspection type-checks). */
@@ -97,7 +97,7 @@ function makeMockCtx() {
 }
 
 describe("tracker api", () => {
-  let env: Record<string, unknown>;
+  let env: WorkerEnv;
   let mocks: ReturnType<typeof makeMockCtx>;
   let api: ReturnType<typeof createTrackerApi>;
 

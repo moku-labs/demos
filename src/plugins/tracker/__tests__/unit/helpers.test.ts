@@ -7,6 +7,7 @@ import {
   rowToCard,
   rowToColumn
 } from "../../helpers";
+import type { ActivityRow } from "../../types";
 
 describe("tracker helpers", () => {
   describe("rowToBoard", () => {
@@ -74,7 +75,7 @@ describe("tracker helpers", () => {
 
   describe("rowToActivity", () => {
     it("maps snake_case row to Activity domain object", () => {
-      const row = {
+      const row: ActivityRow = {
         id: "act1",
         board_id: "b1",
         kind: "card.created",
@@ -92,7 +93,7 @@ describe("tracker helpers", () => {
     });
 
     it("preserves kind exactly", () => {
-      const row = {
+      const row: ActivityRow = {
         id: "act2",
         board_id: "b1",
         kind: "card.moved",

@@ -3,15 +3,15 @@
  * All mappers translate snake_case D1 rows to camelCase domain objects.
  */
 
+import type { Activity, Attachment, Board, BoardSummary, Card, Column } from "../../lib/types";
 import type {
-  Activity,
-  ActivityKind,
-  Attachment,
-  Board,
-  BoardSummary,
-  Card,
-  Column
-} from "../../lib/types";
+  ActivityRow,
+  AttachmentRow,
+  BoardRow,
+  BoardSummaryRow,
+  CardRow,
+  ColumnRow
+} from "./types";
 
 /**
  * Maps a D1 row to a Board domain object.
@@ -23,11 +23,11 @@ import type {
  * const board = rowToBoard({ id: "b1", title: "My Board", created_at: 1700000000 });
  * ```
  */
-export function rowToBoard(row: Record<string, unknown>): Board {
+export function rowToBoard(row: BoardRow): Board {
   return {
-    id: row.id as string,
-    title: row.title as string,
-    createdAt: row.created_at as number
+    id: row.id,
+    title: row.title,
+    createdAt: row.created_at
   };
 }
 
@@ -41,12 +41,12 @@ export function rowToBoard(row: Record<string, unknown>): Board {
  * const col = rowToColumn({ id: "c1", board_id: "b1", title: "To Do", position: 0 });
  * ```
  */
-export function rowToColumn(row: Record<string, unknown>): Column {
+export function rowToColumn(row: ColumnRow): Column {
   return {
-    id: row.id as string,
-    boardId: row.board_id as string,
-    title: row.title as string,
-    position: row.position as number
+    id: row.id,
+    boardId: row.board_id,
+    title: row.title,
+    position: row.position
   };
 }
 
@@ -60,15 +60,15 @@ export function rowToColumn(row: Record<string, unknown>): Column {
  * const card = rowToCard({ id: "card1", board_id: "b1", column_id: "c1", title: "Task", description: "", position: 0, created_at: 1000 });
  * ```
  */
-export function rowToCard(row: Record<string, unknown>): Card {
+export function rowToCard(row: CardRow): Card {
   return {
-    id: row.id as string,
-    boardId: row.board_id as string,
-    columnId: row.column_id as string,
-    title: row.title as string,
-    description: row.description as string,
-    position: row.position as number,
-    createdAt: row.created_at as number
+    id: row.id,
+    boardId: row.board_id,
+    columnId: row.column_id,
+    title: row.title,
+    description: row.description,
+    position: row.position,
+    createdAt: row.created_at
   };
 }
 
@@ -82,13 +82,13 @@ export function rowToCard(row: Record<string, unknown>): Card {
  * const act = rowToActivity({ id: "a1", board_id: "b1", kind: "card.created", summary: "Created task", at: 1000 });
  * ```
  */
-export function rowToActivity(row: Record<string, unknown>): Activity {
+export function rowToActivity(row: ActivityRow): Activity {
   return {
-    id: row.id as string,
-    boardId: row.board_id as string,
-    kind: row.kind as ActivityKind,
-    summary: row.summary as string,
-    at: row.at as number
+    id: row.id,
+    boardId: row.board_id,
+    kind: row.kind,
+    summary: row.summary,
+    at: row.at
   };
 }
 
@@ -102,14 +102,14 @@ export function rowToActivity(row: Record<string, unknown>): Activity {
  * const att = rowToAttachment({ id: "att1", card_id: "card1", key: "attachments/uuid", filename: "img.png", content_type: "image/png", size: 1024 });
  * ```
  */
-export function rowToAttachment(row: Record<string, unknown>): Attachment {
+export function rowToAttachment(row: AttachmentRow): Attachment {
   return {
-    id: row.id as string,
-    cardId: row.card_id as string,
-    key: row.key as string,
-    filename: row.filename as string,
-    contentType: row.content_type as string,
-    size: row.size as number
+    id: row.id,
+    cardId: row.card_id,
+    key: row.key,
+    filename: row.filename,
+    contentType: row.content_type,
+    size: row.size
   };
 }
 
@@ -123,11 +123,11 @@ export function rowToAttachment(row: Record<string, unknown>): Attachment {
  * const summary = rowToBoardSummary({ id: "b1", title: "Board", card_count: 3, updated_at: 1000 });
  * ```
  */
-export function rowToBoardSummary(row: Record<string, unknown>): BoardSummary {
+export function rowToBoardSummary(row: BoardSummaryRow): BoardSummary {
   return {
-    id: row.id as string,
-    title: row.title as string,
-    cardCount: row.card_count as number,
-    updatedAt: row.updated_at as number
+    id: row.id,
+    title: row.title,
+    cardCount: row.card_count,
+    updatedAt: row.updated_at
   };
 }

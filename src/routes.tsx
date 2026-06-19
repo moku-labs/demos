@@ -5,6 +5,8 @@
  * Both routes share the SiteLayout chrome via `.layout()`; in SPA mode the chrome persists and only
  * the page `<section>` (the `main > section` swap region) is replaced on navigation.
  */
+
+import type { Router } from "@moku-labs/web/browser";
 import { createUrls, defineRoutes, route } from "@moku-labs/web/browser";
 import type { ComponentChildren } from "preact";
 import { SiteLayout } from "./layouts/SiteLayout";
@@ -23,7 +25,7 @@ import { BoardPage } from "./pages/BoardPage";
  * route("/").layout(siteLayout).render(() => <BoardListPage />);
  * ```
  */
-const siteLayout = (_ctx: unknown, children: ComponentChildren) => (
+const siteLayout = (_ctx: Router.LayoutContext<Router.RouteState>, children: ComponentChildren) => (
   <SiteLayout>{children}</SiteLayout>
 );
 

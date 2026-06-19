@@ -2,7 +2,7 @@
  * @file tracker plugin — API factory (board domain orchestrator over D1/KV/Queues/R2/DO).
  */
 
-import type { D1, DurableObjects, Queues, Storage } from "@moku-labs/worker";
+import type { D1, DurableObjects, Queues, Storage, WorkerEnv } from "@moku-labs/worker";
 import {
   d1Plugin,
   durableObjectsPlugin,
@@ -25,7 +25,17 @@ import {
   rowToCard,
   rowToColumn
 } from "./helpers";
-import type { Api, KvApi, TrackerCtx as TrackerContext } from "./types";
+import type {
+  ActivityRow,
+  Api,
+  AttachmentRow,
+  BoardRow,
+  BoardSummaryRow,
+  CardRow,
+  ColumnRow,
+  KvApi,
+  TrackerCtx as TrackerContext
+} from "./types";
 
 /**
  * Parse a KV-cached board index, tolerating an absent or corrupt cache value.
@@ -81,11 +91,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
    * await broadcast(env, "board-1", { type: "card.created", card });
    * ```
    */
-  async function broadcast(
-    env: Record<string, unknown>,
-    boardId: string,
-    patch: BoardPatch
-  ): Promise<void> {
+  async function broadcast(env: WorkerEnv, boardId: string, patch: BoardPatch): Promise<void> {
     const stub = durableObjects.get(env, ctx.config.boardDo, boardId);
     await stub.fetch("https://do/broadcast", {
       method: "POST",
@@ -104,11 +110,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
    * await enqueue(env, "board-1", { kind: "card.created", summary: "Created Task" });
    * ```
    */
-  async function enqueue(
-    env: Record<string, unknown>,
-    boardId: string,
-    entry: ActivityEntry
-  ): Promise<void> {
+  async function enqueue(env: WorkerEnv, boardId: string, entry: ActivityEntry): Promise<void> {
     const message: ActivityMessage = { boardId, entry };
     await queues.send(env, ctx.config.activityQueue, message);
   }
@@ -131,7 +133,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
       }
 
       // D1 fallback: aggregate card counts per board
-      const result = await d1.query<Record<string, unknown>>(
+      const result = await d1.query<BoardSummaryRow>(
         env,
         `SELECT b.id, b.title,
            COUNT(c.id) AS card_count,
@@ -201,7 +203,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
       existing.unshift(summary);
       await kv.put(env, ctx.config.boardIndexKey, JSON.stringify(existing));
 
-      const boardRow = await d1.first<Record<string, unknown>>(
+      const boardRow = await d1.first<BoardRow>(
         env,
         "SELECT id, title, created_at FROM boards WHERE id = ?",
         boardId
@@ -222,7 +224,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
      * ```
      */
     async getBoard(env, boardId) {
-      const boardRow = await d1.first<Record<string, unknown>>(
+      const boardRow = await d1.first<BoardRow>(
         env,
         "SELECT id, title, created_at FROM boards WHERE id = ?",
         boardId
@@ -230,12 +232,12 @@ export function createTrackerApi(ctx: TrackerContext): Api {
       // eslint-disable-next-line unicorn/no-null -- Api type declares BoardSnapshot | null
       if (!boardRow) return null;
 
-      const colResult = await d1.query<Record<string, unknown>>(
+      const colResult = await d1.query<ColumnRow>(
         env,
         "SELECT id, board_id, title, position FROM columns WHERE board_id = ? ORDER BY position ASC",
         boardId
       );
-      const cardResult = await d1.query<Record<string, unknown>>(
+      const cardResult = await d1.query<CardRow>(
         env,
         "SELECT id, board_id, column_id, title, description, position, created_at FROM cards WHERE board_id = ? ORDER BY column_id, position ASC",
         boardId
@@ -264,12 +266,12 @@ export function createTrackerApi(ctx: TrackerContext): Api {
       const colId = crypto.randomUUID();
 
       // Determine next position
-      const posResult = await d1.first<Record<string, unknown>>(
+      const posResult = await d1.first<{ next_pos: number }>(
         env,
         "SELECT COALESCE(MAX(position) + 1, 0) AS next_pos FROM columns WHERE board_id = ?",
         boardId
       );
-      const position = (posResult?.next_pos as number | undefined) ?? 0;
+      const position = posResult?.next_pos ?? 0;
 
       await d1.run(
         env,
@@ -280,7 +282,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
         position
       );
 
-      const colRow = await d1.first<Record<string, unknown>>(
+      const colRow = await d1.first<ColumnRow>(
         env,
         "SELECT id, board_id, title, position FROM columns WHERE id = ?",
         colId
@@ -318,12 +320,12 @@ export function createTrackerApi(ctx: TrackerContext): Api {
       };
 
       // Determine next position
-      const posResult = await d1.first<Record<string, unknown>>(
+      const posResult = await d1.first<{ next_pos: number }>(
         env,
         "SELECT COALESCE(MAX(position) + 1, 0) AS next_pos FROM cards WHERE column_id = ?",
         columnId
       );
-      const position = (posResult?.next_pos as number | undefined) ?? 0;
+      const position = posResult?.next_pos ?? 0;
 
       await d1.run(
         env,
@@ -337,7 +339,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
         createdAt
       );
 
-      const cardRow = await d1.first<Record<string, unknown>>(
+      const cardRow = await d1.first<CardRow>(
         env,
         "SELECT id, board_id, column_id, title, description, position, created_at FROM cards WHERE id = ?",
         cardId
@@ -377,12 +379,12 @@ export function createTrackerApi(ctx: TrackerContext): Api {
      */
     async moveCard(env, boardId, cardId, move) {
       // Fetch current card state to record fromColumnId
-      const existingRow = await d1.first<Record<string, unknown>>(
+      const existingRow = await d1.first<CardRow>(
         env,
         "SELECT id, board_id, column_id, title, description, position, created_at FROM cards WHERE id = ?",
         cardId
       );
-      const fromColumnId = (existingRow?.column_id as string | undefined) ?? move.toColumnId;
+      const fromColumnId = existingRow?.column_id ?? move.toColumnId;
 
       await d1.run(
         env,
@@ -392,7 +394,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
         cardId
       );
 
-      const cardRow = await d1.first<Record<string, unknown>>(
+      const cardRow = await d1.first<CardRow>(
         env,
         "SELECT id, board_id, column_id, title, description, position, created_at FROM cards WHERE id = ?",
         cardId
@@ -444,7 +446,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
     async updateCard(env, boardId, cardId, patch) {
       // Build dynamic SET clause
       const setParts: string[] = [];
-      const setValues: unknown[] = [];
+      const setValues: string[] = [];
 
       if (patch.title !== undefined) {
         setParts.push("title = ?");
@@ -464,7 +466,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
         );
       }
 
-      const cardRow = await d1.first<Record<string, unknown>>(
+      const cardRow = await d1.first<CardRow>(
         env,
         "SELECT id, board_id, column_id, title, description, position, created_at FROM cards WHERE id = ?",
         cardId
@@ -544,7 +546,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
         file.body.byteLength
       );
 
-      const attRow = await d1.first<Record<string, unknown>>(
+      const attRow = await d1.first<AttachmentRow>(
         env,
         "SELECT id, card_id, key, filename, content_type, size FROM attachments WHERE id = ?",
         attId
@@ -608,7 +610,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
         at
       );
 
-      const actRow = await d1.first<Record<string, unknown>>(
+      const actRow = await d1.first<ActivityRow>(
         env,
         "SELECT id, board_id, kind, summary, at FROM activity WHERE id = ?",
         actId
@@ -643,7 +645,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
      * ```
      */
     async listActivity(env, boardId, limit = 50) {
-      const result = await d1.query<Record<string, unknown>>(
+      const result = await d1.query<ActivityRow>(
         env,
         "SELECT id, board_id, kind, summary, at FROM activity WHERE board_id = ? ORDER BY at DESC LIMIT ?",
         boardId,

@@ -55,7 +55,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
  * await request<Board>("/api/boards", jsonInit("POST", { title: "Sprint 1" }));
  * ```
  */
-function jsonInit(method: string, body: unknown): RequestInit {
+function jsonInit<T extends object>(method: string, body: T): RequestInit {
   return { method, headers: { "content-type": JSON_TYPE }, body: JSON.stringify(body) };
 }
 

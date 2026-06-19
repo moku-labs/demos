@@ -6,6 +6,7 @@ import type { Server, WorkerEnv, WorkerPluginCtx } from "@moku-labs/worker";
 import type {
   Activity,
   ActivityEntry,
+  ActivityKind,
   Attachment,
   AttachmentInput,
   Board,
@@ -19,6 +20,56 @@ import type {
   NewCard,
   NewColumn
 } from "../../lib/types";
+
+/*
+ * Raw D1 row shapes — snake_case columns exactly as stored in the tracker schema (see
+ * `src/schema.sql`). The mappers in `helpers.ts` translate these to the camelCase domain objects
+ * from `lib/types`. Typing the rows here lets `d1.query`/`d1.first` and the mappers stay fully
+ * typed end-to-end: no `Record<string, unknown>` and no per-field `as` casts. The DB schema is
+ * known, so the row shape is known.
+ */
+
+/** A `boards` row. */
+export type BoardRow = { id: string; title: string; created_at: number };
+/** A `columns` row. */
+export type ColumnRow = { id: string; board_id: string; title: string; position: number };
+/** A `cards` row. */
+export type CardRow = {
+  id: string;
+  board_id: string;
+  column_id: string;
+  title: string;
+  description: string;
+  position: number;
+  created_at: number;
+};
+/** An `attachments` row. */
+export type AttachmentRow = {
+  id: string;
+  card_id: string;
+  key: string;
+  filename: string;
+  content_type: string;
+  size: number;
+};
+/**
+ * An `activity` row. `kind` is the {@link ActivityKind} union rather than bare `string`: the
+ * `activity` table is written only by `recordActivity`, which always persists a valid kind.
+ */
+export type ActivityRow = {
+  id: string;
+  board_id: string;
+  kind: ActivityKind;
+  summary: string;
+  at: number;
+};
+/** A `listBoards` aggregate row: a board joined with its card count and latest-activity timestamp. */
+export type BoardSummaryRow = {
+  id: string;
+  title: string;
+  card_count: number;
+  updated_at: number;
+};
 
 /** tracker plugin configuration. Flat; complete defaults so omission never yields undefined. */
 export type Config = {

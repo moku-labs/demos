@@ -1,4 +1,6 @@
 /* eslint-disable unicorn/no-null -- mocking Cloudflare binding APIs that return null by contract */
+
+import type { WorkerEnv } from "@moku-labs/worker";
 import {
   createApp,
   d1Plugin,
@@ -110,7 +112,7 @@ describe("tracker integration", () => {
       get: (_id: DurableObjectId) => ({ fetch: doFetch }) as unknown as DurableObjectStub
     };
 
-    const fakeEnv: Record<string, unknown> = {
+    const fakeEnv: WorkerEnv = {
       DB: fakeDb,
       BOARDS_KV: { get: kvGet, put: kvPut },
       ACTIVITY_QUEUE: { send: queueSend },
@@ -175,7 +177,7 @@ describe("tracker integration", () => {
       get: (_id: DurableObjectId) => ({ fetch: doFetch }) as unknown as DurableObjectStub
     };
 
-    const fakeEnv: Record<string, unknown> = {
+    const fakeEnv: WorkerEnv = {
       DB: fakeDb,
       BOARDS_KV: { get: kvGet, put: kvPut },
       ACTIVITY_QUEUE: { send: queueSend },
