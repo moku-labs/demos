@@ -1,9 +1,9 @@
 /**
  * @file Web client — browser bundle entry. Boots the SPA over the shared route table + island
- * registry, and imports the stylesheet so the build's client-entry module graph reaches the CSS
- * (the framework bundles it into a content-hashed `assets/*.css`).
+ * registry. The stylesheet (`src/styles/main.css`) is collected by the framework `build` plugin's
+ * bundle phase into a content-hashed `assets/main-*.css` and injected as a `<link>` — it is NOT
+ * imported here (importing it into the JS entry makes the bundler emit it as a module script).
  */
-import "./styles/index.css";
 import { createApp } from "@moku-labs/web/browser";
 import { SITE } from "./config";
 import { islands } from "./islands";

@@ -1,0 +1,6 @@
+# Content directory
+
+Intentionally empty. Tracker is an SPA whose board data is fetched live from the
+worker — there is no static markdown content. This directory exists only to satisfy
+the web `content` plugin (a transitive dependency of `build`). Do not add `.md` files
+here unless you want them rendered as static pages.

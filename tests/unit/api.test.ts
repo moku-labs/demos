@@ -3,8 +3,10 @@ import {
   addAttachment,
   createBoard,
   createCard,
+  createColumn,
   deleteCard,
   getBoard,
+  listActivity,
   listBoards,
   moveCard,
   updateCard
@@ -54,6 +56,26 @@ describe("lib/api", () => {
 
     await expect(getBoard("b1")).resolves.toEqual(snapshot);
     expect(fetchMock).toHaveBeenCalledWith("/api/boards/b1", undefined);
+  });
+
+  it("listActivity GETs the board activity path", async () => {
+    const feed = [{ id: "a1", boardId: "b1", kind: "card.created", summary: "x", at: 1 }];
+    fetchMock.mockResolvedValue(jsonResponse(feed));
+
+    await expect(listActivity("b1")).resolves.toEqual(feed);
+    expect(fetchMock).toHaveBeenCalledWith("/api/boards/b1/activity", undefined);
+  });
+
+  it("createColumn POSTs the column title to the columns path", async () => {
+    const column = { id: "c1", boardId: "b1", title: "Review", position: 1 };
+    fetchMock.mockResolvedValue(jsonResponse(column));
+
+    await expect(createColumn("b1", { title: "Review" })).resolves.toEqual(column);
+    expect(fetchMock).toHaveBeenCalledWith("/api/boards/b1/columns", {
+      method: "POST",
+      headers: JSON_HEADERS,
+      body: JSON.stringify({ title: "Review" })
+    });
   });
 
   it("createCard folds columnId into the JSON body", async () => {

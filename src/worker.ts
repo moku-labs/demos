@@ -33,6 +33,17 @@ const DEFAULT_FILENAME = "upload.bin";
 /** Default attachment content type when the upload omits one. */
 const DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
+/**
+ * The Tracker worker server app — composes the five `@moku-labs/worker` resource plugins (kv, d1,
+ * queues, storage, durableObjects) with the custom `tracker` plugin and declares the endpoint table.
+ * The Cloudflare default export below drives it via `app.server.handle` (HTTP/WS) and
+ * `app.queues.consume` (the activity queue).
+ *
+ * @example
+ * ```ts
+ * const res = await app.server.handle(request, env, ctx);
+ * ```
+ */
 export const app = createApp({
   config: { name: "tracker", stage: "production", compatibilityDate: "2026-06-17" },
   plugins: [kvPlugin, d1Plugin, queuesPlugin, storagePlugin, durableObjectsPlugin, trackerPlugin],
@@ -43,7 +54,7 @@ export const app = createApp({
     storage: { bucket: "ATTACHMENTS" },
     durableObjects: { bindings: { board: "BOARD" } },
     queues: {
-      producers: ["activity"],
+      producers: ["ACTIVITY_QUEUE"],
       // Late-bound: the closure captures `app`; invoked only at queue-event time, after createApp returns (D8).
       // eslint-disable-next-line jsdoc/require-jsdoc -- structural queue consumer callback
       onMessage: async (message: Message, env: WorkerEnv) => {

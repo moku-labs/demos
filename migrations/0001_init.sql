@@ -1,8 +1,7 @@
--- Tracker D1 schema — boards, columns, cards, activity, attachments.
--- Reference copy. The APPLIED schema lives in migrations/0001_init.sql (wrangler d1 migrations);
--- keep the two in sync when evolving the schema.
--- D1 is the durable source of truth; KV indexes boards, R2 holds attachment blobs,
--- the Board Durable Object fans out live patches, and Queues drive the activity feed.
+-- Tracker D1 schema (migration 0001) — applied via `wrangler d1 migrations apply tracker`.
+-- Mirrors src/schema.sql (the human-readable reference). D1 is the durable source of truth;
+-- KV indexes boards, R2 holds attachment blobs, the Board Durable Object fans out live patches,
+-- and Queues drive the activity feed.
 
 CREATE TABLE IF NOT EXISTS boards (
   id         TEXT PRIMARY KEY,
