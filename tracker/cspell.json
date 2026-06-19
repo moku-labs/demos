@@ -9,7 +9,7 @@
     "cwd", "dotenv", "cspell", "SSG", "SPA", "SSR", "SEO", "HMR", "preact", "VNode", "hydration",
     "remark", "rehype", "shiki", "satori", "resvg", "hast", "mdast", "Cloudflare", "wrangler",
     "NFKD", "subprocess", "afplay", "paplay", "expectTypeOf", "EISDIR", "antipatterns",
-    "traker", "tracker", "endpoint", "bindings", "Durable", "Queues"
+    "tracker", "endpoint", "bindings", "Durable", "Queues"
   ],
   "ignorePaths": ["node_modules/**", "dist/**", ".planning/**"]
 }
