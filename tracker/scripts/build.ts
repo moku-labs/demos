@@ -7,7 +7,6 @@
  */
 import { app } from "../src/app";
 
-await app.start();
 const result = await app.cli.build();
 
 // eslint-disable-next-line no-console -- build-script progress feedback

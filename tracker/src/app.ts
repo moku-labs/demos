@@ -4,11 +4,9 @@
 import {
   buildPlugin,
   cliPlugin,
-  contentPlugin,
   createApp,
   dataPlugin,
-  deployPlugin,
-  fileSystemContent
+  deployPlugin
 } from "@moku-labs/web";
 import { SITE } from "./config";
 import { islands } from "./islands";
@@ -28,15 +26,13 @@ import { routes } from "./routes";
 export function makeApp(stage: "production" | "development" | "test") {
   return createApp({
     config: { stage, mode: "spa" },
-    // Dependency order: data → content → build → deploy → cli (each depends on the prior).
-    plugins: [dataPlugin, contentPlugin, buildPlugin, deployPlugin, cliPlugin],
+    // Dependency order: data → build → deploy → cli. No content plugin — the board is
+    // live worker data, not Markdown, and build no longer requires content (web ≥1.15.0).
+    plugins: [dataPlugin, buildPlugin, deployPlugin, cliPlugin],
     pluginConfigs: {
       site: { name: SITE.name, url: SITE.url, author: SITE.author, description: SITE.description },
       router: { routes },
       spa: { components: islands },
-      // buildPlugin requires contentPlugin, which requires ≥1 provider. Tracker has no markdown
-      // content (the board is live worker data), so this points at an empty `content/` dir.
-      content: { providers: [fileSystemContent({ contentDir: "content" })] },
       // cli has its own outDir (default "dist") used by serve/preview + the post-build 404 check —
       // align it with build.outDir so they all target the dir wrangler serves as ASSETS.
       cli: { outDir: "dist/client" },
@@ -63,7 +59,6 @@ export function makeApp(stage: "production" | "development" | "test") {
  *
  * @example
  * ```ts
- * await app.start();
  * await app.cli.build();
  * ```
  */
