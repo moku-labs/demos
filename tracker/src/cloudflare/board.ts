@@ -15,6 +15,30 @@ const PING = "ping";
 /** Keepalive reply sent in response to a {@link PING} frame. */
 const PONG = "pong";
 
+/** Normal closure code — the only non-`3000–4999` value `WebSocket.close()` accepts. */
+const NORMAL_CLOSURE = 1000;
+
+/**
+ * Coerces a runtime-reported close code into one `WebSocket.close()` will accept.
+ *
+ * The hibernation runtime reports the peer's actual close code, which on a browser reload /
+ * navigation is typically `1001` (going away) or `1005` (no status received). The WebSocket spec
+ * only permits `1000` or `3000–4999` to be passed to `close()`; anything else throws — so reserved
+ * codes are mapped to {@link NORMAL_CLOSURE}.
+ *
+ * @param code - The close code the runtime reported for the peer disconnect.
+ * @returns A code safe to pass to `WebSocket.close()`.
+ * @example
+ * ```ts
+ * safeCloseCode(1005); // -> 1000
+ * safeCloseCode(4001); // -> 4001
+ * ```
+ */
+function safeCloseCode(code: number): number {
+  const isApplicationCode = code >= 3000 && code <= 4999;
+  return code === NORMAL_CLOSURE || isApplicationCode ? code : NORMAL_CLOSURE;
+}
+
 /**
  * The Board Durable Object class the Cloudflare runtime instantiates (one per board id).
  *
@@ -99,7 +123,14 @@ export class Board extends defineDurableObject("Board") {
    * ```
    */
   async webSocketClose(webSocket: WebSocket, code: number, reason: string): Promise<void> {
-    webSocket.close(code, reason);
+    // The peer is already gone, so completing the close handshake can race a socket that has
+    // finished closing — swallow that. The code must also be coerced: echoing the runtime's raw
+    // code (e.g. 1005 on a reload) straight back to close() would throw.
+    try {
+      webSocket.close(safeCloseCode(code), reason);
+    } catch {
+      // Socket already closed — nothing to release.
+    }
   }
 
   /**
