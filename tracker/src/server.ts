@@ -81,7 +81,18 @@ export const server = createApp({
       // DO `migrations` are auto-derived from the durableObjects classes.
       entry: "src/cloudflare/worker.ts",
       nodeCompat: true,
-      assets: { binding: "ASSETS", directory: "dist/client", spa: true }
+      assets: { binding: "ASSETS", directory: "dist/client", spa: true },
+      // Cloudflare Workers Observability — turn on metrics + Logs (with invocation logs) at full
+      // head-sampling. Traces are emitted automatically once observability is enabled; log Exports
+      // (Logpush) are set up separately in the dashboard. `wrangler` is the deploy plugin's escape
+      // hatch for top-level keys the typed fields don't derive (it merges into the generated config).
+      wrangler: {
+        observability: {
+          enabled: true,
+          head_sampling_rate: 1,
+          logs: { enabled: true, invocation_logs: true, head_sampling_rate: 1 }
+        }
+      }
     },
     // The full HTTP + WebSocket route table — grouped by resource and documented per endpoint —
     // lives in src/endpoints.ts. Keeping it out of the composition root keeps this file about wiring.
