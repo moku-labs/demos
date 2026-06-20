@@ -36,7 +36,12 @@ export function CardView({ card, attachments = [] }: CardViewProps) {
         <ul data-attachments>
           {attachments.map(attachment => (
             <li key={attachment.id}>
-              <a href={`/api/attachments/${attachment.id}`} data-attachment-link>
+              <a
+                href={`/api/attachments/${attachment.id}`}
+                data-attachment-link
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {attachment.filename}
               </a>
             </li>
