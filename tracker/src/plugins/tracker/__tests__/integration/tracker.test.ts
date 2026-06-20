@@ -130,14 +130,16 @@ describe("tracker integration", () => {
         trackerPlugin
       ],
       pluginConfigs: {
-        bindings: { required: ["DB", "BOARDS_KV", "ACTIVITY_QUEUE", "ATTACHMENTS", "BOARD"] },
-        d1: { binding: "DB", migrations: "" },
-        kv: { binding: "BOARDS_KV" },
-        storage: { bucket: "ATTACHMENTS", upload: "" },
-        durableObjects: { bindings: { board: "BOARD" } },
+        d1: { main: { name: "tracker-db", binding: "DB" } },
+        kv: { boards: { name: "tracker-boards", binding: "BOARDS_KV" } },
+        storage: { attachments: { name: "tracker-attachments", binding: "ATTACHMENTS" } },
+        durableObjects: { board: { binding: "BOARD", className: "BoardChannel" } },
         queues: {
-          producers: ["ACTIVITY_QUEUE"],
-          onMessage: async () => undefined
+          ACTIVITY_QUEUE: {
+            name: "tracker-activity",
+            binding: "ACTIVITY_QUEUE",
+            onMessage: async () => undefined
+          }
         }
       }
     });
@@ -198,14 +200,16 @@ describe("tracker integration", () => {
         trackerPlugin
       ],
       pluginConfigs: {
-        bindings: { required: ["DB", "BOARDS_KV", "ACTIVITY_QUEUE", "ATTACHMENTS", "BOARD"] },
-        d1: { binding: "DB", migrations: "" },
-        kv: { binding: "BOARDS_KV" },
-        storage: { bucket: "ATTACHMENTS", upload: "" },
-        durableObjects: { bindings: { board: "BOARD" } },
+        d1: { main: { name: "tracker-db", binding: "DB" } },
+        kv: { boards: { name: "tracker-boards", binding: "BOARDS_KV" } },
+        storage: { attachments: { name: "tracker-attachments", binding: "ATTACHMENTS" } },
+        durableObjects: { board: { binding: "BOARD", className: "BoardChannel" } },
         queues: {
-          producers: ["ACTIVITY_QUEUE"],
-          onMessage: async () => undefined
+          ACTIVITY_QUEUE: {
+            name: "tracker-activity",
+            binding: "ACTIVITY_QUEUE",
+            onMessage: async () => undefined
+          }
         }
       }
     });

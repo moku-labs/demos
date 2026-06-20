@@ -1,11 +1,11 @@
 /**
- * @file Board Durable Object — one instance per board id; the live WebSocket fan-out hub.
- *
- * Accepts WebSocket upgrades on `/ws/board/{id}` (forwarded by the `/ws/*` server endpoint), keeps
- * the connection set via the Cloudflare **hibernation** API (so the instance can be evicted between
- * events without dropping sockets), and on `POST /broadcast` pushes a {@link BoardPatch} to every
- * connected socket. It is NOT the persistence authority — D1 is (the `tracker` plugin owns writes);
- * the DO only fans out the live patches `tracker` produces.
+ * @file BoardChannel Durable Object — the live WebSocket fan-out channel for a board (one instance
+ * per board id). It is a realtime CHANNEL, not the board entity: it accepts WebSocket upgrades on
+ * `/ws/board/{id}` (forwarded by the `/ws/*` server endpoint), keeps the connection set via the
+ * Cloudflare **hibernation** API (so the instance can be evicted between events without dropping
+ * sockets), and on `POST /broadcast` pushes a {@link BoardPatch} to every connected socket. It is
+ * NOT the persistence authority — D1 is (the `tracker` plugin owns writes); the channel only fans
+ * out the live patches `tracker` produces.
  */
 import { defineDurableObject } from "@moku-labs/worker";
 import type { BoardPatch } from "../lib/types";
@@ -40,18 +40,19 @@ function safeCloseCode(code: number): number {
 }
 
 /**
- * The Board Durable Object class the Cloudflare runtime instantiates (one per board id).
+ * The board's realtime WebSocket channel — the Durable Object class the Cloudflare runtime
+ * instantiates (one per board id).
  *
  * Connection state lives entirely in the hibernation manager (`this.ctx.getWebSockets()`), never in
  * instance fields — an in-memory set would not survive hibernation eviction.
  *
  * @example
  * ```ts
- * // wrangler.jsonc binds BOARD -> Board; the worker forwards upgrades + broadcasts to it.
- * export { Board } from "./board";
+ * // wrangler binds BOARD -> BoardChannel; the worker forwards upgrades + broadcasts to it.
+ * export { BoardChannel } from "./board-channel";
  * ```
  */
-export class Board extends defineDurableObject("Board") {
+export class BoardChannel extends defineDurableObject("BoardChannel") {
   /**
    * Routes a DO request: a WebSocket upgrade (a client connecting) or `POST /broadcast` (fan-out).
    *
@@ -140,7 +141,7 @@ export class Board extends defineDurableObject("Board") {
    * @param patch - The realtime patch frame to deliver to all clients.
    * @example
    * ```ts
-   * board.broadcast({ type: "card.deleted", cardId });
+   * channel.broadcast({ type: "card.deleted", cardId });
    * ```
    */
   broadcast(patch: BoardPatch): void {

@@ -1,11 +1,11 @@
 /**
- * @file Board Durable Object integration — the live-sync fan-out proof. Constructs the real `Board`
- * class over a fake `DurableObjectState` (the hibernation manager), drives a broadcast, and asserts
+ * @file BoardChannel Durable Object integration — the live-sync fan-out proof. Constructs the real
+ * `BoardChannel` class over a fake `DurableObjectState` (the hibernation manager), drives a broadcast, and asserts
  * every connected socket receives the patch — i.e. a change in one tab reaches all the others. The
  * `101` WebSocket-upgrade path needs the Cloudflare runtime and is covered by manual/e2e, not here.
  */
 import { describe, expect, it, vi } from "vitest";
-import { Board } from "../../src/cloudflare/board";
+import { BoardChannel } from "../../src/cloudflare/board-channel";
 import type { BoardPatch } from "../../src/lib/types";
 
 /** A fake hibernation-managed socket pair plus the `DurableObjectState` exposing them. */
@@ -16,7 +16,7 @@ function makeBoard(
     getWebSockets: () => sockets,
     acceptWebSocket: vi.fn()
   } as unknown as DurableObjectState;
-  return new Board(ctx, {} as never);
+  return new BoardChannel(ctx, {} as never);
 }
 
 function makeSocket() {

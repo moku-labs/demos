@@ -1,7 +1,7 @@
 /**
  * @file Cloudflare entry — the thin adapter that connects the Cloudflare Worker runtime to the Moku
  * `server` app (`../server`). It holds only platform glue: the `ExportedHandler` default export the
- * runtime invokes, and the Board Durable Object re-export the runtime instantiates.
+ * runtime invokes, and the BoardChannel Durable Object re-export the runtime instantiates.
  *
  * `fetch` branches `/health` + `/api/*` + `/ws/*` to the server router and serves everything else
  * from Cloudflare Static Assets (`env.ASSETS`, the built web client). `queue` drains the activity
@@ -12,7 +12,7 @@
 import type { WorkerEnv } from "@moku-labs/worker";
 import { server } from "../server";
 
-export { Board } from "./board"; // Cloudflare instantiates the DO class from the Worker module
+export { BoardChannel } from "./board-channel"; // Cloudflare instantiates the DO class from the Worker module
 
 export default {
   /**

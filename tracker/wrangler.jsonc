@@ -1,64 +1,61 @@
 {
-  // Tracker — single Cloudflare Worker serving the web client (Static Assets) + API/WebSocket.
-  // The worker bundles from `main`; `assets.directory` is the built web client (`bun run build`).
-  // Resource ids below are placeholders — create the resources and fill them before `wrangler deploy`
-  // (see README "Deploy"). `wrangler dev` works locally without real ids.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "tracker",
   "main": "src/cloudflare/worker.ts",
   "compatibility_date": "2026-06-17",
-  // A transitive worker dep (@moku-labs/common) imports node:fs; nodejs_compat provides the built-in.
-  "compatibility_flags": ["nodejs_compat"],
-  "observability": { "enabled": true },
-
-  // Built web client (HTML shell + hashed assets). `cloudflare/worker.ts` falls through to `env.ASSETS.fetch`
-  // for any non-`/api`, non-`/ws` path. `not_found_handling: single-page-application` serves the root
-  // `index.html` for any unmatched path (e.g. a client-only board route `/b/{id}`, which @moku-labs/web
-  // renders on the client in `mode: "spa"`); the SPA boots and renders the matched route from the URL.
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "observability": {
+    "enabled": true
+  },
   "assets": {
-    "directory": "./dist/client",
+    "directory": "dist/client",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
-
-  // D1 — durable source of truth (boards, columns, cards, activity, attachment metadata).
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "tracker",
+      "database_name": "tracker-db",
       "database_id": "REPLACE_WITH_D1_DATABASE_ID",
       "migrations_dir": "db/migrations"
     }
   ],
-
-  // KV — board index for fast home-page reads.
   "kv_namespaces": [
     {
       "binding": "BOARDS_KV",
       "id": "REPLACE_WITH_KV_NAMESPACE_ID"
     }
   ],
-
-  // R2 — card attachment blobs.
   "r2_buckets": [
     {
       "binding": "ATTACHMENTS",
       "bucket_name": "tracker-attachments"
     }
   ],
-
-  // Queues — async activity feed. This worker is both producer and consumer (the `queue` handler in
-  // cloudflare/worker.ts drains the batch into tracker.recordActivity).
   "queues": {
-    "producers": [{ "binding": "ACTIVITY_QUEUE", "queue": "tracker-activity" }],
-    "consumers": [{ "queue": "tracker-activity", "max_batch_size": 10, "max_batch_timeout": 5 }]
+    "producers": [
+      {
+        "queue": "tracker-activity",
+        "binding": "ACTIVITY_QUEUE"
+      }
+    ]
   },
-
-  // Durable Objects — one Board instance per board id, the live WebSocket fan-out hub.
   "durable_objects": {
-    "bindings": [{ "name": "BOARD", "class_name": "Board" }]
+    "bindings": [
+      {
+        "name": "BOARD",
+        "class_name": "BoardChannel"
+      }
+    ]
   },
-
-  // DO migration — register the SQLite-backed Board class (required for new DO classes).
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Board"] }]
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "BoardChannel"
+      ]
+    }
+  ]
 }

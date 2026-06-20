@@ -112,7 +112,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
    */
   async function enqueue(env: WorkerEnv, boardId: string, entry: ActivityEntry): Promise<void> {
     const message: ActivityMessage = { boardId, entry };
-    await queues.send(env, ctx.config.activityQueue, message);
+    await queues.use(ctx.config.activityQueue).send(env, message);
   }
 
   return {
