@@ -1,31 +1,18 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tracker",
   "main": "src/cloudflare/worker.ts",
-  "compatibility_date": "2026-06-17",
   "compatibility_flags": [
     "nodejs_compat"
   ],
-  "observability": {
-    "enabled": true
-  },
   "assets": {
     "directory": "dist/client",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "tracker-db",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
-      "migrations_dir": "db/migrations"
-    }
-  ],
+  "name": "tracker",
+  "compatibility_date": "2026-06-17",
   "kv_namespaces": [
     {
-      "binding": "BOARDS_KV",
-      "id": "REPLACE_WITH_KV_NAMESPACE_ID"
+      "binding": "BOARDS_KV"
     }
   ],
   "r2_buckets": [
@@ -34,11 +21,23 @@
       "bucket_name": "tracker-attachments"
     }
   ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tracker-db",
+      "migrations_dir": "db/migrations"
+    }
+  ],
   "queues": {
     "producers": [
       {
         "queue": "tracker-activity",
         "binding": "ACTIVITY_QUEUE"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "tracker-activity"
       }
     ]
   },

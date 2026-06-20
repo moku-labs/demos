@@ -4,8 +4,30 @@
  * Cold-build the web client (`dist/client`), apply local D1 migrations, start `wrangler dev` once,
  * then recompile the client on every change (wrangler's asset server live-reloads the browser).
  * `webBuild` is the seam that composes the `@moku-labs/web` client (`src/app.ts`) with the worker.
+ *
+ * `--port <n>` sets the dev port (default 7878). `--seed` loads the demo data into the local D1
+ * (schema migrations + seed rows) and resets the cached board index before the session starts.
  */
 import { app as web } from "../src/app";
 import { server } from "../src/server";
 
-await server.cli.dev({ webBuild: () => web.cli.build() });
+// The dev port comes straight from the CLI args — explicit, no hidden framework resolution.
+const portFlag = process.argv.indexOf("--port");
+const portValue = portFlag === -1 ? undefined : process.argv[portFlag + 1];
+const port = portValue ? Number(portValue) : 7878;
+
+if (process.argv.includes("--seed")) {
+  await server.cli.seed("db/seed.sql");
+  // listBoards serves a KV-cached index; clear it so the app rebuilds it from the freshly-seeded D1.
+  await server.cli.wrangler([
+    "kv",
+    "key",
+    "delete",
+    "boards:index",
+    "--binding",
+    "BOARDS_KV",
+    "--local"
+  ]);
+}
+
+await server.cli.dev({ port, webBuild: () => web.cli.build() });

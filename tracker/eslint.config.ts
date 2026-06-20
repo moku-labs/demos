@@ -9,6 +9,7 @@ export default [
   {
     ignores: [
       "dist/**",
+      ".wrangler/**",
       "coverage/**",
       "bun.lock",
       ".claude/**",
