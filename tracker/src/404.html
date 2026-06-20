@@ -317,8 +317,11 @@
         *,
         *::before,
         *::after {
+          /* biome-ignore lint/complexity/noImportantStyles: reduced-motion kill-switch — the universal selector has no specificity, so !important is required to beat every animation declaration */
           animation-duration: 0.01ms !important;
+          /* biome-ignore lint/complexity/noImportantStyles: reduced-motion kill-switch (see above) */
           animation-iteration-count: 1 !important;
+          /* biome-ignore lint/complexity/noImportantStyles: reduced-motion kill-switch (see above) */
           transition-duration: 0.01ms !important;
         }
       }
@@ -344,9 +347,9 @@
       // Progressive enhancement: surface the path that 404'd. textContent is never parsed as HTML,
       // so the (browser-encoded) pathname can't inject markup. Works without JS too — the static
       // fallback text above just stays put.
-      (function () {
-        var el = document.querySelector("[data-trace-path]");
-        if (el) el.textContent = "GET " + location.pathname + location.search + " → 404";
+      (() => {
+        const el = document.querySelector("[data-trace-path]");
+        if (el) el.textContent = `GET ${location.pathname}${location.search} → 404`;
       })();
     </script>
   </body>

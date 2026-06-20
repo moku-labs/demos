@@ -1,13 +1,7 @@
 /**
  * @file Web client — Node build composition (`mode: "spa"`); consumed by the build/cli scripts.
  */
-import {
-  buildPlugin,
-  cliPlugin,
-  createApp,
-  dataPlugin,
-  deployPlugin
-} from "@moku-labs/web";
+import { buildPlugin, cliPlugin, createApp, dataPlugin, deployPlugin } from "@moku-labs/web";
 import { SITE } from "./config";
 import { islands } from "./islands";
 import { routes } from "./routes";
