@@ -242,11 +242,19 @@ export function createTrackerApi(ctx: TrackerContext): Api {
         "SELECT id, board_id, column_id, title, description, position, created_at FROM cards WHERE board_id = ? ORDER BY column_id, position ASC",
         boardId
       );
+      // Every attachment on the board's cards (metadata lives in D1) so a reload restores them —
+      // without this the snapshot has no attachments and uploads vanish on refresh.
+      const attachmentResult = await d1.query<AttachmentRow>(
+        env,
+        "SELECT a.id, a.card_id, a.key, a.filename, a.content_type, a.size FROM attachments a JOIN cards c ON c.id = a.card_id WHERE c.board_id = ?",
+        boardId
+      );
 
       return {
         board: rowToBoard(boardRow),
         columns: colResult.results.map(row => rowToColumn(row)),
-        cards: cardResult.results.map(row => rowToCard(row))
+        cards: cardResult.results.map(row => rowToCard(row)),
+        attachments: attachmentResult.results.map(row => rowToAttachment(row))
       };
     },
 
