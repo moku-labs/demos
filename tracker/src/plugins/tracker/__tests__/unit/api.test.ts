@@ -57,7 +57,10 @@ function makeMockCtx() {
     send: vi.fn<AsyncMock<void>>(async () => undefined),
     sendBatch: vi.fn<AsyncMock<void>>(async () => undefined),
     consume: vi.fn<AsyncMock<void>>(async () => undefined),
-    deployManifest: vi.fn()
+    deployManifest: vi.fn(),
+    // The plugin selects the queue via `use(key)` then `.send(env, body)`; return self so the
+    // `send`/`sendBatch` spies below capture the call regardless of the selected key.
+    use: vi.fn((_key: string) => queues)
   };
   const storage = {
     put: vi.fn<AsyncMock<R2Object>>(async () => ({}) as R2Object),
@@ -264,9 +267,9 @@ describe("tracker api", () => {
       };
       mocks.d1.first.mockResolvedValue(cardRow);
       await api.createCard(env, "b1", "col-1", { title: "Task" });
+      expect(mocks.queues.use).toHaveBeenCalledWith("ACTIVITY_QUEUE");
       expect(mocks.queues.send).toHaveBeenCalledWith(
         env,
-        "ACTIVITY_QUEUE",
         expect.objectContaining({ boardId: "b1" })
       );
     });
@@ -374,8 +377,8 @@ describe("tracker api", () => {
       mocks.d1.first.mockResolvedValue(cardRow);
       await api.moveCard(env, "b1", "card-1", { toColumnId: "col-2", position: 1 });
       const queueCall = mocks.queues.send.mock.calls[0];
-      expect(queueCall?.[1]).toBe("ACTIVITY_QUEUE");
-      const body = queueCall?.[2] as { boardId: string; entry: { kind: string } };
+      expect(mocks.queues.use).toHaveBeenCalledWith("ACTIVITY_QUEUE");
+      const body = queueCall?.[1] as { boardId: string; entry: { kind: string } };
       expect(body.entry.kind).toBe("card.moved");
     });
 
@@ -451,7 +454,7 @@ describe("tracker api", () => {
       };
       mocks.d1.first.mockResolvedValue(cardRow);
       await api.updateCard(env, "b1", "card-1", { title: "Updated" });
-      const body = mocks.queues.send.mock.calls[0]?.[2] as { entry: { kind: string } };
+      const body = mocks.queues.send.mock.calls[0]?.[1] as { entry: { kind: string } };
       expect(body.entry.kind).toBe("card.updated");
     });
 
@@ -499,7 +502,7 @@ describe("tracker api", () => {
 
     it("enqueues activity with card.deleted kind", async () => {
       await api.deleteCard(env, "b1", "card-1");
-      const body = mocks.queues.send.mock.calls[0]?.[2] as { entry: { kind: string } };
+      const body = mocks.queues.send.mock.calls[0]?.[1] as { entry: { kind: string } };
       expect(body.entry.kind).toBe("card.deleted");
     });
 

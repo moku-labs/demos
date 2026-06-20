@@ -48,27 +48,41 @@ export const server = createApp({
     cliPlugin
   ],
   pluginConfigs: {
-    bindings: { required: ["DB", "BOARDS_KV", "ATTACHMENTS", "ACTIVITY_QUEUE", "BOARD"] },
-    d1: { binding: "DB", migrations: "db/migrations" },
-    kv: { binding: "BOARDS_KV" },
-    storage: { bucket: "ATTACHMENTS" },
-    durableObjects: { bindings: { board: "BOARD" } },
+    // Each resource is a keyed map of instances: the key is the logical id (the `use("key")` selector
+    // and the default when sole), `name` is the base Cloudflare resource name (stage-suffixed at
+    // deploy), `binding` is the stable env var. No `bindings.required` list — the framework derives
+    // the bindings from these declarations.
+    d1: { main: { name: "tracker-db", binding: "DB", migrations: "db/migrations" } },
+    kv: { boards: { name: "tracker-boards", binding: "BOARDS_KV" } },
+    storage: { attachments: { name: "tracker-attachments", binding: "ATTACHMENTS" } },
+    durableObjects: { board: { binding: "BOARD", className: "BoardChannel" } },
     queues: {
-      producers: ["ACTIVITY_QUEUE"],
-      // Late-bound: the closure captures `server`; invoked only at queue-event time, after createApp returns (D8).
-      // eslint-disable-next-line jsdoc/require-jsdoc -- structural queue consumer callback
-      onMessage: async (message: Message, env: WorkerEnv) => {
-        const body = message.body as ActivityMessage;
-        await server.tracker.recordActivity(env, body.boardId, body.entry);
+      activity: {
+        name: "tracker-activity",
+        binding: "ACTIVITY_QUEUE",
+        // Late-bound: the closure captures `server`; invoked only at queue-event time, after createApp returns (D8).
+        // eslint-disable-next-line jsdoc/require-jsdoc -- structural queue consumer callback
+        onMessage: async (message: Message, env: WorkerEnv) => {
+          const body = message.body as ActivityMessage;
+          await server.tracker.recordActivity(env, body.boardId, body.entry);
+        }
       }
     },
     tracker: {
       boardDo: "board",
-      activityQueue: "ACTIVITY_QUEUE",
+      activityQueue: "activity",
       boardIndexKey: "boards:index",
       attachmentPrefix: "attachments/"
     },
-    deploy: { configFile: "wrangler.jsonc" },
+    deploy: {
+      // Worker-level wrangler keys the resource manifest can't derive. `entry` → wrangler `main`;
+      // `nodeCompat` → `compatibility_flags: ["nodejs_compat"]` (the worker composes the deploy/cli
+      // tooling); `assets` serves the built web client via `env.ASSETS` (SPA fallback for deep links).
+      // DO `migrations` are auto-derived from the durableObjects classes.
+      entry: "src/cloudflare/worker.ts",
+      nodeCompat: true,
+      assets: { binding: "ASSETS", directory: "dist/client", spa: true }
+    },
     // The full HTTP + WebSocket route table — grouped by resource and documented per endpoint —
     // lives in src/endpoints.ts. Keeping it out of the composition root keeps this file about wiring.
     server: { endpoints }
