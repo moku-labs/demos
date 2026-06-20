@@ -1,33 +1,25 @@
 /**
- * @file BoardPage — a single board's content (rendered into the layout's `main > section` swap
- * region). Static markup is the two island mount points (`[data-component="board"]` +
- * `[data-component="activity-panel"]`), each carrying the board id; the `board` and `activity-panel`
- * islands hydrate them live from the worker. The `data-page="board"` wrapper carries the page-scoped
- * layout CSS and rides the swap, so it stays correct as the client renders different routes.
+ * @file BoardPage — a single board's content (rendered into the layout's `main > section` swap region).
+ * It is just the two island mount points (`[data-component="board"]` + `[data-component="activity-panel"]`);
+ * the islands read the board id and any deep-link focus from their route context — `ctx.params.id`,
+ * `ctx.params.cardId`, and `ctx.meta.focus` (declared via the route's `.meta()`; see routes.tsx). No
+ * `data-*` bridge needed. The `data-page="board"` wrapper carries the page-scoped CSS and rides the swap.
  */
 
-/** BoardPage props. */
-export interface BoardPageProps {
-  /** The board id from the route param. */
-  id: string;
-}
-
 /**
- * Render a single board's shell for the given id.
+ * Render a single board's shell — the live island mount points (board + activity feed).
  *
- * @param props - The board page props.
- * @param props.id - The board id from the route param.
  * @returns The board page content (rendered into the `main > section` swap region).
  * @example
  * ```tsx
- * route("/b/{id}").render(ctx => <BoardPage id={ctx.params.id} />);
+ * route("/board/{id}").render(() => <BoardPage />);
  * ```
  */
-export function BoardPage({ id }: BoardPageProps) {
+export function BoardPage() {
   return (
     <div data-page="board">
-      <div data-component="board" data-board-id={id} />
-      <aside data-component="activity-panel" data-board-id={id} />
+      <div data-component="board" />
+      <aside data-component="activity-panel" />
     </div>
   );
 }

@@ -20,6 +20,7 @@ import {
   moveCard,
   updateCard
 } from "../lib/api";
+import { focusElement } from "../lib/focus";
 import { connect, disconnect, onPatch, ping } from "../lib/realtime";
 import type { Attachment, BoardPatch, BoardSnapshot } from "../lib/types";
 
@@ -335,16 +336,52 @@ function teardownBoard(state: BoardState): void {
 }
 
 /**
- * Boot a board instance: load the snapshot, render it, subscribe to live patches, wire delegation.
+ * Honour a deep-link focus, run from the board island *after* it renders so target positions are final
+ * (the board is the page's tall main content; focusing from here avoids a cross-island layout race where
+ * the activity panel is scrolled to before the board pushes it down). Driven by the route's `.meta()`
+ * read off the component context: `focus === "card"` scrolls to + flashes the `cardId` card;
+ * `focus === "activity"` scrolls to + flashes the sibling activity panel.
  *
- * @param host - The `[data-component="board"]` element to bind.
+ * @param host - The board host element (the container of a focused card).
+ * @param focus - The route's `meta.focus` (`"card"` | `"activity"` | `undefined`).
+ * @param cardId - The card to focus (the `card` route's `params.cardId`), if any.
  * @example
  * ```ts
- * await startBoard(element);
+ * focusDeepLink(host, ctx.meta.focus, ctx.params.cardId);
  * ```
  */
-async function startBoard(host: Element): Promise<void> {
-  const boardId = host instanceof HTMLElement ? (host.dataset.boardId ?? "") : "";
+function focusDeepLink(host: Element, focus: unknown, cardId: string | undefined): void {
+  if (focus === "card") {
+    if (!cardId) return;
+    const card = host.querySelector<HTMLElement>(`[data-card-id="${CSS.escape(cardId)}"]`);
+    if (card) focusElement(card);
+    return;
+  }
+  if (focus === "activity") {
+    const activity = document.querySelector<HTMLElement>('[data-component="activity-panel"]');
+    if (activity) focusElement(activity, "start");
+  }
+}
+
+/**
+ * Boot a board instance: load the snapshot, render it, subscribe to live patches, wire delegation,
+ * then honour any deep-link focus. Board id + focus come from the route context (see the island below).
+ *
+ * @param host - The `[data-component="board"]` element to bind.
+ * @param boardId - The board id from the route (`ctx.params.id`).
+ * @param focus - The route's `meta.focus` (`"card"` | `"activity"` | `undefined`).
+ * @param cardId - The card to focus (the `card` route's `ctx.params.cardId`), if any.
+ * @example
+ * ```ts
+ * await startBoard(ctx.el, ctx.params.id ?? "", ctx.meta.focus, ctx.params.cardId);
+ * ```
+ */
+async function startBoard(
+  host: Element,
+  boardId: string,
+  focus: unknown,
+  cardId: string | undefined
+): Promise<void> {
   const snapshot = await getBoard(boardId);
   connect(boardId);
 
@@ -358,6 +395,7 @@ async function startBoard(host: Element): Promise<void> {
   };
   states.set(host, state);
   redraw(state);
+  focusDeepLink(host, focus, cardId);
 
   host.addEventListener("click", onBoardClick);
   host.addEventListener("submit", onBoardSubmit);
@@ -379,7 +417,7 @@ export const board = createComponent("board", {
    * ```
    */
   onMount(ctx) {
-    void startBoard(ctx.el);
+    void startBoard(ctx.el, ctx.params.id ?? "", ctx.meta.focus, ctx.params.cardId);
   },
   /**
    * Tear the board instance down on destroy (SPA navigation away).

@@ -168,11 +168,16 @@ describe("worker endpoints (proof loop)", () => {
     expect(spies.doFetch).toHaveBeenCalled();
   });
 
-  it("non-API paths fall through to Static Assets (env.ASSETS)", async () => {
-    const { env, spies } = makeFakeEnv();
-    const res = await fetchWorker(env, "https://tracker.dev/b/board-1");
-    expect(spies.assetsFetch).toHaveBeenCalled();
-    expect(res.status).toBe(200);
+  it("board deep-link paths fall through to Static Assets (SPA client routing)", async () => {
+    // The worker is path-agnostic for non-API/WS paths: every board deep link (/board/{id} and its
+    // /card/{cardId} + /activity children) is served the SPA shell from env.ASSETS, which boots and
+    // renders the matched route — so a shared link to any place lands the viewer there.
+    for (const path of ["/board/b-1", "/board/b-1/card/c-9", "/board/b-1/activity"]) {
+      const { env, spies } = makeFakeEnv();
+      const res = await fetchWorker(env, `https://tracker.dev${path}`);
+      expect(spies.assetsFetch).toHaveBeenCalled();
+      expect(res.status).toBe(200);
+    }
   });
 
   it("GET /api/attachments/{id} 404s when metadata exists but the R2 blob is gone", async () => {

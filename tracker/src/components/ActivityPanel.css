@@ -13,6 +13,15 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
+    /* Transparent ring by default; the `activity` deep link flashes it accent (see [data-flash]). */
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    transition: outline-color var(--duration-normal) var(--ease-out-expo);
+
+    /* Deep-link arrival (`/board/{id}/activity`): one-shot accent ring around the live feed. */
+    &[data-flash] {
+      outline-color: var(--accent);
+    }
   }
 
   /* — Header: title + live-feed subtitle with a breathing dot — */

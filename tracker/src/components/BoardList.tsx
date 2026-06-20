@@ -3,9 +3,10 @@
  *
  * Rendered by the `board-list` island into its `[data-component="board-list"]` element; the island
  * seeds it from `listBoards` and delegates the `[data-create-board]` submit to `createBoard`. Board
- * links are plain internal hrefs the SPA router intercepts.
+ * links are built from the route map (`urls.toUrl`) so they stay correct as URL patterns evolve.
  */
 import type { BoardSummary } from "../lib/types";
+import { urls } from "../routes";
 
 /** BoardList props. */
 export interface BoardListProps {
@@ -43,7 +44,7 @@ export function BoardList({ boards }: BoardListProps) {
       <ul data-board-list>
         {boards.map(board => (
           <li key={board.id} data-board-summary>
-            <a href={`/b/${board.id}`} data-board-link>
+            <a href={urls.toUrl("board", { id: board.id })} data-board-link>
               <span data-board-name>{board.title}</span>
               <span data-board-meta>{board.cardCount} cards</span>
             </a>

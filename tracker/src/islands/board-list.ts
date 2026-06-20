@@ -7,6 +7,7 @@ import { createComponent } from "@moku-labs/web/browser";
 import { h, render } from "preact";
 import { BoardList } from "../components/BoardList";
 import { createBoard, listBoards } from "../lib/api";
+import { urls } from "../routes";
 
 /**
  * Handle a delegated create-board submit: create the board, then navigate to it.
@@ -29,7 +30,7 @@ async function onCreateBoard(event: Event): Promise<void> {
   if (!title) return;
 
   const board = await createBoard({ title });
-  globalThis.location.assign(`/b/${board.id}`);
+  globalThis.location.assign(urls.toUrl("board", { id: board.id }));
 }
 
 /**

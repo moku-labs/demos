@@ -13,13 +13,17 @@
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
+    /* Transparent ring by default; the `card` deep link flashes it accent (see [data-flash] below). */
+    outline: 2px solid transparent;
+    outline-offset: 3px;
     cursor: grab;
     animation: enter-rise var(--duration-normal) var(--ease-out-expo) both;
     transition:
       border-color var(--duration-fast) var(--ease-out-expo),
       box-shadow var(--duration-fast) var(--ease-out-expo),
       transform var(--duration-fast) var(--ease-out-expo),
-      background-color var(--duration-fast) var(--ease-out-expo);
+      background-color var(--duration-fast) var(--ease-out-expo),
+      outline-color var(--duration-normal) var(--ease-out-expo);
 
     &:hover {
       border-color: var(--border-strong);
@@ -37,6 +41,11 @@
       cursor: grabbing;
       border-color: var(--accent);
       box-shadow: 0 0 0 2px var(--accent-soft);
+    }
+
+    /* Deep-link arrival (`/board/{id}/card/{cardId}`): one-shot accent ring drawing the eye here. */
+    &[data-flash] {
+      outline-color: var(--accent);
     }
   }
 

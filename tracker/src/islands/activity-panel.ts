@@ -60,13 +60,13 @@ function onFeedPatch(host: Element, patch: BoardPatch): void {
  * Render the activity feed into the panel mount point and subscribe to live activity patches.
  *
  * @param host - The `[data-component="activity-panel"]` element to fill.
+ * @param boardId - The board id from the route (`ctx.params.id`).
  * @example
  * ```ts
- * await mountFeed(element);
+ * await mountFeed(element, ctx.params.id ?? "");
  * ```
  */
-async function mountFeed(host: Element): Promise<void> {
-  const boardId = host instanceof HTMLElement ? (host.dataset.boardId ?? "") : "";
+async function mountFeed(host: Element, boardId: string): Promise<void> {
   const activities = await listActivity(boardId);
   const state: FeedState = {
     host,
@@ -75,6 +75,8 @@ async function mountFeed(host: Element): Promise<void> {
   };
   feeds.set(host, state);
   redrawFeed(state);
+  // The `/board/{id}/activity` deep-link focus is driven by the board island after it renders (so the
+  // panel's position is final); this island only renders + streams the feed.
 }
 
 /** Board-page island: the live "Worker Activity" feed. */
@@ -89,7 +91,7 @@ export const activityPanel = createComponent("activity-panel", {
    * ```
    */
   onMount(ctx) {
-    void mountFeed(ctx.el);
+    void mountFeed(ctx.el, ctx.params.id ?? "");
   },
   /**
    * Unsubscribe the feed on destroy (SPA navigation away).
