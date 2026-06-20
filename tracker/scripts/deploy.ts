@@ -6,9 +6,10 @@
  * captured ids into `wrangler.jsonc`, upload, and `wrangler deploy` the worker + assets. `webBuild`
  * composes the web client in.
  *
- * Flags: `--ci` auto-confirms (automation); `--migration` (also implied by `--seed`) applies pending
- * D1 migrations to the REMOTE database after the deploy; `--seed` then loads `db/seed.sql` and resets
- * the cached KV board index — the remote analogue of `bun run dev --seed`.
+ * Flags: `--ci` auto-confirms (automation); `--stage <name>` selects the stage for resource names
+ * (default "production"); `--migration` (also implied by `--seed`) applies pending D1 migrations to
+ * the REMOTE database after the deploy; `--seed` then loads `db/seed.sql` and resets the cached KV
+ * board index — the remote analogue of `bun run dev --seed`.
  */
 import { app as web } from "../src/app";
 import { server } from "../src/server";
@@ -17,7 +18,10 @@ const ci = process.argv.includes("--ci");
 const seed = process.argv.includes("--seed");
 const migrate = process.argv.includes("--migration") || seed;
 
-await server.cli.deploy({ ci, webBuild: () => web.cli.build() });
+const stageFlag = process.argv.indexOf("--stage");
+const stage = stageFlag === -1 ? "production" : (process.argv[stageFlag + 1] ?? "production");
+
+await server.cli.deploy({ ci, stage, webBuild: () => web.cli.build() });
 
 // The deploy provisions the D1 database but never migrates it, so a fresh deploy has no schema.
 // `--migration` applies it to the remote DB (idempotent; wrangler prompts on a TTY, auto in CI).
