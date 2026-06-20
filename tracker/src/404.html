@@ -346,8 +346,11 @@
     <script>
       // Progressive enhancement: surface the path that 404'd. textContent is never parsed as HTML,
       // so the (browser-encoded) pathname can't inject markup. Works without JS too — the static
-      // fallback text above just stays put.
+      // fallback text above just stays put. Guarded to http(s): opened directly as a data:/file: URL
+      // (e.g. a preview), location.pathname is the whole encoded document, not a request path — so we
+      // leave the static fallback in that case.
       (() => {
+        if (location.protocol !== "http:" && location.protocol !== "https:") return;
         const el = document.querySelector("[data-trace-path]");
         if (el) el.textContent = `GET ${location.pathname}${location.search} → 404`;
       })();
