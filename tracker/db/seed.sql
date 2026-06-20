@@ -1,5 +1,5 @@
 -- Tracker demo seed — predefined boards + issues (mock data).
--- Apply with: bun run seed:local   (= wrangler d1 execute tracker --local --file db/seed.sql)
+-- Apply with: bun run seed:local   (= wrangler d1 execute DB --local --file db/seed.sql)
 -- Idempotent: every row uses a fixed `seed-*` id, so re-running replaces the demo data and never
 -- touches boards you created by hand. Run AFTER migrations (the tables must already exist).
 
