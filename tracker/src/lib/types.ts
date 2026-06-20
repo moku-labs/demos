@@ -47,8 +47,13 @@ export type Activity = {
   summary: string;
   at: number;
 };
-/** Full board snapshot returned by getBoard. */
-export type BoardSnapshot = { board: Board; columns: Column[]; cards: Card[] };
+/** Full board snapshot returned by getBoard — includes each card's attachments so a reload restores them. */
+export type BoardSnapshot = {
+  board: Board;
+  columns: Column[];
+  cards: Card[];
+  attachments: Attachment[];
+};
 
 /** Input to create a board. */
 export type NewBoard = { title: string };

@@ -364,6 +364,27 @@ function focusDeepLink(host: Element, focus: unknown, cardId: string | undefined
 }
 
 /**
+ * Group the board snapshot's flat attachment list by card id, so the board view renders each card's
+ * attachments on load — the same shape the live `attachment.added` patch appends to.
+ *
+ * @param attachments - All attachments for the board's cards (`BoardSnapshot.attachments`).
+ * @returns A map of card id → that card's attachments.
+ * @example
+ * ```ts
+ * const byCard = groupAttachmentsByCard(snapshot.attachments);
+ * ```
+ */
+function groupAttachmentsByCard(attachments: Attachment[]): Map<string, Attachment[]> {
+  const byCard = new Map<string, Attachment[]>();
+  for (const attachment of attachments) {
+    const list = byCard.get(attachment.cardId) ?? [];
+    list.push(attachment);
+    byCard.set(attachment.cardId, list);
+  }
+  return byCard;
+}
+
+/**
  * Boot a board instance: load the snapshot, render it, subscribe to live patches, wire delegation,
  * then honour any deep-link focus. Board id + focus come from the route context (see the island below).
  *
@@ -389,7 +410,8 @@ async function startBoard(
     boardId,
     host,
     snapshot,
-    attachmentsByCard: new Map(),
+    // Seed from the snapshot so a reload restores each card's attachments (live patches append after).
+    attachmentsByCard: groupAttachmentsByCard(snapshot.attachments),
     off: onPatch(patch => onBoardPatch(host, patch)),
     keepalive: setInterval(() => ping(), KEEPALIVE_MS)
   };
