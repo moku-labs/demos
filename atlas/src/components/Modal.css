@@ -1,0 +1,157 @@
+/**
+ * Modal — the centered dialog. Scoped to `[data-modal]`. A dimmed scrim covers the page; the dialog
+ * is a raised card that pops in over it. A Fraunces title with a quiet close, optional body copy, an
+ * optional field on sunken paper, and a footer action row. The primary action paints in the accent;
+ * the danger action (delete variant) reads the same vermilion to mark the destructive confirm; quiet
+ * and ghost actions stay neutral (design context §6 E1/E2/E3).
+ */
+@scope ([data-modal]) {
+  :scope {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    display: grid;
+    place-items: center;
+    padding: var(--space-5);
+  }
+
+  [data-scrim] {
+    position: absolute;
+    inset: 0;
+    background: var(--scrim);
+    animation: atlas-fade var(--dur-fast) var(--ease-out);
+  }
+
+  [data-dialog] {
+    position: relative;
+    width: min(26rem, 100%);
+    background: var(--surface-card);
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+    animation: atlas-pop var(--dur-normal) var(--ease-out);
+  }
+
+  [data-modal-form] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-5);
+  }
+
+  [data-modal-head] {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  [data-modal-title] {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 480;
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-snug);
+    color: var(--text-strong);
+  }
+  [data-modal-head] button {
+    display: inline-flex;
+    flex: none;
+    padding: 0.3rem;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-modal-head] button:hover {
+    background: var(--surface-sunken);
+    color: var(--text-strong);
+  }
+
+  [data-modal-message] {
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    color: var(--text-body);
+  }
+
+  [data-modal-field] {
+    display: flex;
+  }
+  [data-modal-field] input {
+    width: 100%;
+    padding: 0.65rem 0.8rem;
+    background: var(--surface-sunken);
+    border: var(--rule-width) solid var(--rule-strong);
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    color: var(--text-strong);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  [data-modal-field] input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--surface-card);
+  }
+
+  [data-modal-actions] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  [data-modal-spacer] {
+    flex: 1;
+  }
+  [data-modal-btn] {
+    padding: 0.55rem 0.9rem;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border: var(--rule-width) solid transparent;
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-modal-btn][data-tone="quiet"] {
+    color: var(--text-body);
+    border-color: var(--rule-strong);
+  }
+  [data-modal-btn][data-tone="quiet"]:hover {
+    background: var(--surface-sunken);
+    border-color: var(--text-faint);
+  }
+  [data-modal-btn][data-tone="ghost"] {
+    color: var(--text-muted);
+  }
+  [data-modal-btn][data-tone="ghost"]:hover {
+    color: var(--accent);
+  }
+  [data-modal-btn][data-tone="primary"],
+  [data-modal-btn][data-tone="danger"] {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  [data-modal-btn][data-tone="primary"]:hover,
+  [data-modal-btn][data-tone="danger"]:hover {
+    background: var(--accent-deep);
+  }
+  [data-modal-btn]:active {
+    transform: translateY(1px);
+  }
+
+  @media (max-width: 480px) {
+    :scope {
+      place-items: end center;
+      padding: 0;
+    }
+    [data-dialog] {
+      width: 100%;
+      border-inline: none;
+      border-bottom: none;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
+    }
+  }
+}

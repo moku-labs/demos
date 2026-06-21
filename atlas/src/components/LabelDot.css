@@ -1,0 +1,41 @@
+/**
+ * LabelDot — a small refined dot (never a loud fill) + optional name. Scoped to `[data-label-chip]`;
+ * the hue comes from `data-label` → `--label-<key>`, identical in both themes. The dot↔name spacing
+ * uses `margin-inline-end` (not flex `gap`) to dodge a real-Safari flex-gap quirk.
+ */
+@scope ([data-label-chip]) {
+  :scope {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--text-xs);
+    color: var(--text-body);
+    white-space: nowrap;
+  }
+
+  [data-dot] {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: var(--radius-pill);
+    margin-inline-end: 0.4rem;
+    background: var(--dot-color);
+  }
+
+  :scope[data-label="bug"] {
+    --dot-color: var(--label-bug);
+  }
+  :scope[data-label="feature"] {
+    --dot-color: var(--label-feature);
+  }
+  :scope[data-label="chore"] {
+    --dot-color: var(--label-chore);
+  }
+  :scope[data-label="research"] {
+    --dot-color: var(--label-research);
+  }
+  :scope[data-label="design"] {
+    --dot-color: var(--label-design);
+  }
+  :scope[data-label="docs"] {
+    --dot-color: var(--label-docs);
+  }
+}

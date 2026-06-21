@@ -1,0 +1,46 @@
+{
+  // Cloudflare Worker config for Atlas. The `main` entry is the thin adapter (src/cloudflare/worker.ts)
+  // that drives the Moku `server` app; `assets.directory` is the web client `bun run build` writes.
+  // Resource ids are placeholders until `bun run deploy` captures the real ones from the account and
+  // writes them back here (the deploy plugin owns this file's ids). `wrangler dev --local` simulates
+  // every binding locally, so the placeholders are fine for local development.
+  "main": "src/cloudflare/worker.ts",
+  "name": "atlas-dev",
+  "compatibility_date": "2026-06-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "dist/client",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+      "head_sampling_rate": 1
+    }
+  },
+  "kv_namespaces": [
+    { "binding": "BOARDS_KV", "id": "00000000000000000000000000000000" },
+    { "binding": "SESSIONS_KV", "id": "00000000000000000000000000000001" }
+  ],
+  "r2_buckets": [{ "binding": "ATTACHMENTS", "bucket_name": "atlas-attachments-dev" }],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "atlas-db-dev",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "db/migrations"
+    }
+  ],
+  "queues": {
+    "producers": [{ "queue": "atlas-activity-dev", "binding": "ACTIVITY_QUEUE" }],
+    "consumers": [{ "queue": "atlas-activity-dev", "max_batch_timeout": 1 }]
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "BOARD", "class_name": "BoardChannel" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BoardChannel"] }]
+}

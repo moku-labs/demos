@@ -1,0 +1,104 @@
+/**
+ * ContextMenu — the universal "⋯" / user popover. Scoped to `[data-context-menu]`. A quiet bordered
+ * card of full-width items that warm to sunken paper on hover; the destructive item (`data-danger`)
+ * reads vermilion and warms to the accent tint. The `user` variant leads with a name + mono email
+ * card above a hairline rule. On phones it drops to a bottom sheet with roomier tap targets (design
+ * context §6 D1/D2).
+ */
+@scope ([data-context-menu]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    min-width: 11rem;
+    padding: var(--space-1);
+    background: var(--surface-card);
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-pop);
+    z-index: var(--z-popover);
+    animation: atlas-pop var(--dur-fast) var(--ease-out);
+  }
+
+  [data-menu-item] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    color: var(--text-body);
+    text-align: start;
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-menu-item] [data-icon] {
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+  }
+  [data-menu-item]:hover {
+    background: var(--surface-sunken);
+    color: var(--text-strong);
+  }
+  [data-menu-item]:hover [data-icon] {
+    color: var(--text-strong);
+  }
+
+  [data-menu-item][data-danger] {
+    color: var(--accent);
+  }
+  [data-menu-item][data-danger] [data-icon] {
+    color: var(--accent);
+  }
+  [data-menu-item][data-danger]:hover {
+    background: var(--accent-tint);
+    color: var(--accent-deep);
+  }
+  [data-menu-item][data-danger]:hover [data-icon] {
+    color: var(--accent-deep);
+  }
+
+  /* ── User variant ── */
+  [data-user-card] {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.55rem 0.65rem 0.45rem;
+  }
+  [data-user-name] {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-strong);
+  }
+  [data-user-email] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--text-faint);
+  }
+  [data-menu-rule] {
+    height: var(--rule-width);
+    margin: var(--space-1) 0;
+    background: var(--rule);
+  }
+
+  @media (max-width: 760px) {
+    :scope {
+      position: fixed;
+      inset-block: auto 0;
+      inset-inline: 0;
+      min-width: 0;
+      padding: var(--space-2) var(--space-2) var(--space-4);
+      border-inline: none;
+      border-bottom: none;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      box-shadow: var(--shadow-sheet);
+      animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
+    }
+    [data-menu-item] {
+      padding: 0.85rem 0.75rem;
+      font-size: var(--text-base);
+    }
+  }
+}

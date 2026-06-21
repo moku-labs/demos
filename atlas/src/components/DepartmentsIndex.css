@@ -1,0 +1,53 @@
+/**
+ * DepartmentsIndex — the contents-page navigation strip. Scoped to `[data-departments]`. A hairline
+ * rule beneath, the tabs laid in a single row that scrolls sideways when it overflows (so phones swipe
+ * through departments — design context §5). The "Add department" affordance sits quietly at the end of
+ * the track and warms to the accent on hover. The scrollbar is hidden for the clean editorial line.
+ */
+@scope ([data-departments]) {
+  :scope {
+    border-bottom: var(--rule-width) solid var(--rule);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  :scope::-webkit-scrollbar {
+    display: none;
+  }
+
+  [data-departments-track] {
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-4);
+    width: max-content;
+    min-width: 100%;
+    padding: var(--space-2) var(--pad-page);
+  }
+
+  [data-add-dept] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    align-self: center;
+    padding: 0.35rem 0.7rem;
+    border: var(--rule-width) dashed var(--rule-strong);
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  [data-add-dept]:hover {
+    color: var(--accent-deep);
+    border-color: var(--accent);
+    background: var(--accent-tint);
+  }
+
+  @media (max-width: 760px) {
+    [data-departments-track] {
+      gap: var(--space-3);
+    }
+  }
+}

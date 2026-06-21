@@ -1,0 +1,85 @@
+/**
+ * Footer — the page's closing editorial block. Scoped to `[data-footer]`. A hairline rule above, the
+ * blurb + tech-stack on the left, three quiet link columns on the right, and a mono base line. Links
+ * warm to the accent on hover.
+ */
+@scope ([data-footer]) {
+  :scope {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr);
+    gap: var(--space-6) var(--space-8);
+    padding: var(--space-8) var(--pad-page) var(--space-6);
+    margin-top: var(--space-10);
+    border-top: var(--rule-width) solid var(--rule);
+  }
+
+  [data-foot-wordmark] {
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: 540;
+    color: var(--text-strong);
+  }
+  [data-stop] {
+    color: var(--accent);
+  }
+
+  [data-foot-blurb] {
+    margin-top: var(--space-3);
+    max-width: 42ch;
+    color: var(--text-body);
+    font-size: var(--text-sm);
+  }
+  [data-foot-stack] {
+    margin-top: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-faint);
+  }
+
+  [data-foot-cols] {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  [data-foot-col-title] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--text-muted);
+    margin-bottom: var(--space-3);
+  }
+  [data-foot-col] li + li {
+    margin-top: 0.55rem;
+  }
+  [data-foot-col] a {
+    font-size: var(--text-sm);
+    color: var(--text-body);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  [data-foot-col] a:hover {
+    color: var(--accent);
+  }
+
+  [data-foot-base] {
+    grid-column: 1 / -1;
+    padding-top: var(--space-5);
+    border-top: var(--rule-width) solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-faint);
+  }
+
+  @media (max-width: 760px) {
+    :scope {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+    [data-foot-cols] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}

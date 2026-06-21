@@ -1,0 +1,33 @@
+/**
+ * DropIndicator — the vermilion insertion line + serif tick. Scoped to `[data-drop-indicator]`. The
+ * line is a 2px accent hairline; the tick is a small serif wedge pinned to its leading edge, echoing
+ * the editorial type. Rides the accent's z-layer so it always sits above the cards it slots between.
+ */
+@scope ([data-drop-indicator]) {
+  :scope {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 0;
+    margin: calc(var(--space-1) * -1) 0;
+    z-index: var(--z-drop-indicator);
+    pointer-events: none;
+  }
+
+  [data-drop-line] {
+    flex: 1;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--accent);
+  }
+
+  [data-drop-tick] {
+    flex: none;
+    width: 0;
+    height: 0;
+    margin-inline-end: 1px;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-inline-start: 6px solid var(--accent);
+  }
+}

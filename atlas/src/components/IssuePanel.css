@@ -1,0 +1,575 @@
+/**
+ * IssuePanel — the article-style issue editor. Scoped to `[data-issue-panel]`. A dimming `[data-scrim]`
+ * backdrop sits behind a slide-over surface (large panel on desktop, full-screen on mobile). The body
+ * is a two-column grid: a prose article on the left (breadcrumb · big Fraunces title · byline ·
+ * markdown body with a drop-cap on its first block · attachments grid · sub-issue checklist) and a
+ * quiet properties rail on the right. The surface slides in with `--ease-out`; `prefers-reduced-motion`
+ * swaps the slide for a plain fade. Below 1024px the rail drops beneath the article; below 760px the
+ * panel goes full-screen.
+ */
+@scope ([data-issue-panel]) {
+  :scope {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-drawer);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  [data-scrim] {
+    position: absolute;
+    inset: 0;
+    background: var(--scrim);
+    animation: scrim-in var(--dur-normal) var(--ease-out);
+  }
+
+  [data-panel-surface] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(58rem, 100%);
+    height: 100%;
+    background: var(--surface-page);
+    border-left: var(--rule-width) solid var(--rule-strong);
+    box-shadow: var(--shadow-sheet);
+    overflow: hidden;
+    animation: panel-in var(--dur-enter) var(--ease-out);
+  }
+
+  /* ── Header bar: breadcrumb + the universal menu + close ── */
+  [data-panel-bar] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-shrink: 0;
+    padding: var(--space-4) var(--space-6);
+    border-bottom: var(--rule-width) solid var(--rule);
+    background: var(--surface-page);
+  }
+  [data-breadcrumb] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  [data-crumb] {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  [data-crumb-id] {
+    color: var(--text-faint);
+  }
+  [data-crumb-sep] {
+    color: var(--text-ghost);
+  }
+  [data-bar-tools] {
+    display: inline-flex;
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+  [data-bar-tools] button {
+    display: inline-flex;
+    padding: 0.4rem;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-bar-tools] button:hover {
+    background: var(--accent-tint);
+    color: var(--accent-deep);
+  }
+
+  /* ── Body grid: article + rail ── */
+  [data-panel-body] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    gap: var(--space-7);
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-7) var(--space-6) var(--space-10);
+  }
+
+  /* ── Article ── */
+  [data-article] {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  [data-issue-title] {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 460;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+  }
+
+  [data-byline] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  [data-byline-text] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  [data-reporter] {
+    color: var(--text-body);
+    font-weight: 550;
+  }
+  [data-byline-sep] {
+    color: var(--text-ghost);
+  }
+  [data-byline-updated] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  /* ── Markdown body + editorial drop-cap on the first block ── */
+  [data-issue-body] {
+    max-width: var(--width-prose);
+    font-size: var(--text-md);
+    line-height: var(--leading-normal);
+    color: var(--text-body);
+  }
+  [data-issue-body] > * + * {
+    margin-top: var(--space-4);
+  }
+  [data-issue-body] h1,
+  [data-issue-body] h2,
+  [data-issue-body] h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+  }
+  [data-issue-body] h1 {
+    font-size: var(--text-lg);
+  }
+  [data-issue-body] h2 {
+    font-size: var(--text-md);
+  }
+  [data-issue-body] h3 {
+    font-size: var(--text-base);
+  }
+  [data-issue-body] a {
+    color: var(--accent-deep);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  [data-issue-body] code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    border-radius: var(--radius-sm);
+    background: var(--surface-sunken);
+    color: var(--text-strong);
+  }
+  [data-issue-body] pre {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--surface-sunken);
+    border: var(--rule-width) solid var(--rule);
+    overflow-x: auto;
+  }
+  [data-issue-body] pre code {
+    padding: 0;
+    background: none;
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+  }
+  [data-issue-body] ul,
+  [data-issue-body] ol {
+    padding-left: var(--space-5);
+  }
+  [data-issue-body] li + li {
+    margin-top: var(--space-1);
+  }
+  [data-issue-body] li::marker {
+    color: var(--text-faint);
+  }
+  /* The drop-cap: a large Fraunces initial on the first rendered paragraph (design context §7). */
+  [data-issue-body] > p:first-child::first-letter {
+    float: left;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 3.2em;
+    line-height: 0.82;
+    margin: 0.04em 0.08em 0 0;
+    color: var(--accent);
+  }
+
+  /* ── Section heads (Attachments, Sub-issues) ── */
+  [data-section-head] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  [data-attach-section],
+  [data-sub-section] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: var(--rule-width) solid var(--rule);
+  }
+
+  /* ── Attachments grid ── */
+  [data-attach-grid] {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+    gap: var(--space-3);
+  }
+  [data-attach-add] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 7rem;
+    border: 1px dashed var(--rule-strong);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  [data-attach-add]:hover {
+    border-color: var(--accent);
+    color: var(--accent-deep);
+    background: var(--accent-tint);
+  }
+
+  /* ── Sub-issues ── */
+  [data-sub-head] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  [data-sub-progress] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  [data-sub-track] {
+    width: 6rem;
+    height: 4px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-sunken);
+    overflow: hidden;
+  }
+  [data-sub-fill] {
+    display: block;
+    width: var(--pct, 0%);
+    height: 100%;
+    background: var(--accent);
+  }
+  [data-sub-count] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--text-muted);
+  }
+  [data-sub-list] {
+    display: flex;
+    flex-direction: column;
+  }
+  [data-sub-add] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-top: var(--space-2);
+  }
+  [data-sub-add-box] {
+    display: inline-grid;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    flex-shrink: 0;
+    border: 1px dashed var(--rule-strong);
+    border-radius: var(--radius-sm);
+    color: var(--text-faint);
+  }
+  [data-sub-add-box] [data-icon] {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+  [data-sub-add-field] {
+    flex: 1;
+    padding: 0.3rem 0;
+    background: none;
+    border: none;
+    font-size: var(--text-base);
+    color: var(--text-strong);
+  }
+  [data-sub-add-field]:focus {
+    outline: none;
+  }
+  [data-sub-add-field]::placeholder {
+    color: var(--text-faint);
+  }
+
+  /* ── Properties rail ── */
+  [data-rail] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    align-self: start;
+    padding-left: var(--space-6);
+    border-left: var(--rule-width) solid var(--rule);
+  }
+  [data-rail-field],
+  [data-rail-icon] {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  [data-rail-label] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  [data-rail-value] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: var(--text-sm);
+    color: var(--text-body);
+  }
+  [data-rail-empty] {
+    color: var(--text-ghost);
+  }
+
+  [data-rail-value] [data-status-dot] {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--text-faint);
+  }
+  [data-rail-value] [data-status-dot][data-status="in_progress"] {
+    background: var(--accent);
+  }
+  [data-rail-value] [data-status-dot][data-status="in_review"] {
+    background: var(--label-amber);
+  }
+  [data-rail-value] [data-status-dot][data-status="done"] {
+    background: var(--label-green);
+  }
+
+  [data-priority-value] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  [data-rail-labels] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  [data-rail-assignees] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    width: 100%;
+  }
+  [data-assignee] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  [data-assignee-name] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  [data-lead-tag] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--accent-deep);
+  }
+  [data-rail-reporter],
+  [data-estimate] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  [data-rail-timeline] [data-rail-value] {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+  }
+  [data-timeline-line] {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  [data-timeline-key] {
+    color: var(--text-muted);
+  }
+  [data-timeline-val] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--text-faint);
+  }
+
+  [data-icon-customize] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    align-self: flex-start;
+    padding: 0.35rem 0.6rem 0.35rem 0.35rem;
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+    color: var(--text-body);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-icon-customize]:hover {
+    border-color: var(--accent);
+    color: var(--accent-deep);
+  }
+  [data-icon-chip] {
+    display: inline-grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-sunken);
+    color: var(--text-muted);
+  }
+  [data-icon-chip] [data-icon] {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  [data-add-property] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    align-self: flex-start;
+    margin-top: var(--space-1);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  [data-add-property]:hover {
+    color: var(--accent-deep);
+  }
+  [data-add-property] [data-icon] {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* ── Responsive: rail drops beneath the article, then full-screen ── */
+  @media (max-width: 1024px) {
+    [data-panel-surface] {
+      width: min(46rem, 100%);
+    }
+    [data-panel-body] {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-6);
+    }
+    [data-rail] {
+      padding-left: 0;
+      border-left: none;
+      padding-top: var(--space-5);
+      border-top: var(--rule-width) solid var(--rule);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-5) var(--space-6);
+    }
+    [data-rail-assignees] {
+      width: auto;
+    }
+  }
+
+  @media (max-width: 760px) {
+    :scope {
+      justify-content: stretch;
+    }
+    [data-panel-surface] {
+      width: 100%;
+      border-left: none;
+    }
+    [data-panel-bar] {
+      padding: var(--space-4) var(--pad-page);
+    }
+    [data-panel-body] {
+      padding: var(--space-5) var(--pad-page) var(--space-8);
+    }
+    [data-issue-title] {
+      font-size: var(--text-xl);
+    }
+    [data-rail] {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-4);
+    }
+  }
+
+  @media (max-width: 480px) {
+    [data-issue-body] > p:first-child::first-letter {
+      font-size: 2.6em;
+    }
+    [data-issue-title] {
+      font-size: var(--text-lg);
+    }
+  }
+
+  /* ── Restrained motion (design context §2): reduce-motion swaps slide/fade for an instant show ── */
+  @keyframes panel-in {
+    from {
+      transform: translateX(2rem);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  @keyframes scrim-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-panel-surface],
+    [data-scrim] {
+      animation: none;
+    }
+  }
+}

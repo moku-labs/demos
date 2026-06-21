@@ -1,0 +1,49 @@
+/**
+ * Toast — the transient confirmation pill. Scoped to `[data-toast]`. A small raised pill pinned to
+ * the page bottom-centre that rises into view; a leading dot marks the tone (accent for info, the
+ * same vermilion for danger — restated since the accent is the one hot colour). Non-blocking and
+ * quiet (design context §6 F1).
+ */
+@scope ([data-toast]) {
+  :scope {
+    position: fixed;
+    inset-block-end: var(--space-6);
+    inset-inline: 0;
+    margin-inline: auto;
+    width: fit-content;
+    max-width: calc(100% - 2 * var(--pad-page));
+    z-index: var(--z-toast);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.55rem 0.9rem;
+    background: var(--surface-card);
+    border: var(--rule-width) solid var(--rule-strong);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-pop);
+    animation: atlas-rise var(--dur-normal) var(--ease-out);
+  }
+
+  [data-toast-mark] {
+    width: 0.5rem;
+    height: 0.5rem;
+    flex: none;
+    border-radius: var(--radius-pill);
+    background: var(--text-faint);
+  }
+  :scope[data-tone="danger"] [data-toast-mark] {
+    background: var(--accent);
+  }
+
+  [data-toast-text] {
+    font-size: var(--text-sm);
+    font-weight: 550;
+    color: var(--text-strong);
+  }
+
+  @media (max-width: 480px) {
+    :scope {
+      inset-block-end: var(--space-4);
+    }
+  }
+}

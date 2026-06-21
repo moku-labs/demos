@@ -1,0 +1,14 @@
+/**
+ * Icon — inline SVG sized to its line. Scoped to `[data-icon]` so it renders identically inside any
+ * component. The glyph inherits `currentColor`; callers size it by setting `font-size`/width on the
+ * button or chip that holds it.
+ */
+@scope ([data-icon]) {
+  :scope {
+    display: inline-block;
+    width: 1.25em;
+    height: 1.25em;
+    flex: none;
+    vertical-align: -0.18em;
+  }
+}

@@ -1,0 +1,33 @@
+/**
+ * StatBlock — a big Fraunces numeral over a small mono caption. Scoped to `[data-stat]`. `data-live`
+ * tints the value vermilion to mark an in-flight figure.
+ */
+@scope ([data-stat]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  [data-stat-value] {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 460;
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  [data-stat-label] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--text-muted);
+  }
+
+  :scope[data-live] [data-stat-value] {
+    color: var(--accent);
+  }
+}

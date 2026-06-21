@@ -1,0 +1,38 @@
+/**
+ * PriorityMark — four ascending bars; filled bars (`[data-on]`) encode the rank. Scoped to
+ * `[data-priority]`. Urgent fills tint vermilion (the only rank that does); the rest read in muted
+ * ink so priority is legible without shouting.
+ */
+@scope ([data-priority]) {
+  :scope {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 0.85rem;
+  }
+
+  [data-bar] {
+    width: 3px;
+    border-radius: 1px;
+    background: var(--rule-strong);
+  }
+  [data-bar]:nth-child(1) {
+    height: 30%;
+  }
+  [data-bar]:nth-child(2) {
+    height: 52%;
+  }
+  [data-bar]:nth-child(3) {
+    height: 74%;
+  }
+  [data-bar]:nth-child(4) {
+    height: 100%;
+  }
+
+  [data-bar][data-on] {
+    background: var(--text-muted);
+  }
+  :scope[data-priority="urgent"] [data-bar][data-on] {
+    background: var(--accent);
+  }
+}

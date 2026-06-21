@@ -37,7 +37,10 @@
     "wrangler": "4.102.0"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "bun run scripts/build.ts",
+    "build:worker": "wrangler deploy --dry-run --outdir dist/worker",
+    "dev": "bun scripts/dev.ts",
+    "deploy": "bun scripts/deploy.ts",
     "typecheck": "tsc --noEmit",
     "lint": "biome check . && eslint .",
     "lint:fix": "biome check --write . && eslint --fix .",

@@ -1,0 +1,97 @@
+/**
+ * BoardPill — one rounded board affordance. Scoped to `[data-board-pill]`. A quiet pill on sunken
+ * paper that warms to the accent on hover; the active board fills with the accent tint and inks its
+ * title. The "⋯" menu and drag handle stay hidden until hover/focus to keep the bar calm. The whole
+ * title is a link, so the pill navigates even with no JS.
+ */
+@scope ([data-board-pill]) {
+  :scope {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    padding-right: 0.3rem;
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-pill);
+    background: var(--surface-sunken);
+    white-space: nowrap;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  :scope:hover {
+    border-color: var(--rule-strong);
+  }
+  :scope[data-active] {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+  }
+
+  [data-board-link] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.5rem 0.4rem 0.85rem;
+    font-size: var(--text-sm);
+    font-weight: 550;
+    color: var(--text-body);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  [data-board-link]:hover {
+    color: var(--text-strong);
+  }
+  :scope[data-active] [data-board-link] {
+    color: var(--accent-deep);
+  }
+
+  [data-board-icon] {
+    display: inline-flex;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+  :scope[data-active] [data-board-icon] {
+    color: var(--accent);
+  }
+
+  button[data-action="menu"] {
+    display: inline-flex;
+    padding: 0.2rem;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    color: var(--text-ghost);
+    opacity: 0;
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out),
+      opacity var(--dur-fast) var(--ease-out);
+  }
+  :scope:hover button[data-action="menu"],
+  button[data-action="menu"]:focus-visible {
+    opacity: 1;
+  }
+  button[data-action="menu"]:hover {
+    background: var(--accent-tint-strong);
+    color: var(--accent-deep);
+  }
+
+  [data-board-handle] {
+    width: 0.6rem;
+    height: 0.8rem;
+    flex: none;
+    cursor: grab;
+    opacity: 0;
+    background-image: radial-gradient(currentColor 1.1px, transparent 1.1px);
+    background-size: 0.3rem 0.3rem;
+    color: var(--text-ghost);
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+  :scope:hover [data-board-handle] {
+    opacity: 1;
+  }
+
+  @media (max-width: 760px) {
+    button[data-action="menu"],
+    [data-board-handle] {
+      opacity: 1;
+    }
+  }
+}

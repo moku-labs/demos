@@ -1,0 +1,162 @@
+/**
+ * CustomizePanel — the Customize popover/sheet. Scoped to `[data-customize-panel]`. A bordered card:
+ * an eyebrow + Fraunces element name, a curated colour palette of token-painted dots (the selected
+ * swatch gets an accent ring), and a cohesive icon grid of quiet cells that warm to the accent tint
+ * when picked, with a "Remove icon" affordance. Each swatch paints from its own `--swatch` custom
+ * property so no colour is hardcoded. On phones it drops to a bottom sheet (design context §4/§6 C3).
+ */
+@scope ([data-customize-panel]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    width: min(18rem, 92vw);
+    padding: var(--space-4);
+    background: var(--surface-card);
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-pop);
+    z-index: var(--z-popover);
+    animation: atlas-pop var(--dur-fast) var(--ease-out);
+  }
+
+  [data-customize-head] {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  [data-customize-eyebrow] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  [data-customize-title] {
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: 500;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+  }
+
+  [data-customize-section] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  [data-customize-heading],
+  [data-customize-heading-row] [data-customize-heading] {
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  [data-customize-heading-row] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  [data-remove-icon] {
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  [data-remove-icon]:hover {
+    color: var(--accent);
+  }
+  [data-remove-icon][data-selected] {
+    color: var(--accent-deep);
+  }
+
+  [data-swatch-grid] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  [data-swatch] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: var(--radius-pill);
+    border: var(--rule-width) solid transparent;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+  [data-swatch]:hover {
+    transform: translateY(-1px);
+  }
+  [data-swatch][data-selected] {
+    border-color: var(--accent);
+  }
+  [data-swatch-dot] {
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: var(--radius-pill);
+    background: var(--swatch);
+    box-shadow: inset 0 0 0 1px var(--inset-soft);
+  }
+
+  [data-icon-grid] {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: var(--space-2);
+  }
+  [data-icon-cell] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-md);
+    color: var(--text-body);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-icon-cell]:hover {
+    background: var(--surface-sunken);
+    border-color: var(--rule-strong);
+  }
+  [data-icon-cell][data-selected] {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+    color: var(--accent-deep);
+  }
+  [data-icon-cell] [data-icon] {
+    width: 17px;
+    height: 17px;
+  }
+
+  @media (max-width: 760px) {
+    :scope {
+      position: fixed;
+      inset-block: auto 0;
+      inset-inline: 0;
+      width: auto;
+      border-inline: none;
+      border-bottom: none;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      box-shadow: var(--shadow-sheet);
+      animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
+    }
+    [data-icon-grid] {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    [data-icon-grid] {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+}

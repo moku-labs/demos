@@ -1,0 +1,87 @@
+/**
+ * BoardView — the columns row + the board PAGE wrapper. Two scopes live here.
+ *
+ * `[data-board]` is the kanban row: columns side by side, each sizing to its content (no internal
+ * scrollbar — the page scrolls, design context §5), separated by the page-grid hairlines. The columns
+ * fill the width on roomy screens and become a horizontally-scrollable, snapping single-column-at-a-
+ * time board on phones (design context §5 "Mobile").
+ *
+ * `[data-page="board"]` is the working-screen stack (board-header region · board · issue overlay) that
+ * rides the SPA swap; its element lives in BoardPage.tsx.
+ */
+@scope ([data-board]) {
+  :scope {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(15rem, 1fr);
+    align-items: start;
+    gap: var(--space-6);
+    padding: var(--space-6) var(--pad-page) var(--space-8);
+  }
+
+  [data-add-column] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    align-self: start;
+    margin-top: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: var(--rule-width) dashed var(--rule-strong);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    white-space: nowrap;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  [data-add-column]:hover {
+    border-color: var(--accent);
+    color: var(--accent-deep);
+    background: var(--accent-tint);
+  }
+
+  @media (max-width: 1024px) {
+    :scope {
+      grid-auto-columns: minmax(16rem, 22rem);
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+    }
+    :scope > * {
+      scroll-snap-align: start;
+    }
+  }
+
+  @media (max-width: 480px) {
+    :scope {
+      grid-auto-columns: 88vw;
+      gap: var(--space-5);
+      scroll-snap-type: x mandatory;
+    }
+  }
+}
+
+/**
+ * The working-screen page wrapper — a calm vertical stack the board-header, board, and issue overlay
+ * flow within. It carries no chrome of its own (the masthead/footer wrap it in the layout); it just
+ * sets the document-flow rhythm and hosts the page-level issue slide-over.
+ */
+@scope ([data-page="board"]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+  }
+
+  [data-region="board-header"] {
+    display: block;
+  }
+
+  [data-region="board"] {
+    display: block;
+  }
+
+  [data-overlay="issue"][hidden] {
+    display: none;
+  }
+}

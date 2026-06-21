@@ -1,0 +1,267 @@
+/**
+ * ActivityPanel — the read-only "Record" drawer. Scoped to `[data-activity-panel]`. A dimmed scrim
+ * plus a right-hand sheet that slides in on the accent-free editorial palette. The header pairs a
+ * Fraunces title with a quiet "read-only" badge; two filter rows (by event type, by person) sit
+ * above a day-grouped feed. Each entry colours its verb by `data-kind` (created → green, moved →
+ * accent, updated → feature blue, attached → docs cyan, deleted → bug red). On phones the drawer
+ * drops to a bottom sheet (design context §4/§6 C1).
+ */
+@scope ([data-activity-panel]) {
+  :scope {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-drawer);
+  }
+
+  [data-scrim] {
+    position: absolute;
+    inset: 0;
+    background: var(--scrim);
+    animation: atlas-fade var(--dur-normal) var(--ease-out);
+  }
+
+  [data-drawer] {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    width: min(var(--width-sheet), 92vw);
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-page);
+    border-inline-start: var(--rule-width) solid var(--rule);
+    box-shadow: var(--shadow-sheet);
+    animation: atlas-slide-in var(--dur-normal) var(--ease-out);
+  }
+
+  [data-drawer-head] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-5) var(--space-4);
+    border-bottom: var(--rule-width) solid var(--rule);
+  }
+  [data-drawer-titles] {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+  }
+  [data-drawer-title] {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 480;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+  }
+  [data-readonly-badge] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding: 0.1rem 0.4rem;
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-pill);
+  }
+  [data-drawer-head] button {
+    display: inline-flex;
+    padding: 0.35rem;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-drawer-head] button:hover {
+    background: var(--surface-sunken);
+    color: var(--text-strong);
+  }
+
+  [data-record-filters] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    border-bottom: var(--rule-width) solid var(--rule);
+  }
+  [data-filter-row] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  [data-filter-row-label] {
+    flex: none;
+    width: 2.4rem;
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  [data-filter-chips] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  [data-kind-filter] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.55rem;
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    color: var(--text-body);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+  [data-kind-filter]:hover,
+  [data-kind-filter][data-active] {
+    background: var(--surface-sunken);
+    border-color: var(--rule-strong);
+  }
+  [data-kind-mark] {
+    display: inline-flex;
+  }
+  [data-kind-mark] [data-icon] {
+    width: 14px;
+    height: 14px;
+  }
+  [data-person-filter] {
+    display: inline-flex;
+    padding: 1px;
+    border-radius: var(--radius-pill);
+    border: var(--rule-width) solid transparent;
+    transition: border-color var(--dur-fast) var(--ease-out);
+  }
+  [data-person-filter]:hover,
+  [data-person-filter][data-active] {
+    border-color: var(--accent);
+  }
+
+  /* ── The day-grouped feed ── */
+  [data-record-feed] {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-4) var(--space-5) var(--space-6);
+  }
+  [data-day-group] + [data-day-group] {
+    margin-top: var(--space-5);
+  }
+  [data-day-heading] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding-bottom: var(--space-2);
+    border-bottom: var(--rule-width) solid var(--rule);
+  }
+  [data-day-entries] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  [data-entry] {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-bottom: var(--rule-width) solid var(--rule);
+  }
+  [data-entry-system] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-sunken);
+    color: var(--text-faint);
+  }
+  [data-entry-system] [data-icon] {
+    width: 14px;
+    height: 14px;
+  }
+  [data-entry-body] {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  [data-entry-line] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-size: var(--text-sm);
+    color: var(--text-body);
+    line-height: var(--leading-snug);
+  }
+  [data-entry-kind] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+  [data-entry-kind] [data-icon] {
+    width: 13px;
+    height: 13px;
+  }
+  [data-entry-target] {
+    color: var(--text-strong);
+  }
+  [data-entry-time] {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--text-faint);
+  }
+
+  /* ── Verb hues (same in both themes — labels stay recognisable) ── */
+  [data-kind="created"] [data-icon],
+  [data-entry-kind][data-kind="created"],
+  [data-kind-mark][data-kind="created"] {
+    color: var(--label-green);
+  }
+  [data-kind="moved"] [data-icon],
+  [data-entry-kind][data-kind="moved"],
+  [data-kind-mark][data-kind="moved"] {
+    color: var(--accent);
+  }
+  [data-kind="updated"] [data-icon],
+  [data-entry-kind][data-kind="updated"],
+  [data-kind-mark][data-kind="updated"] {
+    color: var(--label-feature);
+  }
+  [data-kind="attached"] [data-icon],
+  [data-entry-kind][data-kind="attached"],
+  [data-kind-mark][data-kind="attached"] {
+    color: var(--label-docs);
+  }
+  [data-kind="deleted"] [data-icon],
+  [data-entry-kind][data-kind="deleted"],
+  [data-kind-mark][data-kind="deleted"] {
+    color: var(--label-bug);
+  }
+
+  @media (max-width: 760px) {
+    [data-drawer] {
+      inset-block: auto 0;
+      inset-inline: 0;
+      width: auto;
+      max-height: 85vh;
+      border-inline-start: none;
+      border-top: var(--rule-width) solid var(--rule);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
+    }
+  }
+}

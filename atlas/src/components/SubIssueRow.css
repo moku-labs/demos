@@ -1,0 +1,94 @@
+/**
+ * SubIssueRow — one checklist line. Scoped to `[data-sub-issue]`. A custom square checkbox warms to
+ * the accent when checked; a done line strikes and mutes its title. The "⋯" trigger stays quiet until
+ * the row is hovered, matching the universal-menu language used everywhere else.
+ */
+@scope ([data-sub-issue]) {
+  :scope {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-bottom: var(--rule-width) solid var(--rule);
+  }
+  :scope:last-child {
+    border-bottom: none;
+  }
+
+  [data-check] {
+    display: inline-flex;
+    position: relative;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  [data-check] input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  [data-box] {
+    display: inline-grid;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    border: var(--rule-width) solid var(--rule-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface-sunken);
+    color: transparent;
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-box] [data-icon] {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
+
+  :scope[data-done] [data-box] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+  }
+
+  [data-sub-title] {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--text-base);
+    color: var(--text-body);
+  }
+  :scope[data-done] [data-sub-title] {
+    color: var(--text-faint);
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+  }
+
+  [data-menu] {
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 0.25rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-faint);
+    opacity: 0;
+    transition:
+      opacity var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  :scope:hover [data-menu],
+  [data-menu]:focus-visible {
+    opacity: 1;
+  }
+  [data-menu]:hover {
+    background: var(--accent-tint);
+    color: var(--accent-deep);
+  }
+
+  @media (max-width: 480px) {
+    [data-menu] {
+      opacity: 1;
+    }
+  }
+}

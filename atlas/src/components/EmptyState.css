@@ -1,0 +1,35 @@
+/**
+ * EmptyState — the in-character empty lines. Scoped to `[data-empty-state]`. The first line is italic
+ * Fraunces in muted ink (the editorial voice); the aside beneath is a fainter mono caption that reads
+ * like a margin note. Centred and quietly spaced so an empty column never looks broken — just calm.
+ */
+@scope ([data-empty-state]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-6) var(--space-4);
+    text-align: center;
+  }
+
+  [data-empty-line] {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--text-md);
+    font-weight: 380;
+    line-height: var(--leading-snug);
+    color: var(--text-muted);
+  }
+
+  [data-empty-aside] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-faint);
+  }
+
+  :scope[data-variant="no-results"] {
+    padding: var(--space-8) var(--space-4);
+  }
+}

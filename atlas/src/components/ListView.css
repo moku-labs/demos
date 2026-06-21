@@ -1,0 +1,80 @@
+/**
+ * ListView — the editorial issues table. Scoped to `[data-listview]`. Defines the shared column
+ * template (`--list-cols`, inherited by every `[data-list-row]` so cells align to the page grid), a
+ * sticky mono header row of column labels, and per-status groups each headed by a Fraunces count.
+ * Hairline dividers and generous rhythm read like a contents page. On narrow viewports the sticky
+ * header hides and the rows collapse to two lines (handled in ListRow.css).
+ */
+@scope ([data-listview]) {
+  :scope {
+    /* The single source of truth for column widths — ListRow inherits this custom property. */
+    --list-cols: minmax(0, 3fr) 7rem 3.5rem minmax(4rem, 1fr) 6rem 3.5rem 4.5rem auto;
+    display: block;
+    border-top: var(--rule-width) solid var(--rule);
+  }
+
+  [data-list-head] {
+    display: grid;
+    grid-template-columns: var(--list-cols);
+    gap: var(--space-4);
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-page);
+    border-bottom: var(--rule-width) solid var(--rule-strong);
+  }
+  [data-head-cell] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  [data-list-group] {
+    border-bottom: var(--rule-width) solid var(--rule);
+  }
+  [data-list-group]:last-child {
+    border-bottom: none;
+  }
+
+  [data-group-head] {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-4) var(--space-2);
+  }
+  [data-group-title] {
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: 500;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+  }
+  [data-group-count] {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-faint);
+  }
+
+  @media (max-width: 1024px) {
+    :scope {
+      --list-cols: minmax(0, 3fr) 6rem 3rem minmax(3.5rem, 1fr) 5rem 3rem 4rem auto;
+    }
+  }
+
+  /* On phones the sticky header drops away — the rows carry their own two-line meta (ListRow.css). */
+  @media (max-width: 760px) {
+    [data-list-head] {
+      display: none;
+    }
+    [data-group-head] {
+      padding: var(--space-5) var(--pad-page) var(--space-2);
+    }
+  }
+}

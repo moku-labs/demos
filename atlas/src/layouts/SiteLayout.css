@@ -1,0 +1,42 @@
+/**
+ * SiteLayout — the document frame. Scoped to `[data-app-shell]`. A single centred editorial column
+ * that grows with its content (no viewport lock); the masthead, region mounts, page section, and
+ * footer stack vertically. The region mount points reserve no space until their islands fill them.
+ */
+@scope ([data-app-shell]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    max-width: var(--width-content);
+    margin-inline: auto;
+  }
+
+  [data-main] {
+    flex: 1 0 auto;
+    padding-inline: var(--pad-page);
+    padding-block: var(--space-5);
+  }
+  [data-main] > section {
+    display: block;
+    animation: atlas-fade var(--dur-normal) var(--ease-out) both;
+  }
+
+  [data-overlay][hidden] {
+    display: none;
+  }
+
+  @media (max-width: 760px) {
+    [data-main] {
+      padding-inline: 0;
+    }
+  }
+}
+
+/* The page gutter compacts on phones (design context §5). Declared as a token override so every
+   region (masthead, boards bar, footer, board) tightens together. */
+@media (max-width: 480px) {
+  :root {
+    --pad-page: 1.1rem;
+  }
+}

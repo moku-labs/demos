@@ -1,0 +1,81 @@
+/**
+ * BoardHeader — the editorial title block. Scoped to `[data-board-header]`. A mono eyebrow over the
+ * grand Fraunces title and a muted standfirst, with the stats trio set apart to the side. On shorter
+ * screens the standfirst hides and the title shrinks so the board gets room (design context §5); the
+ * grand display returns on tall/wide screens.
+ */
+@scope ([data-board-header]) {
+  :scope {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding: var(--space-7) var(--pad-page) var(--space-5);
+    border-bottom: var(--rule-width) solid var(--rule);
+  }
+
+  [data-board-headline] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  [data-board-eyebrow] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--accent);
+  }
+
+  [data-board-title] {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 420;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+  }
+
+  [data-board-standfirst] {
+    max-width: var(--width-prose);
+    font-size: var(--text-md);
+    line-height: var(--leading-normal);
+    color: var(--text-muted);
+  }
+
+  [data-board-stats] {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-6);
+    flex: none;
+  }
+
+  @media (max-width: 1024px) {
+    [data-board-title] {
+      font-size: var(--text-xl);
+    }
+    [data-board-stats] {
+      gap: var(--space-5);
+    }
+  }
+
+  @media (max-width: 760px) {
+    :scope {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-4);
+      padding: var(--space-5) var(--pad-page) var(--space-4);
+    }
+    [data-board-standfirst] {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    [data-board-stats] {
+      gap: var(--space-5);
+    }
+  }
+}
