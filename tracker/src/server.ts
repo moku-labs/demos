@@ -60,6 +60,10 @@ export const server = createApp({
       activity: {
         name: "tracker-activity",
         binding: "ACTIVITY_QUEUE",
+        // Cap the consumer's batch window at 1s (vs Cloudflare's ~5s default) so the live activity
+        // feed lands promptly — the whole point of the feed is to watch the worker fire (D7). Written
+        // to the generated wrangler `consumers` entry as `max_batch_timeout` (needs @moku-labs/worker ≥ 0.8.0).
+        maxBatchTimeout: 1,
         // Late-bound: the closure captures `server`; invoked only at queue-event time, after createApp returns (D8).
         // eslint-disable-next-line jsdoc/require-jsdoc -- structural queue consumer callback
         onMessage: async (message: Message, env: WorkerEnv) => {
