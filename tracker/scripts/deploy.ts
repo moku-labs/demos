@@ -8,38 +8,24 @@
  *
  * Flags: `--ci` auto-confirms (automation); `--stage <name>` selects the stage for resource names
  * (default "production"); `--migration` (also implied by `--seed`) applies pending D1 migrations to
- * the REMOTE database after the deploy; `--seed` then loads `db/seed.sql` and resets the cached KV
- * board index — the remote analogue of `bun run dev --seed`.
+ * the REMOTE database; `--seed` then loads `db/seed.sql` and resets the cached KV board index — the
+ * remote analogue of `bun run dev --seed`.
+ *
+ * The migration + seed run INSIDE `server.cli.deploy` now: it applies them ONLY after the worker is
+ * live and SKIPS them on an aborted deploy (e.g. a first run before the `.env.local` token exists),
+ * so `deploy --seed` can no longer fall through to a raw `wrangler … --remote` auth error. What to
+ * seed (the SQL file + the `boards:index` KV reset) is declared in `pluginConfigs.deploy.seed`
+ * (src/server.ts). `deploy` returns a structured report and sets the process exit code itself.
  */
 import { app as web } from "../src/app";
 import { server } from "../src/server";
 
 const ci = process.argv.includes("--ci");
 const seed = process.argv.includes("--seed");
-const migrate = process.argv.includes("--migration") || seed;
+// `--seed` implies a migration (the seed needs the schema); `--migration` requests it on its own.
+const migration = process.argv.includes("--migration") || seed;
 
 const stageFlag = process.argv.indexOf("--stage");
 const stage = stageFlag === -1 ? "production" : (process.argv[stageFlag + 1] ?? "production");
 
-await server.cli.deploy({ ci, stage, webBuild: () => web.cli.build() });
-
-// The deploy provisions the D1 database but never migrates it, so a fresh deploy has no schema.
-// `--migration` applies it to the remote DB (idempotent; wrangler prompts on a TTY, auto in CI).
-if (migrate) {
-  await server.cli.wrangler(["d1", "migrations", "apply", "DB", "--remote"]);
-}
-
-// `--seed` loads the demo data into the remote D1, then clears the KV board index so the app rebuilds
-// it from the seeded rows. Runs after the migration above so the tables exist.
-if (seed) {
-  await server.cli.seed("db/seed.sql", { remote: true });
-  await server.cli.wrangler([
-    "kv",
-    "key",
-    "delete",
-    "boards:index",
-    "--binding",
-    "BOARDS_KV",
-    "--remote"
-  ]);
-}
+await server.cli.deploy({ ci, stage, migration, seed, webBuild: () => web.cli.build() });

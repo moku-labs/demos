@@ -86,6 +86,10 @@ export const server = createApp({
       entry: "src/cloudflare/worker.ts",
       nodeCompat: true,
       assets: { binding: "ASSETS", directory: "dist/client", spa: true },
+      // The remote seed `deploy --seed` loads AFTER a successful deploy (+ migration): the SQL file,
+      // then the cached KV board index to clear so `listBoards` rebuilds it from the seeded rows.
+      // deploy runs this only when the worker actually went live — never on an aborted first deploy.
+      seed: { file: "db/seed.sql", resetKv: [{ binding: "BOARDS_KV", key: "boards:index" }] },
       // Cloudflare Workers Observability — turn on metrics + Logs (with invocation logs) at full
       // head-sampling. Traces are emitted automatically once observability is enabled; log Exports
       // (Logpush) are set up separately in the dashboard. `wrangler` is the deploy plugin's escape

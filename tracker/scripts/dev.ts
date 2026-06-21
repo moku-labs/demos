@@ -9,7 +9,9 @@
  *
  * `--port <n>` sets the dev port (default 7878). `--stage <name>` sets the stage for the generated
  * wrangler config's resource names (default "production"). `--seed` loads the demo data into the
- * local D1 (schema migrations + seed rows) and resets the cached board index before the session.
+ * local D1 (schema migrations + seed rows) and resets the cached board index before the session —
+ * handled inside `cli.dev` from the one `pluginConfigs.deploy.seed` declaration (the local twin of
+ * `deploy --seed`).
  */
 import { app as web } from "../src/app";
 import { server } from "../src/server";
@@ -22,23 +24,15 @@ const port = portValue ? Number(portValue) : 7878;
 const stageFlag = process.argv.indexOf("--stage");
 const stage = stageFlag === -1 ? "production" : (process.argv[stageFlag + 1] ?? "production");
 
-if (process.argv.includes("--seed")) {
-  await server.cli.seed("db/seed.sql");
-  // listBoards serves a KV-cached index; clear it so the app rebuilds it from the freshly-seeded D1.
-  await server.cli.wrangler([
-    "kv",
-    "key",
-    "delete",
-    "boards:index",
-    "--binding",
-    "BOARDS_KV",
-    "--local"
-  ]);
-}
+// `--seed` is handled INSIDE `cli.dev` now (mirroring `deploy --seed`): it applies the local D1
+// migrations, loads the seed, and resets the cached board index before serving — all from the one
+// `pluginConfigs.deploy.seed` declaration (src/server.ts).
+const seed = process.argv.includes("--seed");
 
 await server.cli.dev({
   port,
   stage,
+  seed,
   webBuild: () => web.cli.build(),
   onChange: changes => web.cli.update(changes)
 });

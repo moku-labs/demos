@@ -9,8 +9,8 @@
     "bun": ">=1.3.14"
   },
   "dependencies": {
-    "@moku-labs/web": "1.16.1",
-    "@moku-labs/worker": "0.8.1",
+    "@moku-labs/web": "1.17.0",
+    "@moku-labs/worker": "0.9.0",
     "preact": "10.29.2",
     "preact-render-to-string": "6.7.0"
   },
@@ -40,10 +40,6 @@
     "build": "bun run scripts/build.ts",
     "build:worker": "wrangler deploy --dry-run --outdir dist/worker",
     "typecheck": "tsc --noEmit",
-    "migrate:local": "wrangler d1 migrations apply DB --local",
-    "migrate:remote": "wrangler d1 migrations apply DB --remote",
-    "seed:local": "wrangler d1 execute DB --local --file db/seed.sql && wrangler kv key delete \"boards:index\" --binding BOARDS_KV --local",
-    "seed:remote": "wrangler d1 execute DB --remote --file db/seed.sql && wrangler kv key delete \"boards:index\" --binding BOARDS_KV --remote",
     "dev": "bun scripts/dev.ts",
     "deploy": "bun scripts/deploy.ts",
     "lint": "biome check . && eslint .",

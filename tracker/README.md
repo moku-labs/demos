@@ -77,7 +77,7 @@ bun install
 bun run dev          # build client → apply local D1 migrations → `wrangler dev` (worker + assets + D1/DO/Queue/R2)
 ```
 
-`bun run dev` is self-contained: it builds the web client, applies the D1 migrations to the **local** Miniflare database, then starts `wrangler dev` (Miniflare emulates D1/DO/Queues/KV/R2). Without the migration step the local D1 has no tables and the first `/api/boards` request fails with `D1_ERROR: no such table: boards` — so it is wired into `dev`. The migration step is idempotent; run it on its own any time with:
+`bun run dev` is self-contained: it builds the web client, applies the D1 migrations to the **local** Miniflare database, then starts `wrangler dev` (Miniflare emulates D1/DO/Queues/KV/R2). Without the migration step the local D1 has no tables and the first `/api/boards` request fails with `D1_ERROR: no such table: boards` — so it is wired into `dev`. Add `--seed` (`bun run dev --seed`) to also load `db/seed.sql` and reset the cached board index before serving — the local twin of `deploy --seed`, from the same `pluginConfigs.deploy.seed` declaration. The migration step is idempotent; run it on its own any time with:
 
 ```sh
 bun run migrate:local   # = wrangler d1 migrations apply DB --local
@@ -89,9 +89,9 @@ bun run migrate:local   # = wrangler d1 migrations apply DB --local
 |---|---|
 | `bun run build` | Build the web client → `dist/client` (via `app.cli.build()`) |
 | `bun run build:worker` | `wrangler deploy --dry-run` — bundle + validate the worker offline |
-| `bun run dev` | Build the client, apply local D1 migrations, then `wrangler dev` (full local app) |
+| `bun run dev` | Build the client, apply local D1 migrations, then `wrangler dev` (full local app); add `--seed` to load + reset the local seed first |
 | `bun run migrate:local` / `migrate:remote` | Apply D1 migrations to the local Miniflare DB / the remote Cloudflare DB |
-| `bun run deploy` | Build the client, then `wrangler deploy` |
+| `bun run deploy` | Build the client, then `wrangler deploy` (add `--migration` / `--seed` to migrate + seed the remote DB after a successful deploy) |
 | `bun run typecheck` | `tsc --noEmit` |
 | `bun run lint` / `lint:fix` | Biome + ESLint |
 | `bun run test` / `test:coverage` | Vitest (unit + integration); coverage gate |
@@ -100,9 +100,9 @@ bun run migrate:local   # = wrangler d1 migrations apply DB --local
 
 `bun run deploy` is the Moku **guided** deploy (`server.cli.deploy`): it verifies your Cloudflare token, previews what already exists in the account, confirms before creating anything, provisions the missing D1/KV/R2/Queue resources, writes their ids into [`wrangler.jsonc`](wrangler.jsonc), uploads `dist/client` as Static Assets, and runs `wrangler deploy`.
 
-1. **Credentials** — put `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` in `.env.local`. If the token is missing, `bun run deploy` walks you through creating it (and scaffolds `.env.local`).
+1. **Credentials** — put `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` in `.env.local`. If the token is missing, `bun run deploy` walks you through it: it prints exactly which token + permissions to create (and scaffolds `.env.local`), then stops cleanly — fill it in and re-run.
 2. **Deploy** — `bun run deploy` (guided; prompts on a TTY). Add `--ci` for non-interactive automation.
-3. **Seed** the remote database once it exists: `bun run seed:remote`.
+3. **Migrate + seed in one go** — `bun run deploy --seed` applies the remote D1 migrations and loads `db/seed.sql` (then resets the cached board index) **as part of the deploy**. These post-deploy steps run only after the worker actually goes live and are **skipped on an aborted deploy** (e.g. a first run before the token exists) — so a first `deploy --seed` with no credentials no longer falls through to a raw `wrangler … --remote` auth error. Use `--migration` alone to migrate without seeding. (The standalone `bun run seed:remote` / `migrate:remote` scripts still work for ad-hoc runs against an already-deployed worker.)
 
 CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) validates every PR (typecheck · lint · test+coverage · web build · worker dry-run) and deploys to Cloudflare on push to `main` — **once** the repo has the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets. Until then the deploy job is inert.
 
