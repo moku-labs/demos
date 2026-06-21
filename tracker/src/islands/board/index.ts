@@ -1,32 +1,27 @@
 /**
- * @file board island — wiring (the board-page controller + the demo's proof loop, D5/D7).
+ * @file board island — Complex-tier WIRING ONLY: assembles the createComponent spec and re-exports
+ * the island's public surface. All logic lives in the sibling files (a flat, one-job-per-file layout
+ * that mirrors the framework's own spa plugin):
  *
- * Mounts on `[data-component="board"]`: renders the live board from typed per-instance state via
- * render-on-change, reconciles that state from Board Durable Object patches, and delegates every
- * interaction through declarative `events`. All logic lives in the sibling files — this only wires
- * the spec together and re-exports the pure helpers for direct unit tests.
- *
- * - types.ts     — BoardState/BoardContext + constants
- * - snapshot.ts  — pure card/column/attachment transforms + the realtime reconcile (applyPatch)
- * - render.ts    — initial state + the render-on-change view binding
- * - events.ts    — declarative delegated event handlers (boardEvents)
- * - preview.ts   — the body-level attachment preview overlay (off-host render)
- * - lifecycle.ts — onMount: load + connect + seed + wire + focus
+ * - types.ts                    — BoardState/BoardContext + constants
+ * - state.ts                    — initState (the createState factory)
+ * - render.ts                   — the render-on-change view binding
+ * - reconcile.ts                — applyPatch: how the SERVER drives the board (realtime reconcile)
+ * - handlers.ts                 — how the USER drives the board (delegated interaction handlers)
+ * - events.ts                   — the boardEvents map (selector → handler)
+ * - preview.ts                  — the body-level attachment preview overlay (off-host render)
+ * - lifecycle.ts                — onMount: load + connect + seed + wire + focus
+ * - ../../lib/board-snapshot.ts — the pure card/column/attachment transforms (ctx-free)
  */
 import { createComponent } from "@moku-labs/web/browser";
 import { boardEvents } from "./events";
 import { startBoard } from "./lifecycle";
-import { initState, render } from "./render";
+import { render } from "./render";
+import { initState } from "./state";
 import type { BoardState } from "./types";
 
-export {
-  applyPatch,
-  dropIndexInColumn,
-  findAttachment,
-  groupAttachmentsByCard,
-  placeCardInColumn
-} from "./snapshot";
-export type { BoardState } from "./types";
+export { applyPatch } from "./reconcile";
+export type { BoardState };
 
 /** Board-page island: renders the live board and drives the proof loop. */
 export const board = createComponent<BoardState>("board", {

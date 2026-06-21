@@ -1,30 +1,11 @@
 /**
- * @file board island — initial state + the render-on-change view binding.
+ * @file board island — the render-on-change view binding (state → BoardView). Re-runs after every
+ * `ctx.set`; the initial state factory lives in state.ts.
  */
 import type { Spa } from "@moku-labs/web/browser";
 import { h } from "preact";
 import { BoardView } from "../../components/BoardView";
-import { type BoardContext, type BoardState, EMPTY_SNAPSHOT } from "./types";
-
-/**
- * Build the initial board state (empty until the snapshot loads).
- *
- * @param ctx - The board component context (its `params.id` is the board id).
- * @returns The initial board state.
- * @example
- * ```ts
- * createComponent("board", { state: initState });
- * ```
- */
-export function initState(ctx: BoardContext): BoardState {
-  return {
-    boardId: ctx.params.id ?? "",
-    snapshot: EMPTY_SNAPSHOT,
-    attachmentsByCard: new Map(),
-    previewRoot: undefined,
-    preview: undefined
-  };
-}
+import type { BoardState } from "./types";
 
 /**
  * Render the board content from state.

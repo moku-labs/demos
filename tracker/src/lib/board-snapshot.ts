@@ -1,9 +1,10 @@
 /**
- * @file board island — snapshot helpers: pure card/column/attachment transforms (exported for direct
- * unit tests) and the realtime reconcile (`applyPatch`) that drives the board's render-on-change.
+ * @file Pure board snapshot transforms — card/column placement, drop-index geometry, and attachment
+ * grouping/lookup. Pure functions only: no ctx, no side effects, no platform imports, so they are
+ * safe in both the web and worker graphs (the same shape as lib/attachments.ts) and are unit-tested
+ * directly. The stateful realtime reconcile that drives these into state lives in islands/board/reconcile.ts.
  */
-import type { Attachment, BoardPatch, Card } from "../../lib/types";
-import type { BoardContext } from "./types";
+import type { Attachment, Card } from "./types";
 
 /**
  * Place a card into a column at a given index and renumber that column's cards 0..n, returning a NEW
@@ -113,78 +114,4 @@ export function findAttachment(
     if (found) return found;
   }
   return undefined;
-}
-
-/**
- * Apply a realtime patch to the board state (immutably) via `ctx.set` — the live reconcile.
- * `activity` frames are ignored here (the activity-panel island owns them).
- *
- * @param ctx - The board component context.
- * @param patch - The patch frame from the Board Durable Object.
- * @example
- * ```ts
- * onPatch(patch => applyPatch(ctx, patch));
- * ```
- */
-export function applyPatch(ctx: BoardContext, patch: BoardPatch): void {
-  switch (patch.type) {
-    case "card.created": {
-      ctx.set(previous => ({
-        snapshot: { ...previous.snapshot, cards: [...previous.snapshot.cards, patch.card] }
-      }));
-      return;
-    }
-    case "card.moved": {
-      ctx.set(previous => ({
-        snapshot: {
-          ...previous.snapshot,
-          cards: placeCardInColumn(
-            previous.snapshot.cards,
-            patch.cardId,
-            patch.toColumnId,
-            patch.position
-          )
-        }
-      }));
-      return;
-    }
-    case "card.updated": {
-      ctx.set(previous => ({
-        snapshot: {
-          ...previous.snapshot,
-          cards: previous.snapshot.cards.map(card =>
-            card.id === patch.card.id ? patch.card : card
-          )
-        }
-      }));
-      return;
-    }
-    case "card.deleted": {
-      ctx.set(previous => ({
-        snapshot: {
-          ...previous.snapshot,
-          cards: previous.snapshot.cards.filter(card => card.id !== patch.cardId)
-        }
-      }));
-      return;
-    }
-    case "column.created": {
-      ctx.set(previous => ({
-        snapshot: { ...previous.snapshot, columns: [...previous.snapshot.columns, patch.column] }
-      }));
-      return;
-    }
-    case "attachment.added": {
-      ctx.set(previous => {
-        const byCard = new Map(previous.attachmentsByCard);
-        const list = [...(byCard.get(patch.attachment.cardId) ?? []), patch.attachment];
-        byCard.set(patch.attachment.cardId, list);
-        return { attachmentsByCard: byCard };
-      });
-      return;
-    }
-    case "activity": {
-      return;
-    }
-  }
 }

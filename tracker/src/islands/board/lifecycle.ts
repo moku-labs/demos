@@ -4,10 +4,11 @@
  * `ctx.cleanup`), then honour any deep-link focus.
  */
 import { getBoard } from "../../lib/api";
+import { groupAttachmentsByCard } from "../../lib/board-snapshot";
 import { focusElement } from "../../lib/focus";
 import { connect, disconnect, onPatch, ping } from "../../lib/realtime";
 import { onPreviewClick, onPreviewKeydown } from "./preview";
-import { applyPatch, groupAttachmentsByCard } from "./snapshot";
+import { applyPatch } from "./reconcile";
 import { type BoardContext, KEEPALIVE_MS } from "./types";
 
 /**

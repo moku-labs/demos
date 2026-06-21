@@ -6,15 +6,13 @@
 
 import { mountIsland } from "@moku-labs/web/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { applyPatch, type BoardState, board } from "../../src/islands/board";
 import {
-  applyPatch,
-  type BoardState,
-  board,
   dropIndexInColumn,
   findAttachment,
   groupAttachmentsByCard,
   placeCardInColumn
-} from "../../src/islands/board";
+} from "../../src/lib/board-snapshot";
 import type { Attachment, BoardSnapshot, Card } from "../../src/lib/types";
 
 /** Captured realtime patch handler so a test can drive reconciliation. */
@@ -160,7 +158,6 @@ describe("board island — mutations", () => {
 
   it("edits a card via prompt (and no-ops when cancelled)", async () => {
     // happy-dom has no `prompt` — stub it on the global the island reads (`globalThis.prompt`).
-    // eslint-disable-next-line unicorn/no-null -- prompt returns null on cancel
     const prompt = vi
       .fn<(message?: string, value?: string) => string | null>()
       .mockReturnValue("Renamed");
