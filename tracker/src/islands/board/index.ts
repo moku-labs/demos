@@ -21,7 +21,7 @@ import { initState } from "./state";
 import type { BoardState } from "./types";
 
 export { applyPatch } from "./reconcile";
-export type { BoardState };
+
 
 /** Board-page island: renders the live board and drives the proof loop. */
 export const board = createComponent<BoardState>("board", {
@@ -30,3 +30,5 @@ export const board = createComponent<BoardState>("board", {
   onMount: startBoard,
   events: boardEvents
 });
+
+export {type BoardState} from "./types";
