@@ -150,7 +150,7 @@
 
       /* — layout: the persistent SiteLayout chrome (header + main), mirroring SiteLayout.css — */
       @layer layout {
-        [data-component="site-layout"] {
+        [data-island="site-layout"] {
           display: flex;
           flex-direction: column;
           min-height: 100dvh;
@@ -328,7 +328,7 @@
     </style>
   </head>
   <body>
-    <div data-component="site-layout">
+    <div data-island="site-layout">
       <header data-site-header>
         <a data-brand href="/">Tracker</a>
         <p data-tagline>Real-time kanban, proving @moku-labs/worker</p>

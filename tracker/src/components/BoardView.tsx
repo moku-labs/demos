@@ -1,8 +1,8 @@
 /**
  * @file BoardView — the board's live content (title, add-column form, columns).
  *
- * Rendered by the `board` island into its `[data-component="board"]` element via Preact, so it emits
- * content rather than its own `data-component` root. Cards are bucketed per column and ordered by
+ * Rendered by the `board` island into its `[data-island="board"]` element via Preact, so it emits
+ * content rather than its own `data-island` root. Cards are bucketed per column and ordered by
  * position. Styling + island hooks via data-* only.
  */
 import type { Attachment, BoardSnapshot, Card } from "../lib/types";

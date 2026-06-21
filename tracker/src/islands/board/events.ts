@@ -16,7 +16,7 @@ import {
 import type { BoardState } from "./types";
 
 /** The board island's declarative delegated event map (one delegated listener per type on the host). */
-export const boardEvents: Spa.ComponentEvents<BoardState> = {
+export const boardEvents: Spa.IslandEvents<BoardState> = {
   "click [data-attachment-link]": onAttachmentClick,
   "click [data-action]": onCardAction,
   "submit [data-add-card]": onAddCard,

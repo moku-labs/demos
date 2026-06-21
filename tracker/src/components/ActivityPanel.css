@@ -1,9 +1,9 @@
 /**
  * ActivityPanel — the live worker feed, styled like a terminal/log stream: monospace, a leading
  * status dot per entry keyed off `data-kind`, newest lines pulse in. Scoped to
- * `[data-component="activity-panel"]`. The per-kind hues come from semantic status tokens.
+ * `[data-island="activity-panel"]`. The per-kind hues come from semantic status tokens.
  */
-@scope ([data-component="activity-panel"]) {
+@scope ([data-island="activity-panel"]) {
   :scope {
     display: flex;
     flex-direction: column;

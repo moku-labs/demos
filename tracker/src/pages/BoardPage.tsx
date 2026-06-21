@@ -1,6 +1,6 @@
 /**
  * @file BoardPage — a single board's content (rendered into the layout's `main > section` swap region).
- * It is just the two island mount points (`[data-component="board"]` + `[data-component="activity-panel"]`);
+ * It is just the two island mount points (`[data-island="board"]` + `[data-island="activity-panel"]`);
  * the islands read the board id and any deep-link focus from their route context — `ctx.params.id`,
  * `ctx.params.cardId`, and `ctx.meta.focus` (declared via the route's `.meta()`; see routes.tsx). No
  * `data-*` bridge needed. The `data-page="board"` wrapper carries the page-scoped CSS and rides the swap.
@@ -18,8 +18,8 @@
 export function BoardPage() {
   return (
     <div data-page="board">
-      <div data-component="board" />
-      <aside data-component="activity-panel" />
+      <div data-island="board" />
+      <aside data-island="activity-panel" />
     </div>
   );
 }

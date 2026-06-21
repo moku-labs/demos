@@ -1,12 +1,12 @@
 /**
- * @file board-list island — the home-page controller. Mounts on `[data-component="board-list"]`,
+ * @file board-list island — the home-page controller. Mounts on `[data-island="board-list"]`,
  * seeds its typed per-instance state from `listBoards`, renders the live list via `BoardList`, and
  * delegates the create-board form submit to `createBoard` before navigating to the new board.
  * Coordinates with the worker purely through `lib/api`.
  */
 
 import type { Spa } from "@moku-labs/web/browser";
-import { createComponent } from "@moku-labs/web/browser";
+import { createIsland } from "@moku-labs/web/browser";
 import { h } from "preact";
 import { BoardList } from "../components/BoardList";
 import { createBoard, listBoards } from "../lib/api";
@@ -17,7 +17,7 @@ import { urls } from "../routes";
 type BoardListState = { boards: BoardSummary[] };
 
 /** The board-list component context (typed per-instance state). */
-type BoardListContext = Spa.ComponentContext<BoardListState>;
+type BoardListContext = Spa.IslandContext<BoardListState>;
 
 /**
  * Build the initial (empty) board-list state.
@@ -25,7 +25,7 @@ type BoardListContext = Spa.ComponentContext<BoardListState>;
  * @returns The initial state with no boards loaded yet.
  * @example
  * ```ts
- * createComponent("board-list", { state: initState });
+ * createIsland("board-list", { state: initState });
  * ```
  */
 function initState(): BoardListState {
@@ -39,7 +39,7 @@ function initState(): BoardListState {
  * @returns The board-list view.
  * @example
  * ```ts
- * createComponent("board-list", { render });
+ * createIsland("board-list", { render });
  * ```
  */
 function render(state: Readonly<BoardListState>): Spa.RenderResult {
@@ -53,7 +53,7 @@ function render(state: Readonly<BoardListState>): Spa.RenderResult {
  * @returns A promise that resolves once the boards are loaded into state.
  * @example
  * ```ts
- * createComponent("board-list", { onMount: loadBoards });
+ * createIsland("board-list", { onMount: loadBoards });
  * ```
  */
 async function loadBoards(ctx: BoardListContext): Promise<void> {
@@ -83,7 +83,7 @@ async function onCreateBoard(_ctx: BoardListContext, event: Event, form: Element
 }
 
 /** Home-page island: lists boards and creates new ones. */
-export const boardList = createComponent<BoardListState>("board-list", {
+export const boardList = createIsland<BoardListState>("board-list", {
   state: initState,
   render,
   onMount: loadBoards,

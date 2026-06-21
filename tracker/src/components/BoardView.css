@@ -1,9 +1,9 @@
 /**
  * BoardView — the board's live content: a header (title + add-column form) over a horizontal,
- * scrollable row of columns. Scoped to `[data-component="board"]`; the island renders this fragment
- * into the board host (the column children self-scope via `[data-component="column"]`).
+ * scrollable row of columns. Scoped to `[data-island="board"]`; the island renders this fragment
+ * into the board host (the column children self-scope via `[data-island="column"]`).
  */
-@scope ([data-component="board"]) {
+@scope ([data-island="board"]) {
   :scope {
     display: flex;
     flex-direction: column;

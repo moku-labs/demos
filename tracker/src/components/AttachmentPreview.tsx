@@ -50,7 +50,7 @@ export function AttachmentPreview({ attachment }: AttachmentPreviewProps) {
   const previewable = isInlineSafe(attachment.contentType);
 
   return (
-    <div data-component="attachment-preview" data-preview-backdrop>
+    <div data-island="attachment-preview" data-preview-backdrop>
       <figure
         data-preview-dialog
         role="dialog"

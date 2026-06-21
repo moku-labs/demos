@@ -1,8 +1,8 @@
 /**
  * BoardList — the home page's live content: a create-board form and a responsive grid of board
- * summary cards. Scoped to `[data-component="board-list"]`; the island renders this fragment in.
+ * summary cards. Scoped to `[data-island="board-list"]`; the island renders this fragment in.
  */
-@scope ([data-component="board-list"]) {
+@scope ([data-island="board-list"]) {
   :scope {
     display: block;
     animation: enter-rise var(--duration-enter) var(--ease-out-expo) both;

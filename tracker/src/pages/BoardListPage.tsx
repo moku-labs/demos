@@ -1,7 +1,7 @@
 /**
  * @file BoardListPage — the home page content (rendered into the layout's `main > section` swap
  * region). Static markup is just the island mount point inside a `data-page="board-list"` wrapper
- * (carries the page-scoped layout CSS); the `board-list` island fills `[data-component="board-list"]`
+ * (carries the page-scoped layout CSS); the `board-list` island fills `[data-island="board-list"]`
  * with the live board list + create form.
  */
 
@@ -17,7 +17,7 @@
 export function BoardListPage() {
   return (
     <div data-page="board-list">
-      <div data-component="board-list" />
+      <div data-island="board-list" />
     </div>
   );
 }
