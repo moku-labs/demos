@@ -148,6 +148,20 @@ export type TrackerCtx = WorkerPluginCtx<Config, Record<string, never>, TrackerE
   require: Server.RequireFn;
 };
 
+/**
+ * An attachment resolved for download: the R2 blob stream plus the two headers the endpoint sets.
+ * The internal R2 `key` is deliberately absent — callers serve the blob without touching storage
+ * keys or D1. Built by {@link Api.getAttachmentForDownload}.
+ */
+export type AttachmentDownload = {
+  /** The R2 object body stream, ready to pass to `new Response(...)`. */
+  body: R2ObjectBody["body"];
+  /** Original upload filename, for `Content-Disposition` (header-sanitised by the caller). */
+  filename: string;
+  /** Stored MIME type (kept in D1 — R2 stores none), for `Content-Type` + inline-safety policy. */
+  contentType: string;
+};
+
 /** Public tracker API surface (env-first). */
 export type Api = {
   /**
@@ -272,17 +286,21 @@ export type Api = {
     file: AttachmentInput
   ): Promise<Attachment>;
   /**
-   * Read an attachment body from R2 for download.
+   * Resolve an attachment id to its R2 blob plus the metadata the download endpoint serves it with.
+   *
+   * Reads the metadata from D1 (where the content type lives — R2 keeps none), then fetches the blob
+   * from R2, so the caller never touches D1 or the internal R2 key. Returns null when either the
+   * metadata row or the blob is missing (both map to a 404).
    *
    * @param env - Per-request Cloudflare bindings.
-   * @param key - The R2 object key.
-   * @returns The R2 object body, or null if absent.
+   * @param id - The attachment id.
+   * @returns The blob stream + filename + contentType, or null when the metadata or blob is absent.
    * @example
    * ```ts
-   * const body = await api.getAttachmentBody(env, "attachments/uuid");
+   * const file = await api.getAttachmentForDownload(env, "att-1");
    * ```
    */
-  getAttachmentBody(env: WorkerEnv, key: string): Promise<R2ObjectBody | null>;
+  getAttachmentForDownload(env: WorkerEnv, id: string): Promise<AttachmentDownload | null>;
   /**
    * Persist an activity entry (queue consumer path). Broadcasts activity.
    *
