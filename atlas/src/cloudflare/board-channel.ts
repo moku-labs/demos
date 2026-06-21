@@ -1,15 +1,48 @@
 /**
- * @file BoardChannel Durable Object — the per-board WebSocket fan-out channel (stub).
+ * @file BoardChannel Durable Object — the per-board WebSocket fan-out channel.
  *
- * One instance per board id: it accepts WebSocket upgrades on `/ws/board/{id}` and fans `BoardPatch`
- * frames out to every connected socket. The Cloudflare hibernation implementation lands in Wave 1;
- * these are compiling stubs (`throw new Error("not implemented")`).
+ * One instance per board id: it accepts WebSocket upgrades on `/ws/board/{id}` (forwarded by the
+ * worker) and on `POST /broadcast` pushes a {@link BoardPatch} to every connected socket. Connection
+ * state lives entirely in the Cloudflare **hibernation** manager (`this.ctx.getWebSockets()`), never
+ * in instance fields — so the instance can be evicted between events without dropping sockets. It is
+ * NOT the persistence authority (D1 is, owned by the domain plugins); the channel only fans out the
+ * live patches those plugins produce via the `realtime` service.
  */
 import { defineDurableObject } from "@moku-labs/worker";
 import type { BoardPatch } from "../lib/types";
 
+/** Keepalive frame a client may send; the DO answers with {@link PONG}. */
+const PING = "ping";
+/** Keepalive reply sent in response to a {@link PING} frame. */
+const PONG = "pong";
+
+/** Normal closure code — the only non-`3000–4999` value `WebSocket.close()` accepts. */
+const NORMAL_CLOSURE = 1000;
+
 /**
- * Per-board realtime channel — accepts socket upgrades and broadcasts patches to all connected clients.
+ * Coerce a runtime-reported close code into one `WebSocket.close()` will accept.
+ *
+ * The hibernation runtime reports the peer's actual close code, which on a browser reload /
+ * navigation is typically `1001` (going away) or `1005` (no status received). The WebSocket spec only
+ * permits `1000` or `3000–4999` to be passed to `close()`; anything else throws — so reserved codes
+ * are mapped to {@link NORMAL_CLOSURE}.
+ *
+ * @param code - The close code the runtime reported for the peer disconnect.
+ * @returns A code safe to pass to `WebSocket.close()`.
+ * @example
+ * ```ts
+ * safeCloseCode(1005); // -> 1000
+ * safeCloseCode(4001); // -> 4001
+ * ```
+ */
+function safeCloseCode(code: number): number {
+  const isApplicationCode = code >= 3000 && code <= 4999;
+  return code === NORMAL_CLOSURE || isApplicationCode ? code : NORMAL_CLOSURE;
+}
+
+/**
+ * Per-board realtime channel — the Durable Object the Cloudflare runtime instantiates (one per board
+ * id). Accepts socket upgrades and broadcasts {@link BoardPatch} frames to every connected client.
  *
  * @example
  * ```ts
@@ -18,28 +51,105 @@ import type { BoardPatch } from "../lib/types";
  */
 export class BoardChannel extends defineDurableObject("BoardChannel") {
   /**
-   * Routes a DO request: a WebSocket upgrade, or `POST /broadcast`.
+   * Routes a DO request: a WebSocket upgrade (a client connecting) or `POST /broadcast` (fan-out).
    *
-   * @param _request - The incoming DO request.
+   * @param request - The incoming DO request (an upgrade or a broadcast).
+   * @returns The `101` upgrade response, an acknowledgement, or `404` for anything else.
    * @example
    * ```ts
-   * await stub.fetch(new Request("https://do/broadcast", { method: "POST" }));
+   * await stub.fetch("https://do/broadcast", { method: "POST", body: JSON.stringify(patch) });
    * ```
    */
-  async fetch(_request: Request): Promise<Response> {
-    throw new Error("not implemented");
+  async fetch(request: Request): Promise<Response> {
+    if (request.headers.get("upgrade") === "websocket") {
+      return this.accept();
+    }
+
+    const url = new URL(request.url);
+    if (request.method === "POST" && url.pathname.endsWith("/broadcast")) {
+      const patch = (await request.json()) as BoardPatch;
+      this.broadcast(patch);
+      return new Response("ok");
+    }
+
+    return new Response("not found", { status: 404 });
   }
 
   /**
-   * Fans a patch out to every connected socket.
+   * Complete a WebSocket upgrade: accept the server end into the hibernation manager and return the
+   * client end to the caller with status `101`.
    *
-   * @param _patch - The patch to broadcast.
+   * @returns The `101 Switching Protocols` response carrying the client socket.
    * @example
    * ```ts
-   * channel.broadcast({ type: "board.deleted", boardId });
+   * if (request.headers.get("upgrade") === "websocket") return this.accept();
    * ```
    */
-  broadcast(_patch: BoardPatch): void {
-    throw new Error("not implemented");
+  private accept(): Response {
+    const { 0: client, 1: server } = new WebSocketPair();
+    this.ctx.acceptWebSocket(server);
+    return new Response(undefined, { status: 101, webSocket: client });
+  }
+
+  /**
+   * Hibernation hook — a connected client sent a frame. The board is server-authoritative, so the
+   * only client frame honoured is a `"ping"` keepalive, answered with `"pong"`.
+   *
+   * @param webSocket - The socket the frame arrived on.
+   * @param message - The received frame (string or binary).
+   * @example
+   * ```ts
+   * socket.send("ping"); // -> the DO replies "pong"
+   * ```
+   */
+  async webSocketMessage(webSocket: WebSocket, message: string | ArrayBuffer): Promise<void> {
+    if (message === PING) {
+      webSocket.send(PONG);
+    }
+  }
+
+  /**
+   * Hibernation hook — a client disconnected. The hibernation manager drops the socket from
+   * `getWebSockets()` automatically; this closes the server end cleanly to release it.
+   *
+   * @param webSocket - The closing socket.
+   * @param code - The close code reported by the runtime.
+   * @param reason - The close reason reported by the runtime.
+   * @example
+   * ```ts
+   * // invoked by the runtime when a tab closes or navigates away
+   * ```
+   */
+  async webSocketClose(webSocket: WebSocket, code: number, reason: string): Promise<void> {
+    // The peer is already gone, so completing the close handshake can race a socket that has finished
+    // closing — swallow that. The code must also be coerced: echoing the runtime's raw code (e.g.
+    // 1005 on a reload) straight back to close() would throw.
+    try {
+      webSocket.close(safeCloseCode(code), reason);
+    } catch {
+      // Socket already closed — nothing to release.
+    }
+  }
+
+  /**
+   * Fan a patch out to every connected socket. Per-socket failures are isolated so one dead
+   * connection cannot block delivery to the rest of the board's tabs.
+   *
+   * @param patch - The realtime patch frame to deliver to all clients.
+   * @example
+   * ```ts
+   * channel.broadcast({ type: "issue.deleted", issueId });
+   * ```
+   */
+  broadcast(patch: BoardPatch): void {
+    const frame = JSON.stringify(patch);
+    for (const socket of this.ctx.getWebSockets()) {
+      try {
+        socket.send(frame);
+      } catch {
+        // A socket can race into a closed state between enumeration and send — skip it; the
+        // hibernation manager will reap it and webSocketClose handles cleanup.
+      }
+    }
   }
 }
