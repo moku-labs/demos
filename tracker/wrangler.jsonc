@@ -8,36 +8,48 @@
     "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
-  "name": "tracker",
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+      "head_sampling_rate": 1
+    }
+  },
+  "name": "tracker-dev",
   "compatibility_date": "2026-06-17",
   "kv_namespaces": [
     {
-      "binding": "BOARDS_KV"
+      "binding": "BOARDS_KV",
+      "id": "2288285cd5af480abb6f15a1dee9f8b7"
     }
   ],
   "r2_buckets": [
     {
       "binding": "ATTACHMENTS",
-      "bucket_name": "tracker-attachments"
+      "bucket_name": "tracker-attachments-dev"
     }
   ],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "tracker-db",
+      "database_name": "tracker-db-dev",
+      "database_id": "4a86272f-bafb-43a7-ac44-c67dc2740086",
       "migrations_dir": "db/migrations"
     }
   ],
   "queues": {
     "producers": [
       {
-        "queue": "tracker-activity",
+        "queue": "tracker-activity-dev",
         "binding": "ACTIVITY_QUEUE"
       }
     ],
     "consumers": [
       {
-        "queue": "tracker-activity"
+        "queue": "tracker-activity-dev",
+        "max_batch_timeout": 1
       }
     ]
   },
