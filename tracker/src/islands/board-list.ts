@@ -1,30 +1,79 @@
 /**
  * @file board-list island — the home-page controller. Mounts on `[data-component="board-list"]`,
- * seeds it from `listBoards`, and delegates the create-board form submit to `createBoard` before
- * navigating to the new board. Coordinates with the worker purely through `lib/api`.
+ * seeds its typed per-instance state from `listBoards`, renders the live list via `BoardList`, and
+ * delegates the create-board form submit to `createBoard` before navigating to the new board.
+ * Coordinates with the worker purely through `lib/api`.
  */
+
+import type { Spa } from "@moku-labs/web/browser";
 import { createComponent } from "@moku-labs/web/browser";
-import { h, render } from "preact";
+import { h } from "preact";
 import { BoardList } from "../components/BoardList";
 import { createBoard, listBoards } from "../lib/api";
+import type { BoardSummary } from "../lib/types";
 import { urls } from "../routes";
 
+/** Per-instance state for the board-list island. */
+type BoardListState = { boards: BoardSummary[] };
+
+/** The board-list component context (typed per-instance state). */
+type BoardListContext = Spa.ComponentContext<BoardListState>;
+
 /**
- * Handle a delegated create-board submit: create the board, then navigate to it.
+ * Build the initial (empty) board-list state.
  *
- * @param event - The delegated submit event.
+ * @returns The initial state with no boards loaded yet.
  * @example
  * ```ts
- * host.addEventListener("submit", onCreateBoard);
+ * createComponent("board-list", { state: initState });
  * ```
  */
-async function onCreateBoard(event: Event): Promise<void> {
-  const target = event.target;
-  if (!(target instanceof Element)) return;
-  const form = target.closest("[data-create-board]");
-  if (!(form instanceof HTMLFormElement)) return;
-  event.preventDefault();
+function initState(): BoardListState {
+  return { boards: [] };
+}
 
+/**
+ * Render the live board list from state (header + create form + board links).
+ *
+ * @param state - The current board-list state.
+ * @returns The board-list view.
+ * @example
+ * ```ts
+ * createComponent("board-list", { render });
+ * ```
+ */
+function render(state: Readonly<BoardListState>): Spa.RenderResult {
+  return h(BoardList, { boards: state.boards });
+}
+
+/**
+ * Load the board list into state on mount (a single render fills the list once loaded).
+ *
+ * @param ctx - The board-list component context.
+ * @returns A promise that resolves once the boards are loaded into state.
+ * @example
+ * ```ts
+ * createComponent("board-list", { onMount: loadBoards });
+ * ```
+ */
+async function loadBoards(ctx: BoardListContext): Promise<void> {
+  ctx.set({ boards: await listBoards() });
+}
+
+/**
+ * Handle the create-board submit: create the board, then navigate to it.
+ *
+ * @param _ctx - The board-list component context (unused).
+ * @param event - The delegated submit event.
+ * @param form - The matched `[data-create-board]` form element.
+ * @returns A promise that resolves once the board is created and navigation starts.
+ * @example
+ * ```ts
+ * events: { "submit [data-create-board]": onCreateBoard };
+ * ```
+ */
+async function onCreateBoard(_ctx: BoardListContext, event: Event, form: Element): Promise<void> {
+  event.preventDefault();
   const input = form.querySelector<HTMLInputElement>("[data-create-board-input]");
   const title = input?.value.trim();
   if (!title) return;
@@ -33,33 +82,10 @@ async function onCreateBoard(event: Event): Promise<void> {
   globalThis.location.assign(urls.toUrl("board", { id: board.id }));
 }
 
-/**
- * Render the live board list into the home-page mount point and wire the create-board form.
- *
- * @param host - The `[data-component="board-list"]` element to fill.
- * @example
- * ```ts
- * await mountBoardList(element);
- * ```
- */
-async function mountBoardList(host: Element): Promise<void> {
-  const boards = await listBoards();
-  render(h(BoardList, { boards }), host);
-  host.addEventListener("submit", onCreateBoard);
-}
-
 /** Home-page island: lists boards and creates new ones. */
-export const boardList = createComponent("board-list", {
-  /**
-   * Render the live board list and wire the create form on mount.
-   *
-   * @param ctx - The component context (its `el` is the board-list mount point).
-   * @example
-   * ```ts
-   * createComponent("board-list", { onMount });
-   * ```
-   */
-  onMount(ctx) {
-    void mountBoardList(ctx.el);
-  }
+export const boardList = createComponent<BoardListState>("board-list", {
+  state: initState,
+  render,
+  onMount: loadBoards,
+  events: { "submit [data-create-board]": onCreateBoard }
 });

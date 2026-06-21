@@ -1,110 +1,87 @@
 /**
  * @file activity-panel island — the live "Worker Activity" feed (D7: make the worker visible).
  *
- * Mounts on `[data-component="activity-panel"]`, seeds from `listActivity`, and prepends every
- * `activity` patch the Board Durable Object fans out — each one a D1 write + Queue consume the viewer
- * literally watches happen. The board island owns the socket; this island only subscribes.
+ * Mounts on `[data-component="activity-panel"]`, seeds its typed per-instance state from
+ * `listActivity`, renders it via `ActivityPanel`, and prepends every `activity` patch the Board
+ * Durable Object fans out — each one a D1 write + Queue consume the viewer literally watches happen.
+ * The board island owns the socket; this island only subscribes (unsubscribed via `ctx.cleanup`).
  */
+
+import type { Spa } from "@moku-labs/web/browser";
 import { createComponent } from "@moku-labs/web/browser";
-import { h, render } from "preact";
+import { h } from "preact";
 import { ActivityPanel } from "../components/ActivityPanel";
 import { listActivity } from "../lib/api";
 import { onPatch } from "../lib/realtime";
 import type { Activity, BoardPatch } from "../lib/types";
 
-/** Per-feed-instance state, keyed on the host element. */
-type FeedState = {
-  /** The `[data-component="activity-panel"]` host element. */
-  host: Element;
-  /** The activity entries, newest first. */
-  activities: Activity[];
-  /** Unsubscribe from the realtime patch stream. */
-  off: () => void;
-};
+/** Per-instance state for the activity-panel island. */
+type FeedState = { activities: Activity[] };
 
-/** Live activity feeds by host element. */
-const feeds = new WeakMap<Element, FeedState>();
+/** The activity-panel component context (typed per-instance state). */
+type FeedContext = Spa.ComponentContext<FeedState>;
 
 /**
- * Re-render an activity feed into its host element.
+ * Build the initial (empty) activity-feed state.
  *
- * @param state - The feed instance to render.
+ * @returns The initial state with no activity loaded yet.
  * @example
  * ```ts
- * redrawFeed(state);
+ * createComponent("activity-panel", { state: initState });
  * ```
  */
-function redrawFeed(state: FeedState): void {
-  render(h(ActivityPanel, { activities: state.activities }), state.host);
+function initState(): FeedState {
+  return { activities: [] };
 }
 
 /**
- * Prepend an `activity` patch to a feed (looked up by host element); ignore other patch types.
+ * Render the activity feed from state (newest first).
  *
- * @param host - The feed host element the subscription belongs to.
+ * @param state - The current feed state.
+ * @returns The activity-feed view.
+ * @example
+ * ```ts
+ * createComponent("activity-panel", { render });
+ * ```
+ */
+function render(state: Readonly<FeedState>): Spa.RenderResult {
+  return h(ActivityPanel, { activities: state.activities });
+}
+
+/**
+ * Prepend an `activity` patch to the feed (re-rendered automatically); ignore other patch types.
+ *
+ * @param ctx - The feed component context.
  * @param patch - The incoming patch frame.
  * @example
  * ```ts
- * onPatch(patch => onFeedPatch(host, patch));
+ * onPatch(patch => applyPatch(ctx, patch));
  * ```
  */
-function onFeedPatch(host: Element, patch: BoardPatch): void {
+function applyPatch(ctx: FeedContext, patch: BoardPatch): void {
   if (patch.type !== "activity") return;
-  const state = feeds.get(host);
-  if (!state) return;
-  state.activities = [patch.activity, ...state.activities];
-  redrawFeed(state);
+  ctx.set(previous => ({ activities: [patch.activity, ...previous.activities] }));
 }
 
 /**
- * Render the activity feed into the panel mount point and subscribe to live activity patches.
+ * Seed the feed from `listActivity`, then subscribe to live activity patches (unsubscribed on
+ * destroy via `ctx.cleanup`). Loads first, then subscribes — matching the original ordering.
  *
- * @param host - The `[data-component="activity-panel"]` element to fill.
- * @param boardId - The board id from the route (`ctx.params.id`).
+ * @param ctx - The feed component context (its `params.id` is the board id).
+ * @returns A promise that resolves once the feed is seeded and subscribed.
  * @example
  * ```ts
- * await mountFeed(element, ctx.params.id ?? "");
+ * createComponent("activity-panel", { onMount: startFeed });
  * ```
  */
-async function mountFeed(host: Element, boardId: string): Promise<void> {
-  const activities = await listActivity(boardId);
-  const state: FeedState = {
-    host,
-    activities,
-    off: onPatch(patch => onFeedPatch(host, patch))
-  };
-  feeds.set(host, state);
-  redrawFeed(state);
-  // The `/board/{id}/activity` deep-link focus is driven by the board island after it renders (so the
-  // panel's position is final); this island only renders + streams the feed.
+async function startFeed(ctx: FeedContext): Promise<void> {
+  ctx.set({ activities: await listActivity(ctx.params.id ?? "") });
+  ctx.cleanup(onPatch(patch => applyPatch(ctx, patch)));
 }
 
 /** Board-page island: the live "Worker Activity" feed. */
-export const activityPanel = createComponent("activity-panel", {
-  /**
-   * Render the feed and subscribe on mount.
-   *
-   * @param ctx - The component context (its `el` is the activity-panel mount point).
-   * @example
-   * ```ts
-   * createComponent("activity-panel", { onMount });
-   * ```
-   */
-  onMount(ctx) {
-    void mountFeed(ctx.el, ctx.params.id ?? "");
-  },
-  /**
-   * Unsubscribe the feed on destroy (SPA navigation away).
-   *
-   * @param ctx - The component context (its `el` is the activity-panel mount point).
-   * @example
-   * ```ts
-   * createComponent("activity-panel", { onDestroy });
-   * ```
-   */
-  onDestroy(ctx) {
-    const state = feeds.get(ctx.el);
-    if (state) state.off();
-    feeds.delete(ctx.el);
-  }
+export const activityPanel = createComponent<FeedState>("activity-panel", {
+  state: initState,
+  render,
+  onMount: startFeed
 });

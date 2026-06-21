@@ -1,15 +1,19 @@
 /**
  * @file board island — the board-page controller and the demo's proof loop (D5/D7).
  *
- * Mounts on `[data-component="board"]`, renders the live board (columns + cards) from a snapshot via
- * Preact, subscribes to Board Durable Object patches to reconcile it, and delegates every board
- * interaction (drag-to-move, add card/column, edit, delete, attach) to `lib/api`. Mutations
- * round-trip through the worker; the returning patch is what re-renders — so a viewer literally
- * watches D1 + Queue + Durable Object fire. Per-instance state is keyed on the host element in a
- * WeakMap, so the module-level delegated handlers reach it via `event.currentTarget`.
+ * Mounts on `[data-component="board"]`, renders the live board (columns + cards) from typed
+ * per-instance state via the framework's render-on-change, subscribes to Board Durable Object patches
+ * to reconcile that state, and delegates every board interaction (drag-to-move, add card/column, edit,
+ * delete, attach) to `lib/api` through declarative `events`. Mutations round-trip through the worker;
+ * the returning patch is what updates state — so a viewer literally watches D1 + Queue + Durable Object
+ * fire. State lives on the instance (no WeakMap); subscriptions/timers/listeners are released via
+ * `ctx.cleanup`. The attachment preview is a body-level overlay (escapes the board's scroll), rendered
+ * with a direct Preact `render` — the documented off-host escape hatch.
  */
+
+import type { Spa } from "@moku-labs/web/browser";
 import { createComponent } from "@moku-labs/web/browser";
-import { h, render } from "preact";
+import { h, render as preactRender } from "preact";
 import { AttachmentPreview } from "../components/AttachmentPreview";
 import { BoardView } from "../components/BoardView";
 import {
@@ -23,7 +27,7 @@ import {
 } from "../lib/api";
 import { focusElement } from "../lib/focus";
 import { connect, disconnect, onPatch, ping } from "../lib/realtime";
-import type { Attachment, BoardPatch, BoardSnapshot } from "../lib/types";
+import type { Attachment, BoardPatch, BoardSnapshot, Card } from "../lib/types";
 
 /** Keepalive ping interval (ms) — keeps idle proxies from dropping the live socket. */
 const KEEPALIVE_MS = 30_000;
@@ -32,421 +36,71 @@ const FALLBACK_TYPE = "application/octet-stream";
 /** dataTransfer key carrying the dragged card id. */
 const DRAG_KEY = "text/plain";
 
-/** Per-board-instance runtime state, keyed on the host element. */
+/** Per-instance state for the board island. */
 type BoardState = {
-  /** The board id this instance is bound to. */
+  /** The board id this instance is bound to (from the route). */
   boardId: string;
-  /** The `[data-component="board"]` host element rendered into. */
-  host: Element;
-  /** The current board snapshot (mutated in place as patches arrive). */
+  /** The current board snapshot (replaced immutably as patches/mutations apply). */
   snapshot: BoardSnapshot;
   /** Session attachments grouped by card id (R2 uploads proven live). */
   attachmentsByCard: Map<string, Attachment[]>;
-  /** Body-level overlay root the attachment preview renders into (empty when closed). */
-  previewRoot: HTMLElement;
-  /** Unsubscribe from the realtime patch stream. */
-  off: () => void;
-  /** Keepalive interval handle. */
-  keepalive: ReturnType<typeof setInterval>;
+  /** Body-level overlay root the attachment preview renders into (undefined until mounted). */
+  previewRoot: HTMLElement | undefined;
+  /** The attachment currently previewed, or undefined when the overlay is closed. */
+  preview: Attachment | undefined;
 };
 
-/** Live board instances by host element. */
-const states = new WeakMap<Element, BoardState>();
+/** The board component context (typed per-instance state). */
+type BoardContext = Spa.ComponentContext<BoardState>;
+
+/** An empty snapshot used as the initial state before the real one loads. */
+const EMPTY_SNAPSHOT: BoardSnapshot = {
+  board: { id: "", title: "", createdAt: 0 },
+  columns: [],
+  cards: [],
+  attachments: []
+};
 
 /**
- * Re-render a board instance's content into its host element.
+ * Place a card into a column at a given index and renumber that column's cards 0..n, returning a NEW
+ * cards array (the client mirror of the server's dense renumber, so the optimistic update and every
+ * client's `card.moved` patch converge on the same order without shipping the whole column).
  *
- * @param state - The board instance to render.
- * @example
- * ```ts
- * redraw(state);
- * ```
- */
-function redraw(state: BoardState): void {
-  render(
-    h(BoardView, { snapshot: state.snapshot, attachmentsByCard: state.attachmentsByCard }),
-    state.host
-  );
-}
-
-/**
- * Move a card into a column at a given index and renumber that column's cards 0..n (mutating the
- * snapshot in place) — the client mirror of the server's dense renumber, so the optimistic update and
- * every client's `card.moved` patch converge on the same order without shipping the whole column.
- *
- * @param snapshot - The board snapshot to mutate.
+ * @param cards - The current cards (not mutated).
  * @param cardId - The card being placed.
  * @param toColumnId - The destination column.
  * @param index - The target index within the destination column (clamped to its length).
+ * @returns A new cards array with the card placed and the destination column renumbered.
  * @example
  * ```ts
- * placeCardInColumn(snapshot, "card-1", "col-2", 0);
+ * const next = placeCardInColumn(cards, "card-1", "col-2", 0);
  * ```
  */
-function placeCardInColumn(
-  snapshot: BoardSnapshot,
+export function placeCardInColumn(
+  cards: readonly Card[],
   cardId: string,
   toColumnId: string,
   index: number
-): void {
-  const card = snapshot.cards.find(item => item.id === cardId);
-  if (!card) return;
-  card.columnId = toColumnId;
+): Card[] {
+  const moving = cards.find(item => item.id === cardId);
+  if (!moving) return [...cards];
 
-  const peers = snapshot.cards
-    .filter(item => item.columnId === toColumnId && item.id !== cardId)
+  const others = cards.filter(item => item.id !== cardId);
+  const peers = others
+    .filter(item => item.columnId === toColumnId)
     .toSorted((a, b) => a.position - b.position);
   const at = Math.max(0, Math.min(index, peers.length));
-  peers.splice(at, 0, card);
-  for (const [position, item] of peers.entries()) {
-    item.position = position;
-  }
-}
+  peers.splice(at, 0, { ...moving, columnId: toColumnId });
 
-/**
- * Apply a realtime patch to a board instance's snapshot / attachment map (mutating in place).
- *
- * @param state - The board instance to update.
- * @param patch - The patch frame from the Board Durable Object.
- * @example
- * ```ts
- * applyPatch(state, { type: "card.deleted", cardId });
- * ```
- */
-function applyPatch(state: BoardState, patch: BoardPatch): void {
-  const { snapshot } = state;
-  switch (patch.type) {
-    case "card.created": {
-      snapshot.cards.push(patch.card);
-      break;
-    }
-    case "card.moved": {
-      placeCardInColumn(snapshot, patch.cardId, patch.toColumnId, patch.position);
-      break;
-    }
-    case "card.updated": {
-      const index = snapshot.cards.findIndex(item => item.id === patch.card.id);
-      if (index !== -1) snapshot.cards[index] = patch.card;
-      break;
-    }
-    case "card.deleted": {
-      snapshot.cards = snapshot.cards.filter(item => item.id !== patch.cardId);
-      break;
-    }
-    case "column.created": {
-      snapshot.columns.push(patch.column);
-      break;
-    }
-    case "attachment.added": {
-      const list = state.attachmentsByCard.get(patch.attachment.cardId) ?? [];
-      list.push(patch.attachment);
-      state.attachmentsByCard.set(patch.attachment.cardId, list);
-      break;
-    }
-    case "activity": {
-      break;
-    }
-  }
-}
-
-/**
- * Reconcile a board instance from an incoming patch (looked up by host element).
- *
- * @param host - The board host element the subscription belongs to.
- * @param patch - The incoming patch frame.
- * @example
- * ```ts
- * onPatch(patch => onBoardPatch(host, patch));
- * ```
- */
-function onBoardPatch(host: Element, patch: BoardPatch): void {
-  const state = states.get(host);
-  if (!state) return;
-  applyPatch(state, patch);
-  if (patch.type !== "activity") redraw(state);
-}
-
-/**
- * Find an attachment across a board instance's per-card map by id.
- *
- * @param state - The board instance to search.
- * @param attachmentId - The attachment id from the clicked chip's dataset.
- * @returns The matching attachment, or undefined when none is found.
- * @example
- * ```ts
- * const attachment = findAttachment(state, link.dataset.attachmentId);
- * ```
- */
-function findAttachment(
-  state: BoardState,
-  attachmentId: string | undefined
-): Attachment | undefined {
-  if (!attachmentId) return undefined;
-  for (const list of state.attachmentsByCard.values()) {
-    const found = list.find(attachment => attachment.id === attachmentId);
-    if (found) return found;
-  }
-  return undefined;
-}
-
-/**
- * The board instance whose preview overlay is currently open; undefined when none is open. Only one
- * modal can be open at a time, so a single document keydown listener serves it.
- */
-let openPreviewState: BoardState | undefined;
-
-/**
- * Close the open preview on Escape — a single document-level listener, armed only while a preview is up.
- *
- * @param event - The keydown event.
- * @example
- * ```ts
- * document.addEventListener("keydown", onPreviewKeydown);
- * ```
- */
-function onPreviewKeydown(event: KeyboardEvent): void {
-  if (event.key === "Escape" && openPreviewState) closePreview(openPreviewState);
-}
-
-/**
- * Open the attachment preview overlay for one attachment: render it into the body-level root, focus
- * the close control, and arm the Escape-to-close listener.
- *
- * @param state - The board instance whose overlay root to render into.
- * @param attachment - The attachment to preview.
- * @example
- * ```ts
- * openPreview(state, attachment);
- * ```
- */
-function openPreview(state: BoardState, attachment: Attachment): void {
-  render(h(AttachmentPreview, { attachment }), state.previewRoot);
-  openPreviewState = state;
-  document.addEventListener("keydown", onPreviewKeydown);
-  state.previewRoot.querySelector<HTMLElement>("[data-preview-close]")?.focus();
-}
-
-/**
- * Close the attachment preview overlay: disarm the Escape listener and unmount the overlay. A no-op
- * when this instance has no preview open.
- *
- * @param state - The board instance whose overlay to close.
- * @example
- * ```ts
- * closePreview(state);
- * ```
- */
-function closePreview(state: BoardState): void {
-  if (openPreviewState !== state) return;
-  document.removeEventListener("keydown", onPreviewKeydown);
-  openPreviewState = undefined;
-  // eslint-disable-next-line unicorn/no-null -- Preact unmounts a container when rendered with null
-  render(null, state.previewRoot);
-}
-
-/**
- * Handle a delegated click on the overlay root: close on the × button or a backdrop click (outside
- * the dialog). Clicks inside the dialog (e.g. the open-original link) are left alone.
- *
- * @param state - The board instance the overlay belongs to.
- * @param event - The delegated click event.
- * @example
- * ```ts
- * previewRoot.addEventListener("click", event => onPreviewClick(state, event));
- * ```
- */
-function onPreviewClick(state: BoardState, event: Event): void {
-  const target = event.target;
-  if (!(target instanceof Element)) return;
-  if (target.closest("[data-preview-close]") || target.matches("[data-preview-backdrop]")) {
-    closePreview(state);
-  }
-}
-
-/**
- * Optimistically delete a card, then persist via the worker — restoring it on failure so the UI
- * matches durable state.
- *
- * @param state - The board instance owning the card.
- * @param cardId - The card to delete.
- * @example
- * ```ts
- * await handleCardDelete(state, cardId);
- * ```
- */
-async function handleCardDelete(state: BoardState, cardId: string): Promise<void> {
-  const removed = state.snapshot.cards.find(card => card.id === cardId);
-  state.snapshot.cards = state.snapshot.cards.filter(card => card.id !== cardId);
-  redraw(state);
-  try {
-    await deleteCard(state.boardId, cardId);
-  } catch {
-    // The server rejected the delete — restore the card so the UI matches durable state.
-    if (removed) {
-      state.snapshot.cards.push(removed);
-      redraw(state);
-    }
-  }
-}
-
-/**
- * Prompt for a new card title and persist it via the worker (the returning patch re-renders).
- *
- * @param state - The board instance owning the card.
- * @param cardId - The card to edit.
- * @example
- * ```ts
- * await handleCardEdit(state, cardId);
- * ```
- */
-async function handleCardEdit(state: BoardState, cardId: string): Promise<void> {
-  const card = state.snapshot.cards.find(item => item.id === cardId);
-  const next = globalThis.prompt("Edit card title", card?.title ?? "");
-  if (next) await updateCard(state.boardId, cardId, { title: next });
-}
-
-/**
- * Handle a delegated click: preview an attachment, or edit / delete a card.
- *
- * @param event - The delegated click event.
- * @example
- * ```ts
- * host.addEventListener("click", onBoardClick);
- * ```
- */
-async function onBoardClick(event: Event): Promise<void> {
-  const host = event.currentTarget;
-  const target = event.target;
-  if (!(host instanceof Element) || !(target instanceof Element)) return;
-  const state = states.get(host);
-  if (!state) return;
-
-  // Attachment chip → in-app preview. Intercept the click so the SPA router never sees the
-  // /api/attachments/{id} navigation (which it would otherwise swallow into a home redirect); the
-  // chip's href stays a working no-JS download fallback.
-  const link = target.closest("[data-attachment-link]");
-  if (link instanceof HTMLElement) {
-    event.preventDefault();
-    const attachment = findAttachment(state, link.dataset.attachmentId);
-    if (attachment) openPreview(state, attachment);
-    return;
-  }
-
-  const button = target.closest("[data-action]");
-  if (!(button instanceof HTMLElement)) return;
-  const cardId = button.dataset.cardId;
-  if (!cardId) return;
-
-  if (button.dataset.action === "delete") await handleCardDelete(state, cardId);
-  else if (button.dataset.action === "edit") await handleCardEdit(state, cardId);
-}
-
-/**
- * Handle a delegated submit: add a card to a column, or add a column to the board.
- *
- * @param event - The delegated submit event.
- * @example
- * ```ts
- * host.addEventListener("submit", onBoardSubmit);
- * ```
- */
-async function onBoardSubmit(event: Event): Promise<void> {
-  const host = event.currentTarget;
-  const form = event.target;
-  if (!(host instanceof Element) || !(form instanceof HTMLFormElement)) return;
-  const state = states.get(host);
-  if (!state) return;
-  event.preventDefault();
-
-  if (form.matches("[data-add-card]")) {
-    const columnId = form.dataset.columnId;
-    const input = form.querySelector<HTMLInputElement>("[data-add-card-input]");
-    const title = input?.value.trim();
-    if (columnId && title) {
-      if (input) input.value = "";
-      await createCard(state.boardId, columnId, { title });
-    }
-    return;
-  }
-
-  if (form.matches("[data-add-column]")) {
-    const input = form.querySelector<HTMLInputElement>("[data-add-column-input]");
-    const title = input?.value.trim();
-    if (title) {
-      if (input) input.value = "";
-      await createColumn(state.boardId, { title });
-    }
-  }
-}
-
-/**
- * Handle a delegated file-input change: upload an attachment for its card.
- *
- * @param event - The delegated change event.
- * @example
- * ```ts
- * host.addEventListener("change", onBoardChange);
- * ```
- */
-async function onBoardChange(event: Event): Promise<void> {
-  const host = event.currentTarget;
-  const input = event.target;
-  if (!(host instanceof Element) || !(input instanceof HTMLInputElement)) return;
-  if (!input.matches("[data-attach-input]")) return;
-  const state = states.get(host);
-  const cardId = input.dataset.cardId;
-  const file = input.files?.[0];
-  if (!state || !cardId || !file) return;
-
-  const body = await file.arrayBuffer();
-  input.value = "";
-  await addAttachment(state.boardId, cardId, {
-    filename: file.name,
-    contentType: file.type || FALLBACK_TYPE,
-    body
-  });
-}
-
-/**
- * Handle drag start: stash the dragged card id on the dataTransfer.
- *
- * @param event - The dragstart event.
- * @example
- * ```ts
- * host.addEventListener("dragstart", onBoardDragStart);
- * ```
- */
-function onBoardDragStart(event: Event): void {
-  if (!(event instanceof DragEvent) || !event.dataTransfer) return;
-  const target = event.target;
-  if (!(target instanceof Element)) return;
-  const card = target.closest("[data-card-id]");
-  if (!(card instanceof HTMLElement)) return;
-  event.dataTransfer.setData(DRAG_KEY, card.dataset.cardId ?? "");
-  event.dataTransfer.effectAllowed = "move";
-}
-
-/**
- * Handle drag over a column's card list: allow the drop.
- *
- * @param event - The dragover event.
- * @example
- * ```ts
- * host.addEventListener("dragover", onBoardDragOver);
- * ```
- */
-function onBoardDragOver(event: Event): void {
-  const target = event.target;
-  if (target instanceof Element && target.closest("[data-cards]")) {
-    event.preventDefault();
-  }
+  const renumbered = peers.map((item, position) => ({ ...item, position }));
+  const untouched = others.filter(item => item.columnId !== toColumnId);
+  return [...untouched, ...renumbered];
 }
 
 /**
  * Compute the index a drop should insert at within a column, from the pointer's vertical position:
  * before the first card whose vertical midpoint sits below the cursor, else at the end. The dragged
- * card is skipped so an intra-column reorder measures against the others — this is what lets a card
- * land where it is dropped instead of always at the bottom.
+ * card is skipped so an intra-column reorder measures against the others.
  *
  * @param dropZone - The column's `[data-cards]` element.
  * @param clientY - The drop pointer's viewport Y.
@@ -457,7 +111,11 @@ function onBoardDragOver(event: Event): void {
  * const index = dropIndexInColumn(dropZone, event.clientY, cardId);
  * ```
  */
-function dropIndexInColumn(dropZone: HTMLElement, clientY: number, draggedId: string): number {
+export function dropIndexInColumn(
+  dropZone: HTMLElement,
+  clientY: number,
+  draggedId: string
+): number {
   const cards = [...dropZone.querySelectorAll<HTMLElement>('[data-component="card"]')].filter(
     element => element.dataset.cardId !== draggedId
   );
@@ -469,76 +127,399 @@ function dropIndexInColumn(dropZone: HTMLElement, clientY: number, draggedId: st
 }
 
 /**
+ * Group a flat attachment list by card id (the shape the board view renders per card).
+ *
+ * @param attachments - All attachments for the board's cards.
+ * @returns A map of card id → that card's attachments.
+ * @example
+ * ```ts
+ * const byCard = groupAttachmentsByCard(snapshot.attachments);
+ * ```
+ */
+export function groupAttachmentsByCard(
+  attachments: readonly Attachment[]
+): Map<string, Attachment[]> {
+  const byCard = new Map<string, Attachment[]>();
+  for (const attachment of attachments) {
+    const list = byCard.get(attachment.cardId) ?? [];
+    list.push(attachment);
+    byCard.set(attachment.cardId, list);
+  }
+  return byCard;
+}
+
+/**
+ * Find an attachment across the per-card map by id.
+ *
+ * @param byCard - The per-card attachment map.
+ * @param attachmentId - The attachment id from the clicked chip's dataset.
+ * @returns The matching attachment, or undefined when none is found.
+ * @example
+ * ```ts
+ * const attachment = findAttachment(state.attachmentsByCard, id);
+ * ```
+ */
+export function findAttachment(
+  byCard: ReadonlyMap<string, Attachment[]>,
+  attachmentId: string | undefined
+): Attachment | undefined {
+  if (!attachmentId) return undefined;
+  for (const list of byCard.values()) {
+    const found = list.find(attachment => attachment.id === attachmentId);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+/**
+ * Apply a realtime patch to the board state (immutably) via `ctx.set` — the live reconcile.
+ * `activity` frames are ignored here (the activity-panel island owns them).
+ *
+ * @param ctx - The board component context.
+ * @param patch - The patch frame from the Board Durable Object.
+ * @example
+ * ```ts
+ * onPatch(patch => applyPatch(ctx, patch));
+ * ```
+ */
+export function applyPatch(ctx: BoardContext, patch: BoardPatch): void {
+  switch (patch.type) {
+    case "card.created": {
+      ctx.set(previous => ({
+        snapshot: { ...previous.snapshot, cards: [...previous.snapshot.cards, patch.card] }
+      }));
+      return;
+    }
+    case "card.moved": {
+      ctx.set(previous => ({
+        snapshot: {
+          ...previous.snapshot,
+          cards: placeCardInColumn(
+            previous.snapshot.cards,
+            patch.cardId,
+            patch.toColumnId,
+            patch.position
+          )
+        }
+      }));
+      return;
+    }
+    case "card.updated": {
+      ctx.set(previous => ({
+        snapshot: {
+          ...previous.snapshot,
+          cards: previous.snapshot.cards.map(card =>
+            card.id === patch.card.id ? patch.card : card
+          )
+        }
+      }));
+      return;
+    }
+    case "card.deleted": {
+      ctx.set(previous => ({
+        snapshot: {
+          ...previous.snapshot,
+          cards: previous.snapshot.cards.filter(card => card.id !== patch.cardId)
+        }
+      }));
+      return;
+    }
+    case "column.created": {
+      ctx.set(previous => ({
+        snapshot: { ...previous.snapshot, columns: [...previous.snapshot.columns, patch.column] }
+      }));
+      return;
+    }
+    case "attachment.added": {
+      ctx.set(previous => {
+        const byCard = new Map(previous.attachmentsByCard);
+        const list = [...(byCard.get(patch.attachment.cardId) ?? []), patch.attachment];
+        byCard.set(patch.attachment.cardId, list);
+        return { attachmentsByCard: byCard };
+      });
+      return;
+    }
+    case "activity": {
+      return;
+    }
+  }
+}
+
+/**
+ * Render the board content from state.
+ *
+ * @param state - The current board state.
+ * @returns The board view (columns + cards + add-column form).
+ * @example
+ * ```ts
+ * createComponent("board", { render });
+ * ```
+ */
+function render(state: Readonly<BoardState>): Spa.RenderResult {
+  return h(BoardView, { snapshot: state.snapshot, attachmentsByCard: state.attachmentsByCard });
+}
+
+/**
+ * Close the attachment preview overlay: unmount it and clear the open marker.
+ *
+ * @param ctx - The board component context.
+ * @example
+ * ```ts
+ * closePreview(ctx);
+ * ```
+ */
+function closePreview(ctx: BoardContext): void {
+  const { previewRoot } = ctx.state;
+  // eslint-disable-next-line unicorn/no-null -- Preact unmounts a container when rendered with null
+  if (previewRoot) preactRender(null, previewRoot);
+  ctx.set({ preview: undefined });
+}
+
+/**
+ * Open the attachment preview overlay for one attachment: render it into the body-level root and
+ * focus the close control. Off-host render — the documented escape hatch for content that must escape
+ * the board's scroll/overflow containers.
+ *
+ * @param ctx - The board component context.
+ * @param attachment - The attachment to preview.
+ * @example
+ * ```ts
+ * openPreview(ctx, attachment);
+ * ```
+ */
+function openPreview(ctx: BoardContext, attachment: Attachment): void {
+  const { previewRoot } = ctx.state;
+  if (!previewRoot) return;
+  preactRender(h(AttachmentPreview, { attachment }), previewRoot);
+  ctx.set({ preview: attachment });
+  previewRoot.querySelector<HTMLElement>("[data-preview-close]")?.focus();
+}
+
+/**
+ * Optimistically delete a card, then persist via the worker — restoring it on failure so the UI
+ * matches durable state.
+ *
+ * @param ctx - The board component context.
+ * @param cardId - The card to delete.
+ * @example
+ * ```ts
+ * await handleCardDelete(ctx, cardId);
+ * ```
+ */
+async function handleCardDelete(ctx: BoardContext, cardId: string): Promise<void> {
+  const removed = ctx.state.snapshot.cards.find(card => card.id === cardId);
+  ctx.set(previous => ({
+    snapshot: {
+      ...previous.snapshot,
+      cards: previous.snapshot.cards.filter(card => card.id !== cardId)
+    }
+  }));
+  try {
+    await deleteCard(ctx.state.boardId, cardId);
+  } catch {
+    // The server rejected the delete — restore the card so the UI matches durable state.
+    if (removed) {
+      ctx.set(previous => ({
+        snapshot: { ...previous.snapshot, cards: [...previous.snapshot.cards, removed] }
+      }));
+    }
+  }
+}
+
+/**
+ * Prompt for a new card title and persist it via the worker (the returning patch updates state).
+ *
+ * @param ctx - The board component context.
+ * @param cardId - The card to edit.
+ * @example
+ * ```ts
+ * await handleCardEdit(ctx, cardId);
+ * ```
+ */
+async function handleCardEdit(ctx: BoardContext, cardId: string): Promise<void> {
+  const card = ctx.state.snapshot.cards.find(item => item.id === cardId);
+  const next = globalThis.prompt("Edit card title", card?.title ?? "");
+  if (next) await updateCard(ctx.state.boardId, cardId, { title: next });
+}
+
+/**
+ * Handle a click on an attachment chip: open the in-app preview (intercepting the link so the SPA
+ * router never sees the `/api/attachments/{id}` navigation; the href stays a working no-JS fallback).
+ *
+ * @param ctx - The board component context.
+ * @param event - The delegated click event.
+ * @param link - The matched `[data-attachment-link]` element.
+ * @example
+ * ```ts
+ * events: { "click [data-attachment-link]": onAttachmentClick };
+ * ```
+ */
+function onAttachmentClick(ctx: BoardContext, event: Event, link: Element): void {
+  event.preventDefault();
+  const attachment = findAttachment(
+    ctx.state.attachmentsByCard,
+    (link as HTMLElement).dataset.attachmentId
+  );
+  if (attachment) openPreview(ctx, attachment);
+}
+
+/**
+ * Handle a click on a card action button (edit / delete).
+ *
+ * @param ctx - The board component context.
+ * @param _event - The delegated click event (unused).
+ * @param button - The matched `[data-action]` button.
+ * @example
+ * ```ts
+ * events: { "click [data-action]": onCardAction };
+ * ```
+ */
+function onCardAction(ctx: BoardContext, _event: Event, button: Element): void {
+  const { action, cardId } = (button as HTMLElement).dataset;
+  if (!cardId) return;
+  if (action === "delete") void handleCardDelete(ctx, cardId);
+  else if (action === "edit") void handleCardEdit(ctx, cardId);
+}
+
+/**
+ * Handle the add-card submit for a column.
+ *
+ * @param ctx - The board component context.
+ * @param event - The delegated submit event.
+ * @param form - The matched `[data-add-card]` form (its `columnId` dataset is the target column).
+ * @example
+ * ```ts
+ * events: { "submit [data-add-card]": onAddCard };
+ * ```
+ */
+async function onAddCard(ctx: BoardContext, event: Event, form: Element): Promise<void> {
+  event.preventDefault();
+  const { columnId } = (form as HTMLElement).dataset;
+  const input = form.querySelector<HTMLInputElement>("[data-add-card-input]");
+  const title = input?.value.trim();
+  if (!columnId || !input || !title) return;
+  input.value = "";
+  await createCard(ctx.state.boardId, columnId, { title });
+}
+
+/**
+ * Handle the add-column submit.
+ *
+ * @param ctx - The board component context.
+ * @param event - The delegated submit event.
+ * @param form - The matched `[data-add-column]` form.
+ * @example
+ * ```ts
+ * events: { "submit [data-add-column]": onAddColumn };
+ * ```
+ */
+async function onAddColumn(ctx: BoardContext, event: Event, form: Element): Promise<void> {
+  event.preventDefault();
+  const input = form.querySelector<HTMLInputElement>("[data-add-column-input]");
+  const title = input?.value.trim();
+  if (!input || !title) return;
+  input.value = "";
+  await createColumn(ctx.state.boardId, { title });
+}
+
+/**
+ * Handle an attachment file-input change: upload the file for its card.
+ *
+ * @param ctx - The board component context.
+ * @param _event - The delegated change event (unused).
+ * @param input - The matched `[data-attach-input]` file input.
+ * @example
+ * ```ts
+ * events: { "change [data-attach-input]": onAttach };
+ * ```
+ */
+async function onAttach(ctx: BoardContext, _event: Event, input: Element): Promise<void> {
+  const fileInput = input as HTMLInputElement;
+  const { cardId } = fileInput.dataset;
+  const file = fileInput.files?.[0];
+  if (!cardId || !file) return;
+  const body = await file.arrayBuffer();
+  fileInput.value = "";
+  await addAttachment(ctx.state.boardId, cardId, {
+    filename: file.name,
+    contentType: file.type || FALLBACK_TYPE,
+    body
+  });
+}
+
+/**
+ * Handle drag start on a card: stash the dragged card id on the dataTransfer.
+ *
+ * @param _ctx - The board component context (unused).
+ * @param event - The dragstart event.
+ * @param card - The matched `[data-card-id]` element.
+ * @example
+ * ```ts
+ * events: { "dragstart [data-card-id]": onDragStart };
+ * ```
+ */
+function onDragStart(_ctx: BoardContext, event: Event, card: Element): void {
+  if (!(event instanceof DragEvent) || !event.dataTransfer) return;
+  event.dataTransfer.setData(DRAG_KEY, (card as HTMLElement).dataset.cardId ?? "");
+  event.dataTransfer.effectAllowed = "move";
+}
+
+/**
+ * Handle drag over a column's card list: allow the drop.
+ *
+ * @param _ctx - The board component context (unused).
+ * @param event - The dragover event.
+ * @example
+ * ```ts
+ * events: { "dragover [data-cards]": onDragOver };
+ * ```
+ */
+function onDragOver(_ctx: BoardContext, event: Event): void {
+  event.preventDefault();
+}
+
+/**
  * Handle a drop onto a column: optimistically place the card at the dropped index (reorder or move),
  * then persist via the worker.
  *
+ * @param ctx - The board component context.
  * @param event - The drop event.
+ * @param zone - The matched `[data-cards]` drop zone.
  * @example
  * ```ts
- * host.addEventListener("drop", onBoardDrop);
+ * events: { "drop [data-cards]": onDrop };
  * ```
  */
-async function onBoardDrop(event: Event): Promise<void> {
+async function onDrop(ctx: BoardContext, event: Event, zone: Element): Promise<void> {
   if (!(event instanceof DragEvent)) return;
-  const host = event.currentTarget;
-  const target = event.target;
-  if (!(host instanceof Element) || !(target instanceof Element)) return;
-  const dropZone = target.closest("[data-cards]");
-  const state = states.get(host);
-  if (!state || !(dropZone instanceof HTMLElement)) return;
   event.preventDefault();
-
+  const dropZone = zone as HTMLElement;
   const cardId = event.dataTransfer?.getData(DRAG_KEY);
   const toColumnId = dropZone.dataset.columnId;
-  const card = cardId ? state.snapshot.cards.find(item => item.id === cardId) : undefined;
+  const card = cardId ? ctx.state.snapshot.cards.find(item => item.id === cardId) : undefined;
   if (!cardId || !toColumnId || !card) return;
 
   const position = dropIndexInColumn(dropZone, event.clientY, cardId);
-  placeCardInColumn(state.snapshot, cardId, toColumnId, position);
-  redraw(state);
-
-  await moveCard(state.boardId, cardId, { toColumnId, position });
+  ctx.set(previous => ({
+    snapshot: {
+      ...previous.snapshot,
+      cards: placeCardInColumn(previous.snapshot.cards, cardId, toColumnId, position)
+    }
+  }));
+  await moveCard(ctx.state.boardId, cardId, { toColumnId, position });
 }
 
 /**
- * Tear a board instance down: unsubscribe, disconnect, stop keepalive, remove listeners.
+ * Honour a deep-link focus after the board renders: `meta.focus === "card"` scrolls to + flashes the
+ * `cardId` card; `"activity"` scrolls to + flashes the sibling activity panel. Run from here (the
+ * page's tall main content) so target positions are final.
  *
- * @param state - The board instance to tear down.
- * @example
- * ```ts
- * teardownBoard(state);
- * ```
- */
-function teardownBoard(state: BoardState): void {
-  state.off();
-  disconnect();
-  clearInterval(state.keepalive);
-  // Close any open preview (drops the document keydown listener), then drop the overlay root — which
-  // also removes its anonymous click listener.
-  closePreview(state);
-  state.previewRoot.remove();
-  const { host } = state;
-  host.removeEventListener("click", onBoardClick);
-  host.removeEventListener("submit", onBoardSubmit);
-  host.removeEventListener("change", onBoardChange);
-  host.removeEventListener("dragstart", onBoardDragStart);
-  host.removeEventListener("dragover", onBoardDragOver);
-  host.removeEventListener("drop", onBoardDrop);
-}
-
-/**
- * Honour a deep-link focus, run from the board island *after* it renders so target positions are final
- * (the board is the page's tall main content; focusing from here avoids a cross-island layout race where
- * the activity panel is scrolled to before the board pushes it down). Driven by the route's `.meta()`
- * read off the component context: `focus === "card"` scrolls to + flashes the `cardId` card;
- * `focus === "activity"` scrolls to + flashes the sibling activity panel.
- *
- * @param host - The board host element (the container of a focused card).
- * @param focus - The route's `meta.focus` (`"card"` | `"activity"` | `undefined`).
+ * @param host - The board host element.
+ * @param focus - The route's `meta.focus`.
  * @param cardId - The card to focus (the `card` route's `params.cardId`), if any.
  * @example
  * ```ts
- * focusDeepLink(host, ctx.meta.focus, ctx.params.cardId);
+ * focusDeepLink(ctx.el, ctx.meta.focus, ctx.params.cardId);
  * ```
  */
 function focusDeepLink(host: Element, focus: unknown, cardId: string | undefined): void {
@@ -555,109 +536,124 @@ function focusDeepLink(host: Element, focus: unknown, cardId: string | undefined
 }
 
 /**
- * Group the board snapshot's flat attachment list by card id, so the board view renders each card's
- * attachments on load — the same shape the live `attachment.added` patch appends to.
+ * Build the initial board state (empty until the snapshot loads).
  *
- * @param attachments - All attachments for the board's cards (`BoardSnapshot.attachments`).
- * @returns A map of card id → that card's attachments.
+ * @param ctx - The board component context (its `params.id` is the board id).
+ * @returns The initial board state.
  * @example
  * ```ts
- * const byCard = groupAttachmentsByCard(snapshot.attachments);
+ * createComponent("board", { state: initState });
  * ```
  */
-function groupAttachmentsByCard(attachments: Attachment[]): Map<string, Attachment[]> {
-  const byCard = new Map<string, Attachment[]>();
-  for (const attachment of attachments) {
-    const list = byCard.get(attachment.cardId) ?? [];
-    list.push(attachment);
-    byCard.set(attachment.cardId, list);
-  }
-  return byCard;
+function initState(ctx: BoardContext): BoardState {
+  return {
+    boardId: ctx.params.id ?? "",
+    snapshot: EMPTY_SNAPSHOT,
+    attachmentsByCard: new Map(),
+    previewRoot: undefined,
+    preview: undefined
+  };
 }
 
 /**
- * Boot a board instance: load the snapshot, render it, subscribe to live patches, wire delegation,
- * then honour any deep-link focus. Board id + focus come from the route context (see the island below).
+ * Close the open preview on Escape (the board-level document key handler).
  *
- * @param host - The `[data-component="board"]` element to bind.
- * @param boardId - The board id from the route (`ctx.params.id`).
- * @param focus - The route's `meta.focus` (`"card"` | `"activity"` | `undefined`).
- * @param cardId - The card to focus (the `card` route's `ctx.params.cardId`), if any.
+ * @param ctx - The board component context.
+ * @param event - The keydown event.
  * @example
  * ```ts
- * await startBoard(ctx.el, ctx.params.id ?? "", ctx.meta.focus, ctx.params.cardId);
+ * document.addEventListener("keydown", event => onPreviewKeydown(ctx, event));
  * ```
  */
-async function startBoard(
-  host: Element,
-  boardId: string,
-  focus: unknown,
-  cardId: string | undefined
-): Promise<void> {
+function onPreviewKeydown(ctx: BoardContext, event: KeyboardEvent): void {
+  if (event.key === "Escape" && ctx.state.preview) closePreview(ctx);
+}
+
+/**
+ * Handle a click on the preview overlay root: close on the × button or a backdrop click.
+ *
+ * @param ctx - The board component context.
+ * @param event - The click event.
+ * @example
+ * ```ts
+ * previewRoot.addEventListener("click", event => onPreviewClick(ctx, event));
+ * ```
+ */
+function onPreviewClick(ctx: BoardContext, event: Event): void {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+  if (target.closest("[data-preview-close]") || target.matches("[data-preview-backdrop]")) {
+    closePreview(ctx);
+  }
+}
+
+/**
+ * Boot the live board: load the snapshot, connect the socket, seed state, wire the keepalive +
+ * realtime subscription + the body-level preview overlay (all released via `ctx.cleanup`), then honour
+ * any deep-link focus. Board id + focus come from the route context.
+ *
+ * @param ctx - The board component context.
+ * @returns A promise that resolves once the board is loaded and wired.
+ * @example
+ * ```ts
+ * createComponent("board", { onMount: startBoard });
+ * ```
+ */
+async function startBoard(ctx: BoardContext): Promise<void> {
+  const boardId = ctx.params.id ?? "";
   const snapshot = await getBoard(boardId);
   connect(boardId);
 
   // Body-level overlay root so the preview escapes the board's scroll / overflow containers.
-  // append() doesn't typecheck here: the DOM and @cloudflare/workers-types globals merge
-  // Element.append into conflicting overloads, so use appendChild.
+  // appendChild (not append): the DOM and @cloudflare/workers-types globals merge Element.append
+  // into conflicting overloads, so use appendChild.
   const previewRoot = document.createElement("div");
   // eslint-disable-next-line unicorn/prefer-dom-node-append -- see note above
   document.body.appendChild(previewRoot);
 
-  const state: BoardState = {
+  ctx.set({
     boardId,
-    host,
     snapshot,
-    // Seed from the snapshot so a reload restores each card's attachments (live patches append after).
     attachmentsByCard: groupAttachmentsByCard(snapshot.attachments),
-    previewRoot,
-    off: onPatch(patch => onBoardPatch(host, patch)),
-    keepalive: setInterval(() => ping(), KEEPALIVE_MS)
-  };
-  states.set(host, state);
-  redraw(state);
-  focusDeepLink(host, focus, cardId);
-
-  // Anonymous listener (dropped with previewRoot.remove() on teardown) — looks state up by host so
-  // it survives the WeakMap, matching the host-delegation pattern used for the board itself.
-  previewRoot.addEventListener("click", event => {
-    const current = states.get(host);
-    if (current) onPreviewClick(current, event);
+    previewRoot
   });
-  host.addEventListener("click", onBoardClick);
-  host.addEventListener("submit", onBoardSubmit);
-  host.addEventListener("change", onBoardChange);
-  host.addEventListener("dragstart", onBoardDragStart);
-  host.addEventListener("dragover", onBoardDragOver);
-  host.addEventListener("drop", onBoardDrop);
+
+  // Live patches reconcile state; keepalive holds the socket; the overlay handles its own clicks +
+  // an Escape key. All released on destroy via ctx.cleanup.
+  ctx.cleanup(onPatch(patch => applyPatch(ctx, patch)));
+  const keepalive = globalThis.setInterval(() => ping(), KEEPALIVE_MS);
+  ctx.cleanup(() => globalThis.clearInterval(keepalive));
+  ctx.cleanup(() => disconnect());
+
+  // eslint-disable-next-line jsdoc/require-jsdoc -- inline ctx-binding for the overlay click handler
+  const onRootClick = (event: Event): void => onPreviewClick(ctx, event);
+  previewRoot.addEventListener("click", onRootClick);
+  // eslint-disable-next-line jsdoc/require-jsdoc -- inline ctx-binding for the overlay keydown handler
+  const onKeydown = (event: KeyboardEvent): void => onPreviewKeydown(ctx, event);
+  document.addEventListener("keydown", onKeydown);
+  ctx.cleanup(() => {
+    document.removeEventListener("keydown", onKeydown);
+    previewRoot.remove();
+  });
+
+  // Flush the seeded render before measuring deep-link targets, then focus.
+  ctx.flush();
+  focusDeepLink(ctx.el, ctx.meta.focus, ctx.params.cardId);
 }
 
 /** Board-page island: renders the live board and drives the proof loop. */
-export const board = createComponent("board", {
-  /**
-   * Boot the live board on mount.
-   *
-   * @param ctx - The component context (its `el` is the board mount point).
-   * @example
-   * ```ts
-   * createComponent("board", { onMount });
-   * ```
-   */
-  onMount(ctx) {
-    void startBoard(ctx.el, ctx.params.id ?? "", ctx.meta.focus, ctx.params.cardId);
-  },
-  /**
-   * Tear the board instance down on destroy (SPA navigation away).
-   *
-   * @param ctx - The component context (its `el` is the board mount point).
-   * @example
-   * ```ts
-   * createComponent("board", { onDestroy });
-   * ```
-   */
-  onDestroy(ctx) {
-    const state = states.get(ctx.el);
-    if (state) teardownBoard(state);
-    states.delete(ctx.el);
+export const board = createComponent<BoardState>("board", {
+  state: initState,
+  render,
+  onMount: startBoard,
+  events: {
+    "click [data-attachment-link]": onAttachmentClick,
+    "click [data-action]": onCardAction,
+    "submit [data-add-card]": onAddCard,
+    "submit [data-add-column]": onAddColumn,
+    "change [data-attach-input]": onAttach,
+    "dragstart [data-card-id]": onDragStart,
+    "dragover [data-cards]": onDragOver,
+    "drop [data-cards]": onDrop
   }
 });
