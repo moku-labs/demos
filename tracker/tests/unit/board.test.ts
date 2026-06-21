@@ -109,7 +109,7 @@ describe("board island — render & lifecycle", () => {
     expect(realtimeApi.connect).toHaveBeenCalledWith("b1");
     expect(handle.el.querySelector("[data-board-title]")?.textContent).toBe("Demo");
     expect(handle.el.querySelector("[data-column-title]")?.textContent).toBe("To Do");
-    expect(handle.el.querySelectorAll('[data-component="card"]')).toHaveLength(2);
+    expect(handle.el.querySelectorAll('[data-island="card"]')).toHaveLength(2);
     expect(handle.state?.boardId).toBe("b1");
   });
 
@@ -220,7 +220,7 @@ describe("board island — mutations", () => {
 
     // Stub the per-card geometry happy-dom returns as zeros.
     for (const [index, el] of [
-      ...handle.el.querySelectorAll<HTMLElement>('[data-component="card"]')
+      ...handle.el.querySelectorAll<HTMLElement>('[data-island="card"]')
     ].entries()) {
       vi.spyOn(el, "getBoundingClientRect").mockReturnValue({
         top: index * 40,
@@ -269,7 +269,7 @@ describe("board island — realtime reconcile", () => {
       column: { id: "c2", boardId: "b1", title: "Done", position: 1 }
     });
     handle.flush();
-    expect(handle.el.querySelectorAll('[data-component="column"]')).toHaveLength(2);
+    expect(handle.el.querySelectorAll('[data-island="column"]')).toHaveLength(2);
 
     realtime.handler?.({ type: "attachment.added", attachment: attachment("a9", "k1") });
     handle.flush();
@@ -325,11 +325,11 @@ describe("board pure helpers", () => {
 
   it("dropIndexInColumn picks the index from the pointer Y (geometry stubbed)", () => {
     document.body.innerHTML =
-      '<div data-cards><div data-component="card" data-card-id="k1"></div>' +
-      '<div data-component="card" data-card-id="k2"></div></div>';
+      '<div data-cards><div data-island="card" data-card-id="k1"></div>' +
+      '<div data-island="card" data-card-id="k2"></div></div>';
     const zone = document.querySelector<HTMLElement>("[data-cards]");
     for (const [index, el] of [
-      ...(zone?.querySelectorAll<HTMLElement>('[data-component="card"]') ?? [])
+      ...(zone?.querySelectorAll<HTMLElement>('[data-island="card"]') ?? [])
     ].entries()) {
       vi.spyOn(el, "getBoundingClientRect").mockReturnValue({
         top: index * 40,

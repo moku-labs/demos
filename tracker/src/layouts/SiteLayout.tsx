@@ -25,7 +25,7 @@ export function SiteLayout(
   children: ComponentChildren
 ): VNode {
   return (
-    <div data-component="site-layout">
+    <div data-island="site-layout">
       <header data-site-header>
         <a data-brand href={ctx.url("boards", {})}>
           Tracker

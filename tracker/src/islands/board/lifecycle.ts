@@ -32,7 +32,7 @@ function focusDeepLink(host: Element, focus: unknown, cardId: string | undefined
     return;
   }
   if (focus === "activity") {
-    const activity = document.querySelector<HTMLElement>('[data-component="activity-panel"]');
+    const activity = document.querySelector<HTMLElement>('[data-island="activity-panel"]');
     if (activity) focusElement(activity, "start");
   }
 }
@@ -46,7 +46,7 @@ function focusDeepLink(host: Element, focus: unknown, cardId: string | undefined
  * @returns A promise that resolves once the board is loaded and wired.
  * @example
  * ```ts
- * createComponent("board", { onMount: startBoard });
+ * createIsland("board", { onMount: startBoard });
  * ```
  */
 export async function startBoard(ctx: BoardContext): Promise<void> {

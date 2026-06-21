@@ -1,7 +1,7 @@
 /**
  * @file BoardList — the home page's live content: a create-board form and the list of boards.
  *
- * Rendered by the `board-list` island into its `[data-component="board-list"]` element; the island
+ * Rendered by the `board-list` island into its `[data-island="board-list"]` element; the island
  * seeds it from `listBoards` and delegates the `[data-create-board]` submit to `createBoard`. Board
  * links are built from the route map (`urls.toUrl`) so they stay correct as URL patterns evolve.
  */

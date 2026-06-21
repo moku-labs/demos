@@ -2,9 +2,9 @@
  * AttachmentPreview — a full-viewport modal lightbox for one attachment: a dimmed, blurred backdrop
  * holding a centred dialog (header with filename + close, the image or a fallback card, a footer with
  * size/type + open link). Rendered into a body-level overlay root by the `board` island. Scoped to
- * `[data-component="attachment-preview"]`.
+ * `[data-island="attachment-preview"]`.
  */
-@scope ([data-component="attachment-preview"]) {
+@scope ([data-island="attachment-preview"]) {
   :scope {
     position: fixed;
     inset: 0;

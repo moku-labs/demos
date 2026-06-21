@@ -14,7 +14,7 @@ const app = createApp({
   pluginConfigs: {
     site: { name: SITE.name, url: SITE.url, author: SITE.author, description: SITE.description },
     router: { routes },
-    spa: { components: islands }
+    spa: { islands }
   }
 });
 

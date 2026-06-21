@@ -14,7 +14,7 @@ import type { BoardState } from "./types";
  * @returns The board view (columns + cards + add-column form).
  * @example
  * ```ts
- * createComponent("board", { render });
+ * createIsland("board", { render });
  * ```
  */
 export function render(state: Readonly<BoardState>): Spa.RenderResult {

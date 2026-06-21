@@ -1,14 +1,14 @@
 /**
  * @file activity-panel island — the live "Worker Activity" feed (D7: make the worker visible).
  *
- * Mounts on `[data-component="activity-panel"]`, seeds its typed per-instance state from
+ * Mounts on `[data-island="activity-panel"]`, seeds its typed per-instance state from
  * `listActivity`, renders it via `ActivityPanel`, and prepends every `activity` patch the Board
  * Durable Object fans out — each one a D1 write + Queue consume the viewer literally watches happen.
  * The board island owns the socket; this island only subscribes (unsubscribed via `ctx.cleanup`).
  */
 
 import type { Spa } from "@moku-labs/web/browser";
-import { createComponent } from "@moku-labs/web/browser";
+import { createIsland } from "@moku-labs/web/browser";
 import { h } from "preact";
 import { ActivityPanel } from "../components/ActivityPanel";
 import { listActivity } from "../lib/api";
@@ -19,7 +19,7 @@ import type { Activity, BoardPatch } from "../lib/types";
 type FeedState = { activities: Activity[] };
 
 /** The activity-panel component context (typed per-instance state). */
-type FeedContext = Spa.ComponentContext<FeedState>;
+type FeedContext = Spa.IslandContext<FeedState>;
 
 /**
  * Build the initial (empty) activity-feed state.
@@ -27,7 +27,7 @@ type FeedContext = Spa.ComponentContext<FeedState>;
  * @returns The initial state with no activity loaded yet.
  * @example
  * ```ts
- * createComponent("activity-panel", { state: initState });
+ * createIsland("activity-panel", { state: initState });
  * ```
  */
 function initState(): FeedState {
@@ -41,7 +41,7 @@ function initState(): FeedState {
  * @returns The activity-feed view.
  * @example
  * ```ts
- * createComponent("activity-panel", { render });
+ * createIsland("activity-panel", { render });
  * ```
  */
 function render(state: Readonly<FeedState>): Spa.RenderResult {
@@ -71,7 +71,7 @@ function applyPatch(ctx: FeedContext, patch: BoardPatch): void {
  * @returns A promise that resolves once the feed is seeded and subscribed.
  * @example
  * ```ts
- * createComponent("activity-panel", { onMount: startFeed });
+ * createIsland("activity-panel", { onMount: startFeed });
  * ```
  */
 async function startFeed(ctx: FeedContext): Promise<void> {
@@ -80,7 +80,7 @@ async function startFeed(ctx: FeedContext): Promise<void> {
 }
 
 /** Board-page island: the live "Worker Activity" feed. */
-export const activityPanel = createComponent<FeedState>("activity-panel", {
+export const activityPanel = createIsland<FeedState>("activity-panel", {
   state: initState,
   render,
   onMount: startFeed

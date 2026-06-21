@@ -1,9 +1,9 @@
 /**
  * ColumnView — one board column rendered as a distinct panel: a header (title + count pill), a
  * vertical cards stack that doubles as the drop target, and an inline add-card form. Scoped to
- * `[data-component="column"]`; card children self-scope via `[data-component="card"]`.
+ * `[data-island="column"]`; card children self-scope via `[data-island="card"]`.
  */
-@scope ([data-component="column"]) {
+@scope ([data-island="column"]) {
   :scope {
     display: flex;
     flex-direction: column;

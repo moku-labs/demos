@@ -26,7 +26,7 @@ export function makeApp(stage: "production" | "development" | "test") {
     pluginConfigs: {
       site: { name: SITE.name, url: SITE.url, author: SITE.author, description: SITE.description },
       router: { routes },
-      spa: { components: islands },
+      spa: { islands },
       // cli has its own outDir (default "dist") used by serve/preview + the post-build 404 check —
       // align it with build.outDir so they all target the dir wrangler serves as ASSETS.
       cli: { outDir: "dist/client" },

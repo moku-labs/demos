@@ -11,7 +11,7 @@ import { type BoardContext, type BoardState, EMPTY_SNAPSHOT } from "./types";
  * @returns The initial board state.
  * @example
  * ```ts
- * createComponent("board", { state: initState });
+ * createIsland("board", { state: initState });
  * ```
  */
 export function initState(ctx: BoardContext): BoardState {

@@ -26,7 +26,7 @@ export type BoardState = {
 };
 
 /** The board component context (typed per-instance state). */
-export type BoardContext = Spa.ComponentContext<BoardState>;
+export type BoardContext = Spa.IslandContext<BoardState>;
 
 /** An empty snapshot used as the initial state before the real one loads. */
 export const EMPTY_SNAPSHOT: BoardSnapshot = {

@@ -1,9 +1,9 @@
 /**
  * SiteLayout — the persistent chrome that survives SPA navigation. A sticky top header carrying the
  * "Tracker" wordmark + tagline, over the swap region (`main > section`). Scoped to
- * `[data-component="site-layout"]`; inner selectors target its `data-*` hooks only.
+ * `[data-island="site-layout"]`; inner selectors target its `data-*` hooks only.
  */
-@scope ([data-component="site-layout"]) {
+@scope ([data-island="site-layout"]) {
   :scope {
     display: flex;
     flex-direction: column;

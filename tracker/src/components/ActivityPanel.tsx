@@ -1,7 +1,7 @@
 /**
  * @file ActivityPanel — the live "Worker Activity" feed content (D7: make the worker visible).
  *
- * Rendered by the `activity-panel` island into its `[data-component="activity-panel"]` element; the
+ * Rendered by the `activity-panel` island into its `[data-island="activity-panel"]` element; the
  * island seeds it from `listActivity` and re-renders on every `activity` patch the Board DO fans out
  * (each entry is a D1 write + Queue consume the viewer literally watches happen).
  */

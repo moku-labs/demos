@@ -1,5 +1,5 @@
 /**
- * Element defaults + page wrappers. Each page renders a `data-page` wrapper (no `data-component`)
+ * Element defaults + page wrappers. Each page renders a `data-page` wrapper (no `data-island`)
  * into the layout's `main > section` swap region, so the page-scoped layout is styled here rather
  * than in a scoped component sheet. The `board` page is the 2-column shell: a flex-growing board
  * area + a fixed-ish activity sidebar that drops below the board on narrow screens.
@@ -109,12 +109,12 @@ button {
   padding: var(--space-5) var(--space-5) var(--space-6);
 }
 
-[data-page="board"] [data-component="board"] {
+[data-page="board"] [data-island="board"] {
   flex: 1 1 auto;
   min-width: 0;
 }
 
-[data-page="board"] [data-component="activity-panel"] {
+[data-page="board"] [data-island="activity-panel"] {
   flex: 0 0 clamp(260px, 24vw, 340px);
   position: sticky;
   top: var(--space-4);
@@ -126,7 +126,7 @@ button {
     flex-direction: column;
   }
 
-  [data-page="board"] [data-component="activity-panel"] {
+  [data-page="board"] [data-island="activity-panel"] {
     flex-basis: auto;
     width: 100%;
     position: static;

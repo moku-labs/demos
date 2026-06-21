@@ -61,7 +61,7 @@ export function dropIndexInColumn(
   clientY: number,
   draggedId: string
 ): number {
-  const cards = [...dropZone.querySelectorAll<HTMLElement>('[data-component="card"]')].filter(
+  const cards = [...dropZone.querySelectorAll<HTMLElement>('[data-island="card"]')].filter(
     element => element.dataset.cardId !== draggedId
   );
   const ahead = cards.findIndex(element => {

@@ -1,9 +1,9 @@
 /**
  * CardView — a single draggable kanban card: title, optional description, optional attachment chips,
  * and an actions footer revealed on hover (edit / delete buttons + an attach label styled as a
- * button, wrapping a hidden file input). Scoped to `[data-component="card"]`.
+ * button, wrapping a hidden file input). Scoped to `[data-island="card"]`.
  */
-@scope ([data-component="card"]) {
+@scope ([data-island="card"]) {
   :scope {
     display: flex;
     flex-direction: column;

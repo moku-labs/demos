@@ -31,7 +31,7 @@ export interface CardViewProps {
  */
 export function CardView({ card, attachments = [] }: CardViewProps) {
   return (
-    <article data-component="card" data-card-id={card.id} draggable={true}>
+    <article data-island="card" data-card-id={card.id} draggable={true}>
       <h3 data-card-title>{card.title}</h3>
       {card.description.length > 0 && <p data-card-desc>{card.description}</p>}
       {attachments.length > 0 && (

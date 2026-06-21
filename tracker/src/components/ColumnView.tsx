@@ -32,7 +32,7 @@ export interface ColumnViewProps {
  */
 export function ColumnView({ column, cards, attachmentsByCard }: ColumnViewProps) {
   return (
-    <section data-component="column" data-column-id={column.id}>
+    <section data-island="column" data-column-id={column.id}>
       <header data-column-header>
         <h2 data-column-title>{column.title}</h2>
         <span data-card-count>{cards.length}</span>
