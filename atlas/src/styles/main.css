@@ -1,0 +1,6 @@
+/*
+ * Layer cascade order for the Atlas web client, declared once. Individual sheets are imported into
+ * their layer during the implementation waves; the framework build plugin's bundle phase (Bun.build)
+ * reaches this via the client entry's module graph and emits a content-hashed assets/main-*.css.
+ */
+@layer tokens, base, components;
