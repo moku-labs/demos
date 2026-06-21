@@ -64,7 +64,7 @@ This project uses the **moku** Claude Code plugin for development workflows.
 - **moku-plugin** — Plugin structure + complexity tiers, for authoring Layer-3 plugins.
 - **moku-web** — Web patterns: Preact islands, CSS architecture (@scope, @layer, design tokens).
 
-> Server-side primitives (Durable Objects, Queues, R2, D1, KV, HTTP routing) come from `@moku-labs/worker` — see its README for the `endpoint(...)` routing model and the `worker.ts` default-export pattern. Its build-time deploy/CLI surface is imported separately from `@moku-labs/worker/cli` and must never enter the deployed Worker bundle.
+> Server-side primitives (Durable Objects, Queues, R2, D1, KV, HTTP routing) come from `@moku-labs/worker` — see its README for the `endpoint(...)` routing model and the `worker.ts` default-export pattern. Its build-time deploy/CLI surface is imported from the package root `@moku-labs/worker` (the `./cli` subpath was removed in 0.11.0); the node-only deploy/CLI plugins are tree-shaken out of the deployed Worker bundle unless listed in `createApp({ plugins })`.
 
 ### Agents (validation)
 
