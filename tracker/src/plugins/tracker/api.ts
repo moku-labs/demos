@@ -150,7 +150,8 @@ export function createTrackerApi(ctx: TrackerContext): Api {
     },
 
     /**
-     * Create a board with default columns (To Do / In Progress / Done) and warm the KV index.
+     * Create a board with default columns (To Do / In Progress / Done), warm the KV index, and
+     * enqueue a board.created activity for the new board's feed.
      *
      * @param env - Per-request Cloudflare bindings.
      * @param input - Board creation input.
@@ -208,6 +209,12 @@ export function createTrackerApi(ctx: TrackerContext): Api {
         "SELECT id, title, created_at FROM boards WHERE id = ?",
         boardId
       );
+
+      // Genesis entry for the new board's own activity feed (visible the moment it is first opened).
+      await enqueue(env, boardId, {
+        kind: "board.created",
+        summary: `Created board: ${input.title}`
+      });
 
       return rowToBoard(boardRow ?? { id: boardId, title: input.title, created_at: createdAt });
     },
@@ -373,12 +380,14 @@ export function createTrackerApi(ctx: TrackerContext): Api {
     },
 
     /**
-     * Move a card to another column or position, enqueue card.moved activity, broadcast, emit tracker:cardMoved.
+     * Move or reorder a card: splice it into the target column at the requested index and renumber
+     * that column 0..n so positions stay dense (precise reordering, not just append). Enqueues a
+     * card.moved activity (worded "Moved"/"Reordered"), broadcasts the resting index, emits tracker:cardMoved.
      *
      * @param env - Per-request Cloudflare bindings.
      * @param boardId - The board containing the card.
      * @param cardId - The card to move.
-     * @param move - Target column and position.
+     * @param move - Target column and the index to insert at.
      * @returns The updated card.
      * @example
      * ```ts
@@ -386,7 +395,8 @@ export function createTrackerApi(ctx: TrackerContext): Api {
      * ```
      */
     async moveCard(env, boardId, cardId, move) {
-      // Fetch current card state to record fromColumnId
+      // Read the card's current column first — it labels the activity (move vs. reorder) and is the
+      // fromColumnId reported on the event.
       const existingRow = await d1.first<CardRow>(
         env,
         "SELECT id, board_id, column_id, title, description, position, created_at FROM cards WHERE id = ?",
@@ -394,13 +404,27 @@ export function createTrackerApi(ctx: TrackerContext): Api {
       );
       const fromColumnId = existingRow?.column_id ?? move.toColumnId;
 
-      await d1.run(
+      // Build the target column's new order (current order minus this card, then this card spliced in
+      // at the clamped index) and renumber every card to its array index — dense, collision-free
+      // positions are what let a card land precisely instead of always at the bottom.
+      const siblings = await d1.query<{ id: string }>(
         env,
-        "UPDATE cards SET column_id = ?, position = ? WHERE id = ?",
+        "SELECT id FROM cards WHERE column_id = ? AND id != ? ORDER BY position ASC",
         move.toColumnId,
-        move.position,
         cardId
       );
+      const order = siblings.results.map(row => row.id);
+      const index = Math.max(0, Math.min(move.position, order.length));
+      order.splice(index, 0, cardId);
+
+      // Move the card to its destination column first (only when it actually changed columns); the
+      // renumber loop below then sets every card in the column to its array index.
+      if (fromColumnId !== move.toColumnId) {
+        await d1.run(env, "UPDATE cards SET column_id = ? WHERE id = ?", move.toColumnId, cardId);
+      }
+      for (const [position, id] of order.entries()) {
+        await d1.run(env, "UPDATE cards SET position = ? WHERE id = ?", position, id);
+      }
 
       const cardRow = await d1.first<CardRow>(
         env,
@@ -415,24 +439,29 @@ export function createTrackerApi(ctx: TrackerContext): Api {
           column_id: move.toColumnId,
           title: existingRow?.title ?? "",
           description: existingRow?.description ?? "",
-          position: move.position,
+          position: index,
           created_at: existingRow?.created_at ?? Date.now()
         }
       );
 
-      await enqueue(env, boardId, { kind: "card.moved", summary: `Moved card: ${card.title}` });
+      const summary =
+        fromColumnId === move.toColumnId
+          ? `Reordered card: ${card.title}`
+          : `Moved card: ${card.title}`;
+
+      await enqueue(env, boardId, { kind: "card.moved", summary });
       await broadcast(env, boardId, {
         type: "card.moved",
         cardId,
         toColumnId: move.toColumnId,
-        position: move.position
+        position: index
       });
       ctx.emit("tracker:cardMoved", {
         boardId,
         cardId,
         fromColumnId,
         toColumnId: move.toColumnId,
-        position: move.position
+        position: index
       });
 
       return card;
@@ -525,7 +554,7 @@ export function createTrackerApi(ctx: TrackerContext): Api {
     },
 
     /**
-     * Store an attachment blob in R2 and metadata in D1, broadcast attachment.added, emit tracker:attachmentAdded.
+     * Store an attachment blob in R2 and metadata in D1, enqueue attachment.added activity, broadcast attachment.added, emit tracker:attachmentAdded.
      *
      * @param env - Per-request Cloudflare bindings.
      * @param boardId - The board containing the card.
@@ -571,6 +600,10 @@ export function createTrackerApi(ctx: TrackerContext): Api {
         }
       );
 
+      await enqueue(env, boardId, {
+        kind: "attachment.added",
+        summary: `Attached ${attachment.filename}`
+      });
       await broadcast(env, boardId, { type: "attachment.added", attachment });
       ctx.emit("tracker:attachmentAdded", { boardId, cardId, attachment });
 

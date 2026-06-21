@@ -115,6 +115,9 @@
   }
 
   /* Per-kind hue: drives both the dot and the left border via the local --kind var. */
+  li[data-activity-entry][data-kind="board.created"] {
+    --kind: var(--status-board);
+  }
   li[data-activity-entry][data-kind="card.created"] {
     --kind: var(--status-created);
   }

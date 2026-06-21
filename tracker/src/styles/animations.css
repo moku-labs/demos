@@ -48,3 +48,25 @@
     opacity: 0.35;
   }
 }
+
+/* Backdrop fade-in for the attachment preview overlay. */
+@keyframes overlay-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Dialog pop-in for the attachment preview (scale + rise from the backdrop). */
+@keyframes dialog-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

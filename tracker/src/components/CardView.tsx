@@ -3,8 +3,10 @@
  *
  * The `board` island renders these via Preact and delegates drag / edit / delete / attach off the
  * `data-action` + `data-card-id` hooks; the card carries `draggable` for native HTML5 drag. Session
- * attachments (R2 blobs proven live) render as download links.
+ * attachments (R2 blobs proven live) render as chips; the island intercepts a click on
+ * `[data-attachment-link]` to open an in-app preview (the `href` is a no-JS download fallback).
  */
+import { attachmentUrl } from "../lib/api";
 import type { Attachment, Card } from "../lib/types";
 
 /** CardView props. */
@@ -37,8 +39,9 @@ export function CardView({ card, attachments = [] }: CardViewProps) {
           {attachments.map(attachment => (
             <li key={attachment.id}>
               <a
-                href={`/api/attachments/${attachment.id}`}
+                href={attachmentUrl(attachment.id)}
                 data-attachment-link
+                data-attachment-id={attachment.id}
                 target="_blank"
                 rel="noopener noreferrer"
               >

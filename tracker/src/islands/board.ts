@@ -10,6 +10,7 @@
  */
 import { createComponent } from "@moku-labs/web/browser";
 import { h, render } from "preact";
+import { AttachmentPreview } from "../components/AttachmentPreview";
 import { BoardView } from "../components/BoardView";
 import {
   addAttachment,
@@ -41,6 +42,8 @@ type BoardState = {
   snapshot: BoardSnapshot;
   /** Session attachments grouped by card id (R2 uploads proven live). */
   attachmentsByCard: Map<string, Attachment[]>;
+  /** Body-level overlay root the attachment preview renders into (empty when closed). */
+  previewRoot: HTMLElement;
   /** Unsubscribe from the realtime patch stream. */
   off: () => void;
   /** Keepalive interval handle. */
@@ -67,6 +70,40 @@ function redraw(state: BoardState): void {
 }
 
 /**
+ * Move a card into a column at a given index and renumber that column's cards 0..n (mutating the
+ * snapshot in place) — the client mirror of the server's dense renumber, so the optimistic update and
+ * every client's `card.moved` patch converge on the same order without shipping the whole column.
+ *
+ * @param snapshot - The board snapshot to mutate.
+ * @param cardId - The card being placed.
+ * @param toColumnId - The destination column.
+ * @param index - The target index within the destination column (clamped to its length).
+ * @example
+ * ```ts
+ * placeCardInColumn(snapshot, "card-1", "col-2", 0);
+ * ```
+ */
+function placeCardInColumn(
+  snapshot: BoardSnapshot,
+  cardId: string,
+  toColumnId: string,
+  index: number
+): void {
+  const card = snapshot.cards.find(item => item.id === cardId);
+  if (!card) return;
+  card.columnId = toColumnId;
+
+  const peers = snapshot.cards
+    .filter(item => item.columnId === toColumnId && item.id !== cardId)
+    .toSorted((a, b) => a.position - b.position);
+  const at = Math.max(0, Math.min(index, peers.length));
+  peers.splice(at, 0, card);
+  for (const [position, item] of peers.entries()) {
+    item.position = position;
+  }
+}
+
+/**
  * Apply a realtime patch to a board instance's snapshot / attachment map (mutating in place).
  *
  * @param state - The board instance to update.
@@ -84,11 +121,7 @@ function applyPatch(state: BoardState, patch: BoardPatch): void {
       break;
     }
     case "card.moved": {
-      const card = snapshot.cards.find(item => item.id === patch.cardId);
-      if (card) {
-        card.columnId = patch.toColumnId;
-        card.position = patch.position;
-      }
+      placeCardInColumn(snapshot, patch.cardId, patch.toColumnId, patch.position);
       break;
     }
     case "card.updated": {
@@ -134,7 +167,146 @@ function onBoardPatch(host: Element, patch: BoardPatch): void {
 }
 
 /**
- * Handle a delegated click: edit or delete a card.
+ * Find an attachment across a board instance's per-card map by id.
+ *
+ * @param state - The board instance to search.
+ * @param attachmentId - The attachment id from the clicked chip's dataset.
+ * @returns The matching attachment, or undefined when none is found.
+ * @example
+ * ```ts
+ * const attachment = findAttachment(state, link.dataset.attachmentId);
+ * ```
+ */
+function findAttachment(
+  state: BoardState,
+  attachmentId: string | undefined
+): Attachment | undefined {
+  if (!attachmentId) return undefined;
+  for (const list of state.attachmentsByCard.values()) {
+    const found = list.find(attachment => attachment.id === attachmentId);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+/**
+ * The board instance whose preview overlay is currently open; undefined when none is open. Only one
+ * modal can be open at a time, so a single document keydown listener serves it.
+ */
+let openPreviewState: BoardState | undefined;
+
+/**
+ * Close the open preview on Escape — a single document-level listener, armed only while a preview is up.
+ *
+ * @param event - The keydown event.
+ * @example
+ * ```ts
+ * document.addEventListener("keydown", onPreviewKeydown);
+ * ```
+ */
+function onPreviewKeydown(event: KeyboardEvent): void {
+  if (event.key === "Escape" && openPreviewState) closePreview(openPreviewState);
+}
+
+/**
+ * Open the attachment preview overlay for one attachment: render it into the body-level root, focus
+ * the close control, and arm the Escape-to-close listener.
+ *
+ * @param state - The board instance whose overlay root to render into.
+ * @param attachment - The attachment to preview.
+ * @example
+ * ```ts
+ * openPreview(state, attachment);
+ * ```
+ */
+function openPreview(state: BoardState, attachment: Attachment): void {
+  render(h(AttachmentPreview, { attachment }), state.previewRoot);
+  openPreviewState = state;
+  document.addEventListener("keydown", onPreviewKeydown);
+  state.previewRoot.querySelector<HTMLElement>("[data-preview-close]")?.focus();
+}
+
+/**
+ * Close the attachment preview overlay: disarm the Escape listener and unmount the overlay. A no-op
+ * when this instance has no preview open.
+ *
+ * @param state - The board instance whose overlay to close.
+ * @example
+ * ```ts
+ * closePreview(state);
+ * ```
+ */
+function closePreview(state: BoardState): void {
+  if (openPreviewState !== state) return;
+  document.removeEventListener("keydown", onPreviewKeydown);
+  openPreviewState = undefined;
+  // eslint-disable-next-line unicorn/no-null -- Preact unmounts a container when rendered with null
+  render(null, state.previewRoot);
+}
+
+/**
+ * Handle a delegated click on the overlay root: close on the × button or a backdrop click (outside
+ * the dialog). Clicks inside the dialog (e.g. the open-original link) are left alone.
+ *
+ * @param state - The board instance the overlay belongs to.
+ * @param event - The delegated click event.
+ * @example
+ * ```ts
+ * previewRoot.addEventListener("click", event => onPreviewClick(state, event));
+ * ```
+ */
+function onPreviewClick(state: BoardState, event: Event): void {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+  if (target.closest("[data-preview-close]") || target.matches("[data-preview-backdrop]")) {
+    closePreview(state);
+  }
+}
+
+/**
+ * Optimistically delete a card, then persist via the worker — restoring it on failure so the UI
+ * matches durable state.
+ *
+ * @param state - The board instance owning the card.
+ * @param cardId - The card to delete.
+ * @example
+ * ```ts
+ * await handleCardDelete(state, cardId);
+ * ```
+ */
+async function handleCardDelete(state: BoardState, cardId: string): Promise<void> {
+  const removed = state.snapshot.cards.find(card => card.id === cardId);
+  state.snapshot.cards = state.snapshot.cards.filter(card => card.id !== cardId);
+  redraw(state);
+  try {
+    await deleteCard(state.boardId, cardId);
+  } catch {
+    // The server rejected the delete — restore the card so the UI matches durable state.
+    if (removed) {
+      state.snapshot.cards.push(removed);
+      redraw(state);
+    }
+  }
+}
+
+/**
+ * Prompt for a new card title and persist it via the worker (the returning patch re-renders).
+ *
+ * @param state - The board instance owning the card.
+ * @param cardId - The card to edit.
+ * @example
+ * ```ts
+ * await handleCardEdit(state, cardId);
+ * ```
+ */
+async function handleCardEdit(state: BoardState, cardId: string): Promise<void> {
+  const card = state.snapshot.cards.find(item => item.id === cardId);
+  const next = globalThis.prompt("Edit card title", card?.title ?? "");
+  if (next) await updateCard(state.boardId, cardId, { title: next });
+}
+
+/**
+ * Handle a delegated click: preview an attachment, or edit / delete a card.
  *
  * @param event - The delegated click event.
  * @example
@@ -147,33 +319,26 @@ async function onBoardClick(event: Event): Promise<void> {
   const target = event.target;
   if (!(host instanceof Element) || !(target instanceof Element)) return;
   const state = states.get(host);
-  const button = target.closest("[data-action]");
-  if (!state || !(button instanceof HTMLElement)) return;
+  if (!state) return;
 
-  const cardId = button.dataset.cardId;
-  if (!cardId) return;
-
-  if (button.dataset.action === "delete") {
-    const removed = state.snapshot.cards.find(card => card.id === cardId);
-    state.snapshot.cards = state.snapshot.cards.filter(card => card.id !== cardId);
-    redraw(state);
-    try {
-      await deleteCard(state.boardId, cardId);
-    } catch {
-      // The server rejected the delete — restore the card so the UI matches durable state.
-      if (removed) {
-        state.snapshot.cards.push(removed);
-        redraw(state);
-      }
-    }
+  // Attachment chip → in-app preview. Intercept the click so the SPA router never sees the
+  // /api/attachments/{id} navigation (which it would otherwise swallow into a home redirect); the
+  // chip's href stays a working no-JS download fallback.
+  const link = target.closest("[data-attachment-link]");
+  if (link instanceof HTMLElement) {
+    event.preventDefault();
+    const attachment = findAttachment(state, link.dataset.attachmentId);
+    if (attachment) openPreview(state, attachment);
     return;
   }
 
-  if (button.dataset.action === "edit") {
-    const card = state.snapshot.cards.find(item => item.id === cardId);
-    const next = globalThis.prompt("Edit card title", card?.title ?? "");
-    if (next) await updateCard(state.boardId, cardId, { title: next });
-  }
+  const button = target.closest("[data-action]");
+  if (!(button instanceof HTMLElement)) return;
+  const cardId = button.dataset.cardId;
+  if (!cardId) return;
+
+  if (button.dataset.action === "delete") await handleCardDelete(state, cardId);
+  else if (button.dataset.action === "edit") await handleCardEdit(state, cardId);
 }
 
 /**
@@ -278,7 +443,34 @@ function onBoardDragOver(event: Event): void {
 }
 
 /**
- * Handle a drop onto a column: optimistically move the card, then persist via the worker.
+ * Compute the index a drop should insert at within a column, from the pointer's vertical position:
+ * before the first card whose vertical midpoint sits below the cursor, else at the end. The dragged
+ * card is skipped so an intra-column reorder measures against the others — this is what lets a card
+ * land where it is dropped instead of always at the bottom.
+ *
+ * @param dropZone - The column's `[data-cards]` element.
+ * @param clientY - The drop pointer's viewport Y.
+ * @param draggedId - The dragged card's id (excluded from the measurement).
+ * @returns The target insertion index.
+ * @example
+ * ```ts
+ * const index = dropIndexInColumn(dropZone, event.clientY, cardId);
+ * ```
+ */
+function dropIndexInColumn(dropZone: HTMLElement, clientY: number, draggedId: string): number {
+  const cards = [...dropZone.querySelectorAll<HTMLElement>('[data-component="card"]')].filter(
+    element => element.dataset.cardId !== draggedId
+  );
+  const ahead = cards.findIndex(element => {
+    const rect = element.getBoundingClientRect();
+    return clientY < rect.top + rect.height / 2;
+  });
+  return ahead === -1 ? cards.length : ahead;
+}
+
+/**
+ * Handle a drop onto a column: optimistically place the card at the dropped index (reorder or move),
+ * then persist via the worker.
  *
  * @param event - The drop event.
  * @example
@@ -301,13 +493,8 @@ async function onBoardDrop(event: Event): Promise<void> {
   const card = cardId ? state.snapshot.cards.find(item => item.id === cardId) : undefined;
   if (!cardId || !toColumnId || !card) return;
 
-  // Exclude the dragged card itself so an intra-column drop appends correctly (it is still in
-  // toColumnId at this point); a cross-column drop counts the existing target cards.
-  const position = state.snapshot.cards.filter(
-    item => item.columnId === toColumnId && item.id !== cardId
-  ).length;
-  card.columnId = toColumnId;
-  card.position = position;
+  const position = dropIndexInColumn(dropZone, event.clientY, cardId);
+  placeCardInColumn(state.snapshot, cardId, toColumnId, position);
   redraw(state);
 
   await moveCard(state.boardId, cardId, { toColumnId, position });
@@ -326,6 +513,10 @@ function teardownBoard(state: BoardState): void {
   state.off();
   disconnect();
   clearInterval(state.keepalive);
+  // Close any open preview (drops the document keydown listener), then drop the overlay root — which
+  // also removes its anonymous click listener.
+  closePreview(state);
+  state.previewRoot.remove();
   const { host } = state;
   host.removeEventListener("click", onBoardClick);
   host.removeEventListener("submit", onBoardSubmit);
@@ -406,12 +597,20 @@ async function startBoard(
   const snapshot = await getBoard(boardId);
   connect(boardId);
 
+  // Body-level overlay root so the preview escapes the board's scroll / overflow containers.
+  // append() doesn't typecheck here: the DOM and @cloudflare/workers-types globals merge
+  // Element.append into conflicting overloads, so use appendChild.
+  const previewRoot = document.createElement("div");
+  // eslint-disable-next-line unicorn/prefer-dom-node-append -- see note above
+  document.body.appendChild(previewRoot);
+
   const state: BoardState = {
     boardId,
     host,
     snapshot,
     // Seed from the snapshot so a reload restores each card's attachments (live patches append after).
     attachmentsByCard: groupAttachmentsByCard(snapshot.attachments),
+    previewRoot,
     off: onPatch(patch => onBoardPatch(host, patch)),
     keepalive: setInterval(() => ping(), KEEPALIVE_MS)
   };
@@ -419,6 +618,12 @@ async function startBoard(
   redraw(state);
   focusDeepLink(host, focus, cardId);
 
+  // Anonymous listener (dropped with previewRoot.remove() on teardown) — looks state up by host so
+  // it survives the WeakMap, matching the host-delegation pattern used for the board itself.
+  previewRoot.addEventListener("click", event => {
+    const current = states.get(host);
+    if (current) onPreviewClick(current, event);
+  });
   host.addEventListener("click", onBoardClick);
   host.addEventListener("submit", onBoardSubmit);
   host.addEventListener("change", onBoardChange);

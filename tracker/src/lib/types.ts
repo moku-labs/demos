@@ -33,6 +33,7 @@ export type Attachment = {
 };
 /** Activity-feed kinds. */
 export type ActivityKind =
+  | "board.created"
   | "card.created"
   | "card.moved"
   | "card.updated"

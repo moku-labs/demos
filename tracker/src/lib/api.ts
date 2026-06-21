@@ -26,6 +26,21 @@ import type {
 const JSON_TYPE = "application/json";
 
 /**
+ * Build the same-origin URL the worker streams an attachment blob from. Used both as an `<img>` src
+ * for in-app previews and as the download/open-in-new-tab link target.
+ *
+ * @param attachmentId - The attachment id.
+ * @returns The `/api/attachments/{id}` blob URL.
+ * @example
+ * ```ts
+ * <img src={attachmentUrl(attachment.id)} alt={attachment.filename} />
+ * ```
+ */
+export function attachmentUrl(attachmentId: string): string {
+  return `/api/attachments/${attachmentId}`;
+}
+
+/**
  * Fetch a path on the worker API and parse its JSON response, throwing on a non-2xx status.
  *
  * @param path - The API path (same-origin), e.g. `/api/boards`.

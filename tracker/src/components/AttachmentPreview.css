@@ -1,0 +1,162 @@
+/**
+ * AttachmentPreview — a full-viewport modal lightbox for one attachment: a dimmed, blurred backdrop
+ * holding a centred dialog (header with filename + close, the image or a fallback card, a footer with
+ * size/type + open link). Rendered into a body-level overlay root by the `board` island. Scoped to
+ * `[data-component="attachment-preview"]`.
+ */
+@scope ([data-component="attachment-preview"]) {
+  :scope {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: var(--space-5);
+    background: var(--surface-overlay);
+    backdrop-filter: blur(4px);
+    animation: overlay-fade var(--duration-normal) var(--ease-out-expo) both;
+  }
+
+  figure[data-preview-dialog] {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: min(900px, 100%);
+    max-height: 100%;
+    background: var(--surface-panel);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-pop);
+    overflow: hidden;
+    animation: dialog-pop var(--duration-normal) var(--ease-out-expo) both;
+  }
+
+  header[data-preview-header] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  span[data-preview-name] {
+    flex: 1;
+    min-width: 0;
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    font-weight: 560;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  button[data-preview-close] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+    color: var(--text-muted);
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-lg);
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      color var(--duration-fast) var(--ease-out-expo),
+      border-color var(--duration-fast) var(--ease-out-expo),
+      background-color var(--duration-fast) var(--ease-out-expo);
+
+    &:hover {
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+      background: var(--surface-raised);
+    }
+  }
+
+  /* — Body: the image fills the dialog; the fallback is a centred placeholder card — */
+  div[data-preview-body] {
+    display: grid;
+    place-items: center;
+    min-height: 0;
+    padding: var(--space-4);
+    background: var(--surface-sunken);
+    overflow: auto;
+  }
+
+  img[data-preview-image] {
+    display: block;
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    background: var(--surface-card);
+    box-shadow: var(--shadow-sm);
+  }
+
+  div[data-preview-fallback] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-8) var(--space-6);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    text-align: center;
+  }
+
+  span[data-preview-glyph] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    color: var(--status-attachment);
+    background: color-mix(in srgb, var(--status-attachment) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--status-attachment) 32%, transparent);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xl);
+
+    &::before {
+      content: "📄";
+    }
+  }
+
+  /* — Footer: metadata + open/download link — */
+  footer[data-preview-footer] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  span[data-preview-meta] {
+    flex: 1;
+    min-width: 0;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  a[data-preview-open] {
+    flex-shrink: 0;
+    padding: var(--space-2) var(--space-3);
+    color: var(--text-on-accent);
+    background: var(--accent);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    font-weight: 560;
+    text-decoration: none;
+    transition: background-color var(--duration-fast) var(--ease-out-expo);
+
+    &:hover {
+      background: var(--accent-hover);
+    }
+  }
+}

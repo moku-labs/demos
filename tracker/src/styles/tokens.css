@@ -111,6 +111,7 @@
   --status-deleted: var(--red-500);
   --status-column: var(--violet-500);
   --status-attachment: var(--cyan-500);
+  --status-board: var(--indigo-400);
 
   /* Derived effects */
   --shadow-sm: 0 1px 2px light-dark(#0f131a14, #00000059);

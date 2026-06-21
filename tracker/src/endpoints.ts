@@ -16,6 +16,7 @@
 
 import type { Server } from "@moku-labs/worker";
 import { d1Plugin, durableObjectsPlugin, endpoint } from "@moku-labs/worker";
+import { isInlineSafe } from "./lib/attachments";
 import type { CardMove, CardPatch, NewBoard, NewCard, NewColumn } from "./lib/types";
 import { trackerPlugin } from "./plugins/tracker";
 
@@ -138,11 +139,12 @@ export const endpoints: Server.Endpoint[] = [
       });
     return Response.json(attachment, { status: 201 });
   }),
-  // GET /api/attachments/{id} — download an attachment blob.
+  // GET /api/attachments/{id} — stream an attachment blob (inline preview for safe images).
   //   expects : path {id} (attachment id)
-  //   returns : 200 · the R2 blob streamed with its stored content-type, forced as a download
-  //             (Content-Disposition: attachment) so uploaded HTML/SVG can never execute as stored
-  //             XSS in the worker origin   ·   404 "not found" when metadata or blob is missing
+  //   returns : 200 · the R2 blob streamed with its stored content-type. Safe raster images
+  //             (INLINE_SAFE_TYPES) get Content-Disposition: inline so the browser previews them;
+  //             everything else (incl. HTML/SVG) is forced to download so it can never execute as
+  //             stored XSS in the worker origin   ·   404 "not found" when metadata or blob is missing
   endpoint("/api/attachments/{id}").get(async ctx => {
     // R2 stores no content type (D8) — read it from D1, then stream the blob with that header.
     const meta = await ctx
@@ -155,13 +157,15 @@ export const endpoints: Server.Endpoint[] = [
     if (!meta) return new Response("not found", { status: 404 });
     const object = await ctx.require(trackerPlugin).getAttachmentBody(ctx.env, meta.key);
     if (!object) return new Response("not found", { status: 404 });
-    // Force download (never inline-render) so an uploaded HTML/SVG cannot execute as stored
-    // XSS in the worker origin; strip header-breaking characters from the filename.
+    // Preview safe raster images inline; force everything else (incl. HTML/SVG) to download so an
+    // uploaded document cannot execute as stored XSS in the worker origin. Strip header-breaking
+    // characters from the filename either way.
+    const disposition = isInlineSafe(meta.content_type) ? "inline" : "attachment";
     const safeName = meta.filename.replaceAll(/["\r\n]/g, "");
     return new Response(object.body, {
       headers: {
         "content-type": meta.content_type,
-        "content-disposition": `attachment; filename="${safeName}"`
+        "content-disposition": `${disposition}; filename="${safeName}"`
       }
     });
   }),

@@ -170,6 +170,19 @@ describe("tracker api", () => {
         expect(call[0]).toBe(env);
       }
     });
+
+    it("enqueues board.created activity to ACTIVITY_QUEUE", async () => {
+      mocks.d1.first.mockResolvedValue({ id: "b1", title: "Sprint 1", created_at: 1000 });
+      mocks.kv.get.mockResolvedValue("[]");
+      await api.createBoard(env, { title: "Sprint 1" });
+      expect(mocks.queues.use).toHaveBeenCalledWith("ACTIVITY_QUEUE");
+      expect(mocks.queues.send).toHaveBeenCalledWith(
+        env,
+        expect.objectContaining({
+          entry: expect.objectContaining({ kind: "board.created" })
+        })
+      );
+    });
   });
 
   describe("getBoard", () => {
@@ -411,6 +424,12 @@ describe("tracker api", () => {
       const after = { ...before, column_id: "col-2", position: 1 };
       // First first() = pre-update read (source of fromColumnId); second = post-update read.
       mocks.d1.first.mockResolvedValueOnce(before).mockResolvedValueOnce(after);
+      // col-2 already holds one card, so inserting at index 1 resolves to the resting index 1.
+      mocks.d1.query.mockResolvedValue({
+        results: [{ id: "existing" }],
+        success: true,
+        meta: {}
+      });
       await api.moveCard(env, "b1", "card-1", { toColumnId: "col-2", position: 1 });
       expect(mocks.emit).toHaveBeenCalledWith(
         "tracker:cardMoved",
@@ -422,6 +441,44 @@ describe("tracker api", () => {
           position: 1
         })
       );
+    });
+
+    it("renumbers the target column densely and labels a same-column move as a reorder", async () => {
+      const before = {
+        id: "card-1",
+        board_id: "b1",
+        column_id: "col-1",
+        title: "Task",
+        description: "",
+        position: 0,
+        created_at: 1000
+      };
+      mocks.d1.first.mockResolvedValue(before);
+      // col-1 already holds a, b (excluding card-1); dropping card-1 at index 1 → [a, card-1, b].
+      mocks.d1.query.mockResolvedValue({
+        results: [{ id: "a" }, { id: "b" }],
+        success: true,
+        meta: {}
+      });
+
+      await api.moveCard(env, "b1", "card-1", { toColumnId: "col-1", position: 1 });
+
+      // Every card in the column is renumbered to its new index (a=0, card-1=1, b=2). Both the
+      // sibling (position-only) and moved (column+position) UPDATEs carry (…, position, id) last.
+      const positionByCard = new Map<string, number>();
+      for (const call of mocks.d1.run.mock.calls) {
+        if (!(call[1] as string).toLowerCase().includes("update cards set")) continue;
+        positionByCard.set(call.at(-1) as string, call.at(-2) as number);
+      }
+      expect(positionByCard.get("a")).toBe(0);
+      expect(positionByCard.get("card-1")).toBe(1);
+      expect(positionByCard.get("b")).toBe(2);
+
+      const body = mocks.queues.send.mock.calls[0]?.[1] as {
+        entry: { kind: string; summary: string };
+      };
+      expect(body.entry.kind).toBe("card.moved");
+      expect(body.entry.summary).toContain("Reordered");
     });
   });
 
@@ -610,6 +667,32 @@ describe("tracker api", () => {
       expect(mocks.emit).toHaveBeenCalledWith(
         "tracker:attachmentAdded",
         expect.objectContaining({ boardId: "b1", cardId: "card-1" })
+      );
+    });
+
+    it("enqueues attachment.added activity to ACTIVITY_QUEUE", async () => {
+      const file = {
+        filename: "photo.png",
+        contentType: "image/png",
+        body: new ArrayBuffer(8)
+      };
+      const attRow = {
+        id: "att-1",
+        card_id: "card-1",
+        key: "attachments/uuid",
+        filename: "photo.png",
+        content_type: "image/png",
+        size: 8
+      };
+      mocks.d1.first.mockResolvedValue(attRow);
+      await api.addAttachment(env, "b1", "card-1", file);
+      expect(mocks.queues.use).toHaveBeenCalledWith("ACTIVITY_QUEUE");
+      expect(mocks.queues.send).toHaveBeenCalledWith(
+        env,
+        expect.objectContaining({
+          boardId: "b1",
+          entry: expect.objectContaining({ kind: "attachment.added" })
+        })
       );
     });
   });
