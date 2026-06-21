@@ -23,7 +23,7 @@ fan-out via the Board DO). Env-first API — every method takes the per-request 
 ## API
 
 Env-first methods: `listBoards`, `createBoard`, `getBoard`, `createColumn`, `createCard`,
-`moveCard`, `updateCard`, `deleteCard`, `addAttachment`, `getAttachmentBody`, `recordActivity`,
+`moveCard`, `updateCard`, `deleteCard`, `addAttachment`, `getAttachmentForDownload`, `recordActivity`,
 `listActivity`. See `types.ts` for signatures.
 
 ## Events

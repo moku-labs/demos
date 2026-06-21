@@ -611,18 +611,34 @@ export function createTrackerApi(ctx: TrackerContext): Api {
     },
 
     /**
-     * Read an attachment blob from R2 for the download endpoint.
+     * Resolve an attachment id to its R2 blob plus the metadata the download endpoint serves it with.
+     *
+     * Reads the metadata from D1 (R2 stores no content type — D8), then streams the blob from R2, so
+     * the endpoint never touches D1 or the internal R2 key. Returns null when the metadata row or the
+     * blob is missing — the endpoint maps either to a 404.
      *
      * @param env - Per-request Cloudflare bindings.
-     * @param key - The R2 object key.
-     * @returns The R2 object body, or null when absent.
+     * @param id - The attachment id.
+     * @returns The blob stream + filename + contentType, or null when the metadata or blob is absent.
      * @example
      * ```ts
-     * const body = await api.getAttachmentBody(env, "attachments/uuid");
+     * const file = await api.getAttachmentForDownload(env, "att-1");
      * ```
      */
-    async getAttachmentBody(env, key) {
-      return storage.get(env, key);
+    async getAttachmentForDownload(env, id) {
+      const meta = await d1.first<Pick<AttachmentRow, "key" | "content_type" | "filename">>(
+        env,
+        "SELECT key, content_type, filename FROM attachments WHERE id = ?",
+        id
+      );
+      // eslint-disable-next-line unicorn/no-null -- Api type declares AttachmentDownload | null
+      if (!meta) return null;
+
+      const object = await storage.get(env, meta.key);
+      // eslint-disable-next-line unicorn/no-null -- R2 get() returns null on a miss; surfaced as 404
+      if (!object) return null;
+
+      return { body: object.body, filename: meta.filename, contentType: meta.content_type };
     },
 
     /**

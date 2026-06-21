@@ -15,7 +15,7 @@
  */
 
 import type { Server } from "@moku-labs/worker";
-import { d1Plugin, durableObjectsPlugin, endpoint } from "@moku-labs/worker";
+import { durableObjectsPlugin, endpoint } from "@moku-labs/worker";
 import { isInlineSafe } from "./lib/attachments";
 import type { CardMove, CardPatch, NewBoard, NewCard, NewColumn } from "./lib/types";
 import { trackerPlugin } from "./plugins/tracker";
@@ -146,25 +146,18 @@ export const endpoints: Server.Endpoint[] = [
   //             everything else (incl. HTML/SVG) is forced to download so it can never execute as
   //             stored XSS in the worker origin   ·   404 "not found" when metadata or blob is missing
   endpoint("/api/attachments/{id}").get(async ctx => {
-    // R2 stores no content type (D8) — read it from D1, then stream the blob with that header.
-    const meta = await ctx
-      .require(d1Plugin)
-      .first<{ key: string; content_type: string; filename: string }>(
-        ctx.env,
-        "SELECT key, content_type, filename FROM attachments WHERE id = ?",
-        ctx.params.id
-      );
-    if (!meta) return new Response("not found", { status: 404 });
-    const object = await ctx.require(trackerPlugin).getAttachmentBody(ctx.env, meta.key);
-    if (!object) return new Response("not found", { status: 404 });
+    const file = await ctx.require(trackerPlugin).getAttachmentForDownload(ctx.env, ctx.params.id);
+    if (!file) return new Response("not found", { status: 404 });
+
     // Preview safe raster images inline; force everything else (incl. HTML/SVG) to download so an
     // uploaded document cannot execute as stored XSS in the worker origin. Strip header-breaking
     // characters from the filename either way.
-    const disposition = isInlineSafe(meta.content_type) ? "inline" : "attachment";
-    const safeName = meta.filename.replaceAll(/["\r\n]/g, "");
-    return new Response(object.body, {
+    const disposition = isInlineSafe(file.contentType) ? "inline" : "attachment";
+    const safeName = file.filename.replaceAll(/["\r\n]/g, "");
+
+    return new Response(file.body, {
       headers: {
-        "content-type": meta.content_type,
+        "content-type": file.contentType,
         "content-disposition": `${disposition}; filename="${safeName}"`
       }
     });

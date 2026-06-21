@@ -697,25 +697,41 @@ describe("tracker api", () => {
     });
   });
 
-  describe("getAttachmentBody", () => {
-    it("calls storage.get with env and key", async () => {
-      const fakeBody = {} as R2ObjectBody;
-      mocks.storage.get.mockResolvedValue(fakeBody);
-      const result = await api.getAttachmentBody(env, "attachments/uuid");
+  describe("getAttachmentForDownload", () => {
+    it("resolves the id to its blob body + filename + contentType", async () => {
+      mocks.d1.first.mockResolvedValue({
+        key: "attachments/uuid",
+        content_type: "image/png",
+        filename: "photo.png"
+      });
+      const stream = {} as ReadableStream;
+      mocks.storage.get.mockResolvedValue({ body: stream } as unknown as R2ObjectBody);
+
+      const result = await api.getAttachmentForDownload(env, "att-1");
+
+      // R2 key stays internal: looked up from D1, never required from the caller.
       expect(mocks.storage.get).toHaveBeenCalledWith(env, "attachments/uuid");
-      expect(result).toBe(fakeBody);
+      expect(result?.body).toBe(stream);
+      expect(result?.filename).toBe("photo.png");
+      expect(result?.contentType).toBe("image/png");
     });
 
-    it("returns null when key absent", async () => {
-      mocks.storage.get.mockResolvedValue(null);
-      const result = await api.getAttachmentBody(env, "missing/key");
+    it("returns null and skips R2 when the metadata row is absent", async () => {
+      mocks.d1.first.mockResolvedValue(null);
+      const result = await api.getAttachmentForDownload(env, "missing");
       expect(result).toBeNull();
+      expect(mocks.storage.get).not.toHaveBeenCalled();
     });
 
-    it("passes env as first arg", async () => {
+    it("returns null when metadata exists but the R2 blob is gone", async () => {
+      mocks.d1.first.mockResolvedValue({
+        key: "attachments/uuid",
+        content_type: "image/png",
+        filename: "photo.png"
+      });
       mocks.storage.get.mockResolvedValue(null);
-      await api.getAttachmentBody(env, "k");
-      expect(mocks.storage.get.mock.calls[0]?.[0]).toBe(env);
+      const result = await api.getAttachmentForDownload(env, "att-1");
+      expect(result).toBeNull();
     });
   });
 
