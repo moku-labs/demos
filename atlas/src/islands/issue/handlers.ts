@@ -11,6 +11,7 @@ import {
   addSubIssue,
   deleteAttachment,
   deleteIssue,
+  moveIssue,
   patchIssue,
   removeSubIssue,
   toggleSubIssue
@@ -189,36 +190,29 @@ async function saveDescription(ctx: IssueContext): Promise<void> {
 // ─── article: attachments ────────────────────────────────────────────────────
 
 /**
- * Open a transient file picker and upload the chosen file to the open issue. The component ships only
- * the "Attach file" button (no `<input type=file>`), so a detached input is created on demand — the
- * same programmatic-element pattern `lib/nav` uses for navigation.
+ * Upload the file chosen in the "Attach file" input (a real `<input type=file>` opened natively by its
+ * wrapping label — no JS `.click()`, which is unreliable on a hidden/detached input). Clears the input
+ * after so re-picking the same file fires `change` again.
  *
  * @param ctx - The issue component context.
+ * @param _event - The delegated change event (unused).
+ * @param field - The matched `[data-attach-input]` file input.
+ * @returns A promise that resolves once the upload persists (or no file was chosen).
  * @example
  * ```ts
- * pickAndUpload(ctx);
+ * events: { "change [data-attach-input]": onAttachInput };
  * ```
  */
-function pickAndUpload(ctx: IssueContext): void {
-  const detail = ctx.state.detail;
-  if (!detail) return;
-
-  const input = document.createElement("input");
-  input.type = "file";
-  // The input MUST be in the document for a synthetic .click() to reliably open the native picker
-  // (a detached input is silently ignored in several browsers) — hide it, then remove it on change.
-  input.style.display = "none";
-
-  input.addEventListener("change", () => {
-    const file = input.files?.[0];
-    if (file) void uploadFile(ctx, file);
-    input.remove();
-  });
-  // appendChild (not append): @cloudflare/workers-types merges Element.append into a conflicting
-  // overload set in this project (see nav.ts), so the DOM helper is used explicitly.
-  // eslint-disable-next-line unicorn/prefer-dom-node-append -- workers-types overload conflict, see above
-  document.body.appendChild(input);
-  input.click();
+export async function onAttachInput(
+  ctx: IssueContext,
+  _event: Event,
+  field: Element
+): Promise<void> {
+  const input = field as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+  await uploadFile(ctx, file);
+  input.value = "";
 }
 
 /**
@@ -502,7 +496,10 @@ function chooseStatus(ctx: IssueContext, anchor: HTMLElement): void {
 }
 
 /**
- * Persist a chosen status (no-op when unchanged) and confirm with a toast.
+ * Persist a chosen status (no-op when unchanged) and confirm with a toast. Changing status MOVES the
+ * card to the column whose title matches that status (a kanban status IS its column), so the board
+ * reflects the change — `moveIssue` updates column + status + position and broadcasts `issue.moved`.
+ * Falls back to a plain status patch when the board has no column for that status.
  *
  * @param ctx - The issue component context.
  * @param status - The chosen status.
@@ -516,7 +513,10 @@ async function applyStatus(ctx: IssueContext, status: IssueStatus): Promise<void
   const detail = ctx.state.detail;
   if (!detail || status === detail.issue.status) return;
 
-  await patchIssue(detail.issue.id, { status });
+  const targetColumn = ctx.state.columns.find(column => column.title === STATUS_TITLES[status]);
+  await (targetColumn && targetColumn.id !== detail.issue.columnId
+    ? moveIssue(detail.issue.id, { toColumnId: targetColumn.id, position: 0, status })
+    : patchIssue(detail.issue.id, { status }));
   showToast(`Status → ${STATUS_TITLES[status]}`);
 }
 
@@ -960,9 +960,9 @@ function openIssueCustomize(ctx: IssueContext): void {
 
 /**
  * The single delegated `[data-action]` dispatcher — every action button in the panel (the header ×
- * and ⋯, the scrim, the description Preview/Edit toggle, "Attach file", the rail icon "Customize",
- * and each sub-issue's ⋯) routes here by its `data-action` token. Sub-issue menus are told apart by
- * their `data-sub-id`.
+ * and ⋯, the scrim, the description Preview/Edit toggle, the rail icon "Customize", and each
+ * sub-issue's ⋯) routes here by its `data-action` token. Sub-issue menus are told apart by their
+ * `data-sub-id`. ("Attach file" is a native `<label>` + file input, handled by `onAttachInput`.)
  *
  * @param ctx - The issue component context.
  * @param event - The delegated click event.
@@ -990,10 +990,6 @@ export function onAction(ctx: IssueContext, event: Event, element: Element): voi
     }
     case "menu": {
       openHeaderMenu(ctx, element);
-      return;
-    }
-    case "attach": {
-      pickAndUpload(ctx);
       return;
     }
     case "customize": {

@@ -83,7 +83,8 @@
     font-size: var(--text-base);
     font-weight: 520;
     line-height: var(--leading-snug);
-    color: var(--text-strong);
+    /* A customized issue colour tints the card title too (#6); falls back to strong ink. */
+    color: var(--element-color, var(--text-strong));
   }
 
   [data-card-head] [data-priority] {

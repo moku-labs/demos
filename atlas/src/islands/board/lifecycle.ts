@@ -21,6 +21,22 @@ import { type BoardContext, EMPTY_SNAPSHOT, KEEPALIVE_MS } from "./types";
 const snapshotCache = new Map<string, BoardSnapshot>();
 
 /**
+ * The cached snapshot for a board id, if one was loaded earlier this session — lets {@link initState}
+ * paint the real board on the very first render after a re-mount (opening an issue re-mounts the board),
+ * eliminating the empty-board flash behind the issue panel.
+ *
+ * @param boardId - The board whose cached snapshot to read.
+ * @returns The cached {@link BoardSnapshot}, or undefined when none is cached.
+ * @example
+ * ```ts
+ * snapshot: cachedSnapshot(boardId) ?? EMPTY_SNAPSHOT;
+ * ```
+ */
+export function cachedSnapshot(boardId: string): BoardSnapshot | undefined {
+  return boardId ? snapshotCache.get(boardId) : undefined;
+}
+
+/**
  * Reset the kanban scroller to its start after a paint. On every viewport that triggers
  * `overflow-x:auto` (≤1024px) the framework reconcile of `[data-region=board]` leaves the horizontal
  * scroller anchored at its end, so the board opens scrolled past the first column (Backlog) into a void.

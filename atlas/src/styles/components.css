@@ -47,5 +47,6 @@
 @import "../components/CustomizePanel.css";
 @import "../components/ContextMenu.css";
 @import "../components/Chooser.css";
+@import "../components/MilestonePicker.css";
 @import "../components/Modal.css";
 @import "../components/Toast.css";

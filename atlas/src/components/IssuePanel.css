@@ -359,6 +359,19 @@
     color: var(--accent-deep);
     background: var(--accent-tint);
   }
+  /* The real file input is visually hidden (NOT display:none — that can block the dialog); the wrapping
+     label opens it natively on click. */
+  [data-attach-input] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 
   /* ── Sub-issues ── */
   [data-sub-head] {

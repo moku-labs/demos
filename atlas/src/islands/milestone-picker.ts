@@ -14,7 +14,7 @@ import { Fragment, h } from "preact";
 import { MilestonePicker } from "../components/MilestonePicker";
 import { deleteMilestone, listMilestones, renameMilestone } from "../lib/api";
 import type { MilestoneRequest } from "../lib/menu";
-import { onMilestone, openModal, positionPopover } from "../lib/menu";
+import { onMilestone, openModal } from "../lib/menu";
 
 /** Per-instance state for the milestone-picker island — the open request + the fetched catalog. */
 type MilestoneState = {
@@ -91,9 +91,6 @@ async function refreshCatalog(ctx: MilestoneContext): Promise<void> {
   if (!request) return;
   const milestones = await listMilestones(request.boardId);
   ctx.set({ milestones });
-  ctx.flush();
-  const card = ctx.el.querySelector<HTMLElement>(CARD_SELECTOR);
-  if (card) positionPopover(card, request.anchor);
 }
 
 /**
@@ -116,10 +113,6 @@ async function openPicker(ctx: MilestoneContext, request: MilestoneRequest): Pro
   // Stale guard: a newer open may have replaced this request while the catalog loaded.
   if (ctx.state.request !== request) return;
   ctx.set({ milestones });
-
-  ctx.flush();
-  const card = ctx.el.querySelector<HTMLElement>(CARD_SELECTOR);
-  if (card) positionPopover(card, request.anchor);
 }
 
 /**

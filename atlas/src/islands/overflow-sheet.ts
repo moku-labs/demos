@@ -20,7 +20,7 @@
 
 import type { Spa } from "@moku-labs/web/browser";
 import { createIsland } from "@moku-labs/web/browser";
-import { boardIdFromUrl, navigate } from "../lib/nav";
+import { boardIdFromUrl, currentView, navigate } from "../lib/nav";
 import { urls } from "../routes";
 
 /** Per-instance state for the overflow-sheet island — whether the sheet is currently open. */
@@ -85,6 +85,23 @@ function reflectTheme(ctx: OverflowContext, theme: Theme): void {
 }
 
 /**
+ * Mark the active Board / List view button so the sheet shows the current selection (#11) — derived
+ * from the URL ({@link currentView}).
+ *
+ * @param ctx - The overflow-sheet component context.
+ * @example
+ * ```ts
+ * reflectView(ctx);
+ * ```
+ */
+function reflectView(ctx: OverflowContext): void {
+  const view = currentView();
+  for (const button of ctx.el.querySelectorAll<HTMLElement>("[data-sheet-view]")) {
+    button.toggleAttribute("data-active", button.dataset.view === view);
+  }
+}
+
+/**
  * Open the sheet — mark state open, unhide the host, and sync the theme glyph to the live document
  * theme. A no-op when already open. (The sheet's own full-bleed `[data-scrim]` covers the page; the
  * sheet is short, so no document scroll-lock is needed.)
@@ -100,6 +117,7 @@ function open(ctx: OverflowContext): void {
   ctx.set({ open: true });
   ctx.el.toggleAttribute("hidden", false);
   reflectTheme(ctx, resolveTheme());
+  reflectView(ctx);
 }
 
 /**

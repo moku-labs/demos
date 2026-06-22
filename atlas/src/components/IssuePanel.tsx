@@ -219,10 +219,13 @@ export function IssuePanel({
                 {attachments.map(attachment => (
                   <AttachmentThumb key={attachment.id} attachment={attachment} />
                 ))}
-                <button type="button" data-attach-add data-action="attach">
+                {/* A native <label> + hidden file input: clicking the label opens the OS picker with
+                    no JS .click() (the reliable, accessible pattern); the change handler uploads. */}
+                <label data-attach-add>
                   <Icon name="attach" />
                   <span>Attach file</span>
-                </button>
+                  <input type="file" data-attach-input aria-label="Attach a file" />
+                </label>
               </div>
             </section>
 

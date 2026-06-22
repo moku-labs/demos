@@ -39,10 +39,11 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: var(--tracking-widest);
-    color: var(--text-muted);
+    /* A customized column colour tints the title text too (#6); falls back to muted ink. */
+    color: var(--element-color, var(--text-muted));
   }
   :scope[data-status="in_progress"] [data-column-title] {
-    color: var(--accent);
+    color: var(--element-color, var(--accent));
   }
   /* Customized column colour tints its icon; a colour-only customization shows a small dot. */
   [data-column-icon] {

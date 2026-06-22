@@ -229,6 +229,13 @@
     border-color: var(--accent);
     color: var(--accent-deep);
   }
+  /* The current view reads as selected (#11) — accent fill + border, lifted off the sunken track. */
+  [data-sheet-views] button[data-active] {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+    color: var(--accent-deep);
+    font-weight: 600;
+  }
 
   /* Done — the full-width dismiss, set apart above by a hairline rule. */
   [data-sheet-done] {

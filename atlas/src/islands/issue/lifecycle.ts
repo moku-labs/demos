@@ -109,6 +109,7 @@ async function openIssue(ctx: IssueContext, boardId: string, issueId: string): P
     detail,
     board: snapshot.board,
     column,
+    columns: snapshot.columns,
     customization
   });
   setHostOpen(ctx.el, true);

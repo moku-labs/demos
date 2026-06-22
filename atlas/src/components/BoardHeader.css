@@ -10,7 +10,9 @@
     align-items: flex-end;
     justify-content: space-between;
     gap: var(--space-6);
-    padding: var(--space-7) var(--pad-page) var(--space-5);
+    /* No vertical padding (#3) — the headline's own rhythm provides the spacing; keep the page gutter
+       so the title stays aligned with the board below. */
+    padding: 0 var(--pad-page);
     border-bottom: var(--rule-width) solid var(--rule);
   }
 
@@ -66,7 +68,7 @@
       flex-direction: column;
       align-items: flex-start;
       gap: var(--space-4);
-      padding: var(--space-5) var(--pad-page) var(--space-4);
+      padding: 0 var(--pad-page);
     }
     [data-board-standfirst] {
       display: none;

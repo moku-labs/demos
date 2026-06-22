@@ -28,6 +28,8 @@ export type IssueState = {
   board: Board | undefined;
   /** The column the open issue sits in (the breadcrumb's middle crumb), or undefined when closed. */
   column: Column | undefined;
+  /** All columns on the open issue's board — lets a status change move the card to the matching column. */
+  columns: Column[];
   /** The issue element's colour/icon customization (drives the rail's icon row), or undefined. */
   customization: Customization | undefined;
   /** Whether the description is in edit (textarea) mode vs. the default rendered preview. */
@@ -46,6 +48,7 @@ export const CLOSED_STATE: IssueState = {
   detail: undefined,
   board: undefined,
   column: undefined,
+  columns: [],
   customization: undefined,
   editingDescription: false,
   editingTitle: false

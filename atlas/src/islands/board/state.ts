@@ -3,12 +3,15 @@
  * route. The real snapshot + view are loaded and synced on mount (see lifecycle.ts).
  */
 import { currentView } from "../../lib/nav";
+import { cachedSnapshot } from "./lifecycle";
 import { type BoardContext, type BoardState, EMPTY_SNAPSHOT } from "./types";
 
 /**
- * Build the initial board state (empty snapshot until the real one loads). The board id comes from the
- * route param when present (`/board/{id}`), else stays empty until the home route resolves its active
- * board on mount. The view is read straight from the URL so the first render is already correct.
+ * Build the initial board state. The board id comes from the route param when present (`/board/{id}`),
+ * else stays empty until the home route resolves its active board on mount. The first render reuses the
+ * board's cached snapshot when one exists (opening an issue re-mounts this island), so the board never
+ * flashes empty behind the issue panel; otherwise it starts empty until the real snapshot loads. The
+ * view is read straight from the URL so the first render is already correct.
  *
  * @param ctx - The board island context (its `params.id` is the board id, when on a board route).
  * @returns The initial board state.
@@ -18,9 +21,10 @@ import { type BoardContext, type BoardState, EMPTY_SNAPSHOT } from "./types";
  * ```
  */
 export function initState(ctx: BoardContext): BoardState {
+  const boardId = ctx.params.id ?? "";
   return {
-    boardId: ctx.params.id ?? "",
-    snapshot: EMPTY_SNAPSHOT,
+    boardId,
+    snapshot: cachedSnapshot(boardId) ?? EMPTY_SNAPSHOT,
     view: ctx.meta.view === "list" ? "list" : currentView(),
     emptyDepartment: false
   };

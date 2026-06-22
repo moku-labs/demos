@@ -8,6 +8,7 @@
 import type { Spa } from "@moku-labs/web/browser";
 import {
   onAction,
+  onAttachInput,
   onAttachmentClick,
   onRailEdit,
   onSubAdd,
@@ -18,10 +19,12 @@ import type { IssueState } from "./types";
 
 /** The issue island's declarative delegated event map (one delegated listener per type on the host). */
 export const issueEvents: Spa.IslandEvents<IssueState> = {
-  // Header / scrim / attach / customize / sub-issue ⋯ — one [data-action] dispatcher.
+  // Header / scrim / customize / sub-issue ⋯ — one [data-action] dispatcher.
   "click [data-action]": onAction,
   // Double-clicking the article title opens the inline title editor.
   "dblclick [data-issue-title]": startTitleEdit,
+  // The hidden file input (opened by the "Attach file" label) uploads the chosen file on change.
+  "change [data-attach-input]": onAttachInput,
   // An attachment chip: plain click opens the blob, Alt-click deletes it.
   "click [data-attachment]": onAttachmentClick,
   // A quiet rail field click opens its property editor (status/priority/labels/…/milestone).

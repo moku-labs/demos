@@ -645,3 +645,43 @@ test.describe("Theme toggle", () => {
     await expect(page.locator("[data-masthead]")).toBeVisible();
   });
 });
+
+test.describe("Round-2 regressions — issue editor", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.clock.setFixedTime(FIXED_TIME);
+    await signIn(page);
+  });
+
+  test("#5: 'Attach file' opens a native file picker", async ({ page }) => {
+    await page.goto("/board/board-platform/issue/issue-ws-reconnect");
+    await page.waitForLoadState("load");
+    await expect(page.locator("[data-attach-add]")).toBeVisible();
+    // The label-wrapped file input must open the OS picker on click (the prior detached-input + JS
+    // .click() never did). A filechooser event is the durable proof the dialog opened.
+    const [chooser] = await Promise.all([
+      page.waitForEvent("filechooser"),
+      page.locator("[data-attach-add]").click()
+    ]);
+    expect(chooser).toBeTruthy();
+  });
+
+  test("#10: changing an issue's status moves its card to that column", async ({ page }) => {
+    // Self-contained: create a fresh Backlog issue so this never mutates seed issues other tests read.
+    const created = await page.request.post(
+      "/api/boards/board-platform/columns/col-backlog/issues",
+      { data: { title: "Status-move probe" } }
+    );
+    expect(created.ok()).toBeTruthy();
+    const { id } = (await created.json()) as { id: string };
+
+    await page.goto(`/board/board-platform/issue/${id}`);
+    await page.waitForLoadState("load");
+    await page.locator('[data-rail-field]:has([data-rail-label]:text-is("Status"))').click();
+    await page.locator('[data-chooser-option][data-value="in_review"]').click();
+
+    await page.goto("/board/board-platform");
+    await page.waitForLoadState("load");
+    const reviewColumn = page.locator('[data-column][aria-label="In Review"]');
+    await expect(reviewColumn.locator(`[data-card-id="${id}"]`)).toBeVisible();
+  });
+});

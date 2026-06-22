@@ -5,18 +5,38 @@
  * foot. Mirrors the Chooser's shell + scrim so the interaction language stays identical.
  */
 @scope ([data-milestone-picker]) {
+  /* A centered modal layer: a dimmed scrim fills the (already-fixed) host and the card floats centred
+     above it — robust positioning that never depends on anchor math (the old anchored popover landed
+     off-screen). On phones it drops to a bottom sheet. */
+  :scope {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6);
+  }
+
+  [data-scrim] {
+    position: fixed;
+    inset: 0;
+    background: var(--scrim);
+    animation: atlas-fade var(--dur-normal) var(--ease-out);
+  }
+
   [data-ms-card] {
+    position: relative;
     display: flex;
     flex-direction: column;
-    width: max-content;
-    min-width: 15rem;
-    max-width: min(22rem, calc(100vw - 2 * var(--space-2)));
+    width: min(22rem, 92vw);
+    max-height: min(80vh, 32rem);
+    overflow-y: auto;
     padding: var(--space-1);
     background: var(--surface-card);
     border: var(--rule-width) solid var(--rule);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-pop);
-    z-index: var(--z-modal);
+    z-index: var(--z-popover);
     animation: atlas-pop var(--dur-fast) var(--ease-out);
   }
 
@@ -184,6 +204,11 @@
   }
 
   @media (max-width: 760px) {
+    :scope {
+      align-items: stretch;
+      justify-content: stretch;
+      padding: 0;
+    }
     [data-ms-card] {
       position: fixed;
       inset-block: auto 0;
@@ -191,6 +216,7 @@
       width: auto;
       min-width: 0;
       max-width: none;
+      max-height: 80vh;
       padding: var(--space-2) var(--space-2) var(--space-4);
       border-inline: none;
       border-bottom: none;
@@ -214,29 +240,6 @@
     [data-ms-option] {
       padding: 0.85rem 0.75rem;
       font-size: var(--text-base);
-    }
-  }
-}
-
-/**
- * The dimming scrim — a sibling of `[data-milestone-picker]`'s card inside the overlay host, scoped to
- * the host's `[data-overlay="milestone"]`. Inert on desktop; a full-bleed dimming layer under the phone
- * bottom sheet so an outside tap lands on a visibly dimmed page and dismisses.
- */
-@scope ([data-overlay="milestone"]) {
-  [data-scrim] {
-    display: none;
-  }
-
-  @media (max-width: 760px) {
-    [data-scrim] {
-      display: block;
-      position: fixed;
-      inset: 0;
-      background: var(--scrim);
-      z-index: calc(var(--z-sheet) - 1);
-      animation: atlas-fade var(--dur-normal) var(--ease-out);
-      pointer-events: auto;
     }
   }
 }

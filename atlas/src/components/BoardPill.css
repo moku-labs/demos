@@ -61,6 +61,10 @@
     border-radius: 50%;
     background: var(--element-color, var(--text-muted));
   }
+  /* A customized board colour tints its pill title too (#6); inherits the link colour otherwise. */
+  [data-board-title] {
+    color: var(--element-color, inherit);
+  }
 
   button[data-action="menu"] {
     display: inline-flex;
