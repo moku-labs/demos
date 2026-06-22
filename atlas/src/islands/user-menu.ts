@@ -61,7 +61,8 @@ function render(state: Readonly<UserState>): Spa.RenderResult {
   const { person } = state;
   if (!person) return h(Fragment, {});
 
-  return h(Avatar, { person, size: "sm" });
+  // `md` (1.6rem) fills the 2.1rem masthead button far better than the old `sm` (1.35rem) (#5).
+  return h(Avatar, { person, size: "md" });
 }
 
 /**

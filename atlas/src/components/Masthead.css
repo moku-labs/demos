@@ -71,6 +71,9 @@
     width: 2.1rem;
     height: 2.1rem;
     padding: 0;
+    /* Center the avatar in the round button — the base `button` only sets align-items, so without this
+       the (now md) avatar sat against the leading edge instead of centered (#5). */
+    justify-content: center;
     border-radius: var(--radius-pill);
     background: var(--surface-sunken);
     border-color: var(--rule);
