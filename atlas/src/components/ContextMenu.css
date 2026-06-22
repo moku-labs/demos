@@ -18,7 +18,7 @@
     padding: var(--space-1);
     background: var(--surface-card);
     border: var(--rule-width) solid var(--rule);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-pop);
     z-index: var(--z-popover);
     animation: atlas-pop var(--dur-fast) var(--ease-out);
@@ -34,7 +34,7 @@
     align-items: center;
     gap: var(--space-3);
     width: 100%;
-    padding: 0.6rem 0.8rem;
+    padding: 0.55rem 0.9rem;
     border-radius: var(--radius-sm);
     font-size: var(--text-sm);
     color: var(--text-body);
@@ -56,8 +56,23 @@
     color: var(--text-strong);
   }
 
+  /*
+   * The destructive item reads vermilion and is set apart with a hairline rule above it (mirroring the
+   * user variant's [data-menu-rule]). The rule is a ::before that bleeds past the card's --space-1
+   * padding so it spans the full card width, with a small gap so Delete reads as its own quiet block.
+   */
   [data-menu-item][data-danger] {
+    position: relative;
+    margin-block-start: calc(var(--space-1) + var(--rule-width));
     color: var(--accent);
+  }
+  [data-menu-item][data-danger]::before {
+    content: "";
+    position: absolute;
+    inset-inline: calc(-1 * var(--space-1));
+    inset-block-start: calc(-0.5 * var(--space-1) - var(--rule-width));
+    height: var(--rule-width);
+    background: var(--rule);
   }
   [data-menu-item][data-danger] [data-icon] {
     color: var(--accent);

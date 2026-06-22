@@ -1,12 +1,13 @@
 /**
  * @file ActivityPanel (overlay C1) — *"The Record"*, a right-hand read-only drawer of the durable
- * activity history (design context §6 C1). Entries are grouped by day; each row carries the actor's
- * {@link Avatar}, a coloured/iconed event type (created / moved / updated / attached / deleted), the
- * target text, and a relative time in mono. Its own filters narrow by event type and by person. The
- * Record is non-destructive — there is no edit/delete affordance anywhere in it. On phones the drawer
- * becomes a bottom sheet. Pure + SSR shared markup: the Phase-C activity island re-renders it with
- * live data via `h(ActivityPanel, props)`; behaviour (open/close, filters) is wired off the
- * `data-action`/`data-scrim` hooks.
+ * activity history (design context §6 C1). Entries are grouped by day under sticky day headings and
+ * laid out as an editorial **timeline**: a left rail carries a coloured, iconed event badge (created /
+ * moved / updated / attached / deleted) joined by a vertical connector, the target reads in
+ * italic-serif, and the actor {@link Avatar} plus a mono relative time sit on the meta line. Its own
+ * filters narrow by event type and by person. The Record is non-destructive — there is no edit/delete
+ * affordance anywhere in it. On phones the drawer goes full-screen. Pure + SSR shared markup: the
+ * Phase-C activity island re-renders it with live data via `h(ActivityPanel, props)`; behaviour
+ * (open/close, filters) is wired off the `data-action`/`data-scrim` hooks.
  */
 
 import { PEOPLE } from "../lib/people";
@@ -173,35 +174,45 @@ export function ActivityPanel({ activities, people = PEOPLE }: ActivityPanelProp
         <div data-record-feed>
           {groups.map(group => (
             <section key={group.day} data-day-group>
-              <h3 data-day-heading>{group.day}</h3>
+              <h3 data-day-heading>
+                {group.day}
+                <span data-day-count>{group.entries.length}</span>
+              </h3>
               <ol data-day-entries>
                 {group.entries.map(entry => (
                   <li key={entry.id} data-entry data-kind={entry.kind}>
-                    {entry.actorName ? (
-                      <Avatar
-                        person={{
-                          id: entry.actorId ?? "ak",
-                          name: entry.actorName,
-                          initials: initialsOf(entry.actorName)
-                        }}
-                        size="sm"
-                      />
-                    ) : (
-                      <span data-entry-system aria-hidden="true">
-                        <Icon name="activity" />
+                    <div data-entry-rail aria-hidden="true">
+                      <span data-entry-badge data-kind={entry.kind}>
+                        <Icon name={KIND_ICON[entry.kind]} />
                       </span>
-                    )}
+                      <span data-entry-connector />
+                    </div>
                     <div data-entry-body>
                       <p data-entry-line>
                         <span data-entry-kind data-kind={entry.kind}>
-                          <Icon name={KIND_ICON[entry.kind]} />
                           {KIND_LABEL[entry.kind]}
                         </span>
                         <span data-entry-target>{entry.summary}</span>
                       </p>
-                      <time data-entry-time dateTime={new Date(entry.at).toISOString()}>
-                        {clockLabel(entry.at)}
-                      </time>
+                      <div data-entry-meta>
+                        {entry.actorName ? (
+                          <Avatar
+                            person={{
+                              id: entry.actorId ?? "ak",
+                              name: entry.actorName,
+                              initials: initialsOf(entry.actorName)
+                            }}
+                            size="sm"
+                          />
+                        ) : (
+                          <span data-entry-system aria-hidden="true">
+                            <Icon name="activity" />
+                          </span>
+                        )}
+                        <time data-entry-time dateTime={new Date(entry.at).toISOString()}>
+                          {clockLabel(entry.at)}
+                        </time>
+                      </div>
                     </div>
                   </li>
                 ))}

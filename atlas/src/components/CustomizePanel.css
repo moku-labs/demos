@@ -29,11 +29,12 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
-    width: min(21rem, 92vw);
+    gap: var(--space-5);
+    width: min(24rem, 92vw);
     max-height: min(80vh, 40rem);
     overflow-y: auto;
-    padding: var(--space-4);
+    overflow-x: clip;
+    padding: var(--space-5);
     background: var(--surface-card);
     border: var(--rule-width) solid var(--rule);
     border-radius: var(--radius-lg);
@@ -56,7 +57,7 @@
   }
   [data-customize-title] {
     font-family: var(--font-display);
-    font-size: var(--text-md);
+    font-size: var(--text-lg);
     font-weight: 500;
     letter-spacing: var(--tracking-tight);
     color: var(--text-strong);
@@ -66,6 +67,10 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
+  }
+  [data-customize-section] + [data-customize-section] {
+    border-block-start: var(--rule-width) solid var(--rule);
+    padding-block-start: var(--space-4);
   }
   [data-customize-heading],
   [data-customize-heading-row] [data-customize-heading] {
@@ -99,9 +104,10 @@
   }
 
   [data-swatch-grid] {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: var(--space-3);
+    justify-items: center;
   }
   [data-swatch] {
     display: inline-flex;
@@ -131,13 +137,14 @@
 
   [data-icon-grid] {
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: var(--space-3);
   }
   [data-icon-cell] {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 0;
     aspect-ratio: 1;
     border: var(--rule-width) solid var(--rule);
     border-radius: var(--radius-md);
@@ -178,17 +185,14 @@
       border-bottom: none;
       border-radius: var(--radius-lg) var(--radius-lg) 0 0;
       box-shadow: var(--shadow-sheet-up);
-      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+      padding-bottom: max(var(--space-5), env(safe-area-inset-bottom));
       animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
-    }
-    [data-icon-grid] {
-      grid-template-columns: repeat(6, 1fr);
     }
   }
 
   @media (max-width: 480px) {
     [data-icon-grid] {
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(5, minmax(0, 1fr));
     }
   }
 }

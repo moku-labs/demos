@@ -108,7 +108,7 @@ export function BoardView({ snapshot }: BoardViewProps) {
   const grouped = issuesByColumn(snapshot.issues);
   const columns = [...snapshot.columns].sort((a, b) => a.position - b.position);
   return (
-    <div data-board>
+    <div data-board style={{ "--column-count": columns.length }}>
       <DropIndicator hidden />
       {columns.map(column => {
         const custom = columnCustomization(snapshot, column.id);

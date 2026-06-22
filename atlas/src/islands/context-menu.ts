@@ -12,7 +12,7 @@ import { createIsland } from "@moku-labs/web/browser";
 import { Fragment, h } from "preact";
 import type { ContextMenuUser } from "../components/ContextMenu";
 import { ContextMenu } from "../components/ContextMenu";
-import type { MenuRequest } from "../lib/menu";
+import type { MenuRequest, PopoverAlign } from "../lib/menu";
 import { onMenu, positionPopover } from "../lib/menu";
 
 /** Per-instance state for the context-menu island — the active request, or `null` when closed. */
@@ -82,6 +82,11 @@ function closeMenu(ctx: MenuContext): void {
  * Open the menu for a request: stash it, render synchronously, unhide, then place the popover under
  * its anchor (one menu open at a time — a new request replaces any current one).
  *
+ * The measure-and-place is deferred to `requestAnimationFrame`: `ctx.flush()` writes the markup into
+ * the DOM, but the panel's `offsetWidth`/`offsetHeight` are not reliable until layout settles. Reading
+ * them in the same tick can report a zero-width panel, which clamps the popover into the top-left
+ * corner — the user-menu detachment bug. The `user` variant right-aligns under its right-pinned avatar.
+ *
  * @param ctx - The menu component context.
  * @param request - The incoming menu request (variant, anchor, callbacks).
  * @example
@@ -93,10 +98,13 @@ function openMenu(ctx: MenuContext, request: MenuRequest): void {
   ctx.set({ request });
   ctx.el.toggleAttribute("hidden", false);
 
-  // Force the panel into the DOM before measuring, then place it under the anchor.
+  // Force the panel into the DOM (ctx.flush lays it out, so offsetWidth is reliable) and place it
+  // under its anchor SYNCHRONOUSLY — deferring to rAF leaves the items briefly unplaced and breaks an
+  // immediate click on a menu item. The `user` variant right-aligns under its right-pinned avatar.
   ctx.flush();
+  const align: PopoverAlign = request.variant === "user" ? "end" : "start";
   const panel = ctx.el.querySelector<HTMLElement>(PANEL_SELECTOR);
-  if (panel) positionPopover(panel, request.anchor);
+  if (panel) positionPopover(panel, request.anchor, align);
 }
 
 /**

@@ -151,23 +151,26 @@
   [data-issue-body] > * + * {
     margin-top: var(--space-4);
   }
-  [data-issue-body] h1,
-  [data-issue-body] h2,
-  [data-issue-body] h3 {
+  [data-issue-body] :is(h1, h2, h3) {
     font-family: var(--font-display);
     font-weight: 500;
     line-height: var(--leading-snug);
     letter-spacing: var(--tracking-tight);
     color: var(--text-strong);
   }
+  /* In-body headings (## Symptom / ## Plan) read as editorial section breaks, not near-body text —
+     a clear size step and extra space above each (the first block keeps the body's flow margin). */
+  [data-issue-body] :is(h1, h2, h3):not(:first-child) {
+    margin-top: var(--space-5);
+  }
   [data-issue-body] h1 {
-    font-size: var(--text-lg);
+    font-size: var(--text-xl);
   }
   [data-issue-body] h2 {
-    font-size: var(--text-md);
+    font-size: var(--text-lg);
   }
   [data-issue-body] h3 {
-    font-size: var(--text-base);
+    font-size: var(--text-md);
   }
   [data-issue-body] a {
     color: var(--accent-deep);
@@ -247,6 +250,35 @@
     color: var(--accent-deep);
   }
 
+  /* ── Inline markdown writer: the Edit segment swaps the rendered body for this textarea (§7).
+     Full-width, generous height, raw monospace-free body voice — the whole source stays visible.
+     Committing happens on the Preview segment (see issue/handlers.ts). ── */
+  [data-desc-edit] {
+    width: 100%;
+    min-height: 12rem;
+    max-width: var(--width-prose);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-sunken);
+    border: var(--rule-width) solid var(--rule-strong);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--text-md);
+    line-height: var(--leading-normal);
+    color: var(--text-body);
+    resize: vertical;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
+  }
+  [data-desc-edit]::placeholder {
+    color: var(--text-faint);
+  }
+  [data-desc-edit]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 var(--rule-width) var(--accent-tint);
+  }
+
   /* ── Section heads (Attachments, Sub-issues) ── */
   [data-section-head] {
     font-family: var(--font-mono);
@@ -286,6 +318,11 @@
       border-color var(--dur-fast) var(--ease-out),
       color var(--dur-fast) var(--ease-out),
       background var(--dur-fast) var(--ease-out);
+  }
+  /* With no attachments the "Attach file" tile is the only cell — span the full width as a dropzone
+     so it never strands beside a wide empty gutter (it packs back into the grid once files exist). */
+  [data-attach-add]:only-child {
+    grid-column: 1 / -1;
   }
   [data-attach-add]:hover {
     border-color: var(--accent);
@@ -366,7 +403,7 @@
   [data-rail] {
     display: flex;
     flex-direction: column;
-    gap: var(--space-5);
+    gap: var(--space-6);
     align-self: start;
     padding-left: var(--space-6);
     border-left: var(--rule-width) solid var(--rule);
@@ -376,6 +413,13 @@
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+  }
+  /* Quiet blocks: a hairline + lead-in space sets the read-only Timeline and the icon/add-property
+     group apart from the editable fields above, so the rail reads as distinct stanzas. */
+  [data-rail-timeline],
+  [data-rail-icon] {
+    padding-top: var(--space-5);
+    border-top: var(--rule-width) solid var(--rule);
   }
   [data-rail-label] {
     font-family: var(--font-mono);
@@ -544,6 +588,12 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--space-5) var(--space-6);
     }
+    /* The desktop per-block separators would land mid-grid here — drop them once the rail is a grid. */
+    [data-rail-timeline],
+    [data-rail-icon] {
+      padding-top: 0;
+      border-top: none;
+    }
     [data-rail-assignees] {
       width: auto;
     }
@@ -565,8 +615,32 @@
     [data-panel-bar] {
       padding: var(--space-4) var(--pad-page);
     }
+    /* Crumbs wrap instead of every one clipping to an ellipsis — only the long ISSUE-ID truncates. */
+    [data-breadcrumb] {
+      flex-wrap: wrap;
+    }
+    [data-crumb] {
+      overflow: visible;
+      text-overflow: clip;
+    }
+    [data-crumb-id] {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 14rem;
+    }
     [data-panel-body] {
       padding: var(--space-7) var(--pad-page) var(--space-8);
+    }
+    /* More air on phones so the panel doesn't read flat/cramped vs. desktop. */
+    [data-article] {
+      gap: var(--space-7);
+    }
+    [data-attach-section],
+    [data-sub-section] {
+      padding-top: var(--space-5);
+    }
+    [data-desc-toggle] {
+      margin-bottom: var(--space-1);
     }
     [data-issue-title] {
       font-size: var(--text-2xl);

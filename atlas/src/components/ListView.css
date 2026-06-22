@@ -7,8 +7,10 @@
  */
 @scope ([data-listview]) {
   :scope {
-    /* The single source of truth for column widths — ListRow inherits this custom property. */
-    --list-cols: minmax(0, 3fr) 7rem 3.5rem minmax(4rem, 1fr) 6rem 3.5rem 4.5rem auto;
+    /* The single source of truth for column widths — ListRow inherits this custom property. The
+       Labels track is held to a tight `0.7fr` so the lone label dot sits under its header, not
+       adrift across a wide gap. */
+    --list-cols: minmax(0, 3fr) 7rem 3.5rem minmax(4rem, 0.7fr) 6rem 3.5rem 4.5rem auto;
     display: block;
     border-top: var(--rule-width) solid var(--rule);
   }
@@ -46,7 +48,7 @@
     display: flex;
     align-items: baseline;
     gap: var(--space-3);
-    padding: var(--space-5) var(--space-4) var(--space-2);
+    padding: var(--space-5) var(--space-4) var(--space-3);
   }
   [data-group-title] {
     font-family: var(--font-display);
@@ -58,13 +60,23 @@
   [data-group-count] {
     font-family: var(--font-display);
     font-size: var(--text-lg);
+    font-weight: 500;
     font-variant-numeric: tabular-nums;
-    color: var(--text-muted);
+    color: var(--text-strong);
+  }
+
+  /* Quiet cap line when a status group exceeds its display limit (design context §6 F4). */
+  [data-list-more] {
+    padding: var(--space-3) var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-faint);
   }
 
   @media (max-width: 1024px) {
     :scope {
-      --list-cols: minmax(0, 3fr) 6rem 3rem minmax(3.5rem, 1fr) 5rem 3rem 4rem auto;
+      --list-cols: minmax(0, 3fr) 6rem 3rem minmax(3.5rem, 0.7fr) 5rem 3rem 4rem auto;
     }
   }
 
@@ -74,7 +86,10 @@
       display: none;
     }
     [data-group-head] {
-      padding: var(--space-5) var(--pad-page) var(--space-2);
+      padding: var(--space-5) var(--pad-page) var(--space-3);
+    }
+    [data-list-more] {
+      padding-inline: var(--pad-page);
     }
   }
 }

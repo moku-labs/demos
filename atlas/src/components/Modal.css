@@ -64,7 +64,7 @@
   }
   [data-modal-title] {
     font-family: var(--font-display);
-    font-size: var(--text-xl);
+    font-size: var(--text-lg);
     font-weight: 480;
     letter-spacing: var(--tracking-tight);
     line-height: var(--leading-snug);
@@ -161,18 +161,62 @@
     transform: translateY(1px);
   }
 
+  /* Delete confirm: give the warning copy room to breathe before the danger row. */
+  :scope[data-variant="delete"] [data-modal-message] {
+    margin-block: var(--space-1) 0;
+  }
+  :scope[data-variant="delete"] [data-modal-actions] {
+    padding-top: var(--space-5);
+  }
+
   @media (max-width: 760px) {
     :scope {
       place-items: end center;
       padding: 0;
     }
+    /*
+     * Phone sheet: cap the height and turn the dialog into a flex column so the body scrolls and the
+     * action row pins — the field + Cancel/confirm can never be buried below the keyboard. A grab
+     * handle (a phones-only ::before pill) tops the sheet, matching the ContextMenu sheet family.
+     */
     [data-dialog] {
       width: 100%;
+      max-height: 92dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
       border-inline: none;
       border-bottom: none;
       border-radius: var(--radius-lg) var(--radius-lg) 0 0;
       box-shadow: var(--shadow-sheet-up);
       animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
+    }
+    [data-dialog]::before {
+      content: "";
+      flex: none;
+      width: 2.25rem;
+      height: 4px;
+      margin: var(--space-2) auto 0;
+      border-radius: var(--radius-pill);
+      background: var(--rule-strong);
+    }
+    [data-modal-form] {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: var(--space-5);
+    }
+    [data-modal-field] input {
+      padding: 0.85rem 0.9rem;
+    }
+    [data-modal-actions] {
+      position: sticky;
+      bottom: 0;
+      background: var(--surface-card);
+    }
+    [data-modal-btn] {
+      min-height: 44px;
+      padding: 0.75rem 1.1rem;
     }
   }
 }

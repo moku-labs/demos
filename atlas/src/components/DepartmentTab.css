@@ -92,12 +92,20 @@
 
   @media (max-width: 760px) {
     :scope {
-      padding-top: var(--space-1);
-      padding-bottom: calc(var(--space-1) + 1px);
+      gap: var(--space-1);
+      padding-top: var(--space-2);
+      padding-bottom: calc(var(--space-2) - 1px);
     }
-    button[data-action="menu"],
-    [data-dept-handle] {
+
+    /* Touch has no hover, so the "⋯" menu (which carries "Move to…") is always visible — it
+       is the mobile path for reorder + customize (design context §4). The drag handle is a
+       desktop-only hover affordance, so it is removed entirely on phones to keep the swipeable
+       index calm and uncluttered rather than forced-on. */
+    button[data-action="menu"] {
       opacity: 1;
+    }
+    [data-dept-handle] {
+      display: none;
     }
   }
 }

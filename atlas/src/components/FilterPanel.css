@@ -12,7 +12,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--space-5);
+    gap: var(--space-4);
     width: min(22rem, 92vw);
     max-height: min(80vh, 40rem);
     overflow-y: auto;
@@ -48,6 +48,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
+    font-family: var(--font-mono);
     font-size: var(--text-2xs);
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
@@ -67,7 +68,7 @@
     background: var(--surface-sunken);
     border: var(--rule-width) solid var(--rule-strong);
     border-radius: var(--radius-md);
-    color: var(--text-faint);
+    color: var(--text-muted);
   }
   [data-filter-search]:focus-within {
     border-color: var(--accent);
@@ -86,6 +87,9 @@
     font-size: var(--text-base);
     color: var(--text-strong);
   }
+  [data-filter-search] input::placeholder {
+    color: var(--text-muted);
+  }
 
   [data-facet-group] {
     display: flex;
@@ -93,6 +97,7 @@
     gap: var(--space-2);
   }
   [data-facet-heading] {
+    font-family: var(--font-mono);
     font-size: var(--text-2xs);
     font-weight: 600;
     letter-spacing: var(--tracking-wide);
@@ -187,12 +192,15 @@
   }
 
   @media (max-width: 760px) {
-    /* The card reflows into a full-width bottom sheet pinned to the viewport edge. */
+    /* The card reflows into a full-width bottom sheet pinned to the viewport edge. The body scrolls
+       while the head and Done button stay pinned (below) so the confirm control never falls below
+       the fold or under the keyboard. */
     :scope {
       position: fixed;
       inset-block: auto 0;
       inset-inline: 0;
       z-index: var(--z-sheet);
+      gap: var(--space-4);
       width: auto;
       max-height: 85vh;
       padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom));
@@ -201,6 +209,19 @@
       border-radius: var(--radius-lg) var(--radius-lg) 0 0;
       box-shadow: var(--shadow-sheet-up);
       animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
+    }
+
+    /* Pin the heading to the top of the scrolling sheet so the title and "filters remembered" cue
+       stay visible while the facet list scrolls beneath. The negative margins + matching padding let
+       the sticky band span the sheet's full width and cover content sliding under it. */
+    [data-filter-head] {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      margin-block-start: calc(-1 * var(--space-4));
+      margin-inline: calc(-1 * var(--space-4));
+      padding: var(--space-4) var(--space-4) var(--space-2);
+      background: var(--surface-card);
     }
 
     /* Full-viewport dimming backdrop behind the sheet — a tap dismisses it (z-index:-1 keeps it under
@@ -226,9 +247,13 @@
       font-size: var(--text-sm);
     }
 
-    /* Full-width Done button to dismiss the sheet. */
+    /* Full-width Done button, pinned to the sheet's bottom edge so it never scrolls below the fold.
+       The sticky band sits above the safe-area padding and carries the sheet ground so facet pills
+       scrolling underneath stay covered. */
     [data-filter-done] {
       display: block;
+      position: sticky;
+      bottom: 0;
       width: 100%;
       margin-top: var(--space-2);
       padding: 0.7rem 1rem;

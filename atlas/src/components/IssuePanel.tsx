@@ -188,7 +188,16 @@ export function IssuePanel({
               </button>
             </div>
 
-            <div data-issue-body>{renderMarkdown(issue.description)}</div>
+            {editingDescription ? (
+              <textarea
+                data-desc-edit
+                aria-label="Edit description"
+                placeholder="Write in Markdown…"
+                defaultValue={issue.description}
+              />
+            ) : (
+              <div data-issue-body>{renderMarkdown(issue.description)}</div>
+            )}
 
             <section data-attach-section aria-label="Attachments">
               <h2 data-section-head>Attachments</h2>

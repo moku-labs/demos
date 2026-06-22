@@ -14,7 +14,7 @@
     );
     align-items: center;
     gap: var(--space-4);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-4);
     border-bottom: var(--rule-width) solid var(--rule);
     transition:
       background var(--dur-fast) var(--ease-out),
@@ -88,7 +88,8 @@
     height: 4px;
     min-width: 2.5rem;
     border-radius: var(--radius-pill);
-    background: var(--surface-sunken);
+    background: var(--rule);
+    box-shadow: inset 0 0 0 1px var(--rule);
     overflow: hidden;
   }
   [data-progress-fill] {
@@ -142,9 +143,9 @@
     font-size: var(--text-sm);
   }
 
-  /* ── Two-line collapse on narrow viewports (design context §6 A4): line one = title (with status
-        floated right), line two = the meta facets as a wrapping run. Flex flow lets the six cells
-        share a line without a wrapper element in the markup. ── */
+  /* ── Two-line collapse on narrow viewports (design context §6 A4): line one = title + status
+        (status hugs the right end), then the meta facets fall left-aligned beneath. Flex flow lets
+        the cells reflow without a wrapper element in the markup. ── */
   @media (max-width: 760px) {
     :scope {
       display: flex;
@@ -153,49 +154,48 @@
       gap: var(--space-2) var(--space-4);
       padding: var(--space-4) var(--pad-page);
     }
-    /* Title takes the whole first line; status sits at its right end (margin-auto pushes it over,
-       and the title's full-row grow-basis forces every meta cell to wrap to line two). */
+    /* Line one = title + status: the title flexes to fill, status hugs the right end (margin-auto).
+       The meta cells then fall to the lines beneath, every one left-aligned to the gutter — the
+       priority cell's full-row basis (below) is what forces the break off line one. */
     [data-cell="issue"] {
-      flex: 1 1 100%;
+      flex: 1 1 0;
       min-width: 0;
       order: 1;
     }
     [data-cell="status"] {
       flex: 0 0 auto;
-      order: 2;
+      order: 1;
       margin-left: auto;
     }
-    [data-cell="priority"] {
-      order: 3;
-      margin-top: var(--space-2);
-    }
-    [data-cell="labels"] {
-      order: 4;
-      margin-top: var(--space-2);
-    }
-    [data-cell="progress"] {
-      order: 5;
-      margin-top: var(--space-2);
-    }
-    [data-cell="files"] {
-      order: 6;
-      margin-top: var(--space-2);
-    }
-    [data-cell="due"] {
-      order: 7;
-      margin-top: var(--space-2);
-    }
-    [data-cell="who"] {
-      order: 8;
-      margin-top: var(--space-2);
-    }
-    [data-cell="priority"],
     [data-cell="labels"],
     [data-cell="progress"],
     [data-cell="files"],
     [data-cell="due"],
     [data-cell="who"] {
       flex: 0 0 auto;
+      margin-top: var(--space-2);
+    }
+    [data-cell="labels"] {
+      order: 4;
+    }
+    [data-cell="progress"] {
+      order: 5;
+    }
+    [data-cell="files"] {
+      order: 6;
+    }
+    [data-cell="due"] {
+      order: 7;
+    }
+    [data-cell="who"] {
+      order: 8;
+    }
+    /* Priority opens line two: its full-row basis forces the wrap off line one so the priority mark
+       sits flush to the left gutter, with the remaining facets in their own left-aligned run below. */
+    [data-cell="priority"] {
+      order: 3;
+      flex: 0 1 100%;
+      margin-top: var(--space-2);
     }
     /* Hide empty placeholders so the meta line reads as a clean run of present facets only. */
     [data-cell]:has([data-empty-cell]) {

@@ -7,7 +7,6 @@
   :scope {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     gap: var(--space-8);
     padding: var(--space-8) var(--space-8) var(--space-7);
     background:
@@ -28,7 +27,7 @@
   }
 
   [data-auth-lead] {
-    margin-block: auto;
+    margin-block: var(--space-10) var(--space-8);
   }
   [data-eyebrow] {
     font-family: var(--font-mono);
@@ -61,6 +60,7 @@
   [data-auth-stats] {
     display: flex;
     gap: var(--space-6);
+    margin-top: auto;
     padding-top: var(--space-5);
     border-top: var(--rule-width) solid var(--rule);
   }
@@ -80,10 +80,11 @@
       border-bottom: var(--rule-width) solid var(--rule);
     }
     [data-auth-lead] {
-      margin-block: var(--space-6) 0;
+      margin-block: var(--space-6) var(--space-5);
     }
     [data-auth-stats] {
       gap: var(--space-5);
+      margin-top: 0;
     }
   }
 }

@@ -76,39 +76,55 @@ export function onTitleEdit(ctx: IssueContext): void {
 // ─── article: description ────────────────────────────────────────────────────
 
 /**
- * Edit the markdown description via the prompt modal pre-filled with the raw source — the Preview/Edit
- * affordance. The panel renders markdown by default; the Edit segment of the visible `[data-desc-toggle]`
- * control (or double-clicking the body) opens the writer. `editingDescription` stays true while the
- * modal is open so the toggle marks Edit active.
+ * Open the inline markdown writer — flip `editingDescription` so the component swaps the rendered
+ * `[data-issue-body]` for a full-width `[data-desc-edit]` textarea seeded with the raw source (§7's
+ * Preview/Edit affordance). The render binding re-runs on this `ctx.set`, marking the visible
+ * `[data-desc-toggle]` Edit segment active. Committing happens on the Preview segment via
+ * {@link saveDescription} — there is no prompt modal (full markdown must stay visible, not clipped in a
+ * single-line input).
  *
  * @param ctx - The issue component context.
- * @returns A promise that resolves once the description persists (or is cancelled).
  * @example
  * ```ts
- * await editDescription(ctx);
+ * editDescription(ctx); // reveals the inline <textarea data-desc-edit>
  * ```
  */
-async function editDescription(ctx: IssueContext): Promise<void> {
-  const detail = ctx.state.detail;
-  if (!detail) return;
-
+function editDescription(ctx: IssueContext): void {
+  if (!ctx.state.detail) return;
   ctx.set({ editingDescription: true });
-  const result = await openModal({
-    variant: "prompt",
-    title: "Edit description",
-    placeholder: "Write in Markdown…",
-    initialValue: detail.issue.description
-  });
-  ctx.set({ editingDescription: false });
-  if (result.kind !== "submit") return;
+}
 
-  if (result.value === detail.issue.description) return;
-  await patchIssue(detail.issue.id, { description: result.value });
+/**
+ * Commit the inline writer and return to the rendered preview — read the live `[data-desc-edit]`
+ * textarea value from the host, persist it via `patchIssue` when it changed, then flip
+ * `editingDescription` off so the component re-renders the markdown body. The returning realtime patch
+ * reconciles the body text; here we only close the writer and toast. A no-op when the writer isn't open.
+ *
+ * @param ctx - The issue component context.
+ * @returns A promise that resolves once any change persists and the writer closes.
+ * @example
+ * ```ts
+ * await saveDescription(ctx); // Preview segment / dblclick-back commits the textarea
+ * ```
+ */
+async function saveDescription(ctx: IssueContext): Promise<void> {
+  const detail = ctx.state.detail;
+  if (!detail || !ctx.state.editingDescription) return;
+
+  const field = ctx.el.querySelector<HTMLTextAreaElement>("[data-desc-edit]");
+  const next = field?.value ?? detail.issue.description;
+
+  ctx.set({ editingDescription: false });
+  if (next === detail.issue.description) return;
+
+  await patchIssue(detail.issue.id, { description: next });
   showToast("Description updated");
 }
 
 /**
- * Handle a double-click on the rendered description — open the markdown writer.
+ * Handle a double-click on the rendered description — open the inline markdown writer (the faster path
+ * to the `[data-desc-toggle]` Edit segment). Committing is the Preview segment's job (the rendered body
+ * is replaced by the writer while editing, so this handler only ever fires from the preview state).
  *
  * @param ctx - The issue component context.
  * @example
@@ -117,7 +133,7 @@ async function editDescription(ctx: IssueContext): Promise<void> {
  * ```
  */
 export function onDescriptionEdit(ctx: IssueContext): void {
-  void editDescription(ctx);
+  editDescription(ctx);
 }
 
 // ─── article: attachments ────────────────────────────────────────────────────
@@ -714,9 +730,13 @@ export function onAction(ctx: IssueContext, event: Event, element: Element): voi
       return;
     }
     case "edit-description": {
-      // The visible Preview/Edit control's Edit segment — open the markdown writer (§7). The Preview
-      // segment is the resting state (the body always renders), so it falls through the default no-op.
-      void editDescription(ctx);
+      // The Edit segment of the visible Preview/Edit control — reveal the inline writer (§7).
+      editDescription(ctx);
+      return;
+    }
+    case "preview-description": {
+      // The Preview segment — commit the inline writer back to the rendered body (no-op when resting).
+      void saveDescription(ctx);
       return;
     }
     default: {

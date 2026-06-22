@@ -235,26 +235,55 @@ export function showToast(message: string, tone?: "info" | "danger"): void {
 const VIEWPORT_MARGIN = 8;
 
 /**
+ * Which anchor edge a popover's inline edge aligns to before clamping.
+ *
+ * - `"start"` (default) — the popover's left edge tracks the anchor's left edge (drop-down).
+ * - `"end"` — the popover's right edge tracks the anchor's right edge (drop-down hugging a control
+ *   pinned to the right of its row, e.g. the masthead avatar/user menu).
+ */
+export type PopoverAlign = "start" | "end";
+
+/**
  * Position a popover panel just under (or above) an anchor button, flipped/clamped to stay within the
  * viewport. Sets `position: fixed` + `top`/`left` inline. Shared by the menu and customize popovers so
  * they place consistently; on mobile the CSS promotes the same panel to a bottom sheet, overriding this.
  *
+ * The caller is responsible for ensuring the panel has been laid out (non-zero `offsetWidth`) before
+ * calling — measuring a not-yet-flushed panel reports a zero width that would otherwise clamp `left`
+ * hard against {@link VIEWPORT_MARGIN}, parking the popover at the top-left of the viewport. As a
+ * defensive backstop, a zero-area anchor rect (a not-yet-laid-out anchor) is treated as "leave the
+ * panel where it is" so it is never flung into the corner.
+ *
  * @param panel - The popover element to place.
  * @param anchor - The button the popover belongs to.
+ * @param align - Which anchor edge the popover's inline edge tracks (`"start"` default, `"end"` to
+ *   right-align under a right-pinned anchor). The result is still clamped into the viewport.
  * @example
  * ```ts
- * positionPopover(menuEl, request.anchor);
+ * positionPopover(menuEl, request.anchor); // left-aligned drop-down
+ * positionPopover(userMenuEl, avatarBtn, "end"); // right-aligned under the avatar
  * ```
  */
-export function positionPopover(panel: HTMLElement, anchor: HTMLElement): void {
+export function positionPopover(
+  panel: HTMLElement,
+  anchor: HTMLElement,
+  align: PopoverAlign = "start"
+): void {
   const anchorRect = anchor.getBoundingClientRect();
+  // A zero-area anchor rect means the anchor has not been laid out yet — bail rather than clamp the
+  // panel into the top-left corner against the viewport margin.
+  if (anchorRect.width === 0 && anchorRect.height === 0) return;
+
   const { offsetWidth: width, offsetHeight: height } = panel;
   const { innerWidth, innerHeight } = globalThis;
 
-  let left = anchorRect.left;
+  // Right-aligned popovers track the anchor's right edge; left-aligned ones track its left edge.
+  let left = align === "end" ? anchorRect.right - width : anchorRect.left;
   if (left + width > innerWidth - VIEWPORT_MARGIN) {
-    left = Math.max(VIEWPORT_MARGIN, anchorRect.right - width);
+    left = anchorRect.right - width;
   }
+  // Clamp into the viewport (an end-aligned panel wider than its anchor's right offset can go negative).
+  left = Math.max(VIEWPORT_MARGIN, Math.min(left, innerWidth - VIEWPORT_MARGIN - width));
 
   let top = anchorRect.bottom + VIEWPORT_MARGIN;
   if (top + height > innerHeight - VIEWPORT_MARGIN) {

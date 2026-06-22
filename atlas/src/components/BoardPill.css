@@ -89,9 +89,20 @@
   }
 
   @media (max-width: 760px) {
-    button[data-action="menu"],
-    [data-board-handle] {
+    /* On phones the boards bar swipes sideways. The "⋯" menu (carrying "Move to…") is the
+       touch path for reorder + customize, so it stays visible; the drag handle is a
+       desktop-only hover affordance and is dropped to keep the pill calm (design context §4–5). */
+    button[data-action="menu"] {
       opacity: 1;
+    }
+    [data-board-handle] {
+      display: none;
+    }
+
+    /* Comfortable tap target — the link grows a touch taller so the whole pill is easy to hit
+       while it scrolls past (design context §5 — nothing cramped). */
+    [data-board-link] {
+      padding-block: 0.55rem;
     }
   }
 }

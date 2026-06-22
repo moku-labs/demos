@@ -38,6 +38,9 @@ interface IssueLookups {
   attachmentCount: number;
 }
 
+/** Maximum issues rendered per status group before the quiet "N more not shown" cap line (§6 F4). */
+const GROUP_DISPLAY_CAP = 20;
+
 /** The labelled columns of the sticky header, in table order. */
 const HEADERS: readonly { key: string; label: string }[] = [
   { key: "issue", label: "Issue" },
@@ -135,6 +138,8 @@ export function ListView({ snapshot }: ListViewProps) {
         STATUS_ORDER.map(status => {
           const issues = groups.get(status) ?? [];
           if (issues.length === 0) return null;
+          const shown = issues.slice(0, GROUP_DISPLAY_CAP);
+          const hidden = issues.length - shown.length;
           return (
             <div key={status} data-list-group>
               <h3 data-group-head>
@@ -142,7 +147,7 @@ export function ListView({ snapshot }: ListViewProps) {
                 <span data-group-count>{issues.length}</span>
               </h3>
               <div data-list-rows>
-                {issues.map(issue => {
+                {shown.map(issue => {
                   const lookup = lookups.get(issue.id);
                   return (
                     <ListRow
@@ -157,6 +162,7 @@ export function ListView({ snapshot }: ListViewProps) {
                   );
                 })}
               </div>
+              {hidden > 0 ? <p data-list-more>{hidden} more not shown</p> : null}
             </div>
           );
         })

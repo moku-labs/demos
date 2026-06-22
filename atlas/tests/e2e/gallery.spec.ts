@@ -30,11 +30,14 @@ async function shot(
   await page.screenshot({ path: `${DIR}/${name}.png`, fullPage }).catch(() => {});
 }
 
-/** Toggle the app into dark theme via the masthead theme-toggle island. */
+/**
+ * Toggle the app into dark theme via the masthead theme-toggle (skips gracefully when the tool is
+ * collapsed into the mobile header overflow — the click is bounded so it can't stall the capture).
+ */
 async function goDark(page: import("@playwright/test").Page): Promise<void> {
   await page
     .locator("[data-masthead] [data-tool='theme']")
-    .click()
+    .click({ timeout: 2500 })
     .catch(() => {});
   await page.waitForTimeout(250);
 }

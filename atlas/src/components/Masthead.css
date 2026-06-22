@@ -92,17 +92,32 @@
   @media (max-width: 760px) {
     :scope {
       align-items: center;
+      gap: var(--space-3);
       padding: var(--space-4) var(--pad-page);
+    }
+    [data-tools] {
+      gap: var(--space-1);
     }
     [data-tool-text] {
       display: none;
     }
+
+    /* D3 — the labelled tools collapse behind a single "⋯". Theme, Filter, and Activity all
+       fold into the overflow bottom sheet so the rail reads wordmark + avatar + overflow.
+       The icon-only buttons square up to a comfortable tap target (design context §5 — nothing
+       cramped) and the avatar / overflow keep their resting size. */
+    [data-tool="theme"],
     [data-tool="filter"],
     [data-tool="activity"] {
       display: none;
     }
     [data-tool="overflow"] {
       display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2.1rem;
+      min-height: 2.1rem;
+      padding: 0;
     }
   }
 }

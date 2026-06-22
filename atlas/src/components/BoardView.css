@@ -16,7 +16,19 @@
     grid-auto-columns: minmax(15rem, 1fr);
     align-items: start;
     gap: var(--space-6);
-    padding: var(--space-6) var(--pad-page) var(--space-8);
+    /* No inline padding: `[data-main]` already applies the single `--pad-page` page gutter, so the
+       board inherits it. The vertical rhythm stays here. */
+    padding: var(--space-6) 0 var(--space-8);
+  }
+
+  /* Wide viewport: drive an explicit column count so stage tracks flex-fill to the right edge instead
+     of left-packing at min-content and leaving a dead right band. The trailing `auto` track lets
+     `[data-add-column]` hug its content. `--column-count` is set inline in BoardView.tsx. */
+  @media (min-width: 1025px) {
+    :scope {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(var(--column-count), minmax(0, 1fr)) auto;
+    }
   }
 
   [data-add-column] {
@@ -61,6 +73,8 @@
       gap: var(--space-5);
       scroll-snap-type: x mandatory;
       scroll-padding-inline-start: var(--pad-page);
+      /* A sparse single-column board still reads as a full, calm screen rather than a tall void. */
+      min-height: 60dvh;
     }
   }
 }
