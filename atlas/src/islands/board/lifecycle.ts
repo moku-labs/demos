@@ -11,6 +11,7 @@ import { onFilterChange } from "../../lib/filter";
 import { currentView, resolveActive } from "../../lib/nav";
 import { connect, disconnect, onPatch, ping, seed } from "../../lib/realtime";
 import type { BoardSnapshot } from "../../lib/types";
+import { loadUsers } from "../../lib/users";
 import { mountPager } from "./pager";
 import { applyPatch } from "./reconcile";
 import { type BoardContext, EMPTY_SNAPSHOT, KEEPALIVE_MS } from "./types";
@@ -105,6 +106,10 @@ export async function sync(ctx: BoardContext): Promise<void> {
 async function loadBoard(ctx: BoardContext, boardId: string): Promise<void> {
   // Connect BEFORE awaiting so live frames buffer into the pre-seed queue during the load.
   connect(boardId);
+
+  // Register the signed-in user(s) so a card assignee that is the current user resolves to their
+  // name + avatar colour (cached; non-blocking — the seed cast resolves without it on first paint).
+  void loadUsers();
 
   // Paint the cached snapshot immediately (avoids the empty-board flash on re-mount).
   const cached = snapshotCache.get(boardId);

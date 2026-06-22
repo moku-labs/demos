@@ -24,9 +24,30 @@ export const PEOPLE: readonly Person[] = [
 ];
 
 /**
- * Looks up a demo person by id.
+ * Dynamically-registered people — signed-in {@link User}s resolved to {@link Person}s (with their
+ * chosen avatar `color`), keyed by id. Populated CLIENT-SIDE by `lib/users` after a fetch; stays empty
+ * in the server/SSR graph (the worker never registers), so SSR resolves the static cast only (#6).
+ */
+const dynamicPeople = new Map<string, Person>();
+
+/**
+ * Register signed-in users into the dynamic people registry so {@link personById} / {@link allPeople}
+ * resolve them everywhere assignees + reporters render. Idempotent (re-registering an id overwrites).
  *
- * @param id - The person id to resolve (e.g. `"ak"`).
+ * @param people - The people to register (a signed-in user resolved to a `Person` with its colour).
+ * @example
+ * ```ts
+ * registerPeople(users.map(userToPerson));
+ * ```
+ */
+export function registerPeople(people: readonly Person[]): void {
+  for (const person of people) dynamicPeople.set(person.id, person);
+}
+
+/**
+ * Looks up a person by id — the static demo cast first, then any dynamically-registered signed-in user.
+ *
+ * @param id - The person id to resolve (e.g. `"ak"` or a `u_…` user id).
  * @returns The matching {@link Person}, or `undefined` when no person has that id.
  * @example
  * ```ts
@@ -35,5 +56,21 @@ export const PEOPLE: readonly Person[] = [
  * ```
  */
 export function personById(id: string): Person | undefined {
-  return PEOPLE.find(person => person.id === id);
+  return PEOPLE.find(person => person.id === id) ?? dynamicPeople.get(id);
+}
+
+/**
+ * Every selectable person — the static demo cast followed by the registered signed-in users — for the
+ * assignee / reporter choosers. De-duplicated by id (a registered user never shadows a cast member).
+ *
+ * @returns The combined, de-duplicated list of people.
+ * @example
+ * ```ts
+ * const options = allPeople().map(person => ({ value: person.id, label: person.name }));
+ * ```
+ */
+export function allPeople(): Person[] {
+  const seen = new Set(PEOPLE.map(person => person.id));
+  const extras = [...dynamicPeople.values()].filter(person => !seen.has(person.id));
+  return [...PEOPLE, ...extras];
 }

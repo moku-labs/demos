@@ -31,8 +31,10 @@ import type {
   NewDepartment,
   NewIssue,
   NewSubIssue,
+  ProfileInput,
   Session,
-  SubIssue
+  SubIssue,
+  User
 } from "./types";
 
 /** Actor identity returned by the session probe. */
@@ -623,6 +625,49 @@ export async function deleteAttachment(attachmentId: string): Promise<void> {
  */
 export async function setCustomization(input: CustomizationInput): Promise<Customization> {
   return request<Customization>("/api/customize", jsonInit("POST", input));
+}
+
+// ─── users (signed-in profiles → assignable demo users, #6) ──────────────────
+
+/**
+ * List every persisted user — the selectable real accounts the assignee / reporter choosers merge
+ * with the static demo cast.
+ *
+ * @returns Every persisted {@link User}.
+ * @example
+ * ```ts
+ * const users = await listUsers();
+ * ```
+ */
+export async function listUsers(): Promise<User[]> {
+  return request<User[]>("/api/users");
+}
+
+/**
+ * Fetch the signed-in user's profile (the worker creates a default-coloured row on first read).
+ *
+ * @returns The current {@link User}.
+ * @example
+ * ```ts
+ * const me = await getMyProfile();
+ * ```
+ */
+export async function getMyProfile(): Promise<User> {
+  return request<User>("/api/users/me");
+}
+
+/**
+ * Update the signed-in user's profile — display name + avatar colour token (`null` clears the colour).
+ *
+ * @param input - The profile `{ name, color }`.
+ * @returns The persisted {@link User}.
+ * @example
+ * ```ts
+ * await updateMyProfile({ name: "Ada", color: "--label-green" });
+ * ```
+ */
+export async function updateMyProfile(input: ProfileInput): Promise<User> {
+  return request<User>("/api/users/me", jsonInit("PUT", input));
 }
 
 // ─── activity ──────────────────────────────────────────────────────────────

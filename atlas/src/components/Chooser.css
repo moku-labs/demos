@@ -100,6 +100,14 @@
     opacity: 1;
   }
 
+  /* A palette colour dot (profile avatar-colour picker, #6) — its hue comes from the inline --swatch. */
+  [data-chooser-swatch] {
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: var(--radius-pill);
+    box-shadow: inset 0 0 0 1px var(--inset-soft);
+  }
+
   /* The status dot mirrors the rail's own dot (IssuePanel.css), recoloured by status. */
   [data-chooser-status] {
     width: 0.5rem;

@@ -19,7 +19,7 @@ import {
 import { LABEL_KEYS, LABELS, PRIORITIES, STATUS_ORDER, STATUS_TITLES } from "../../lib/labels";
 import type { ChooserOption } from "../../lib/menu";
 import { openChooser, openCustomize, openMenu, openModal, showToast } from "../../lib/menu";
-import { PEOPLE } from "../../lib/people";
+import { allPeople } from "../../lib/people";
 import type { IssueStatus, LabelKey, Priority } from "../../lib/types";
 import { closeToBoard } from "./lifecycle";
 import type { IssueContext } from "./types";
@@ -558,7 +558,7 @@ function chooseAssignees(ctx: IssueContext, anchor: HTMLElement): void {
   if (!detail) return;
 
   const assigned = new Set(detail.assignees.map(({ personId }) => personId));
-  const options: ChooserOption[] = PEOPLE.map(person => ({
+  const options: ChooserOption[] = allPeople().map(person => ({
     value: person.id,
     label: person.name,
     ornament: { kind: "person", personId: person.id },
@@ -590,10 +590,9 @@ async function applyAssignees(ctx: IssueContext, values: string[]): Promise<void
   if (!detail) return;
 
   const chosen = new Set(values);
-  const assignees = PEOPLE.filter(person => chosen.has(person.id)).map((person, index) => ({
-    personId: person.id,
-    isLead: index === 0
-  }));
+  const assignees = allPeople()
+    .filter(person => chosen.has(person.id))
+    .map((person, index) => ({ personId: person.id, isLead: index === 0 }));
   await patchIssue(detail.issue.id, { assignees });
   showToast("Assignees updated");
 }
@@ -714,7 +713,7 @@ function chooseReporter(ctx: IssueContext, anchor: HTMLElement): void {
   const current = detail.issue.reporterId;
   const options: ChooserOption[] = [
     { value: "", label: "No reporter", ornament: { kind: "none" }, selected: !current },
-    ...PEOPLE.map(person => ({
+    ...allPeople().map(person => ({
       value: person.id,
       label: person.name,
       ornament: { kind: "person" as const, personId: person.id },

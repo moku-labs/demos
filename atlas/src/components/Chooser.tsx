@@ -44,6 +44,11 @@ function renderOrnament(ornament: ChooserOrnament): VNode | null {
       const person = personById(ornament.personId);
       return person ? <Avatar person={person} size="sm" /> : null;
     }
+    case "swatch": {
+      return (
+        <span data-chooser-swatch style={`background:var(${ornament.color})`} aria-hidden="true" />
+      );
+    }
     default: {
       return null;
     }

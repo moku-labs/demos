@@ -16,6 +16,7 @@ import type {
   IssuePatch,
   SubIssue
 } from "../../lib/types";
+import { loadUsers } from "../../lib/users";
 import { urls } from "../../routes";
 import { CLOSED_STATE, ESCAPE_KEY, ISSUE_FOCUS, type IssueContext } from "./types";
 
@@ -75,7 +76,9 @@ async function loadIssue(
   snapshot: BoardSnapshot;
   customization: Customization | undefined;
 }> {
-  const [detail, snapshot] = await Promise.all([getIssue(issueId), getBoard(boardId)]);
+  // loadUsers() registers the signed-in user(s) so the rail's assignee/reporter avatars + the choosers
+  // resolve them (it caches, so this is a no-op after the first load).
+  const [detail, snapshot] = await Promise.all([getIssue(issueId), getBoard(boardId), loadUsers()]);
   return { detail, snapshot, customization: issueCustomization(snapshot, issueId) };
 }
 

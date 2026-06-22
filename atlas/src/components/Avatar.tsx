@@ -29,6 +29,9 @@ export interface AvatarProps {
  * ```
  */
 export function Avatar({ person, lead, size = "md" }: AvatarProps) {
+  // A signed-in user carries a chosen palette-token colour; paint it via the existing `--avatar-fallback`
+  // hook (the `data-person` token rules only match the static cast, so a `u_…` user falls through to it).
+  const style = person.color ? `--avatar-fallback:var(${person.color})` : undefined;
   return (
     <span
       data-avatar
@@ -38,6 +41,7 @@ export function Avatar({ person, lead, size = "md" }: AvatarProps) {
       role="img"
       title={person.name}
       aria-label={person.name}
+      style={style}
     >
       {person.initials}
     </span>

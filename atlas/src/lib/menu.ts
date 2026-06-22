@@ -96,6 +96,7 @@ export type ChooserOrnament =
   | { kind: "priority"; priority: Priority }
   | { kind: "label"; label: LabelKey }
   | { kind: "person"; personId: string }
+  | { kind: "swatch"; color: string }
   | { kind: "none" };
 
 /** One selectable row in the {@link ChooserRequest} popover. */

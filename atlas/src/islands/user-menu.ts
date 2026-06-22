@@ -12,8 +12,10 @@ import { Fragment, h } from "preact";
 import { Avatar } from "../components/Avatar";
 import { getSession, signOut } from "../lib/api";
 import { hardNavigate } from "../lib/hard-nav";
-import { openMenu, openModal, showToast } from "../lib/menu";
+import type { ChooserOption } from "../lib/menu";
+import { openChooser, openMenu, openModal, showToast } from "../lib/menu";
 import type { Person } from "../lib/types";
+import { currentUser, loadUsers, saveProfile, userToPerson } from "../lib/users";
 import { urls } from "../routes";
 
 /** Per-instance state for the user-menu island — the signed-in person + their email. */
@@ -32,6 +34,20 @@ const USER_KEY = "atlas:user";
 
 /** Max initials taken from a display name. */
 const MAX_INITIALS = 2;
+
+/** The avatar-colour palette for the profile picker — the same curated tokens as the Customize panel. */
+const PROFILE_PALETTE: readonly { token: string; name: string }[] = [
+  { token: "--accent", name: "Vermilion" },
+  { token: "--label-bug", name: "Bug red" },
+  { token: "--label-amber", name: "Amber" },
+  { token: "--label-green", name: "Green" },
+  { token: "--label-docs", name: "Cyan" },
+  { token: "--label-feature", name: "Blue" },
+  { token: "--label-research", name: "Violet" },
+  { token: "--label-design", name: "Pink" },
+  { token: "--avatar-ak", name: "Steel" },
+  { token: "--avatar-rt", name: "Sage" }
+];
 
 /**
  * Build the initial (signed-out) user state.
@@ -121,57 +137,95 @@ async function mount(ctx: UserContext): Promise<void> {
   const actor = await getSession();
   if (!actor) return;
 
-  const person: Person = { id: actor.id, name: actor.name, initials: initialsOf(actor.name) };
+  // Load the persisted profile so the masthead avatar shows the chosen name + colour (#6); fall back
+  // to the session actor (no colour) until it resolves / when unauthenticated.
+  await loadUsers();
+  const me = currentUser();
+  const person: Person = me
+    ? userToPerson(me)
+    : { id: actor.id, name: actor.name, initials: initialsOf(actor.name) };
   const email = readStoredUser()?.email ?? "";
   ctx.set({ person, email });
 }
 
 /**
- * Open a prompt modal to edit the display name, then persist it to localStorage and re-sync the avatar.
+ * Edit the profile: prompt for the display name, persist it to the D1 `users` row, then offer the
+ * avatar-colour chooser (#6). The name is saved immediately (so it is never lost if the colour step is
+ * skipped); picking a colour saves again. The signed-in user is now a selectable assignee with this
+ * name + colour.
  *
  * @param ctx - The user-menu component context.
- * @returns A promise that resolves once the profile update persists (or is cancelled).
+ * @returns A promise that resolves once the name persists (or the prompt is cancelled).
  * @example
  * ```ts
  * await editProfile(ctx);
  * ```
  */
 async function editProfile(ctx: UserContext): Promise<void> {
-  const currentName = ctx.state.person?.name ?? "";
+  const me = currentUser();
+  const currentName = me?.name ?? ctx.state.person?.name ?? "";
+  // eslint-disable-next-line unicorn/no-null -- null is the profile-colour domain contract (User.color)
+  const currentColor = me?.color ?? ctx.state.person?.color ?? null;
+
   const result = await openModal({
     variant: "prompt",
     title: "Edit profile",
+    message: "Your display name — pick an avatar colour next.",
     placeholder: "Your display name",
     initialValue: currentName,
     confirmLabel: "Save"
   });
   if (result.kind !== "submit") return;
 
-  const newName = result.value.trim();
-  if (!newName || newName === currentName) return;
+  const name = result.value.trim();
+  if (!name) return;
 
-  // Persist the updated name to localStorage (read by this island on next mount + by the avatar).
-  const raw = localStorage.getItem(USER_KEY);
-  const stored = raw
-    ? (() => {
-        try {
-          return JSON.parse(raw) as { name?: unknown; email?: unknown };
-        } catch {
-          return {};
-        }
-      })()
-    : {};
-  const email = typeof stored.email === "string" ? stored.email : ctx.state.email;
-  localStorage.setItem(USER_KEY, JSON.stringify({ name: newName, email }));
+  await applyProfile(ctx, name, currentColor);
+  openColorChooser(ctx, name, currentColor);
+}
 
-  // Update the avatar initials live by re-deriving the Person from the new name.
-  const person: Person = {
-    id: ctx.state.person?.id ?? "",
-    name: newName,
-    initials: initialsOf(newName)
-  };
-  ctx.set({ person, email });
+/**
+ * Open the avatar-colour chooser anchored to the avatar button; picking a colour re-saves the profile.
+ *
+ * @param ctx - The user-menu component context.
+ * @param name - The just-saved display name (re-saved with the chosen colour).
+ * @param currentColor - The current colour token (marks the selected swatch), or null.
+ * @example
+ * ```ts
+ * openColorChooser(ctx, "Ada", "--label-green");
+ * ```
+ */
+function openColorChooser(ctx: UserContext, name: string, currentColor: string | null): void {
+  const options: ChooserOption[] = PROFILE_PALETTE.map(swatch => ({
+    value: swatch.token,
+    label: swatch.name,
+    ornament: { kind: "swatch", color: swatch.token },
+    selected: swatch.token === currentColor
+  }));
+  openChooser({
+    anchor: ctx.el as HTMLElement,
+    title: "Avatar colour",
+    options,
+    // eslint-disable-next-line jsdoc/require-jsdoc -- inline onSelect: re-save with the chosen colour
+    onSelect: value => void applyProfile(ctx, name, value)
+  });
+}
 
+/**
+ * Persist the profile (name + colour) to D1 and repaint the masthead avatar live.
+ *
+ * @param ctx - The user-menu component context.
+ * @param name - The display name.
+ * @param color - The avatar colour token, or null to clear it.
+ * @returns A promise that resolves once the profile persists.
+ * @example
+ * ```ts
+ * await applyProfile(ctx, "Ada", "--label-green");
+ * ```
+ */
+async function applyProfile(ctx: UserContext, name: string, color: string | null): Promise<void> {
+  const user = await saveProfile({ name, color });
+  ctx.set({ person: userToPerson(user) });
   showToast("Profile updated");
 }
 
