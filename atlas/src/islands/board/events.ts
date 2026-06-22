@@ -13,11 +13,9 @@ import {
   onCardDragStart,
   onCardMenu,
   onCardOpen,
-  onCardTitleEdit,
   onColumnDragStart,
   onColumnDrop,
   onColumnMenu,
-  onColumnTitleEdit,
   onDragEnd,
   onDragOver
 } from "./handlers";
@@ -33,10 +31,6 @@ export const boardEvents: Spa.IslandEvents<BoardState> = {
   "click [data-add-column]": onAddColumn,
   "click [data-pager-dot]": onPagerDotClick,
   "click [data-card-id]": onCardOpen,
-
-  // double-click to rename (faster path than the menu)
-  "dblclick [data-card-title]": onCardTitleEdit,
-  "dblclick [data-column-title]": onColumnTitleEdit,
 
   // drag to reorder — cards (native draggable) and columns (from the drag handle)
   "dragstart [data-card-id]": onCardDragStart,

@@ -69,6 +69,7 @@ export function BoardPill({ board, active, customization }: BoardPillProps) {
   const icon = toElementIcon(customization?.icon);
   return (
     <div data-board-pill data-active={active ? "" : undefined} data-drag="board">
+      <span data-board-handle aria-hidden="true" />
       <a
         href={urls.toUrl("board", { id: board.id })}
         data-board-link
@@ -84,7 +85,6 @@ export function BoardPill({ board, active, customization }: BoardPillProps) {
       <button type="button" data-action="menu" aria-label={`${board.title} menu`}>
         <Icon name="more" />
       </button>
-      <span data-board-handle aria-hidden="true" />
     </div>
   );
 }

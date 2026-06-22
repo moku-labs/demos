@@ -94,25 +94,6 @@ textarea:disabled {
 }
 
 /**
- * Inline rename field (design context §4 D4) — the `[data-inline-rename]` input replaces a title
- * element on double-click. The title carries `[data-renaming]` while the input is live; the JS
- * positions it immediately after the hidden title. The accent underline signals "editing" without
- * a heavy box; focus-visible ring is suppressed (the underline IS the focus signal here).
- */
-[data-renaming] {
-  visibility: hidden;
-  pointer-events: none;
-  /* visibility:hidden keeps the element in flow (holds space for siblings like the ⋯ button). */
-}
-
-[data-inline-rename] {
-  flex: 1;
-}
-[data-inline-rename]:focus {
-  outline: none;
-}
-
-/**
  * Overlay scroll-lock — while any full-viewport overlay is open, the document behind it must not
  * scroll (design context §5: overlays are modal layers, never floating mid-page). Each overlay island
  * toggles its own boolean attribute on the document element when it opens; this locks the root and

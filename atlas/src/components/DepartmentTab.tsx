@@ -78,6 +78,7 @@ export function DepartmentTab({ department, index, active, customization }: Depa
       data-drag="department"
       aria-current={active ? "true" : undefined}
     >
+      <span data-dept-handle aria-hidden="true" />
       <span data-dept-serial aria-hidden="true">
         {serial}
       </span>
@@ -90,7 +91,6 @@ export function DepartmentTab({ department, index, active, customization }: Depa
       <button type="button" data-action="menu" aria-label={`${department.title} menu`}>
         <Icon name="more" />
       </button>
-      <span data-dept-handle aria-hidden="true" />
     </div>
   );
 }

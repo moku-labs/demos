@@ -389,24 +389,30 @@ test.describe("D — Menus and rename", () => {
     }
   });
 
-  test("D4: Double-click column title shows inline rename field", async ({ page }) => {
-    const columnTitle = page.locator("[data-column]").first().locator("[data-column-title]");
-    await columnTitle.dblclick();
-    // Inline rename: an input appears in-place (no modal); Escape cancels it
-    const inlineField = page.locator("[data-inline-rename]");
-    await expect(inlineField).toBeVisible();
+  test("D4: Column rename is the ⋯ menu's Rename (a prompt modal — no double-click edit)", async ({
+    page
+  }) => {
+    const menuBtn = page.locator("[data-column]").first().locator("[data-action='menu']");
+    await menuBtn.click();
+    await page
+      .getByRole("menuitem", { name: /rename/i })
+      .or(page.getByText("Rename"))
+      .first()
+      .click();
+    // Rename opens the universal prompt modal (the inline double-click edit was removed).
+    await expect(
+      page.locator("[data-modal], [data-overlay='modal'] [data-prompt], dialog")
+    ).toBeVisible();
     await page.keyboard.press("Escape");
-    await expect(inlineField).toBeHidden();
   });
 
-  test("D4: Double-click card title shows inline rename field", async ({ page }) => {
-    const cardTitle = page.locator("[data-card-id='issue-ws-reconnect'] [data-card-title]");
-    await cardTitle.dblclick();
-    // Inline rename: an input appears in-place (no modal); Escape cancels it
-    const inlineField = page.locator("[data-inline-rename]");
-    await expect(inlineField).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(inlineField).toBeHidden();
+  test("D4: Double-click a column title does NOT open an inline edit (removed)", async ({
+    page
+  }) => {
+    const columnTitle = page.locator("[data-column]").first().locator("[data-column-title]");
+    await columnTitle.dblclick();
+    // The in-place edit was intentionally removed — no inline field appears, no modal pops.
+    await expect(page.locator("[data-inline-rename]")).toHaveCount(0);
   });
 });
 

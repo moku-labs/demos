@@ -13,6 +13,7 @@
     border-bottom: 2px solid transparent;
     white-space: nowrap;
     color: var(--text-body);
+    cursor: pointer;
     transition:
       color var(--dur-fast) var(--ease-out),
       border-color var(--dur-fast) var(--ease-out);

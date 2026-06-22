@@ -12,7 +12,7 @@ import { Fragment, h } from "preact";
 import { Avatar } from "../components/Avatar";
 import { getSession, signOut } from "../lib/api";
 import { hardNavigate } from "../lib/hard-nav";
-import { openMenu } from "../lib/menu";
+import { openMenu, openModal, showToast } from "../lib/menu";
 import type { Person } from "../lib/types";
 import { urls } from "../routes";
 
@@ -126,8 +126,57 @@ async function mount(ctx: UserContext): Promise<void> {
 }
 
 /**
- * Open the user menu anchored to the avatar button; "Sign out" clears the session and returns to
- * sign-in.
+ * Open a prompt modal to edit the display name, then persist it to localStorage and re-sync the avatar.
+ *
+ * @param ctx - The user-menu component context.
+ * @returns A promise that resolves once the profile update persists (or is cancelled).
+ * @example
+ * ```ts
+ * await editProfile(ctx);
+ * ```
+ */
+async function editProfile(ctx: UserContext): Promise<void> {
+  const currentName = ctx.state.person?.name ?? "";
+  const result = await openModal({
+    variant: "prompt",
+    title: "Edit profile",
+    placeholder: "Your display name",
+    initialValue: currentName,
+    confirmLabel: "Save"
+  });
+  if (result.kind !== "submit") return;
+
+  const newName = result.value.trim();
+  if (!newName || newName === currentName) return;
+
+  // Persist the updated name to localStorage (read by this island on next mount + by the avatar).
+  const raw = localStorage.getItem(USER_KEY);
+  const stored = raw
+    ? (() => {
+        try {
+          return JSON.parse(raw) as { name?: unknown; email?: unknown };
+        } catch {
+          return {};
+        }
+      })()
+    : {};
+  const email = typeof stored.email === "string" ? stored.email : ctx.state.email;
+  localStorage.setItem(USER_KEY, JSON.stringify({ name: newName, email }));
+
+  // Update the avatar initials live by re-deriving the Person from the new name.
+  const person: Person = {
+    id: ctx.state.person?.id ?? "",
+    name: newName,
+    initials: initialsOf(newName)
+  };
+  ctx.set({ person, email });
+
+  showToast("Profile updated");
+}
+
+/**
+ * Open the user menu anchored to the avatar button; "Edit profile" updates the display name;
+ * "Sign out" clears the session and returns to sign-in.
  *
  * @param ctx - The user-menu component context.
  * @example
@@ -145,6 +194,7 @@ function onClick(ctx: UserContext): void {
     user: { name, email },
     // eslint-disable-next-line jsdoc/require-jsdoc -- inline handler for the universal-menu actions
     onAction: action => {
+      if (action === "profile") void editProfile(ctx);
       if (action === "sign-out")
         signOut().then(
           // Full-page load back to the auth split — the SPA cannot swap the app chrome for it.

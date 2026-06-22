@@ -15,7 +15,7 @@ import {
   removeSubIssue,
   toggleSubIssue
 } from "../../lib/api";
-import { inlineRename } from "../../lib/inline-rename";
+
 import { LABEL_KEYS, LABELS, PRIORITIES, STATUS_ORDER, STATUS_TITLES } from "../../lib/labels";
 import { openCustomize, openMenu, openModal, showToast } from "../../lib/menu";
 import { PEOPLE, personById } from "../../lib/people";
@@ -59,34 +59,6 @@ async function editTitle(ctx: IssueContext): Promise<void> {
 
   await patchIssue(detail.issue.id, { title });
   showToast("Issue renamed");
-}
-
-/**
- * Handle a double-click on the article title — inline rename (design context §4 D4): the heading
- * becomes an editable field in-place; Enter/blur saves, Escape cancels.
- *
- * @param ctx - The issue component context.
- * @param event - The delegated dblclick event.
- * @param titleElement - The matched `[data-issue-title]` element.
- * @example
- * ```ts
- * events: { "dblclick [data-issue-title]": onTitleEdit };
- * ```
- */
-export function onTitleEdit(ctx: IssueContext, event: Event, titleElement: Element): void {
-  event.preventDefault();
-  const detail = ctx.state.detail;
-  if (!detail) return;
-
-  void (async () => {
-    const next = await inlineRename({
-      titleEl: titleElement as HTMLElement,
-      currentValue: detail.issue.title
-    });
-    if (!next) return;
-    await patchIssue(detail.issue.id, { title: next });
-    showToast("Issue renamed");
-  })();
 }
 
 // ─── article: description ────────────────────────────────────────────────────
@@ -135,21 +107,6 @@ async function saveDescription(ctx: IssueContext): Promise<void> {
 
   await patchIssue(detail.issue.id, { description: next });
   showToast("Description updated");
-}
-
-/**
- * Handle a double-click on the rendered description — open the inline markdown writer (the faster path
- * to the `[data-desc-toggle]` Edit segment). Committing is the Preview segment's job (the rendered body
- * is replaced by the writer while editing, so this handler only ever fires from the preview state).
- *
- * @param ctx - The issue component context.
- * @example
- * ```ts
- * events: { "dblclick [data-issue-body]": onDescriptionEdit };
- * ```
- */
-export function onDescriptionEdit(ctx: IssueContext): void {
-  editDescription(ctx);
 }
 
 // ─── article: attachments ────────────────────────────────────────────────────

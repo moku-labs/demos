@@ -6,15 +6,7 @@
  * inside the dispatcher).
  */
 import type { Spa } from "@moku-labs/web/browser";
-import {
-  onAction,
-  onAttachmentClick,
-  onDescriptionEdit,
-  onRailEdit,
-  onSubAdd,
-  onSubToggle,
-  onTitleEdit
-} from "./handlers";
+import { onAction, onAttachmentClick, onRailEdit, onSubAdd, onSubToggle } from "./handlers";
 import type { IssueState } from "./types";
 
 /** The issue island's declarative delegated event map (one delegated listener per type on the host). */
@@ -25,9 +17,6 @@ export const issueEvents: Spa.IslandEvents<IssueState> = {
   "click [data-attachment]": onAttachmentClick,
   // A quiet rail field click opens its property editor (status/priority/labels/…/milestone).
   "click [data-rail-field]": onRailEdit,
-  // Double-click the article title or the rendered description to edit them.
-  "dblclick [data-issue-title]": onTitleEdit,
-  "dblclick [data-issue-body]": onDescriptionEdit,
   // The "Add a sub-issue…" field commits on Enter.
   "keydown [data-sub-add-field]": onSubAdd,
   // A sub-issue checkbox toggles its done state.

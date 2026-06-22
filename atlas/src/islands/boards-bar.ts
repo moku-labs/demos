@@ -19,7 +19,7 @@ import { createIsland } from "@moku-labs/web/browser";
 import { h } from "preact";
 import { BoardsBar } from "../components/BoardsBar";
 import { createBoard, deleteBoard, renameBoard, reorderBoard } from "../lib/api";
-import { inlineRename } from "../lib/inline-rename";
+
 import { openCustomize, openMenu, openModal, showToast } from "../lib/menu";
 import { navigate, onNavRefresh, refresh, resolveActive } from "../lib/nav";
 import type { Board, BoardSummary, Customization } from "../lib/types";
@@ -375,38 +375,6 @@ async function moveBoardFlow(ctx: BoardsBarContext, board: BoardSummary): Promis
   showToast("Board moved");
 }
 
-// ─── double-click rename ────────────────────────────────────────────────────────
-
-/**
- * Double-click a board title to rename it inline (design context §4 D4) — the in-place field
- * replaces the title text; Enter/blur saves, Escape cancels.
- *
- * @param ctx - The boards-bar island context.
- * @param event - The delegated dblclick event.
- * @param title - The matched `[data-board-title]` element.
- * @example
- * ```ts
- * events: { "dblclick [data-board-title]": onTitleEdit };
- * ```
- */
-function onTitleEdit(ctx: BoardsBarContext, event: Event, title: Element): void {
-  event.preventDefault();
-  const pill = title.closest("[data-board-pill]");
-  const board = pill ? boardForPill(ctx, pill) : undefined;
-  if (!board) return;
-
-  void (async () => {
-    const next = await inlineRename({
-      titleEl: title as HTMLElement,
-      currentValue: board.title
-    });
-    if (!next) return;
-    await renameBoard(board.id, next);
-    refresh();
-    showToast("Board renamed");
-  })();
-}
-
 // ─── drag to reorder ─────────────────────────────────────────────────────────
 
 /**
@@ -524,7 +492,6 @@ export const boardsBar = createIsland<BoardsBarState>("boards-bar", {
   events: {
     "click [data-action='add-board']": onAddBoard,
     "click [data-action='menu']": onBoardMenu,
-    "dblclick [data-board-title]": onTitleEdit,
     "dragstart [data-board-handle]": onPillDragStart,
     "dragover [data-boards-track]": onTrackDragOver,
     "drop [data-boards-track]": onPillDrop

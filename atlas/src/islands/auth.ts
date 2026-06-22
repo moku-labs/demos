@@ -128,20 +128,32 @@ async function onSubmit(_ctx: AuthContext, event: Event, form: Element): Promise
 
 /**
  * Run a one-tap demo sign-in for the social ("continue with") buttons, then navigate home.
+ * These are demo buttons — they sign in with the built-in demo credentials (no real OAuth flow).
  *
  * @param ctx - The auth component context.
+ * @param _event - The delegated click event (unused).
+ * @param button - The matched `[data-social]` button.
  * @returns A promise that resolves once the demo session settles.
  * @example
  * ```ts
  * events: { "click [data-social]": onSocial };
  * ```
  */
-async function onSocial(ctx: AuthContext): Promise<void> {
+async function onSocial(ctx: AuthContext, _event: Event, button: Element): Promise<void> {
+  const socialButton = button as HTMLButtonElement;
+  socialButton.disabled = true;
+  socialButton.setAttribute("aria-busy", "true");
+
   try {
     const session = await signIn(DEMO_CREDS);
     finishAuth(session.name, session.email);
   } catch {
-    showError(ctx.el, "Demo sign-in is unavailable right now.");
+    socialButton.disabled = false;
+    socialButton.removeAttribute("aria-busy");
+    showError(
+      ctx.el,
+      "Demo sign-in: tap the email form above with demo@atlas.dev and any password."
+    );
   }
 }
 

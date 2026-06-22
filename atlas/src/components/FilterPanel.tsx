@@ -96,126 +96,130 @@ export function FilterPanel({ selected = {} }: FilterPanelProps) {
     <div data-filter-panel role="dialog" aria-label="Filter issues">
       {/* Mobile-only dimming backdrop — a tap dismisses the sheet (hidden on desktop via CSS). */}
       <div data-scrim data-action="close-filter" aria-hidden="true" />
-      <header data-filter-head>
-        <h2 data-filter-title>Filter</h2>
-        <span data-filter-remembered>
-          <Icon name="check" />
-          filters remembered
-        </span>
-      </header>
 
-      <label data-filter-search>
-        <Icon name="search" />
-        <input
-          type="search"
-          name="filter-text"
-          data-action="filter-text"
-          placeholder="Search issues…"
-          value={selected.text ?? ""}
-        />
-      </label>
+      {/* [data-filter-body] is the scrollable region on mobile — the DONE button lives outside it. */}
+      <div data-filter-body>
+        <header data-filter-head>
+          <h2 data-filter-title>Filter</h2>
+          <span data-filter-remembered>
+            <Icon name="check" />
+            filters remembered
+          </span>
+        </header>
 
-      <section data-facet-group aria-label="Label">
-        <h3 data-facet-heading>Label</h3>
-        <div data-facet-options>
-          {LABEL_KEYS.map(key => (
-            <button
-              key={key}
-              type="button"
-              data-action="toggle-label"
-              data-value={key}
-              data-selected={labels.has(key) ? "" : undefined}
-              aria-pressed={labels.has(key) ? "true" : "false"}
-            >
-              <LabelDot label={key} />
-            </button>
-          ))}
-        </div>
-      </section>
+        <label data-filter-search>
+          <Icon name="search" />
+          <input
+            type="search"
+            name="filter-text"
+            data-action="filter-text"
+            placeholder="Search issues…"
+            value={selected.text ?? ""}
+          />
+        </label>
 
-      <section data-facet-group aria-label="Priority">
-        <h3 data-facet-heading>Priority</h3>
-        <div data-facet-options>
-          {PRIORITY_KEYS.map(rank => (
-            <button
-              key={rank}
-              type="button"
-              data-action="toggle-priority"
-              data-value={rank}
-              data-selected={priorities.has(rank) ? "" : undefined}
-              aria-pressed={priorities.has(rank) ? "true" : "false"}
-            >
-              <PriorityMark priority={rank} />
-              <span data-facet-text>{PRIORITIES[rank]}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+        <section data-facet-group aria-label="Label">
+          <h3 data-facet-heading>Label</h3>
+          <div data-facet-options>
+            {LABEL_KEYS.map(key => (
+              <button
+                key={key}
+                type="button"
+                data-action="toggle-label"
+                data-value={key}
+                data-selected={labels.has(key) ? "" : undefined}
+                aria-pressed={labels.has(key) ? "true" : "false"}
+              >
+                <LabelDot label={key} />
+              </button>
+            ))}
+          </div>
+        </section>
 
-      <section data-facet-group aria-label="Assignee">
-        <h3 data-facet-heading>Assignee</h3>
-        <div data-facet-options>
-          {PEOPLE.map(person => (
-            <button
-              key={person.id}
-              type="button"
-              data-action="toggle-assignee"
-              data-value={person.id}
-              data-selected={assignees.has(person.id) ? "" : undefined}
-              aria-pressed={assignees.has(person.id) ? "true" : "false"}
-            >
-              <Avatar person={person} size="sm" />
-              <span data-facet-text>{person.name}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+        <section data-facet-group aria-label="Priority">
+          <h3 data-facet-heading>Priority</h3>
+          <div data-facet-options>
+            {PRIORITY_KEYS.map(rank => (
+              <button
+                key={rank}
+                type="button"
+                data-action="toggle-priority"
+                data-value={rank}
+                data-selected={priorities.has(rank) ? "" : undefined}
+                aria-pressed={priorities.has(rank) ? "true" : "false"}
+              >
+                <PriorityMark priority={rank} />
+                <span data-facet-text>{PRIORITIES[rank]}</span>
+              </button>
+            ))}
+          </div>
+        </section>
 
-      <section data-facet-group aria-label="Status">
-        <h3 data-facet-heading>Status</h3>
-        <div data-facet-options>
-          {STATUS_ORDER.map(status => (
-            <button
-              key={status}
-              type="button"
-              data-action="toggle-status"
-              data-value={status}
-              data-selected={statuses.has(status) ? "" : undefined}
-              aria-pressed={statuses.has(status) ? "true" : "false"}
-            >
-              <span data-facet-text>{STATUS_TITLES[status]}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+        <section data-facet-group aria-label="Assignee">
+          <h3 data-facet-heading>Assignee</h3>
+          <div data-facet-options>
+            {PEOPLE.map(person => (
+              <button
+                key={person.id}
+                type="button"
+                data-action="toggle-assignee"
+                data-value={person.id}
+                data-selected={assignees.has(person.id) ? "" : undefined}
+                aria-pressed={assignees.has(person.id) ? "true" : "false"}
+              >
+                <Avatar person={person} size="sm" />
+                <span data-facet-text>{person.name}</span>
+              </button>
+            ))}
+          </div>
+        </section>
 
-      <footer data-filter-foot>
-        {chips.length > 0 ? (
-          <>
-            <div data-filter-summary>
-              {chips.map(chip => (
-                <button
-                  key={`${chip.facet}:${chip.value}`}
-                  type="button"
-                  data-summary-chip
-                  data-action="remove-filter"
-                  data-facet={chip.facet}
-                  data-value={chip.value}
-                  aria-label={`Remove ${chip.label}`}
-                >
-                  <span data-chip-text>{chip.label}</span>
-                  <Icon name="close" />
-                </button>
-              ))}
-            </div>
-            <button type="button" data-clear-all data-action="clear-filters">
-              Clear all
-            </button>
-          </>
-        ) : (
-          <p data-filter-empty>No filters yet — pick a facet to narrow the board.</p>
-        )}
-      </footer>
+        <section data-facet-group aria-label="Status">
+          <h3 data-facet-heading>Status</h3>
+          <div data-facet-options>
+            {STATUS_ORDER.map(status => (
+              <button
+                key={status}
+                type="button"
+                data-action="toggle-status"
+                data-value={status}
+                data-selected={statuses.has(status) ? "" : undefined}
+                aria-pressed={statuses.has(status) ? "true" : "false"}
+              >
+                <span data-facet-text>{STATUS_TITLES[status]}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <footer data-filter-foot>
+          {chips.length > 0 ? (
+            <>
+              <div data-filter-summary>
+                {chips.map(chip => (
+                  <button
+                    key={`${chip.facet}:${chip.value}`}
+                    type="button"
+                    data-summary-chip
+                    data-action="remove-filter"
+                    data-facet={chip.facet}
+                    data-value={chip.value}
+                    aria-label={`Remove ${chip.label}`}
+                  >
+                    <span data-chip-text>{chip.label}</span>
+                    <Icon name="close" />
+                  </button>
+                ))}
+              </div>
+              <button type="button" data-clear-all data-action="clear-filters">
+                Clear all
+              </button>
+            </>
+          ) : (
+            <p data-filter-empty>No filters yet — pick a facet to narrow the board.</p>
+          )}
+        </footer>
+      </div>
 
       {/* Bottom-sheet dismiss — only shown at the mobile sheet breakpoint via CSS. */}
       <button type="button" data-filter-done data-action="close-filter">

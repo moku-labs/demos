@@ -88,6 +88,10 @@ export function ContextMenu({ variant, elementLabel, canMove, user }: ContextMen
             {user?.email && <span data-user-email>{user.email}</span>}
           </div>
           <div data-menu-rule aria-hidden="true" />
+          <button type="button" data-menu-item data-action="profile" role="menuitem">
+            <Icon name="feather" />
+            Edit profile
+          </button>
           <button type="button" data-menu-item data-action="sign-out" role="menuitem">
             <Icon name="logout" />
             Sign out

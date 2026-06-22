@@ -17,9 +17,8 @@ import type { Spa } from "@moku-labs/web/browser";
 import { createIsland } from "@moku-labs/web/browser";
 import { Fragment, h } from "preact";
 import { BoardHeader } from "../components/BoardHeader";
-import { getBoard, renameBoard } from "../lib/api";
-import { openModal, showToast } from "../lib/menu";
-import { boardIdFromUrl, refresh, resolveActive } from "../lib/nav";
+import { getBoard } from "../lib/api";
+import { boardIdFromUrl, resolveActive } from "../lib/nav";
 import { onPatch } from "../lib/realtime";
 import type { Board, BoardPatch, Issue, IssueStatus } from "../lib/types";
 
@@ -201,41 +200,6 @@ function applyPatch(ctx: HeaderContext, patch: BoardPatch, scheduleRefetch: () =
   if (STAT_AFFECTING.has(patch.type)) scheduleRefetch();
 }
 
-// ─── double-click rename ────────────────────────────────────────────────────────
-
-/**
- * Double-click the board title to rename it — the faster path, via the universal prompt modal. On
- * submit it persists with `renameBoard` (the `board.renamed` patch repaints the title live) and
- * {@link refresh}es the chrome so the boards bar re-syncs.
- *
- * @param ctx - The board-header island context.
- * @returns A promise that resolves once the rename persists (or is cancelled).
- * @example
- * ```ts
- * events: { "dblclick [data-board-title]": onTitleEdit };
- * ```
- */
-async function onTitleEdit(ctx: HeaderContext): Promise<void> {
-  const board = ctx.state.board;
-  if (!board) return;
-
-  const result = await openModal({
-    variant: "prompt",
-    title: "Rename board",
-    placeholder: "Board title",
-    initialValue: board.title,
-    confirmLabel: "Rename"
-  });
-  if (result.kind !== "submit") return;
-
-  const title = result.value.trim();
-  if (!title || title === board.title) return;
-
-  await renameBoard(board.id, title);
-  refresh();
-  showToast("Board renamed");
-}
-
 // ─── island spec ───────────────────────────────────────────────────────────────
 
 /**
@@ -279,7 +243,5 @@ export const boardHeader = createIsland<HeaderState>("board-header", {
   onMount: mount,
   // eslint-disable-next-line jsdoc/require-jsdoc -- inline nav-end re-sync
   onNavEnd: ctx => void sync(ctx),
-  events: {
-    "dblclick [data-board-title]": onTitleEdit
-  }
+  events: {}
 });

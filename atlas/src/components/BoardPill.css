@@ -9,6 +9,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.15rem;
+    padding-left: 0.3rem;
     padding-right: 0.3rem;
     border: var(--rule-width) solid var(--rule);
     border-radius: var(--radius-pill);
@@ -30,7 +31,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.4rem 0.5rem 0.4rem 0.85rem;
+    padding: 0.4rem 0.5rem;
     font-size: var(--text-sm);
     font-weight: 550;
     color: var(--text-body);
