@@ -116,6 +116,31 @@
     line-height: var(--leading-tight);
     letter-spacing: var(--tracking-tight);
     color: var(--text-strong);
+    cursor: text;
+  }
+
+  /* The inline title editor (double-click the title) — matches the h1 register so the swap is seamless,
+     with a quiet underline + focus ring so it clearly reads as an editable field. */
+  [data-title-edit] {
+    width: 100%;
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-2xl), 1.6rem + 1.6vw, var(--text-3xl));
+    font-weight: 540;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+    background: var(--surface-sunken);
+    border: var(--rule-width) solid var(--rule-strong);
+    border-radius: var(--radius-md);
+    padding: var(--space-1) var(--space-3);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
+  }
+  [data-title-edit]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 var(--rule-width) var(--accent-tint);
   }
 
   [data-byline] {
@@ -369,29 +394,46 @@
     display: flex;
     flex-direction: column;
   }
+  /* The add-sub-issue row reads as a real text field: a bordered shell that warms on hover and lights
+     its border + ring on focus (mirrors the description editor), so users know they can type into it. */
   [data-sub-add] {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
-    padding-top: var(--space-2);
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    padding: 0.4rem var(--space-3);
+    background: var(--surface-card);
+    border: var(--rule-width) solid var(--rule-strong);
+    border-radius: var(--radius-md);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
+  }
+  [data-sub-add]:hover {
+    border-color: var(--accent);
+  }
+  [data-sub-add]:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 var(--rule-width) var(--accent-tint);
   }
   [data-sub-add-box] {
     display: inline-grid;
     place-items: center;
-    width: 1.15rem;
-    height: 1.15rem;
+    width: 1.1rem;
+    height: 1.1rem;
     flex-shrink: 0;
-    border: 1px dashed var(--rule-strong);
-    border-radius: var(--radius-sm);
     color: var(--text-faint);
   }
+  [data-sub-add]:focus-within [data-sub-add-box] {
+    color: var(--accent);
+  }
   [data-sub-add-box] [data-icon] {
-    width: 0.8rem;
-    height: 0.8rem;
+    width: 0.9rem;
+    height: 0.9rem;
   }
   [data-sub-add-field] {
     flex: 1;
-    padding: 0.3rem 0;
+    padding: 0.2rem 0;
     background: none;
     border: none;
     font-size: var(--text-base);
@@ -419,8 +461,24 @@
     flex-direction: column;
     gap: 0.35rem;
   }
-  /* Quiet blocks: a hairline + lead-in space sets the read-only Timeline and the icon/add-property
-     group apart from the editable fields above, so the rail reads as distinct stanzas. */
+  /* Editable rail rows (every field except the read-only Timeline) open a chooser/modal on click —
+     give them a clear pointer + hover fill so they read as interactive (#10). The negative inline
+     margin + matching padding keep the hover fill flush without shifting the rail's rhythm. */
+  [data-rail-field]:not([data-rail-timeline]) {
+    cursor: pointer;
+    margin-inline: calc(var(--space-2) * -1);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    transition: background var(--dur-fast) var(--ease-out);
+  }
+  [data-rail-field]:not([data-rail-timeline]):hover {
+    background: var(--surface-sunken);
+  }
+  [data-rail-field]:not([data-rail-timeline]):hover [data-rail-label] {
+    color: var(--text-strong);
+  }
+  /* Quiet blocks: a hairline + lead-in space sets the read-only Timeline and the icon group apart from
+     the editable fields above, so the rail reads as distinct stanzas. */
   [data-rail-timeline],
   [data-rail-icon] {
     padding-top: var(--space-5);
@@ -550,24 +608,6 @@
     color: var(--text-muted);
   }
   [data-icon-chip] [data-icon] {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  [data-add-property] {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    align-self: flex-start;
-    margin-top: var(--space-1);
-    font-size: var(--text-sm);
-    color: var(--text-muted);
-    transition: color var(--dur-fast) var(--ease-out);
-  }
-  [data-add-property]:hover {
-    color: var(--accent-deep);
-  }
-  [data-add-property] [data-icon] {
     width: 1rem;
     height: 1rem;
   }

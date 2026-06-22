@@ -66,6 +66,9 @@ export function CardView({
   customization
 }: CardViewProps) {
   const icon = customization?.icon ?? null;
+  const color = customization?.color ?? null;
+  // Paint the element's chosen colour onto the icon (or a dot when colour-only) via --element-color.
+  const style = color ? `--element-color:var(${color})` : undefined;
   const priority: Priority = issue.priority ?? "none";
   const summary = excerpt(issue.description);
   const hasSubIssues = subIssues.total > 0;
@@ -78,6 +81,7 @@ export function CardView({
       data-card
       draggable={true}
       aria-roledescription="Draggable card"
+      {...(style ? { style } : {})}
     >
       <div data-card-head>
         {icon && (
@@ -85,6 +89,7 @@ export function CardView({
             <Icon name={icon as IconName} />
           </span>
         )}
+        {!icon && color && <span data-card-dot aria-hidden="true" />}
         <h3 data-card-title>{issue.title}</h3>
         <PriorityMark priority={priority} />
         <button type="button" data-action="card-menu" aria-label={`${issue.title} menu`}>

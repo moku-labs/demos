@@ -47,10 +47,19 @@
   [data-board-icon] {
     display: inline-flex;
     font-size: var(--text-xs);
-    color: var(--text-muted);
+    /* The element's customized colour wins; falls back to muted ink (or accent when active). */
+    color: var(--element-color, var(--text-muted));
   }
   :scope[data-active] [data-board-icon] {
-    color: var(--accent);
+    color: var(--element-color, var(--accent));
+  }
+  /* Colour-only customization (no icon): a small dot carries the chosen colour. */
+  [data-board-dot] {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--element-color, var(--text-muted));
   }
 
   button[data-action="menu"] {

@@ -482,6 +482,51 @@ export async function patchIssue(issueId: string, patch: IssuePatch): Promise<Is
 }
 
 /**
+ * List a board's milestone catalog — the distinct milestone names used across its issues.
+ *
+ * @param boardId - The board whose milestones to list.
+ * @returns The distinct milestone names (alphabetised; may be empty).
+ * @example
+ * ```ts
+ * const milestones = await listMilestones(boardId);
+ * ```
+ */
+export async function listMilestones(boardId: string): Promise<string[]> {
+  return request<string[]>(`/api/boards/${boardId}/milestones`);
+}
+
+/**
+ * Rename a milestone board-wide — every issue carrying `from` is rewritten to `to`.
+ *
+ * @param boardId - The board whose milestone to rename.
+ * @param from - The current milestone name.
+ * @param to - The new milestone name.
+ * @returns Resolves once the rename persists.
+ * @example
+ * ```ts
+ * await renameMilestone(boardId, "Sprint 11", "Sprint 12");
+ * ```
+ */
+export async function renameMilestone(boardId: string, from: string, to: string): Promise<void> {
+  await send(`/api/boards/${boardId}/milestones/rename`, jsonInit("POST", { from, to }));
+}
+
+/**
+ * Delete a milestone board-wide — clears it on every issue that carries it.
+ *
+ * @param boardId - The board whose milestone to delete.
+ * @param name - The milestone name to clear.
+ * @returns Resolves once the delete persists.
+ * @example
+ * ```ts
+ * await deleteMilestone(boardId, "Sprint 11");
+ * ```
+ */
+export async function deleteMilestone(boardId: string, name: string): Promise<void> {
+  await send(`/api/boards/${boardId}/milestones/delete`, jsonInit("POST", { name }));
+}
+
+/**
  * Delete an issue (broadcasts `issue.deleted`).
  *
  * @param issueId - The issue to delete.

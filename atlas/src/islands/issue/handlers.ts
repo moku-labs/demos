@@ -18,7 +18,14 @@ import {
 
 import { LABEL_KEYS, LABELS, PRIORITIES, STATUS_ORDER, STATUS_TITLES } from "../../lib/labels";
 import type { ChooserOption } from "../../lib/menu";
-import { openChooser, openCustomize, openMenu, openModal, showToast } from "../../lib/menu";
+import {
+  openChooser,
+  openCustomize,
+  openMenu,
+  openMilestone,
+  openModal,
+  showToast
+} from "../../lib/menu";
 import { allPeople } from "../../lib/people";
 import type { IssueStatus, LabelKey, Priority } from "../../lib/types";
 import { closeToBoard } from "./lifecycle";
@@ -33,8 +40,77 @@ const DAY_MS = 86_400_000;
 // ─── article: title ──────────────────────────────────────────────────────────
 
 /**
- * Rename the issue via the prompt modal (the article title's double-click path — the component ships
- * no inline field, so the universal prompt modal is the faster-path Rename).
+ * Begin an inline title edit (the article title's double-click path): swap the `<h1>` for an editable
+ * input, focus + select it, then commit on Enter or blur and cancel on Escape. The keydown/blur
+ * listeners are bound directly to the input (not delegated) so they share one `commit` closure — this
+ * guards against a double-save (Enter then blur) and lets Escape `stopPropagation` so it cancels the
+ * edit instead of the panel's global Escape-to-close. Persists via `patchIssue` (the returning
+ * `issue.updated` realtime patch reconciles the title into state + the board card).
+ *
+ * @param ctx - The issue component context.
+ * @example
+ * ```ts
+ * events: { "dblclick [data-issue-title]": startTitleEdit };
+ * ```
+ */
+export function startTitleEdit(ctx: IssueContext): void {
+  const detail = ctx.state.detail;
+  if (!detail || ctx.state.editingTitle) return;
+
+  ctx.set({ editingTitle: true });
+  ctx.flush();
+
+  const input = ctx.el.querySelector<HTMLInputElement>("[data-title-edit]");
+  if (!input) return;
+  input.focus();
+  input.select();
+
+  let done = false;
+  // eslint-disable-next-line jsdoc/require-jsdoc -- inline single-shot commit/cancel for the title input
+  const commit = (save: boolean): void => {
+    if (done) return;
+    done = true;
+    input.removeEventListener("blur", onBlur);
+    const next = input.value.trim();
+    ctx.set({ editingTitle: false });
+    if (!save || !next || next === detail.issue.title) return;
+    void persistTitle(detail.issue.id, next);
+  };
+  // eslint-disable-next-line jsdoc/require-jsdoc -- inline blur → commit
+  const onBlur = (): void => commit(true);
+  input.addEventListener("blur", onBlur);
+  input.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      commit(true);
+    } else if (event.key === "Escape") {
+      // Cancel — and stop the panel's global Escape handler from closing the whole issue.
+      event.preventDefault();
+      event.stopPropagation();
+      commit(false);
+    }
+  });
+}
+
+/**
+ * Persist a new issue title and confirm with a toast — the commit path for the inline title editor.
+ *
+ * @param issueId - The issue whose title to update.
+ * @param title - The trimmed new title.
+ * @returns A promise that resolves once the title persists.
+ * @example
+ * ```ts
+ * void persistTitle(issue.id, "New title");
+ * ```
+ */
+async function persistTitle(issueId: string, title: string): Promise<void> {
+  await patchIssue(issueId, { title });
+  showToast("Issue renamed");
+}
+
+/**
+ * Rename the issue via the prompt modal — the "⋯ → Rename" header-menu path (the inline double-click
+ * path is {@link startTitleEdit}).
  *
  * @param ctx - The issue component context.
  * @returns A promise that resolves once the rename persists (or is cancelled).
@@ -129,11 +205,19 @@ function pickAndUpload(ctx: IssueContext): void {
 
   const input = document.createElement("input");
   input.type = "file";
+  // The input MUST be in the document for a synthetic .click() to reliably open the native picker
+  // (a detached input is silently ignored in several browsers) — hide it, then remove it on change.
+  input.style.display = "none";
 
   input.addEventListener("change", () => {
     const file = input.files?.[0];
     if (file) void uploadFile(ctx, file);
+    input.remove();
   });
+  // appendChild (not append): @cloudflare/workers-types merges Element.append into a conflicting
+  // overload set in this project (see nav.ts), so the DOM helper is used explicitly.
+  // eslint-disable-next-line unicorn/prefer-dom-node-append -- workers-types overload conflict, see above
+  document.body.appendChild(input);
   input.click();
 }
 
@@ -752,32 +836,47 @@ async function applyReporter(ctx: IssueContext, value: string): Promise<void> {
 }
 
 /**
- * Edit the issue's milestone / cycle via a prompt; an empty value clears it.
+ * Open the milestone picker under the rail field — the board's remembered milestone catalog (pick · add
+ * · rename · delete). Picking assigns via {@link applyMilestone}; rename/delete are catalog admin the
+ * picker performs itself.
  *
  * @param ctx - The issue component context.
- * @param _anchor - Unused; the rail field anchor (milestone is free text, edited via a prompt).
- * @returns A promise that resolves once the milestone persists.
+ * @param anchor - The rail field the picker anchors under.
  * @example
  * ```ts
- * await editMilestone(ctx);
+ * editMilestone(ctx, field);
  * ```
  */
-async function editMilestone(ctx: IssueContext, _anchor?: HTMLElement): Promise<void> {
+function editMilestone(ctx: IssueContext, anchor: HTMLElement): void {
   const detail = ctx.state.detail;
   if (!detail) return;
 
-  const result = await openModal({
-    variant: "prompt",
-    title: "Milestone / Cycle",
-    placeholder: "Sprint 12",
-    initialValue: detail.issue.milestone ?? ""
+  openMilestone({
+    anchor,
+    boardId: ctx.state.boardId,
+    current: detail.issue.milestone,
+    // eslint-disable-next-line jsdoc/require-jsdoc -- inline onAssign: persist the chosen milestone
+    onAssign: value => void applyMilestone(ctx, value)
   });
-  if (result.kind !== "submit") return;
+}
 
-  // eslint-disable-next-line unicorn/no-null -- null is the milestone domain contract (clears the milestone)
-  const milestone = result.value.trim() || null;
+/**
+ * Persist a chosen milestone on the issue (no-op when unchanged) and confirm with a toast.
+ *
+ * @param ctx - The issue component context.
+ * @param milestone - The chosen milestone name, or `null` to clear it.
+ * @returns A promise that resolves once the change persists.
+ * @example
+ * ```ts
+ * await applyMilestone(ctx, "Sprint 12");
+ * ```
+ */
+async function applyMilestone(ctx: IssueContext, milestone: string | null): Promise<void> {
+  const detail = ctx.state.detail;
+  if (!detail || milestone === detail.issue.milestone) return;
+
   await patchIssue(detail.issue.id, { milestone });
-  showToast("Milestone updated");
+  showToast(milestone ? "Milestone updated" : "Milestone cleared");
 }
 
 /**
@@ -857,34 +956,13 @@ function openIssueCustomize(ctx: IssueContext): void {
   });
 }
 
-/**
- * Handle the "+ Add property" affordance — reveal the next unset optional rail field by surfacing its
- * editor (the component keeps unset fields out of the way; here we open the estimate/due/milestone
- * editors in turn). Opens the due-date editor as the first sensible default.
- *
- * @param ctx - The issue component context.
- * @example
- * ```ts
- * revealNextProperty(ctx);
- * ```
- */
-function revealNextProperty(ctx: IssueContext): void {
-  const detail = ctx.state.detail;
-  if (!detail) return;
-
-  // Reveal the first still-unset optional field (due → estimate → milestone).
-  if (detail.issue.dueAt === null) void editDueDate(ctx);
-  else if (detail.issue.estimate === null) void editEstimate(ctx);
-  else void editMilestone(ctx);
-}
-
-// ─── header: the [data-action] dispatcher (close · ⋯ · attach · customize · add) ─
+// ─── header: the [data-action] dispatcher (close · ⋯ · attach · customize) ───────
 
 /**
  * The single delegated `[data-action]` dispatcher — every action button in the panel (the header ×
  * and ⋯, the scrim, the description Preview/Edit toggle, "Attach file", the rail icon "Customize",
- * "+ Add property", and each sub-issue's ⋯) routes here by its `data-action` token. Sub-issue menus
- * are told apart by their `data-sub-id`.
+ * and each sub-issue's ⋯) routes here by its `data-action` token. Sub-issue menus are told apart by
+ * their `data-sub-id`.
  *
  * @param ctx - The issue component context.
  * @param event - The delegated click event.
@@ -920,10 +998,6 @@ export function onAction(ctx: IssueContext, event: Event, element: Element): voi
     }
     case "customize": {
       openIssueCustomize(ctx);
-      return;
-    }
-    case "add-property": {
-      revealNextProperty(ctx);
       return;
     }
     case "edit-description": {

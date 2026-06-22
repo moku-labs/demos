@@ -61,13 +61,15 @@
      `pointer-events:none` so the scrim-less desktop popover lets outside clicks reach the page (the
      island closes on the resulting outside pointerdown); the panel itself re-enables pointer events.
      On phones the panel promotes to a bottom sheet WITH a scrim that re-arms its own pointer-events. */
-  [data-overlay="chooser"]:not([hidden]) {
+  [data-overlay="chooser"]:not([hidden]),
+  [data-overlay="milestone"]:not([hidden]) {
     position: fixed;
     inset: 0;
     z-index: var(--z-modal);
     pointer-events: none;
   }
-  [data-overlay="chooser"]:not([hidden]) [data-chooser] {
+  [data-overlay="chooser"]:not([hidden]) [data-chooser],
+  [data-overlay="milestone"]:not([hidden]) [data-ms-card] {
     pointer-events: auto;
   }
 

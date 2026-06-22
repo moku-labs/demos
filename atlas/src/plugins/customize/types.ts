@@ -12,6 +12,12 @@ export type Api = {
   getCustomizationsForBoard(env: WorkerEnv, boardId: string): Promise<Customization[]>;
   /** All department-level customizations — for the departments index. */
   getCustomizationsForDepartments(env: WorkerEnv): Promise<Customization[]>;
+  /**
+   * All chrome-level customizations (departments AND boards) in one query — feeds the persistent
+   * navigation chrome (the departments index + the boards bar's pills) so a board pill shows its
+   * colour/icon even when its board isn't the one currently open.
+   */
+  getCustomizationsForChrome(env: WorkerEnv): Promise<Customization[]>;
 };
 
 /** customize plugin events (env-carrying payload contract). */

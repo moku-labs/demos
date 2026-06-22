@@ -98,8 +98,8 @@ function toBoard(summary: BoardSummary): Board {
 
 /**
  * Render the SSR boards bar from state. Never authors markup — it composes the existing
- * {@link BoardsBar} component. Board customizations also arrive via the board snapshot's `customized`
- * patches, so an empty list here is fine (the pills still tint live on the board screen).
+ * {@link BoardsBar} component. The pills tint from the chrome customizations carried in state (each
+ * board-scoped row matched to its pill by id); a live `customized` patch still re-tints the open board.
  *
  * @param state - The current boards-bar state.
  * @returns The boards-bar view.
@@ -120,10 +120,10 @@ function render(state: Readonly<BoardsBarState>): Spa.RenderResult {
 
 /**
  * Re-resolve the active navigation context and paint the bar. Idempotent and safe from `onMount`,
- * `onNavEnd` (the bar persists across SPA navigation), and after an {@link onNavRefresh}. The active
- * department's board customizations are not part of the nav index, so `[]` is passed (they arrive live
- * via the board snapshot). When an empty department is selected ({@link file://../lib/empty-dept.ts})
- * the bar shows only its "Add board" — no pills, no controls — since it has no board to view.
+ * `onNavEnd` (the bar persists across SPA navigation), and after an {@link onNavRefresh}. The chrome
+ * customizations from the nav index (departments + boards) are passed through so each board pill tints
+ * by id. When an empty department is selected ({@link file://../lib/empty-dept.ts}) the bar shows only
+ * its "Add board" — no pills, no controls — since it has no board to view.
  *
  * @param ctx - The boards-bar island context.
  * @returns A promise that resolves once the bar is painted.
@@ -151,7 +151,8 @@ async function sync(ctx: BoardsBarContext): Promise<void> {
     activeBoardId: active.activeBoardId ?? "",
     activeDepartmentId: active.activeDepartmentId ?? "",
     view: active.view,
-    customizations: [],
+    // Board pills tint from the chrome customizations (board-scoped rows match each pill by id).
+    customizations: active.customizations,
     emptyDepartment: false
   });
 }

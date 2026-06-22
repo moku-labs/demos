@@ -89,6 +89,18 @@ export type Api = {
     patch: IssuePatch,
     actor: Actor
   ): Promise<Issue>;
+  /** The board's milestone catalog — the distinct non-empty `milestone` values (alphabetised). */
+  listMilestones(env: WorkerEnv, boardId: string): Promise<string[]>;
+  /** Rename a milestone board-wide (every issue carrying it) + broadcast property.changed per issue. */
+  renameMilestone(
+    env: WorkerEnv,
+    boardId: string,
+    from: string,
+    to: string,
+    actor: Actor
+  ): Promise<void>;
+  /** Delete a milestone board-wide (clears it on every issue carrying it) + broadcast per issue. */
+  deleteMilestone(env: WorkerEnv, boardId: string, name: string, actor: Actor): Promise<void>;
 };
 
 /** issues plugin events (env-carrying payload contract). */

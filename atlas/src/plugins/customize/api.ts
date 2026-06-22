@@ -149,6 +149,28 @@ export function createCustomizeApi(ctx: CustomizeContext): Api {
         "department"
       );
       return results.map(row => rowToCustomization(row));
+    },
+
+    /**
+     * Return all chrome-level customizations — departments AND boards — in a single query.
+     *
+     * The persistent nav chrome (departments index + boards bar) renders pills/tabs for elements that
+     * may not be the currently-open board, so it needs every department and board customization at once
+     * (the board-scoped `getCustomizationsForBoard` only covers one board's subtree).
+     *
+     * @param env - Per-request Cloudflare bindings.
+     * @returns An array of department + board `Customization` objects (may be empty).
+     * @example
+     * ```ts
+     * const chrome = await app.customize.getCustomizationsForChrome(env);
+     * ```
+     */
+    async getCustomizationsForChrome(env: WorkerEnv): Promise<Customization[]> {
+      const { results } = await d1.query<CustomizationRow>(
+        env,
+        "SELECT element_type, element_id, board_id, color, icon FROM customizations WHERE element_type IN ('department', 'board')"
+      );
+      return results.map(row => rowToCustomization(row));
     }
   };
 }

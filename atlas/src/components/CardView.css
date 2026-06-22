@@ -63,7 +63,17 @@
     flex: none;
     margin-top: 0.1rem;
     font-size: var(--text-sm);
-    color: var(--text-muted);
+    /* The issue's customized colour tints its leading icon; falls back to muted ink. */
+    color: var(--element-color, var(--text-muted));
+  }
+  /* Colour-only customization (no icon): a small dot carries the chosen colour. */
+  [data-card-dot] {
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-top: 0.35rem;
+    border-radius: 50%;
+    background: var(--element-color, var(--text-muted));
   }
 
   [data-card-title] {

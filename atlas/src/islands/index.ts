@@ -23,6 +23,7 @@ import { customizePanel } from "./customize-panel";
 import { departments } from "./departments";
 import { filterPanel } from "./filter-panel";
 import { issue } from "./issue";
+import { milestonePicker } from "./milestone-picker";
 import { modal } from "./modal";
 import { overflowSheet } from "./overflow-sheet";
 import { themeToggle } from "./theme-toggle";
@@ -44,6 +45,7 @@ export const islands = [
   // Overlay singletons (the lib/menu bus consumers + the persistent panels)
   contextMenu,
   chooser,
+  milestonePicker,
   modal,
   toast,
   customizePanel,

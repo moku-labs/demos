@@ -71,12 +71,16 @@ export interface DepartmentTabProps {
 export function DepartmentTab({ department, index, active, customization }: DepartmentTabProps) {
   const serial = String(index + 1).padStart(2, "0");
   const icon = toElementIcon(customization?.icon);
+  const color = customization?.color ?? null;
+  // Paint the element's chosen colour onto the icon (or a dot when colour-only) via --element-color.
+  const style = color ? `--element-color:var(${color})` : undefined;
   return (
     <div
       data-dept-tab
       data-active={active ? "" : undefined}
       data-drag="department"
       aria-current={active ? "true" : undefined}
+      {...(style ? { style } : {})}
     >
       <span data-dept-handle aria-hidden="true" draggable={true} />
       <span data-dept-serial aria-hidden="true">
@@ -87,6 +91,7 @@ export function DepartmentTab({ department, index, active, customization }: Depa
           <Icon name={icon} />
         </span>
       )}
+      {!icon && color && <span data-dept-dot aria-hidden="true" />}
       <span data-dept-name>{department.title}</span>
       <button type="button" data-action="menu" aria-label={`${department.title} menu`}>
         <Icon name="more" />

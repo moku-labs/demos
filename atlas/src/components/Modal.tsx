@@ -7,20 +7,25 @@
  * re-renders it via `h(Modal, props)` and wires submit/dismiss off the `data-action`/`data-scrim`
  * hooks; the form degrades to a real submit with no JS.
  */
+import type { ModalSwatch } from "../lib/menu";
 import { Icon } from "./Icon";
 
 /** Props for {@link Modal}. */
 export interface ModalProps {
   /** Which dialog to render. */
-  variant: "delete" | "prompt" | "date";
+  variant: "delete" | "prompt" | "date" | "profile";
   /** The dialog title (e.g. "Delete column", "New board", "Set due date"). */
   title: string;
   /** The body copy (delete variant) or helper line. */
   message?: string;
   /** Label for the primary/confirm button (defaults per variant). */
   confirmLabel?: string;
-  /** Placeholder for the text field (prompt variant). */
+  /** Placeholder for the text field (prompt/profile variant). */
   placeholder?: string;
+  /** The avatar-colour palette (profile variant). */
+  palette?: ModalSwatch[];
+  /** The selected colour token (profile variant) — marks the active swatch. */
+  selectedColor?: string | null;
 }
 
 /**
@@ -40,11 +45,20 @@ export interface ModalProps {
  * <Modal variant="date" title="Set due date" />
  * ```
  */
-export function Modal({ variant, title, message, confirmLabel, placeholder }: ModalProps) {
+export function Modal({
+  variant,
+  title,
+  message,
+  confirmLabel,
+  placeholder,
+  palette = [],
+  selectedColor = null
+}: ModalProps) {
   const isDelete = variant === "delete";
   const isDate = variant === "date";
+  const isProfile = variant === "profile";
   const confirm = confirmLabel ?? (isDelete ? "Delete" : isDate ? "Save" : "Create");
-  const eyebrow = isDelete ? "Confirm" : isDate ? "Schedule" : "Create";
+  const eyebrow = isDelete ? "Confirm" : isDate ? "Schedule" : isProfile ? "Edit" : "Create";
 
   return (
     <div data-modal data-variant={variant}>
@@ -63,7 +77,7 @@ export function Modal({ variant, title, message, confirmLabel, placeholder }: Mo
 
           {message && <p data-modal-message>{message}</p>}
 
-          {variant === "prompt" && (
+          {(variant === "prompt" || isProfile) && (
             <label data-modal-field>
               <input
                 type="text"
@@ -74,6 +88,27 @@ export function Modal({ variant, title, message, confirmLabel, placeholder }: Mo
                 required
               />
             </label>
+          )}
+
+          {isProfile && (
+            <div data-modal-swatches>
+              {palette.map(swatch => (
+                <button
+                  key={swatch.token}
+                  type="button"
+                  data-modal-swatch
+                  data-action="pick-color"
+                  data-value={swatch.token}
+                  data-selected={selectedColor === swatch.token ? "" : undefined}
+                  style={`--swatch:var(${swatch.token})`}
+                  aria-pressed={selectedColor === swatch.token ? "true" : "false"}
+                  aria-label={swatch.name}
+                  title={swatch.name}
+                >
+                  <span data-modal-swatch-dot aria-hidden="true" />
+                </button>
+              ))}
+            </div>
           )}
 
           {isDate && (

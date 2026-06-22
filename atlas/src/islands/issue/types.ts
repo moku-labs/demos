@@ -32,6 +32,8 @@ export type IssueState = {
   customization: Customization | undefined;
   /** Whether the description is in edit (textarea) mode vs. the default rendered preview. */
   editingDescription: boolean;
+  /** Whether the title is in inline-edit (input) mode — opened by double-clicking the article title. */
+  editingTitle: boolean;
 };
 
 /** The issue component context (typed per-instance state). */
@@ -45,5 +47,6 @@ export const CLOSED_STATE: IssueState = {
   board: undefined,
   column: undefined,
   customization: undefined,
-  editingDescription: false
+  editingDescription: false,
+  editingTitle: false
 };

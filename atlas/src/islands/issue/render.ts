@@ -36,6 +36,7 @@ export function render(state: Readonly<IssueState>): Spa.RenderResult {
     board: state.board,
     column: state.column,
     editingDescription: state.editingDescription,
+    editingTitle: state.editingTitle,
     ...(reporter ? { reporter } : {}),
     ...(state.customization ? { customization: state.customization } : {})
   });

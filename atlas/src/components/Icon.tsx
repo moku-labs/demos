@@ -82,11 +82,33 @@ const PATHS: Record<IconName, string> = {
   trash:
     "M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7M10 11v6m4-6v6",
   logout: "M14 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 8l-4 4 4 4M6 12h11",
+  // google is rendered as the 4-colour brand mark (see GOOGLE_SEGMENTS); this single-colour fallback
+  // is kept only to satisfy the Record<IconName, string> contract and is never used by the renderer.
   google:
-    "M21 12.2c0-.6 0-1.2-.1-1.7H12v3.5h5a4.3 4.3 0 0 1-1.9 2.8v2.3h3A9 9 0 0 0 21 12.2M12 21c2.4 0 4.5-.8 6-2.2l-3-2.3a5.4 5.4 0 0 1-8-2.8H4v2.4A9 9 0 0 0 12 21M7 11.7a5.4 5.4 0 0 1 0-3.4V5.9H4a9 9 0 0 0 0 8.1M12 6.6c1.3 0 2.5.5 3.4 1.3l2.6-2.5A9 9 0 0 0 4 5.9l3 2.4a5.4 5.4 0 0 1 5-1.7",
+    "M23 12.26c0-.81-.07-1.59-.21-2.34H12v4.43h6.19c-.27 1.44-1.08 2.66-2.3 3.48v2.89h3.72C21.78 18.72 23 15.8 23 12.26z",
   apple:
-    "M16 3a4 4 0 0 1-1 3 3.5 3.5 0 0 1-3 1.4A4 4 0 0 1 13 4a4.3 4.3 0 0 1 3-1M18 16.5c-.5 1.2-.8 1.7-1.5 2.7-1 1.4-2.4 3.2-4.1 3.2-1.5 0-1.9-1-4-1s-2.5 1-4 1c-1.7 0-3-1.6-4-3-2.8-4-3.1-8.7-1.4-11.2A5 5 0 0 1 9 7.8c1.6 0 2.6 1 4 1 1.3 0 2.1-1 4-1a5 5 0 0 1 3.7 2c-3.3 1.8-2.8 6.4 0 7.7"
+    "M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-1.72-.92-2.83-.9-1.46.02-2.8.85-3.55 2.16-1.51 2.63-.39 6.52 1.09 8.66.72 1.05 1.58 2.22 2.71 2.18 1.09-.04 1.5-.7 2.82-.7 1.31 0 1.68.7 2.83.68 1.17-.02 1.91-1.06 2.63-2.11.83-1.21 1.17-2.38 1.19-2.44-.03-.01-2.28-.88-2.31-3.48M14.6 4.42c.6-.73 1.01-1.74.9-2.75-.87.04-1.92.58-2.54 1.31-.56.65-1.05 1.68-.92 2.67.97.08 1.96-.49 2.56-1.23"
 };
+
+/** The four colour segments of the Google "G" brand mark (rendered in place of a single currentColor). */
+const GOOGLE_SEGMENTS: readonly { fill: string; d: string }[] = [
+  {
+    fill: "#4285F4",
+    d: "M23 12.26c0-.81-.07-1.59-.21-2.34H12v4.43h6.19c-.27 1.44-1.08 2.66-2.3 3.48v2.89h3.72C21.78 18.72 23 15.8 23 12.26z"
+  },
+  {
+    fill: "#34A853",
+    d: "M12 23c3.11 0 5.71-1.03 7.61-2.79l-3.72-2.89c-1.03.69-2.35 1.1-3.89 1.1-2.99 0-5.53-2.02-6.43-4.74H1.73v2.98C3.62 20.41 7.51 23 12 23z"
+  },
+  {
+    fill: "#FBBC05",
+    d: "M5.57 13.68c-.23-.69-.36-1.42-.36-2.18s.13-1.49.36-2.18V6.34H1.73C.96 7.87.5 9.59.5 11.5s.46 3.63 1.23 5.16l3.84-2.98z"
+  },
+  {
+    fill: "#EA4335",
+    d: "M12 5.58c1.69 0 3.2.58 4.39 1.72l3.29-3.29C17.71 2.16 15.11 1 12 1 7.51 1 3.62 3.59 1.73 6.34l3.84 2.98C6.47 7.6 9.01 5.58 12 5.58z"
+  }
+];
 
 /** Props for {@link Icon}. */
 export interface IconProps {
@@ -110,7 +132,26 @@ export interface IconProps {
  * ```
  */
 export function Icon({ name, label }: IconProps) {
-  const filled = name === "more" || name === "grip" || name === "google" || name === "apple";
+  // Google renders as its 4-colour brand mark (each segment its own brand fill), not a flat glyph.
+  if (name === "google") {
+    return (
+      <svg
+        data-icon="google"
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        role={label ? "img" : undefined}
+        aria-label={label}
+        aria-hidden={label ? undefined : "true"}
+      >
+        {GOOGLE_SEGMENTS.map(segment => (
+          <path key={segment.fill} fill={segment.fill} d={segment.d} />
+        ))}
+      </svg>
+    );
+  }
+
+  const filled = name === "more" || name === "grip" || name === "apple";
   return (
     <svg
       data-icon={name}

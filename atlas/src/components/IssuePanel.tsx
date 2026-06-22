@@ -5,8 +5,8 @@
  * markdown-rendered description (drop-cap on its first paragraph), the attachments grid, and the
  * sub-issue checklist. The properties rail
  * (right) lists Status · Priority · Labels · Assignees · Due · Estimate · Reporter · Milestone · a
- * read-only Timeline · a Customize icon row · and a "+ Add property" affordance. The header carries the
- * universal "⋯" menu and a close control. Pure + SSR — the issue island wires the panel's behaviour.
+ * read-only Timeline · and a Customize icon row. The header carries the universal "⋯" menu and a close
+ * control. Pure + SSR — the issue island wires the panel's behaviour.
  */
 import type { ComponentChildren } from "preact";
 import { PRIORITIES, STATUS_TITLES } from "../lib/labels";
@@ -35,6 +35,8 @@ export interface IssuePanelProps {
   customization?: Customization;
   /** Whether the description is being edited — marks the Preview/Edit toggle's Edit segment active. */
   editingDescription?: boolean;
+  /** Whether the title is in inline-edit mode — swaps the `<h1>` for an editable input. */
+  editingTitle?: boolean;
 }
 
 /** Month abbreviations for the editorial dates (`"12 Mar 2026"`). */
@@ -107,7 +109,8 @@ export function IssuePanel({
   column,
   reporter,
   customization,
-  editingDescription
+  editingDescription,
+  editingTitle
 }: IssuePanelProps) {
   const { issue, subIssues, labels, assignees, attachments } = detail;
 
@@ -150,7 +153,18 @@ export function IssuePanel({
 
         <div data-panel-body>
           <div data-article>
-            <h1 data-issue-title>{issue.title}</h1>
+            {editingTitle ? (
+              <input
+                type="text"
+                data-title-edit
+                aria-label="Edit issue title"
+                defaultValue={issue.title}
+              />
+            ) : (
+              <h1 data-issue-title title="Double-click to edit">
+                {issue.title}
+              </h1>
+            )}
 
             <div data-byline>
               {reporter && <Avatar person={reporter} size="md" />}
@@ -350,11 +364,6 @@ export function IssuePanel({
                 <span>Customize</span>
               </button>
             </div>
-
-            <button type="button" data-add-property data-action="add-property">
-              <Icon name="plus" />
-              <span>Add property</span>
-            </button>
           </aside>
         </div>
       </article>

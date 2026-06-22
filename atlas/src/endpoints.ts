@@ -9,7 +9,7 @@
  * effect — and every `realtime.broadcast` / `ctx.emit` — lives inside those plugins, never here.
  *
  * **Cross-plugin view-models are assembled HERE, not in a plugin** (spec/12 §"Consumer API surface"):
- * `GET /api/departments` merges `departments.list` + `customize.getCustomizationsForDepartments`
+ * `GET /api/departments` merges `departments.list` + `customize.getCustomizationsForChrome`
  * into a `DepartmentsIndex`; `GET /api/boards/{id}` merges `boards.getBoardWithColumns` +
  * `issues.listForBoard` + `attachments.listForBoard` + `customize.getCustomizationsForBoard` into one
  * `BoardSnapshot` (the realtime seed). This is why `boards`/`departments` do not depend on `customize`.
@@ -55,6 +55,18 @@ import { usersPlugin } from "./plugins/users";
 const DEFAULT_FILENAME = "upload.bin";
 /** Fallback attachment content type when a multipart upload omits a type. */
 const DEFAULT_CONTENT_TYPE = "application/octet-stream";
+
+/** The rail-property keys of an {@link IssuePatch} — everything except the article body (title/description). */
+const RAIL_PATCH_KEYS = [
+  "status",
+  "priority",
+  "estimate",
+  "dueAt",
+  "milestone",
+  "reporterId",
+  "labels",
+  "assignees"
+] as const satisfies readonly (keyof IssuePatch)[];
 
 /**
  * Build a `401 Unauthorized` text response — returned when a mutation has no resolvable actor.
@@ -219,7 +231,8 @@ export const endpoints: Server.Endpoint[] = [
   endpoint("/api/departments").get(async ctx => {
     const [departments, customizations] = await Promise.all([
       ctx.require(departmentsPlugin).list(ctx.env),
-      ctx.require(customizePlugin).getCustomizationsForDepartments(ctx.env)
+      // Chrome customizations = departments + boards, so the boards-bar pills tint too (not just tabs).
+      ctx.require(customizePlugin).getCustomizationsForChrome(ctx.env)
     ]);
     const index: DepartmentsIndex = { departments, customizations };
     return Response.json(index);
@@ -326,6 +339,32 @@ export const endpoints: Server.Endpoint[] = [
     };
     return Response.json(snapshot);
   }),
+  // GET /api/boards/{id}/milestones — the board's milestone catalog (distinct issue milestones).
+  //   returns : 200 · string[]
+  //   NOTE: more specific than /api/boards/{id}, so the literal `/milestones` suffix wins the match.
+  endpoint("/api/boards/{id}/milestones").get(async ctx =>
+    Response.json(await ctx.require(issuesPlugin).listMilestones(ctx.env, ctx.params.id))
+  ),
+  // POST /api/boards/{id}/milestones/rename — rename a milestone board-wide.
+  //   expects : path {id} · JSON body { from, to }   ·   returns : 204 · empty   ·   401 when no actor
+  endpoint("/api/boards/{id}/milestones/rename").post(async ctx => {
+    const actor = await ctx.require(authPlugin).resolveActor(ctx.request, ctx.env);
+    if (!actor) return unauthorized();
+    const { from, to } = (await ctx.request.json()) as { from: string; to: string };
+    if (!from || !to) return badRequest("from and to are required");
+    await ctx.require(issuesPlugin).renameMilestone(ctx.env, ctx.params.id, from, to, actor);
+    return new Response(undefined, { status: 204 });
+  }),
+  // POST /api/boards/{id}/milestones/delete — delete a milestone board-wide (clears it on every issue).
+  //   expects : path {id} · JSON body { name }   ·   returns : 204 · empty   ·   401 when no actor
+  endpoint("/api/boards/{id}/milestones/delete").post(async ctx => {
+    const actor = await ctx.require(authPlugin).resolveActor(ctx.request, ctx.env);
+    if (!actor) return unauthorized();
+    const { name } = (await ctx.request.json()) as { name: string };
+    if (!name) return badRequest("name is required");
+    await ctx.require(issuesPlugin).deleteMilestone(ctx.env, ctx.params.id, name, actor);
+    return new Response(undefined, { status: 204 });
+  }),
   // PATCH /api/boards/{id} — rename a board (broadcasts board.renamed).
   //   expects : path {id} · JSON body { title }
   //   returns : 200 · Board   ·   401 when no actor   ·   404 when the id is unknown
@@ -431,10 +470,11 @@ export const endpoints: Server.Endpoint[] = [
     const merged: IssueDetail = { ...detail, attachments };
     return Response.json(merged);
   }),
-  // PATCH /api/issues/{id} — patch issue properties (the rail: status/priority/labels/assignees/…).
-  //   expects : path {id} · JSON body IssuePatch (scalar fields and/or label/assignee sets)
+  // PATCH /api/issues/{id} — patch the article body (title/description) AND/OR the rail properties.
+  //   expects : path {id} · JSON body IssuePatch (body fields and/or scalar/label/assignee sets)
   //   returns : 200 · Issue   ·   401 when no actor   ·   404 when the issue is unknown
-  //   Resolves the owning boardId from the issue (setProperties needs it for label/assignee scope).
+  //   Body fields (title/description) route to `issues.update`; rail fields to `issues.setProperties`
+  //   — the two write distinct columns and broadcast distinct patches, so a mixed patch runs both.
   endpoint("/api/issues/{id}").patch(async ctx => {
     const actor = await ctx.require(authPlugin).resolveActor(ctx.request, ctx.env);
     if (!actor) return unauthorized();
@@ -442,13 +482,15 @@ export const endpoints: Server.Endpoint[] = [
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
     const patch = (await ctx.request.json()) as IssuePatch;
-    const issue = await issues.setProperties(
-      ctx.env,
-      detail.issue.boardId,
-      ctx.params.id,
-      patch,
-      actor
-    );
+    const boardId = detail.issue.boardId;
+
+    // Body fields (title/description) persist via `update`; everything else via `setProperties`.
+    const hasBody = patch.title !== undefined || patch.description !== undefined;
+    const hasRail = RAIL_PATCH_KEYS.some(key => patch[key] !== undefined);
+
+    let issue = detail.issue;
+    if (hasBody) issue = await issues.update(ctx.env, boardId, ctx.params.id, patch, actor);
+    if (hasRail) issue = await issues.setProperties(ctx.env, boardId, ctx.params.id, patch, actor);
     return Response.json(issue);
   }),
   // DELETE /api/issues/{id} — delete an issue (R2 purge first, then broadcast issue.deleted).

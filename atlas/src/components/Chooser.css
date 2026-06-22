@@ -66,8 +66,15 @@
     background: var(--surface-sunken);
     color: var(--text-strong);
   }
+  /* The current selection reads as a filled, accented row — a persistent tint (distinct from the
+     plain hover) plus heavier ink + the trailing check, so it stands out even with nothing hovered. */
   [data-chooser-option][data-selected] {
-    color: var(--text-strong);
+    background: var(--accent-tint);
+    color: var(--accent-deep);
+    font-weight: 550;
+  }
+  [data-chooser-option][data-selected]:hover {
+    background: var(--accent-tint-strong);
   }
 
   /* The mark slot keeps a fixed width so labels line up whether or not a row has an ornament. */

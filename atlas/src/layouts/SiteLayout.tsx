@@ -50,6 +50,7 @@ export function SiteLayout(
       <div data-island="customize-panel" data-overlay="customize" hidden />
       <div data-island="context-menu" data-overlay="menu" hidden />
       <div data-island="chooser" data-overlay="chooser" hidden />
+      <div data-island="milestone-picker" data-overlay="milestone" hidden />
       <div data-island="modal" data-overlay="modal" hidden />
       <div data-island="toast" data-overlay="toast" aria-live="polite" />
     </div>

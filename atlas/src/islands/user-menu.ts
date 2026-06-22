@@ -12,8 +12,7 @@ import { Fragment, h } from "preact";
 import { Avatar } from "../components/Avatar";
 import { getSession, signOut } from "../lib/api";
 import { hardNavigate } from "../lib/hard-nav";
-import type { ChooserOption } from "../lib/menu";
-import { openChooser, openMenu, openModal, showToast } from "../lib/menu";
+import { openMenu, openModal, showToast } from "../lib/menu";
 import type { Person } from "../lib/types";
 import { currentUser, loadUsers, saveProfile, userToPerson } from "../lib/users";
 import { urls } from "../routes";
@@ -149,13 +148,11 @@ async function mount(ctx: UserContext): Promise<void> {
 }
 
 /**
- * Edit the profile: prompt for the display name, persist it to the D1 `users` row, then offer the
- * avatar-colour chooser (#6). The name is saved immediately (so it is never lost if the colour step is
- * skipped); picking a colour saves again. The signed-in user is now a selectable assignee with this
- * name + colour.
+ * Edit the profile in ONE popup: the display name field + the avatar-colour swatches together (#2),
+ * saved on a single "Save". The signed-in user becomes a selectable assignee with this name + colour.
  *
  * @param ctx - The user-menu component context.
- * @returns A promise that resolves once the name persists (or the prompt is cancelled).
+ * @returns A promise that resolves once the profile persists (or the modal is cancelled).
  * @example
  * ```ts
  * await editProfile(ctx);
@@ -168,11 +165,13 @@ async function editProfile(ctx: UserContext): Promise<void> {
   const currentColor = me?.color ?? ctx.state.person?.color ?? null;
 
   const result = await openModal({
-    variant: "prompt",
+    variant: "profile",
     title: "Edit profile",
-    message: "Your display name — pick an avatar colour next.",
+    message: "Your display name and avatar colour.",
     placeholder: "Your display name",
     initialValue: currentName,
+    initialColor: currentColor,
+    palette: [...PROFILE_PALETTE],
     confirmLabel: "Save"
   });
   if (result.kind !== "submit") return;
@@ -180,35 +179,7 @@ async function editProfile(ctx: UserContext): Promise<void> {
   const name = result.value.trim();
   if (!name) return;
 
-  await applyProfile(ctx, name, currentColor);
-  openColorChooser(ctx, name, currentColor);
-}
-
-/**
- * Open the avatar-colour chooser anchored to the avatar button; picking a colour re-saves the profile.
- *
- * @param ctx - The user-menu component context.
- * @param name - The just-saved display name (re-saved with the chosen colour).
- * @param currentColor - The current colour token (marks the selected swatch), or null.
- * @example
- * ```ts
- * openColorChooser(ctx, "Ada", "--label-green");
- * ```
- */
-function openColorChooser(ctx: UserContext, name: string, currentColor: string | null): void {
-  const options: ChooserOption[] = PROFILE_PALETTE.map(swatch => ({
-    value: swatch.token,
-    label: swatch.name,
-    ornament: { kind: "swatch", color: swatch.token },
-    selected: swatch.token === currentColor
-  }));
-  openChooser({
-    anchor: ctx.el as HTMLElement,
-    title: "Avatar colour",
-    options,
-    // eslint-disable-next-line jsdoc/require-jsdoc -- inline onSelect: re-save with the chosen colour
-    onSelect: value => void applyProfile(ctx, name, value)
-  });
+  await applyProfile(ctx, name, result.color ?? currentColor);
 }
 
 /**

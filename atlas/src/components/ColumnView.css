@@ -44,6 +44,19 @@
   :scope[data-status="in_progress"] [data-column-title] {
     color: var(--accent);
   }
+  /* Customized column colour tints its icon; a colour-only customization shows a small dot. */
+  [data-column-icon] {
+    display: inline-flex;
+    align-items: center;
+    color: var(--element-color, var(--text-muted));
+  }
+  [data-column-dot] {
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--element-color, var(--text-muted));
+  }
 
   [data-column-count] {
     font-family: var(--font-display);

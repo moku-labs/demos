@@ -76,8 +76,16 @@ export function ColumnView({
   const status = statusForColumn(column);
   const shown = issues.slice(0, CARD_CAP);
   const overflow = issues.length - shown.length;
+  const color = customization?.color ?? null;
+  // Paint the element's chosen colour onto the icon (or a dot when colour-only) via --element-color.
+  const style = color ? `--element-color:var(${color})` : undefined;
   return (
-    <section data-column data-status={status} aria-label={column.title}>
+    <section
+      data-column
+      data-status={status}
+      aria-label={column.title}
+      {...(style ? { style } : {})}
+    >
       <header data-column-head>
         <button
           type="button"
@@ -93,6 +101,7 @@ export function ColumnView({
             <Icon name={customization.icon as IconName} />
           </span>
         )}
+        {!customization?.icon && color && <span data-column-dot aria-hidden="true" />}
         <h2 data-column-title>{column.title}</h2>
         <span data-column-count>{issues.length}</span>
         <button type="button" data-action="menu" aria-label={`${column.title} menu`}>

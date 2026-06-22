@@ -62,7 +62,9 @@ function render(state: Readonly<ModalState>): Spa.RenderResult {
     title: request.title,
     ...(request.message ? { message: request.message } : {}),
     ...(request.confirmLabel ? { confirmLabel: request.confirmLabel } : {}),
-    ...(request.placeholder ? { placeholder: request.placeholder } : {})
+    ...(request.placeholder ? { placeholder: request.placeholder } : {}),
+    ...(request.palette ? { palette: request.palette } : {}),
+    ...(request.initialColor === undefined ? {} : { selectedColor: request.initialColor })
   });
 }
 
@@ -134,7 +136,37 @@ function onConfirm(ctx: ModalContext, event: Event): void {
   }
 
   const input = ctx.el.querySelector<HTMLInputElement>(INPUT_SELECTOR);
-  settle(ctx, { kind: "submit", value: input?.value ?? "" });
+  const value = input?.value ?? "";
+
+  // The profile variant also reports the chosen avatar colour (the selected swatch).
+  if (request.variant === "profile") {
+    const picked = ctx.el.querySelector<HTMLElement>("[data-modal-swatch][data-selected]")?.dataset
+      .value;
+    // eslint-disable-next-line unicorn/no-null -- null clears the colour per the profile contract
+    settle(ctx, { kind: "submit", value, color: picked ?? null });
+    return;
+  }
+
+  settle(ctx, { kind: "submit", value });
+}
+
+/**
+ * Select an avatar-colour swatch in the profile variant — moves the `data-selected` marker to the
+ * clicked swatch (a direct DOM toggle, so it never disturbs the typed display name).
+ *
+ * @param ctx - The modal component context.
+ * @param _event - The delegated click event (unused).
+ * @param swatch - The matched `[data-action=pick-color]` swatch.
+ * @example
+ * ```ts
+ * events: { "click [data-action=pick-color]": onPickColor };
+ * ```
+ */
+function onPickColor(ctx: ModalContext, _event: Event, swatch: Element): void {
+  for (const node of ctx.el.querySelectorAll<HTMLElement>("[data-modal-swatch]")) {
+    delete node.dataset.selected;
+  }
+  if (swatch instanceof HTMLElement) swatch.dataset.selected = "";
 }
 
 /**
@@ -190,6 +222,7 @@ export const modal = createIsland<ModalState>("modal", {
   onMount: mount,
   events: {
     "submit [data-modal-form]": onConfirm,
+    "click [data-action=pick-color]": onPickColor,
     "click [data-action=clear-date]": onClear,
     "click [data-action=dismiss-modal]": onDismiss
   }

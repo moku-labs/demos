@@ -34,28 +34,40 @@ export interface MenuRequest {
 
 // ─── modal (E1 delete · E2 prompt · E3 date) ─────────────────────────────────
 
+/** One avatar-colour swatch offered by the `profile` modal variant. */
+export interface ModalSwatch {
+  /** The CSS colour token the swatch paints with + reports back (e.g. `--label-green`). */
+  token: string;
+  /** The swatch's accessible name. */
+  name: string;
+}
+
 /** A request to open the centered modal. */
 export interface ModalRequest {
   /** Which dialog to render. */
-  variant: "delete" | "prompt" | "date";
+  variant: "delete" | "prompt" | "date" | "profile";
   /** The dialog title. */
   title: string;
   /** The body copy (delete) or helper line. */
   message?: string;
   /** Label for the primary/confirm button (defaults per variant). */
   confirmLabel?: string;
-  /** Placeholder for the text field (prompt variant). */
+  /** Placeholder for the text field (prompt/profile variant). */
   placeholder?: string;
-  /** Initial field value (prompt/date prefill). */
+  /** Initial field value (prompt/date/profile prefill). */
   initialValue?: string;
+  /** The avatar-colour palette (profile variant) — rendered as selectable swatches. */
+  palette?: ModalSwatch[];
+  /** The initially-selected colour token (profile variant), or `null`. */
+  initialColor?: string | null;
 }
 
 /** The outcome of a modal — what the user chose. */
 export type ModalResult =
   /** The delete confirm was accepted. */
   | { kind: "confirm" }
-  /** A prompt/date field was submitted with this value (may be empty for an optional date). */
-  | { kind: "submit"; value: string }
+  /** A prompt/date/profile field was submitted (profile also carries the chosen colour token). */
+  | { kind: "submit"; value: string; color?: string | null }
   /** The date variant's "Clear" was pressed. */
   | { kind: "clear" }
   /** Cancelled or dismissed (scrim / close / Escape). */
@@ -131,6 +143,24 @@ export interface ChooserRequest {
   onCommit?: (values: string[]) => void;
 }
 
+// ─── milestone picker (the issue rail's milestone catalog manager) ───────────
+
+/**
+ * A request to open the milestone picker under the rail's Milestone field. The picker manages the
+ * board's milestone catalog (pick · add · rename · delete) and reports an assignment back via
+ * {@link MilestoneRequest.onAssign}; rename/delete are catalog admin the picker performs itself.
+ */
+export interface MilestoneRequest {
+  /** The rail field the popover anchors under. */
+  anchor: HTMLElement;
+  /** The board whose milestone catalog to manage. */
+  boardId: string;
+  /** The open issue's current milestone (marks the selected row), or `null`. */
+  current: string | null;
+  /** Invoked when a milestone is assigned to the issue (a name, or `null` to clear). */
+  onAssign: (value: string | null) => void;
+}
+
 // ─── toast (F1) ──────────────────────────────────────────────────────────────
 
 /** A request to show a transient confirmation toast. */
@@ -148,6 +178,7 @@ let menuListener: ((request: MenuRequest) => void) | undefined;
 let modalListener: ((request: ModalRequest) => Promise<ModalResult>) | undefined;
 let customizeListener: ((request: CustomizeRequest) => void) | undefined;
 let chooserListener: ((request: ChooserRequest) => void) | undefined;
+let milestoneListener: ((request: MilestoneRequest) => void) | undefined;
 let toastListener: ((request: ToastRequest) => void) | undefined;
 
 /**
@@ -273,6 +304,36 @@ export function onChooser(listener: (request: ChooserRequest) => void): () => vo
  */
 export function openChooser(request: ChooserRequest): void {
   chooserListener?.(request);
+}
+
+/**
+ * Register the milestone-picker island as the milestone subscriber.
+ *
+ * @param listener - Called with each {@link MilestoneRequest}.
+ * @returns An unsubscribe function.
+ * @example
+ * ```ts
+ * ctx.cleanup(onMilestone(request => openMilestone(ctx, request)));
+ * ```
+ */
+export function onMilestone(listener: (request: MilestoneRequest) => void): () => void {
+  milestoneListener = listener;
+  return () => {
+    if (milestoneListener === listener) milestoneListener = undefined;
+  };
+}
+
+/**
+ * Open the milestone picker (no-op if the milestone island has not mounted).
+ *
+ * @param request - The milestone request (anchor, board, current value, assign callback).
+ * @example
+ * ```ts
+ * openMilestone({ anchor: field, boardId, current, onAssign: value => setMilestone(value) });
+ * ```
+ */
+export function openMilestone(request: MilestoneRequest): void {
+  milestoneListener?.(request);
 }
 
 /**

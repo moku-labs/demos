@@ -116,6 +116,42 @@
     background: var(--surface-card);
   }
 
+  /* Profile variant — the avatar-colour swatch row beneath the name field. Round, token-painted dots;
+     the selected one gets an accent ring. (Same visual language as the Customize panel swatches.) */
+  [data-modal-swatches] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-1);
+  }
+  [data-modal-swatch] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.85rem;
+    aspect-ratio: 1;
+    flex: none;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+  [data-modal-swatch]:hover {
+    transform: translateY(-1px);
+  }
+  [data-modal-swatch][data-selected] {
+    border-color: var(--accent);
+  }
+  [data-modal-swatch-dot] {
+    width: 1.2rem;
+    aspect-ratio: 1;
+    flex: none;
+    border-radius: 50%;
+    background: var(--swatch);
+    box-shadow: inset 0 0 0 1px var(--inset-soft);
+  }
+
   [data-modal-actions] {
     display: flex;
     align-items: center;

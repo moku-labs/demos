@@ -67,8 +67,16 @@ export interface BoardPillProps {
  */
 export function BoardPill({ board, active, customization }: BoardPillProps) {
   const icon = toElementIcon(customization?.icon);
+  const color = customization?.color ?? null;
+  // Paint the element's chosen colour onto the icon (or a dot when colour-only) via --element-color.
+  const style = color ? `--element-color:var(${color})` : undefined;
   return (
-    <div data-board-pill data-active={active ? "" : undefined} data-drag="board">
+    <div
+      data-board-pill
+      data-active={active ? "" : undefined}
+      data-drag="board"
+      {...(style ? { style } : {})}
+    >
       <span data-board-handle aria-hidden="true" draggable={true} />
       <a
         href={urls.toUrl("board", { id: board.id })}
@@ -80,6 +88,7 @@ export function BoardPill({ board, active, customization }: BoardPillProps) {
             <Icon name={icon} />
           </span>
         )}
+        {!icon && color && <span data-board-dot aria-hidden="true" />}
         <span data-board-title>{board.title}</span>
       </a>
       <button type="button" data-action="menu" aria-label={`${board.title} menu`}>
