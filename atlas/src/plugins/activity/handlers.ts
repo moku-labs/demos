@@ -9,13 +9,14 @@
  */
 /* eslint-disable jsdoc/require-jsdoc -- structural event handlers inside returned object literal (spec/14 §2) */
 import type { WorkerEnv } from "@moku-labs/worker";
-import { queuesPlugin } from "@moku-labs/worker";
+import { d1Plugin, queuesPlugin } from "@moku-labs/worker";
 import type { ActivityMessage } from "../../lib/types";
 import type { AttachmentsEvents } from "../attachments/types";
 import type { BoardsEvents } from "../boards/types";
 import type { CustomizeEvents } from "../customize/types";
 import type { DepartmentsEvents } from "../departments/types";
 import type { IssuesEvents } from "../issues/types";
+import { INSERT_SQL } from "./api";
 import type { ActivityCtx as ActivityContext } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -75,6 +76,31 @@ type HookMap = {
 const makeEnqueue =
   (ctx: ActivityContext) =>
   async (env: WorkerEnv, msg: ActivityMessage): Promise<void> => {
+    // LOCAL DEV ONLY: `wrangler dev`'s workerd segfaults on a queue producer `send()` in some mutation
+    // paths (a local-runtime bug — cloudflare/workers-sdk#4995 / workerd#1422; not present in prod).
+    // So locally we persist the activity row directly via D1 (the same INSERT the queue consumer runs),
+    // keeping the Record working without the crashing local send. The `ENVIRONMENT` var is set to
+    // "development" only by `.dev.vars` (never deployed) — in production this branch is skipped and the
+    // activity rides the queue exactly as designed.
+    if ((env as { ENVIRONMENT?: string }).ENVIRONMENT === "development") {
+      await ctx.require(d1Plugin).run(
+        env,
+        INSERT_SQL,
+        msg.eventId,
+        // eslint-disable-next-line unicorn/no-null -- D1 binds SQL NULL for an absent scope column
+        msg.departmentId ?? null,
+        // eslint-disable-next-line unicorn/no-null -- D1 binds SQL NULL for an absent scope column
+        msg.boardId ?? null,
+        msg.actor.id,
+        msg.actor.name,
+        msg.kind,
+        msg.targetType,
+        msg.targetId,
+        msg.summary,
+        msg.at
+      );
+      return;
+    }
     await ctx.require(queuesPlugin).use(ctx.config.activityQueue).send(env, msg);
   };
 

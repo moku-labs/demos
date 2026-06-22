@@ -37,7 +37,7 @@
     "typescript": "6.0.3",
     "typescript-eslint": "8.58.0",
     "vitest": "4.0.18",
-    "wrangler": "4.102.0"
+    "wrangler": "4.103.0"
   },
   "scripts": {
     "build": "bun run scripts/build.ts",

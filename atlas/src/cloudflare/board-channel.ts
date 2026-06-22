@@ -20,6 +20,12 @@ const PONG = "pong";
 const NORMAL_CLOSURE = 1000;
 
 /**
+ * DEV-ONLY keepalive heartbeat interval (ms). Comfortably under the local `wrangler dev` idle-eviction
+ * window so the DO never idle-evicts locally. See {@link BoardChannel.alarm}.
+ */
+const DEV_KEEPALIVE_MS = 5000;
+
+/**
  * Coerce a runtime-reported close code into one `WebSocket.close()` will accept.
  *
  * The hibernation runtime reports the peer's actual close code, which on a browser reload /
@@ -88,7 +94,58 @@ export class BoardChannel extends defineDurableObject("BoardChannel") {
   private accept(): Response {
     const { 0: client, 1: server } = new WebSocketPair();
     this.ctx.acceptWebSocket(server);
+    this.armKeepAlive();
     return new Response(undefined, { status: 101, webSocket: client });
+  }
+
+  /**
+   * Whether this DO is running under local `wrangler dev` — read from the standard `ENVIRONMENT` var,
+   * which `.dev.vars` sets to `"development"` locally and which is absent (so `!== "development"`) on
+   * the deployed Worker. So the keepalive workaround below is strictly local; in production the DO
+   * hibernates/evicts normally on the real (unaffected) runtime.
+   *
+   * @returns `true` only under local dev.
+   * @example
+   * ```ts
+   * if (this.isLocalDev) this.armKeepAlive();
+   * ```
+   */
+  private get isLocalDev(): boolean {
+    return (this.env as { ENVIRONMENT?: string }).ENVIRONMENT === "development";
+  }
+
+  /**
+   * DEV-ONLY: start the keepalive alarm so the local runtime never idle-evicts this DO. No-op in prod.
+   * `setAlarm` is idempotent (it just (re)sets the single pending alarm), so calling it on every
+   * upgrade is safe.
+   *
+   * @example
+   * ```ts
+   * this.ctx.acceptWebSocket(server);
+   * this.armKeepAlive();
+   * ```
+   */
+  private armKeepAlive(): void {
+    if (this.isLocalDev) {
+      this.ctx.storage.setAlarm(Date.now() + DEV_KEEPALIVE_MS).catch(() => {});
+    }
+  }
+
+  /**
+   * DEV-ONLY keepalive heartbeat. `wrangler dev`'s workerd segfaults (signal 11) when a
+   * hibernatable-WebSocket DO is evicted on Apple Silicon — a documented local-runtime bug
+   * (cloudflare/workers-sdk#4995, cloudflare/workerd#1422), not an app issue. Re-arming the alarm keeps
+   * this DO resident locally once it has accepted a socket, so it never hits that eviction path. In
+   * production `isLocalDev` is false, no alarm is ever scheduled, and the DO hibernates/evicts normally.
+   *
+   * @returns Resolves once the next heartbeat is (re)scheduled.
+   * @example
+   * ```ts
+   * // invoked by the runtime when the keepalive alarm fires
+   * ```
+   */
+  async alarm(): Promise<void> {
+    if (this.isLocalDev) await this.ctx.storage.setAlarm(Date.now() + DEV_KEEPALIVE_MS);
   }
 
   /**

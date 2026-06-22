@@ -78,7 +78,7 @@ const toActivity = (row: ActivityRow): Activity => ({
 
 const SELECT_COLS =
   "SELECT id, department_id, board_id, actor_id, actor_name, kind, target_type, target_id, summary, at FROM activity";
-const INSERT_SQL = `INSERT OR IGNORE INTO activity (id, department_id, board_id, actor_id, actor_name, kind, target_type, target_id, summary, at) VALUES (?,?,?,?,?,?,?,?,?,?)`;
+export const INSERT_SQL = `INSERT OR IGNORE INTO activity (id, department_id, board_id, actor_id, actor_name, kind, target_type, target_id, summary, at) VALUES (?,?,?,?,?,?,?,?,?,?)`;
 const SELECT_BY_ID = `${SELECT_COLS} WHERE id = ?`;
 const SELECT_ALL = `${SELECT_COLS} ORDER BY at DESC LIMIT ?`;
 const SELECT_BY_BOARD = `${SELECT_COLS} WHERE board_id = ? ORDER BY at DESC LIMIT ?`;
