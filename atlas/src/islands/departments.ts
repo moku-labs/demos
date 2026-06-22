@@ -24,6 +24,7 @@ import {
   renameDepartment,
   reorderDepartment
 } from "../lib/api";
+import { inlineRename } from "../lib/inline-rename";
 import { openCustomize, openMenu, openModal, showToast } from "../lib/menu";
 import { loadBoards, navigate, onNavRefresh, refresh, resolveActive } from "../lib/nav";
 import type { Customization, Department } from "../lib/types";
@@ -400,22 +401,34 @@ async function moveDepartmentFlow(ctx: DepartmentsContext, department: Departmen
 // ─── double-click rename ────────────────────────────────────────────────────────
 
 /**
- * Double-click a department name to rename it — the faster path, via the universal prompt modal (the
- * SSR tab ships no inline field, so the prompt modal is the inline-rename surface, matching the board
- * and issue islands).
+ * Double-click a department name to rename it inline (design context §4 D4) — the in-place field
+ * replaces the name text; Enter/blur saves, Escape cancels. Falls back to the prompt modal on touch
+ * (the prompt is still the menu's Rename path).
  *
  * @param ctx - The departments island context.
- * @param _event - The delegated dblclick event (unused).
+ * @param event - The delegated dblclick event.
  * @param name - The matched `[data-dept-name]` element.
  * @example
  * ```ts
  * events: { "dblclick [data-dept-name]": onNameEdit };
  * ```
  */
-function onNameEdit(ctx: DepartmentsContext, _event: Event, name: Element): void {
+function onNameEdit(ctx: DepartmentsContext, event: Event, name: Element): void {
+  event.preventDefault();
   const tab = name.closest("[data-dept-tab]");
   const department = tab ? departmentForTab(ctx, tab) : undefined;
-  if (department) void renameDepartmentFlow(department);
+  if (!department) return;
+
+  void (async () => {
+    const next = await inlineRename({
+      titleEl: name as HTMLElement,
+      currentValue: department.title
+    });
+    if (!next) return;
+    await renameDepartment(department.id, next);
+    refresh();
+    showToast("Department renamed");
+  })();
 }
 
 // ─── drag to reorder ─────────────────────────────────────────────────────────

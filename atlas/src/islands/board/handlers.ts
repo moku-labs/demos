@@ -17,6 +17,7 @@ import {
   renameColumn,
   reorderColumn
 } from "../../lib/api";
+import { inlineRename } from "../../lib/inline-rename";
 import { openCustomize, openMenu, openModal, showToast } from "../../lib/menu";
 import { navigate } from "../../lib/nav";
 import type { Column, Issue } from "../../lib/types";
@@ -29,6 +30,32 @@ import {
   statusForColumn
 } from "./snapshot";
 import { type BoardContext, DRAG_COLUMN_KEY, DRAG_ISSUE_KEY } from "./types";
+
+/**
+ * A click landing directly on a card TITLE defers opening the issue by this long so a double-click
+ * (inline rename, design §4 D4) can cancel it. Clicks elsewhere on the card open instantly — only the
+ * editable title pays this tiny debounce, the price of letting the same element serve open + rename.
+ */
+const CARD_TITLE_OPEN_DELAY_MS = 240;
+
+/** Pending deferred card-open timer (a title single-click), cleared by a title double-click. */
+let pendingCardOpen: ReturnType<typeof setTimeout> | undefined;
+
+/**
+ * Cancel a deferred card-open (a title single-click that turned out to be the first half of a
+ * double-click rename).
+ *
+ * @example
+ * ```ts
+ * cancelPendingCardOpen();
+ * ```
+ */
+function cancelPendingCardOpen(): void {
+  if (pendingCardOpen !== undefined) {
+    clearTimeout(pendingCardOpen);
+    pendingCardOpen = undefined;
+  }
+}
 
 // ─── lookups ─────────────────────────────────────────────────────────────────
 
@@ -84,9 +111,26 @@ function columnForElement(ctx: BoardContext, columnElement: Element): Column | u
  */
 export function onCardOpen(ctx: BoardContext, event: Event, card: Element): void {
   if (event.target instanceof Element && event.target.closest("button, a, input")) return;
+  // The 2nd click of a double-click never opens — that gesture is the title's inline rename.
+  if (event instanceof MouseEvent && event.detail > 1) return;
   const issue = issueForCard(ctx, card);
   if (!issue) return;
-  navigate(urls.toUrl("issue", { id: ctx.state.boardId, issueId: issue.id }));
+
+  // eslint-disable-next-line jsdoc/require-jsdoc -- inline open helper (deferred for title clicks)
+  const open = () => navigate(urls.toUrl("issue", { id: ctx.state.boardId, issueId: issue.id }));
+
+  // A click directly on the editable title defers opening so a double-click can cancel it and rename
+  // instead; clicks anywhere else on the card open instantly.
+  const onTitle = event.target instanceof Element && event.target.closest("[data-card-title]");
+  if (onTitle) {
+    cancelPendingCardOpen();
+    pendingCardOpen = setTimeout(() => {
+      pendingCardOpen = undefined;
+      open();
+    }, CARD_TITLE_OPEN_DELAY_MS);
+    return;
+  }
+  open();
 }
 
 // ─── the universal "⋯" element menu (column) + inline rename ────────────────────
@@ -231,38 +275,63 @@ async function moveColumnFlow(ctx: BoardContext, column: Column): Promise<void> 
 }
 
 /**
- * Double-click a column title to rename it inline (the faster path) — falls back to the prompt flow,
- * which the universal interaction language already provides for touch and accessibility.
+ * Double-click a column title to rename it inline (design context §4 D4) — in-place input replaces
+ * the title text; Enter/blur saves, Escape cancels.
  *
  * @param ctx - The board island context.
- * @param _event - The delegated dblclick event (unused).
+ * @param event - The delegated dblclick event.
  * @param title - The matched `[data-column-title]` element.
  * @example
  * ```ts
  * events: { "dblclick [data-column-title]": onColumnTitleEdit };
  * ```
  */
-export function onColumnTitleEdit(ctx: BoardContext, _event: Event, title: Element): void {
+export function onColumnTitleEdit(ctx: BoardContext, event: Event, title: Element): void {
+  event.preventDefault();
   const columnElement = title.closest<HTMLElement>("[data-column]");
   const column = columnElement ? columnForElement(ctx, columnElement) : undefined;
-  if (column) void renameColumnFlow(ctx, column);
+  if (!column) return;
+
+  void (async () => {
+    const next = await inlineRename({
+      titleEl: title as HTMLElement,
+      currentValue: column.title
+    });
+    if (!next) return;
+    await renameColumn(ctx.state.boardId, column.id, next);
+    showToast("Column renamed");
+  })();
 }
 
 /**
- * Double-click a card title to rename the issue inline (the faster path) — a prompt modal → `patchIssue`.
+ * Double-click a card title to rename the issue inline (design context §4 D4) — in-place input
+ * replaces the title text; Enter/blur saves, Escape cancels.
  *
  * @param ctx - The board island context.
- * @param _event - The delegated dblclick event (unused).
+ * @param event - The delegated dblclick event.
  * @param title - The matched `[data-card-title]` element.
  * @example
  * ```ts
  * events: { "dblclick [data-card-title]": onCardTitleEdit };
  * ```
  */
-export function onCardTitleEdit(ctx: BoardContext, _event: Event, title: Element): void {
+export function onCardTitleEdit(ctx: BoardContext, event: Event, title: Element): void {
+  event.preventDefault();
+  // Cancel the open that the first click of this double-click scheduled (see onCardOpen).
+  cancelPendingCardOpen();
   const card = title.closest("[data-card-id]");
   const issue = card ? issueForCard(ctx, card) : undefined;
-  if (issue) void renameIssueFlow(issue);
+  if (!issue) return;
+
+  void (async () => {
+    const next = await inlineRename({
+      titleEl: title as HTMLElement,
+      currentValue: issue.title
+    });
+    if (!next) return;
+    await patchIssue(issue.id, { title: next });
+    showToast("Issue renamed");
+  })();
 }
 
 /**

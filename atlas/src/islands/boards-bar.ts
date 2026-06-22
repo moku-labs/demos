@@ -19,6 +19,7 @@ import { createIsland } from "@moku-labs/web/browser";
 import { h } from "preact";
 import { BoardsBar } from "../components/BoardsBar";
 import { createBoard, deleteBoard, renameBoard, reorderBoard } from "../lib/api";
+import { inlineRename } from "../lib/inline-rename";
 import { openCustomize, openMenu, openModal, showToast } from "../lib/menu";
 import { navigate, onNavRefresh, refresh, resolveActive } from "../lib/nav";
 import type { Board, BoardSummary, Customization } from "../lib/types";
@@ -377,21 +378,33 @@ async function moveBoardFlow(ctx: BoardsBarContext, board: BoardSummary): Promis
 // ─── double-click rename ────────────────────────────────────────────────────────
 
 /**
- * Double-click a board title to rename it — the faster path, via the universal prompt modal (the SSR
- * pill ships no inline field, matching the board / issue islands' rename path).
+ * Double-click a board title to rename it inline (design context §4 D4) — the in-place field
+ * replaces the title text; Enter/blur saves, Escape cancels.
  *
  * @param ctx - The boards-bar island context.
- * @param _event - The delegated dblclick event (unused).
+ * @param event - The delegated dblclick event.
  * @param title - The matched `[data-board-title]` element.
  * @example
  * ```ts
  * events: { "dblclick [data-board-title]": onTitleEdit };
  * ```
  */
-function onTitleEdit(ctx: BoardsBarContext, _event: Event, title: Element): void {
+function onTitleEdit(ctx: BoardsBarContext, event: Event, title: Element): void {
+  event.preventDefault();
   const pill = title.closest("[data-board-pill]");
   const board = pill ? boardForPill(ctx, pill) : undefined;
-  if (board) void renameBoardFlow(board);
+  if (!board) return;
+
+  void (async () => {
+    const next = await inlineRename({
+      titleEl: title as HTMLElement,
+      currentValue: board.title
+    });
+    if (!next) return;
+    await renameBoard(board.id, next);
+    refresh();
+    showToast("Board renamed");
+  })();
 }
 
 // ─── drag to reorder ─────────────────────────────────────────────────────────

@@ -389,21 +389,24 @@ test.describe("D — Menus and rename", () => {
     }
   });
 
-  test("D4: Double-click column title opens rename prompt", async ({ page }) => {
+  test("D4: Double-click column title shows inline rename field", async ({ page }) => {
     const columnTitle = page.locator("[data-column]").first().locator("[data-column-title]");
     await columnTitle.dblclick();
-    // A modal or inline field should appear
-    const modal = page.locator("[data-modal], dialog");
-    await expect(modal).toBeVisible();
+    // Inline rename: an input appears in-place (no modal); Escape cancels it
+    const inlineField = page.locator("[data-inline-rename]");
+    await expect(inlineField).toBeVisible();
     await page.keyboard.press("Escape");
+    await expect(inlineField).toBeHidden();
   });
 
-  test("D4: Double-click card title opens rename prompt", async ({ page }) => {
+  test("D4: Double-click card title shows inline rename field", async ({ page }) => {
     const cardTitle = page.locator("[data-card-id='issue-ws-reconnect'] [data-card-title]");
     await cardTitle.dblclick();
-    const modal = page.locator("[data-modal], dialog");
-    await expect(modal).toBeVisible();
+    // Inline rename: an input appears in-place (no modal); Escape cancels it
+    const inlineField = page.locator("[data-inline-rename]");
+    await expect(inlineField).toBeVisible();
     await page.keyboard.press("Escape");
+    await expect(inlineField).toBeHidden();
   });
 });
 
