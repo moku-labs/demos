@@ -73,13 +73,90 @@
 
   @media (max-width: 480px) {
     :scope {
-      /* One full column with a deliberate peek of the next — the gutter plus a sliver of gap. */
-      grid-auto-columns: calc(100vw - 2 * var(--pad-page) - 2.5rem);
-      gap: var(--space-5);
+      /* One column fills the full content width — no peek, mandatory snap so a swipe lands exactly on
+         the next column. The page gutter is zeroed (columns occupy the full viewport width, matching
+         how the design context §5 describes the mobile board). */
+      grid-auto-columns: 100%;
+      gap: 0;
       scroll-snap-type: x mandatory;
-      /* Restore the page gutter the zeroed `[data-main]` no longer supplies (see the ≤1024px note). */
+      padding-inline: 0;
+      scroll-padding-inline-start: 0;
+    }
+    :scope > * {
+      /* Each child (column + add-column button) snaps from the start of the scroll port. */
+      scroll-snap-align: start;
+      /* Restore the editorial page gutter inside each column so content is not flush with the edge. */
       padding-inline: var(--pad-page);
-      scroll-padding-inline-start: var(--pad-page);
+      box-sizing: border-box;
+    }
+  }
+}
+
+/**
+ * Phone-only column pager — a row of dots (one per column) with the active column highlighted, plus
+ * a "Name · N of M" label. Hidden on desktop (display:none above 480px) since all columns are visible
+ * there. The board island (pager.ts) updates `data-active-index` on the nav and `aria-current` on the
+ * active dot button via IntersectionObserver; tapping a dot delegates up to the board island.
+ */
+@scope ([data-board-pager]) {
+  :scope {
+    display: none; /* hidden on desktop; the ≤480px query reveals it */
+  }
+
+  @media (max-width: 480px) {
+    :scope {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--pad-page) var(--space-4);
+      /* Pin to the top of the viewport so the column switcher stays reachable while scrolling down a
+         long column (the masthead is part of the flowing page and scrolls away above it). */
+      position: sticky;
+      top: 0;
+      z-index: 6;
+      background: var(--surface-page);
+    }
+
+    [data-pager-label] {
+      font-family: var(--font-mono);
+      font-size: var(--text-2xs);
+      letter-spacing: var(--tracking-wide);
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    [data-pager-dots] {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    [data-pager-dot] {
+      /* Each dot is a 44×44 touch target wrapping a small visible disc. */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.75rem; /* 44px tap target */
+      height: 2.75rem;
+      padding: 0;
+      /* The visible disc is painted via a centred pseudo-element so the hit area stays large. */
+    }
+    [data-pager-dot]::after {
+      content: "";
+      display: block;
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-pill);
+      background: var(--rule-strong);
+      transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+    }
+    [data-pager-dot][aria-current="true"]::after {
+      background: var(--accent);
+      transform: scale(1.5);
     }
   }
 }

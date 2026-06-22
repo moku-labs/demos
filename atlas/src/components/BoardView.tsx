@@ -7,6 +7,7 @@
  * SSR — the SHARED markup the `board` island re-renders. This file ALSO owns the `[data-page="board"]`
  * PAGE wrapper layout (the `data-page="board"` element lives in BoardPage.tsx).
  */
+import { Fragment } from "preact";
 import { personById } from "../lib/people";
 import type { BoardSnapshot, Customization, Issue, LabelKey, Person } from "../lib/types";
 import { ColumnView } from "./ColumnView";
@@ -93,11 +94,11 @@ export interface BoardViewProps {
 
 /**
  * Render the columns row — a {@link ColumnView} per column with derived per-issue lookups, plus the
- * "Add column" affordance.
+ * "Add column" affordance, and the phone-only column pager (dots + "Name · N of M" label).
  *
  * @param props - The board-view props.
  * @param props.snapshot - The full board snapshot.
- * @returns The board element.
+ * @returns The board and pager elements wrapped in a fragment.
  * @example
  * ```tsx
  * <BoardView snapshot={snapshot} />
@@ -108,25 +109,55 @@ export function BoardView({ snapshot }: BoardViewProps) {
   const grouped = issuesByColumn(snapshot.issues);
   const columns = [...snapshot.columns].sort((a, b) => a.position - b.position);
   return (
-    <div data-board style={{ "--column-count": columns.length }}>
-      <DropIndicator hidden />
-      {columns.map(column => {
-        const custom = columnCustomization(snapshot, column.id);
-        return (
-          <ColumnView
-            key={column.id}
-            column={column}
-            issues={grouped[column.id] ?? []}
-            {...lookups}
-            {...(custom ? { customization: custom } : {})}
-          />
-        );
-      })}
+    <Fragment>
+      {/* Phone-only pager — hidden on desktop via CSS (display:none above 480px). Placed ABOVE the
+          columns so it's visible the moment the board loads (a tall column would otherwise bury it).
+          The pager island (wired in the board island) tracks the active column via IntersectionObserver
+          and updates `data-active-index` + the label here; tapping a dot scrolls to that column. */}
+      <nav
+        data-board-pager
+        aria-label="Board columns"
+        data-column-count={columns.length}
+        data-active-index="0"
+      >
+        <span data-pager-label aria-live="polite">
+          {columns[0]?.title ?? ""} · 1 of {columns.length}
+        </span>
+        <ol data-pager-dots>
+          {columns.map((column, i) => (
+            <li key={column.id}>
+              <button
+                type="button"
+                data-pager-dot
+                data-column-index={i}
+                aria-label={`Go to ${column.title} (column ${i + 1} of ${columns.length})`}
+                aria-current={i === 0 ? "true" : undefined}
+              />
+            </li>
+          ))}
+        </ol>
+      </nav>
 
-      <button type="button" data-add-column data-action="add-column">
-        <Icon name="plus" />
-        <span>Add column</span>
-      </button>
-    </div>
+      <div data-board style={{ "--column-count": columns.length }}>
+        <DropIndicator hidden />
+        {columns.map(column => {
+          const custom = columnCustomization(snapshot, column.id);
+          return (
+            <ColumnView
+              key={column.id}
+              column={column}
+              issues={grouped[column.id] ?? []}
+              {...lookups}
+              {...(custom ? { customization: custom } : {})}
+            />
+          );
+        })}
+
+        <button type="button" data-add-column data-action="add-column">
+          <Icon name="plus" />
+          <span>Add column</span>
+        </button>
+      </div>
+    </Fragment>
   );
 }

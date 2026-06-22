@@ -159,13 +159,15 @@
     background: var(--rule-strong);
   }
 
-  /* The tool rows — full-width items that warm to sunken paper on press (touch has no hover). */
+  /* The tool rows — full-width items that warm to sunken paper on press (touch has no hover).
+     Each row is at least 44px tall (WCAG 2.5.5) so a glancing thumb tap still lands. */
   :scope > button {
     display: flex;
     align-items: center;
     gap: var(--space-3);
     width: 100%;
-    padding: 0.85rem 0.75rem;
+    min-height: 2.75rem; /* 44px minimum tap target */
+    padding: 0.75rem 0.85rem;
     border-radius: var(--radius-sm);
     font-size: var(--text-base);
     color: var(--text-body);
@@ -205,6 +207,7 @@
   }
   [data-sheet-views] button {
     flex: 1;
+    min-height: 2.75rem; /* 44px minimum tap target */
     padding: 0.7rem 0.8rem;
     background: var(--surface-sunken);
     border: var(--rule-width) solid var(--rule-strong);
@@ -233,7 +236,12 @@
     font-weight: 600;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--text-body); /* lifted from muted → body for easier read + better tap affordance */
+    min-height: 2.75rem; /* 44px tap target */
+  }
+  [data-sheet-done]:active {
+    color: var(--text-strong);
+    background: var(--surface-sunken);
   }
 }
 

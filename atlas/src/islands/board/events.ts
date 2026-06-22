@@ -21,6 +21,7 @@ import {
   onDragEnd,
   onDragOver
 } from "./handlers";
+import { onPagerDotClick } from "./pager";
 import type { BoardState } from "./types";
 
 /** The board island's declarative delegated event map (one delegated listener per type on the host). */
@@ -30,6 +31,7 @@ export const boardEvents: Spa.IslandEvents<BoardState> = {
   "click [data-action='card-menu']": onCardMenu,
   "click [data-add-card]": onAddCard,
   "click [data-add-column]": onAddColumn,
+  "click [data-pager-dot]": onPagerDotClick,
   "click [data-card-id]": onCardOpen,
 
   // double-click to rename (faster path than the menu)

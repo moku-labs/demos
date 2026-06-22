@@ -11,6 +11,7 @@ import { onFilterChange } from "../../lib/filter";
 import { currentView, resolveActive } from "../../lib/nav";
 import { connect, disconnect, onPatch, ping, seed } from "../../lib/realtime";
 import type { BoardSnapshot } from "../../lib/types";
+import { mountPager } from "./pager";
 import { applyPatch } from "./reconcile";
 import { type BoardContext, EMPTY_SNAPSHOT, KEEPALIVE_MS } from "./types";
 
@@ -157,5 +158,9 @@ export async function startBoard(ctx: BoardContext): Promise<void> {
 
   // Flush the seeded render before measuring the deep-link target, then focus.
   ctx.flush();
+
+  // Wire the phone-only column pager (no-op on desktop — checks visibility before attaching).
+  mountPager(ctx);
+
   focusDeepLink(ctx.meta);
 }
