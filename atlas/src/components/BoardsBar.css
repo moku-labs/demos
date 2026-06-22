@@ -111,12 +111,17 @@
   }
 
   @media (max-width: 760px) {
-    /* The pills row and the Board / List toggle share one line; the pills take the room and scroll
-       sideways, the toggle stays inline at the trailing edge. Filter / Activity defer to the masthead
-       "⋯" overflow sheet on phones (D3) — hidden here so the same action is not defined twice. */
-    [data-control="filter"],
-    [data-control="activity"] {
+    /* Departments + boards only on phones: the WHOLE controls cluster (Board / List toggle + Filter +
+       Activity) collapses into the masthead "⋯" overflow sheet (D3), so the pills get the full row and
+       never clip. Hide the cluster, not its children — a child `display:none` (specificity 0,1,0) would
+       lose to the base `[data-boards-controls] button { display: inline-flex }` (0,1,1); hiding the
+       container matches the base `[data-boards-controls]` specificity and wins on source order. */
+    [data-boards-controls] {
       display: none;
+    }
+    /* With the controls gone, the pills track owns the full row and scrolls sideways (never clips). */
+    [data-boards-track] {
+      flex: 1;
     }
   }
 }
