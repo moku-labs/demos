@@ -48,6 +48,16 @@
     text-overflow: ellipsis;
     max-width: 100%;
   }
+  /* A derived one-line description excerpt under the title — quiet supporting prose, clipped so the
+     row height stays compact (design context §6 A4 list). */
+  [data-row-desc] {
+    max-width: 100%;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   [data-row-id] {
     font-family: var(--font-mono);
     font-size: var(--text-2xs);

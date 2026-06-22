@@ -81,6 +81,20 @@
     margin-top: 0.15rem;
   }
 
+  /* A derived one-to-two-line description excerpt, sitting just under the head as quiet supporting
+     prose — clamped so a long description never grows the card (design context §6 G card anatomy). */
+  [data-card-desc] {
+    margin-top: calc(-1 * var(--space-1));
+    font-size: var(--text-sm);
+    line-height: var(--leading-snug);
+    color: var(--text-muted);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+
   [data-card-labels] {
     display: flex;
     flex-wrap: wrap;

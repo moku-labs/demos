@@ -6,6 +6,7 @@
  * — the SHARED markup the `card` island re-renders with live data via `h(CardView, props)`. It is
  * `draggable` and tagged `data-card-id` + `data-island="card"` so the board can bind drag + open.
  */
+import { excerpt } from "../lib/markdown";
 import type { Customization, Issue, LabelKey, Person, Priority } from "../lib/types";
 import { Avatar } from "./Avatar";
 import type { IconName } from "./Icon";
@@ -66,6 +67,7 @@ export function CardView({
 }: CardViewProps) {
   const icon = customization?.icon ?? null;
   const priority: Priority = issue.priority ?? "none";
+  const summary = excerpt(issue.description);
   const hasSubIssues = subIssues.total > 0;
   const hasMeta =
     assignees.length > 0 || hasSubIssues || attachmentCount > 0 || issue.dueAt !== null;
@@ -89,6 +91,8 @@ export function CardView({
           <Icon name="more" />
         </button>
       </div>
+
+      {summary && <p data-card-desc>{summary}</p>}
 
       {labels.length > 0 && (
         <div data-card-labels>

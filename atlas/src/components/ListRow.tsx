@@ -7,6 +7,7 @@
  * lookups derived from the board snapshot.
  */
 import { STATUS_TITLES } from "../lib/labels";
+import { excerpt } from "../lib/markdown";
 import type { Issue, LabelKey, Person } from "../lib/types";
 import { urls } from "../routes";
 import { Avatar } from "./Avatar";
@@ -105,6 +106,7 @@ export function ListRow({
   const { total, done } = subIssues;
   const pct = total === 0 ? 0 : Math.round((done / total) * 100);
   const ordered = [...assignees].sort((a, b) => Number(b.isLead) - Number(a.isLead));
+  const summary = excerpt(issue.description);
 
   return (
     <a
@@ -114,6 +116,7 @@ export function ListRow({
     >
       <span data-cell="issue">
         <span data-row-title>{issue.title}</span>
+        {summary && <span data-row-desc>{summary}</span>}
         <span data-row-id>{issue.id}</span>
       </span>
 
