@@ -91,8 +91,23 @@ export type Activity = {
   summary: string;
   at: number;
 };
-/** A demo person — assignees and reporters reference these static records. */
-export type Person = { id: string; name: string; initials: string };
+/**
+ * A person — assignees and reporters reference these. The static demo cast (`lib/people`) carries no
+ * `color` (its avatar hue comes from a `--avatar-<id>` token); a signed-in {@link User} resolves to a
+ * Person carrying its chosen palette-token `color`, which the avatar paints inline (#6).
+ */
+export type Person = { id: string; name: string; initials: string; color?: string };
+
+/** A signed-in user's persisted profile (D1 `users`). The `id` is the stable auth id = assignee person_id. */
+export type User = {
+  id: string;
+  name: string;
+  color: string | null;
+  createdAt: number;
+  updatedAt: number;
+};
+/** Input to update the signed-in user's profile (display name + avatar colour token; null clears colour). */
+export type ProfileInput = { name: string; color: string | null };
 
 /** The signed-in user, threaded into every mutation and carried in events for attribution. */
 export type Actor = { id: string; name: string };

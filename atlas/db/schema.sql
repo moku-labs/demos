@@ -59,6 +59,11 @@ CREATE TABLE activity (                 -- owner: activity
   kind TEXT NOT NULL,                                           -- created/moved/updated/attached/deleted
   target_type TEXT NOT NULL, target_id TEXT, summary TEXT NOT NULL, at INTEGER NOT NULL);
 
+CREATE TABLE users (                    -- owner: users
+  id TEXT PRIMARY KEY,                                          -- stable u_<sha256(email)> = assignee person_id
+  name TEXT NOT NULL, color TEXT,                               -- color: a customize palette token, or NULL
+  created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
+
 -- Indexes
 CREATE INDEX idx_boards_department ON boards (department_id, position);
 CREATE INDEX idx_columns_board ON columns (board_id, position);

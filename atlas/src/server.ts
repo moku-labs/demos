@@ -26,6 +26,7 @@ import { customizePlugin } from "./plugins/customize";
 import { departmentsPlugin } from "./plugins/departments";
 import { issuesPlugin } from "./plugins/issues";
 import { realtimePlugin } from "./plugins/realtime";
+import { usersPlugin } from "./plugins/users";
 
 /**
  * The Atlas worker server app. Driven by `cloudflare/worker.ts` (`server.server.handle`,
@@ -52,6 +53,7 @@ export const server = createApp({
     boardsPlugin,
     issuesPlugin,
     activityPlugin,
+    usersPlugin,
     deployPlugin,
     cliPlugin
   ],

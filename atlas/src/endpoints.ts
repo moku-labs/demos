@@ -39,7 +39,8 @@ import type {
   NewColumn,
   NewDepartment,
   NewIssue,
-  NewSubIssue
+  NewSubIssue,
+  ProfileInput
 } from "./lib/types";
 import { activityPlugin } from "./plugins/activity";
 import { attachmentsPlugin } from "./plugins/attachments";
@@ -48,6 +49,7 @@ import { boardsPlugin } from "./plugins/boards";
 import { customizePlugin } from "./plugins/customize";
 import { departmentsPlugin } from "./plugins/departments";
 import { issuesPlugin } from "./plugins/issues";
+import { usersPlugin } from "./plugins/users";
 
 /** Fallback attachment filename when a multipart upload omits the file's name. */
 const DEFAULT_FILENAME = "upload.bin";
@@ -614,6 +616,36 @@ export const endpoints: Server.Endpoint[] = [
     const input = (await ctx.request.json()) as CustomizationInput;
     const customization = await ctx.require(customizePlugin).set(ctx.env, input, actor);
     return Response.json(customization);
+  }),
+
+  // ── Users (signed-in profiles → assignable demo users, #6) ──────────────
+  // GET /api/users — every persisted user (the selectable accounts the choosers merge with the cast).
+  //   expects : —
+  //   returns : 200 · User[]
+  endpoint("/api/users").get(async ctx =>
+    Response.json(await ctx.require(usersPlugin).list(ctx.env))
+  ),
+  // GET /api/users/me — the current user's profile (creates a default row on first read).
+  //   expects : the session cookie (resolved to an Actor)
+  //   returns : 200 · User   ·   401 when no actor
+  // NOTE: declared BEFORE any future /api/users/{id} so the literal `/me` wins the specificity match.
+  endpoint("/api/users/me").get(async ctx => {
+    const actor = await ctx.require(authPlugin).resolveActor(ctx.request, ctx.env);
+    if (!actor) return unauthorized();
+    return Response.json(await ctx.require(usersPlugin).getMe(ctx.env, actor));
+  }),
+  // PUT /api/users/me — upsert the current user's display name + avatar colour token.
+  //   expects : JSON body ProfileInput { name, color }
+  //   returns : 200 · User   ·   401 when no actor   ·   400 on a blank name
+  endpoint("/api/users/me").put(async ctx => {
+    const actor = await ctx.require(authPlugin).resolveActor(ctx.request, ctx.env);
+    if (!actor) return unauthorized();
+    const input = (await ctx.request.json()) as ProfileInput;
+    const name = input.name.trim();
+    if (!name) return badRequest("name required");
+    return Response.json(
+      await ctx.require(usersPlugin).updateProfile(ctx.env, actor, { name, color: input.color })
+    );
   }),
 
   // ── Activity (the durable Record) ───────────────────────────────────────
