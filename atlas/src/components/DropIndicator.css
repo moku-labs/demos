@@ -34,4 +34,31 @@
     border-bottom: 4px solid transparent;
     border-inline-start: 6px solid var(--accent);
   }
+
+  /*
+   * Vertical variant — the between-tabs/pills bar for the horizontal department + board tracks. The
+   * line runs top-to-bottom and sits in the inter-item gap (negative inline margin); the serif tick
+   * caps it from above. The wiring island insertBefore-moves it between flex children.
+   */
+  :scope[data-orientation="vertical"] {
+    flex-direction: column;
+    align-self: stretch;
+    width: 0;
+    height: auto;
+    margin: 0 calc(var(--space-1) * -1);
+  }
+  :scope[data-orientation="vertical"] [data-drop-line] {
+    flex: 1;
+    width: 2px;
+    height: auto;
+  }
+  :scope[data-orientation="vertical"] [data-drop-tick] {
+    margin-inline-end: 0;
+    margin-block-end: 1px;
+    border-top: none;
+    border-bottom: none;
+    border-inline-start: 4px solid transparent;
+    border-inline-end: 4px solid transparent;
+    border-block-start: 6px solid var(--accent);
+  }
 }

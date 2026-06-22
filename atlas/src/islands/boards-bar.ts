@@ -20,6 +20,7 @@ import { h } from "preact";
 import { BoardsBar } from "../components/BoardsBar";
 import { createBoard, deleteBoard, renameBoard, reorderBoard } from "../lib/api";
 
+import { hideInsertionIndicator, positionInsertionIndicator } from "../lib/drag-indicator";
 import { openCustomize, openMenu, openModal, showToast } from "../lib/menu";
 import { navigate, onNavRefresh, refresh, resolveActive } from "../lib/nav";
 import type { Board, BoardSummary, Customization } from "../lib/types";
@@ -399,17 +400,39 @@ function onPillDragStart(ctx: BoardsBarContext, event: Event, handle: Element): 
 }
 
 /**
- * Allow a board drop over the track (the drag-over default must be cancelled for a drop to fire).
+ * Allow a board drop over the track (the drag-over default must be cancelled for a drop to fire) and
+ * show the vermilion insertion bar in the gap under the pointer (#2 — drag feedback).
  *
- * @param _ctx - The boards-bar island context (unused).
+ * @param ctx - The boards-bar island context.
  * @param event - The dragover event.
  * @example
  * ```ts
  * events: { "dragover [data-boards-track]": onTrackDragOver };
  * ```
  */
-function onTrackDragOver(_ctx: BoardsBarContext, event: Event): void {
-  if (event instanceof DragEvent) event.preventDefault();
+function onTrackDragOver(ctx: BoardsBarContext, event: Event): void {
+  if (!(event instanceof DragEvent)) return;
+  event.preventDefault();
+
+  const track = ctx.el.querySelector<HTMLElement>("[data-boards-track]");
+  const indicator = track?.querySelector<HTMLElement>("[data-drop-indicator]");
+  if (!track || !indicator) return;
+  const pills = [...track.querySelectorAll<HTMLElement>("[data-board-pill]")];
+  positionInsertionIndicator(track, indicator, pills, event.clientX);
+}
+
+/**
+ * Hide the insertion bar when a board drag ends (dropped or cancelled).
+ *
+ * @param ctx - The boards-bar island context.
+ * @param _event - The dragend event (unused).
+ * @example
+ * ```ts
+ * events: { "dragend [data-boards-track]": onTrackDragEnd };
+ * ```
+ */
+function onTrackDragEnd(ctx: BoardsBarContext, _event: Event): void {
+  hideInsertionIndicator(ctx.el.querySelector<HTMLElement>("[data-drop-indicator]"));
 }
 
 /**
@@ -427,6 +450,7 @@ function onTrackDragOver(_ctx: BoardsBarContext, event: Event): void {
 async function onPillDrop(ctx: BoardsBarContext, event: Event): Promise<void> {
   if (!(event instanceof DragEvent)) return;
   event.preventDefault();
+  hideInsertionIndicator(ctx.el.querySelector<HTMLElement>("[data-drop-indicator]"));
 
   const draggedId = event.dataTransfer?.getData(DRAG_BOARD_KEY);
   const current = draggedId ? ctx.state.boards.findIndex(item => item.id === draggedId) : -1;
@@ -494,6 +518,7 @@ export const boardsBar = createIsland<BoardsBarState>("boards-bar", {
     "click [data-action='menu']": onBoardMenu,
     "dragstart [data-board-handle]": onPillDragStart,
     "dragover [data-boards-track]": onTrackDragOver,
+    "dragend [data-boards-track]": onTrackDragEnd,
     "drop [data-boards-track]": onPillDrop
   }
 });

@@ -25,6 +25,7 @@ import {
   reorderDepartment
 } from "../lib/api";
 
+import { hideInsertionIndicator, positionInsertionIndicator } from "../lib/drag-indicator";
 import { openCustomize, openMenu, openModal, showToast } from "../lib/menu";
 import { loadBoards, navigate, onNavRefresh, refresh, resolveActive } from "../lib/nav";
 import type { Customization, Department } from "../lib/types";
@@ -422,17 +423,39 @@ function onTabDragStart(ctx: DepartmentsContext, event: Event, handle: Element):
 }
 
 /**
- * Allow a department drop over the track (the drag-over default must be cancelled for a drop to fire).
+ * Allow a department drop over the track (the drag-over default must be cancelled for a drop to fire)
+ * and show the vermilion insertion bar in the gap under the pointer (#2 — drag feedback).
  *
- * @param _ctx - The departments island context (unused).
+ * @param ctx - The departments island context.
  * @param event - The dragover event.
  * @example
  * ```ts
  * events: { "dragover [data-departments-track]": onTrackDragOver };
  * ```
  */
-function onTrackDragOver(_ctx: DepartmentsContext, event: Event): void {
-  if (event instanceof DragEvent) event.preventDefault();
+function onTrackDragOver(ctx: DepartmentsContext, event: Event): void {
+  if (!(event instanceof DragEvent)) return;
+  event.preventDefault();
+
+  const track = ctx.el.querySelector<HTMLElement>("[data-departments-track]");
+  const indicator = track?.querySelector<HTMLElement>("[data-drop-indicator]");
+  if (!track || !indicator) return;
+  const tabs = [...track.querySelectorAll<HTMLElement>("[data-dept-tab]")];
+  positionInsertionIndicator(track, indicator, tabs, event.clientX);
+}
+
+/**
+ * Hide the insertion bar when a department drag ends (dropped or cancelled).
+ *
+ * @param ctx - The departments island context.
+ * @param _event - The dragend event (unused).
+ * @example
+ * ```ts
+ * events: { "dragend [data-departments-track]": onTrackDragEnd };
+ * ```
+ */
+function onTrackDragEnd(ctx: DepartmentsContext, _event: Event): void {
+  hideInsertionIndicator(ctx.el.querySelector<HTMLElement>("[data-drop-indicator]"));
 }
 
 /**
@@ -450,6 +473,7 @@ function onTrackDragOver(_ctx: DepartmentsContext, event: Event): void {
 async function onTabDrop(ctx: DepartmentsContext, event: Event): Promise<void> {
   if (!(event instanceof DragEvent)) return;
   event.preventDefault();
+  hideInsertionIndicator(ctx.el.querySelector<HTMLElement>("[data-drop-indicator]"));
 
   const draggedId = event.dataTransfer?.getData(DRAG_DEPT_KEY);
   const department = draggedId
@@ -521,6 +545,7 @@ export const departments = createIsland<DepartmentsState>("departments", {
     "click [data-action='menu']": onDepartmentMenu,
     "dragstart [data-dept-handle]": onTabDragStart,
     "dragover [data-departments-track]": onTrackDragOver,
+    "dragend [data-departments-track]": onTrackDragEnd,
     "drop [data-departments-track]": onTabDrop
   }
 });

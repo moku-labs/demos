@@ -11,6 +11,7 @@
 import type { Board, Customization } from "../lib/types";
 import { urls } from "../routes";
 import { BoardPill } from "./BoardPill";
+import { DropIndicator } from "./DropIndicator";
 import { Icon } from "./Icon";
 
 /** Props for {@link BoardsBar}. */
@@ -60,6 +61,8 @@ export function BoardsBar({ boards, activeBoardId, view, customizations = [] }: 
           <Icon name="plus" />
           <span>Add board</span>
         </button>
+        {/* Drag-reorder insertion bar — hidden until the boards-bar island moves it under the pointer. */}
+        <DropIndicator orientation="vertical" hidden />
       </div>
 
       <div data-boards-controls>
