@@ -117,7 +117,9 @@ test.describe("A — Screens", () => {
       await page.goto("/board/board-platform");
       await page.waitForLoadState("load");
       // DropIndicator must exist in the board element
-      const indicator = page.locator("[data-drop-indicator]");
+      // Scope to the board's card indicator — the department + board-pill tracks now carry their own
+      // vertical drop indicators too (#2), so an unscoped selector matches three elements.
+      const indicator = page.locator("[data-board] [data-drop-indicator]");
       await expect(indicator).toBeAttached();
       // Must start hidden (hidden attribute set)
       await expect(indicator).toBeHidden();
@@ -263,15 +265,13 @@ test.describe("B — Persistent regions (signed in)", () => {
     await page.waitForLoadState("load");
   });
 
-  test("B1: Masthead — wordmark, edition line, theme toggle, filter, activity, avatar", async ({
-    page
-  }) => {
+  test("B1: Masthead — wordmark, edition line, theme toggle, avatar", async ({ page }) => {
     await expect(page.locator("[data-masthead]")).toBeVisible();
     await expect(page.locator("[data-wordmark]")).toContainText("Atlas");
     await expect(page.locator("[data-edition]")).toBeVisible();
     await expect(page.locator("[data-tool='theme']")).toBeVisible();
-    await expect(page.locator("[data-tool='filter']")).toBeVisible();
-    await expect(page.locator("[data-tool='activity']")).toBeVisible();
+    // Filter + Activity live in the boards bar (B3) on desktop, not the masthead (design §6 B1/B3).
+    await expect(page.locator("[data-tool='user']")).toBeVisible();
   });
 
   test("B2: Departments index — numbered tabs with Engineering active", async ({ page }) => {
@@ -318,7 +318,8 @@ test.describe("C — Overlays", () => {
   });
 
   test("C1: Activity log drawer opens via activity button", async ({ page }) => {
-    await page.locator("[data-tool='activity'], [data-action='open-activity']").first().click();
+    // Filter/Activity live in the boards bar on desktop (not the masthead) — click the visible one.
+    await page.locator("[data-boards-bar] [data-action='open-activity']").click();
     await expect(page.locator("[data-activity-panel]")).toBeVisible();
   });
 
@@ -329,7 +330,7 @@ test.describe("C — Overlays", () => {
   });
 
   test("C2: Filter panel opens via filter button", async ({ page }) => {
-    await page.locator("[data-tool='filter'], [data-action='open-filter']").first().click();
+    await page.locator("[data-boards-bar] [data-action='open-filter']").click();
     await expect(page.locator("[data-filter-panel]")).toBeVisible();
     // Filter panel has a search field and facets
     await expect(
@@ -342,7 +343,7 @@ test.describe("C — Overlays", () => {
   });
 
   test("C2: Filter can be dismissed", async ({ page }) => {
-    await page.locator("[data-tool='filter'], [data-action='open-filter']").first().click();
+    await page.locator("[data-boards-bar] [data-action='open-filter']").click();
     await expect(page.locator("[data-filter-panel]")).toBeVisible();
     await page.keyboard.press("Escape");
     // Filter panel should close or at least not error
@@ -464,7 +465,8 @@ test.describe("F — Inline and transient elements", () => {
   });
 
   test("F2: Drop indicator is in the DOM (board markup) and hidden initially", async ({ page }) => {
-    const indicator = page.locator("[data-drop-indicator]");
+    // Scope to the board's card indicator — departments + board pills now have their own (#2).
+    const indicator = page.locator("[data-board] [data-drop-indicator]");
     await expect(indicator).toBeAttached();
     await expect(indicator).toBeHidden();
   });
