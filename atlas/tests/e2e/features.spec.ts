@@ -219,7 +219,7 @@ test.describe("A — Screens", () => {
       await page.goto("/board/board-platform/issue/issue-ws-reconnect");
       await page.waitForLoadState("load");
       const overlay = page.locator("[data-issue-panel]");
-      const rail = overlay.locator("[data-issue-rail], [data-properties]");
+      const rail = overlay.locator("[data-rail]");
       await expect(rail).toBeVisible();
     });
 
@@ -228,7 +228,7 @@ test.describe("A — Screens", () => {
       await page.waitForLoadState("load");
       const overlay = page.locator("[data-issue-panel]");
       // ws-reconnect has 3 sub-issues (2 done)
-      const subIssues = overlay.locator("[data-sub-issues], [data-sub-issue-list]");
+      const subIssues = overlay.locator("[data-sub-section]");
       await expect(subIssues).toBeVisible();
     });
 
