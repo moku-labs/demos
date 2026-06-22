@@ -10,6 +10,7 @@
 import { personById } from "../lib/people";
 import type { BoardSnapshot, Customization, Issue, LabelKey, Person } from "../lib/types";
 import { ColumnView } from "./ColumnView";
+import { DropIndicator } from "./DropIndicator";
 import { Icon } from "./Icon";
 
 /** The per-issue presentation maps {@link ColumnView} consumes, derived once from the snapshot. */
@@ -108,6 +109,7 @@ export function BoardView({ snapshot }: BoardViewProps) {
   const columns = [...snapshot.columns].sort((a, b) => a.position - b.position);
   return (
     <div data-board>
+      <DropIndicator hidden />
       {columns.map(column => {
         const custom = columnCustomization(snapshot, column.id);
         return (

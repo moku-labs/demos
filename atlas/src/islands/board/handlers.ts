@@ -11,6 +11,7 @@ import {
   createColumn,
   createIssue,
   deleteColumn,
+  deleteIssue,
   moveIssue,
   patchIssue,
   renameColumn,
@@ -287,6 +288,83 @@ async function renameIssueFlow(issue: Issue): Promise<void> {
   if (!title || title === issue.title) return;
   await patchIssue(issue.id, { title });
   showToast("Issue renamed");
+}
+
+// ─── card "⋯" menu ─────────────────────────────────────────────────────────────
+
+/**
+ * Open the universal element menu for a card, anchored to its "⋯" button. Routes the chosen
+ * action: `rename` → {@link renameIssueFlow}; `customize` opens the Customize panel;
+ * `delete` → {@link deleteIssueFlow}. `canMove` is false — cards move by drag.
+ *
+ * @param ctx - The board island context.
+ * @param _event - The delegated click event (unused).
+ * @param button - The matched card `[data-action="card-menu"]` button.
+ * @example
+ * ```ts
+ * events: { "click [data-action='card-menu']": onCardMenu };
+ * ```
+ */
+export function onCardMenu(ctx: BoardContext, _event: Event, button: Element): void {
+  const card = button.closest("[data-card-id]");
+  const issue = card ? issueForCard(ctx, card) : undefined;
+  if (!issue) return;
+
+  const custom = ctx.state.snapshot.customizations.find(
+    item => item.elementType === "issue" && item.elementId === issue.id
+  );
+
+  openMenu({
+    variant: "element",
+    anchor: button as HTMLElement,
+    elementLabel: issue.title,
+    canMove: false,
+    // eslint-disable-next-line jsdoc/require-jsdoc -- inline ctx-binding for the chosen menu action
+    onAction: action => {
+      if (action === "rename") {
+        void renameIssueFlow(issue);
+        return;
+      }
+      if (action === "customize") {
+        openCustomize({
+          elementType: "issue",
+          elementId: issue.id,
+          boardId: ctx.state.boardId,
+          elementLabel: issue.title,
+          // eslint-disable-next-line unicorn/no-null -- null is the customize contract
+          color: custom?.color ?? null,
+          // eslint-disable-next-line unicorn/no-null -- null is the customize contract
+          icon: custom?.icon ?? null
+        });
+        return;
+      }
+      if (action === "delete") {
+        void deleteIssueFlow(issue);
+      }
+    }
+  });
+}
+
+/**
+ * Delete an issue after a confirm modal, persisting through the api (the `issue.deleted` patch
+ * removes it from state).
+ *
+ * @param issue - The issue to delete.
+ * @example
+ * ```ts
+ * await deleteIssueFlow(issue);
+ * ```
+ */
+async function deleteIssueFlow(issue: Issue): Promise<void> {
+  const result = await openModal({
+    variant: "delete",
+    title: `Delete "${issue.title}"?`,
+    message: "This deletes the issue and its data. This can't be undone.",
+    confirmLabel: "Delete issue"
+  });
+  if (result.kind !== "confirm") return;
+  await deleteIssue(issue.id);
+  showToast("Issue deleted", "danger");
 }
 
 // ─── add affordances ───────────────────────────────────────────────────────────

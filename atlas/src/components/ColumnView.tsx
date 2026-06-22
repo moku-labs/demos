@@ -79,8 +79,14 @@ export function ColumnView({
   return (
     <section data-column data-status={status} aria-label={column.title}>
       <header data-column-head>
-        <button type="button" data-handle data-action="reorder" aria-label="Reorder column">
-          <Icon name="more" />
+        <button
+          type="button"
+          data-handle
+          data-action="reorder"
+          aria-label="Reorder column"
+          draggable={true}
+        >
+          <Icon name="grip" />
         </button>
         {customization?.icon && (
           <span data-column-icon>

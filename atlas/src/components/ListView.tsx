@@ -147,6 +147,7 @@ export function ListView({ snapshot }: ListViewProps) {
                   return (
                     <ListRow
                       key={issue.id}
+                      boardId={snapshot.board.id}
                       issue={issue}
                       labels={lookup?.labels ?? []}
                       assignees={lookup?.assignees ?? []}

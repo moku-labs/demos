@@ -13,6 +13,10 @@
     z-index: var(--z-drop-indicator);
     pointer-events: none;
   }
+  /* Honour the HTML hidden attribute so the board island can show/hide with toggleAttribute. */
+  :scope[hidden] {
+    display: none;
+  }
 
   [data-drop-line] {
     flex: 1;

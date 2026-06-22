@@ -85,6 +85,9 @@ export function CardView({
         )}
         <h3 data-card-title>{issue.title}</h3>
         <PriorityMark priority={priority} />
+        <button type="button" data-action="card-menu" aria-label={`${issue.title} menu`}>
+          <Icon name="more" />
+        </button>
       </div>
 
       {labels.length > 0 && (

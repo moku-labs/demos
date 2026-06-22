@@ -9,10 +9,14 @@ export default [
   {
     ignores: [
       "dist/**",
+      "dist-e2e/**",
       "coverage/**",
       "bun.lock",
       ".claude/**",
       ".planning/**",
+      ".wrangler/**",
+      "playwright-report/**",
+      "test-results/**",
       "node_modules/**",
       "declarations.d.ts"
     ]

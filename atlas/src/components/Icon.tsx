@@ -34,6 +34,7 @@ export type IconName =
   | "check"
   | "chevron-down"
   | "more"
+  | "grip"
   | "attach"
   | "clock"
   | "trash"
@@ -73,6 +74,7 @@ const PATHS: Record<IconName, string> = {
   check: "M5 12.5 10 17l9-10",
   "chevron-down": "M6 9l6 6 6-6",
   more: "M6 12h.01M12 12h.01M18 12h.01",
+  grip: "M9 8h.01M9 12h.01M9 16h.01M15 8h.01M15 12h.01M15 16h.01",
   attach:
     "M21 11.5 12.5 20a5 5 0 0 1-7-7l8-8a3.3 3.3 0 0 1 4.7 4.7l-8 8a1.6 1.6 0 0 1-2.4-2.4l7.4-7.4",
   clock: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18m0 4v5l3.5 2",
@@ -106,7 +108,7 @@ export interface IconProps {
  * ```
  */
 export function Icon({ name, label }: IconProps) {
-  const filled = name === "more";
+  const filled = name === "more" || name === "grip";
   return (
     <svg
       data-icon={name}

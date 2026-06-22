@@ -19,6 +19,7 @@
     "@arethetypeswrong/core": "0.18.3",
     "@biomejs/biome": "2.4.16",
     "@cloudflare/workers-types": "4.20260617.1",
+    "@playwright/test": "1.52.0",
     "@types/bun": "1.3.14",
     "@vitest/coverage-istanbul": "4.0.18",
     "eslint": "9.39.3",
@@ -29,6 +30,7 @@
     "globals": "17.4.0",
     "jiti": "2.6.1",
     "lefthook": "2.1.1",
+    "playwright": "1.52.0",
     "publint": "0.3.21",
     "tsdown": "0.22.1",
     "typescript": "6.0.3",
@@ -48,6 +50,9 @@
     "test": "vitest run",
     "test:unit": "vitest run --project unit",
     "test:integration": "vitest run --project integration",
-    "test:coverage": "vitest run --project unit --project integration --coverage"
+    "test:coverage": "vitest run --project unit --project integration --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots",
+    "test:e2e:update:linux": "docker run --rm -v $(pwd):/work -w /work mcr.microsoft.com/playwright:v1.52.0-noble bunx playwright test --update-snapshots"
   }
 }

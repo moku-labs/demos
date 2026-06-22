@@ -11,6 +11,7 @@ import {
   onAddColumn,
   onBoardDrop,
   onCardDragStart,
+  onCardMenu,
   onCardOpen,
   onCardTitleEdit,
   onColumnDragStart,
@@ -26,6 +27,7 @@ import type { BoardState } from "./types";
 export const boardEvents: Spa.IslandEvents<BoardState> = {
   // clicks — controls first, then the broad card-open (guarded against inner controls)
   "click [data-action='menu']": onColumnMenu,
+  "click [data-action='card-menu']": onCardMenu,
   "click [data-add-card]": onAddCard,
   "click [data-add-column]": onAddColumn,
   "click [data-card-id]": onCardOpen,

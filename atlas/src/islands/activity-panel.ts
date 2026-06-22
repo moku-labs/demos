@@ -145,6 +145,21 @@ function close(ctx: ActivityContext): void {
 }
 
 /**
+ * True when the current route is a board's activity deep link (`/board/{id}/activity`) — the route
+ * whose `focus: "activity"` meta means "open the Record". Drives the deep-link auto-open so a hard
+ * load of (or SPA navigation to) the activity URL reveals the drawer, not just scrolls to its host.
+ *
+ * @returns Whether the current path targets the activity drawer.
+ * @example
+ * ```ts
+ * if (isActivityRoute()) open(ctx);
+ * ```
+ */
+function isActivityRoute(): boolean {
+  return globalThis.location.pathname.endsWith("/activity");
+}
+
+/**
  * Toggle a value within a local filter array — adds it when absent, removes it when present.
  *
  * @param values - The current filter values.
@@ -264,6 +279,23 @@ function mount(ctx: ActivityContext): void {
   ctx.cleanup(() => {
     if (refetchTimer) clearTimeout(refetchTimer);
   });
+
+  // Deep link: a hard load of /board/{id}/activity focuses the Record — open the drawer.
+  if (isActivityRoute()) open(ctx);
+}
+
+/**
+ * Re-honour the activity deep link after an SPA navigation: opening the drawer when navigating to a
+ * `/board/{id}/activity` route (the button/Escape/outside affordances still drive it on other routes).
+ *
+ * @param ctx - The activity component context.
+ * @example
+ * ```ts
+ * createIsland("activity-panel", { onNavEnd: navSync });
+ * ```
+ */
+function navSync(ctx: ActivityContext): void {
+  if (isActivityRoute()) open(ctx);
 }
 
 /** Singleton chrome island: the read-only "Record" activity drawer. */
@@ -271,6 +303,7 @@ export const activityPanel = createIsland<ActivityState>("activity-panel", {
   state: initState,
   render,
   onMount: mount,
+  onNavEnd: navSync,
   events: {
     "click [data-action=filter-kind]": onFilterKind,
     "click [data-action=filter-person]": onFilterPerson,

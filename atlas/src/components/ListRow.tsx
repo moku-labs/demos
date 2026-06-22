@@ -8,6 +8,7 @@
  */
 import { STATUS_TITLES } from "../lib/labels";
 import type { Issue, LabelKey, Person } from "../lib/types";
+import { urls } from "../routes";
 import { Avatar } from "./Avatar";
 import { Icon } from "./Icon";
 import { LabelDot } from "./LabelDot";
@@ -31,6 +32,8 @@ interface RowAssignee {
 
 /** Props for {@link ListRow}. */
 export interface ListRowProps {
+  /** The id of the board the issue belongs to — builds the issue deep link via the route map. */
+  boardId: string;
   /** The issue this row depicts. */
   issue: Issue;
   /** The issue's labels, in display order. */
@@ -79,6 +82,7 @@ function formatDue(at: number): string {
  * Due · Who.
  *
  * @param props - The list-row props.
+ * @param props.boardId - The id of the board the issue belongs to (builds the issue deep link).
  * @param props.issue - The issue this row depicts.
  * @param props.labels - The issue's labels.
  * @param props.assignees - The issue's assignees (lead marked).
@@ -87,16 +91,27 @@ function formatDue(at: number): string {
  * @returns The list-row element.
  * @example
  * ```tsx
- * <ListRow issue={issue} labels={["bug"]} assignees={[{ person, isLead: true }]} subIssues={{ done: 2, total: 5 }} attachmentCount={1} />
+ * <ListRow boardId="board-platform" issue={issue} labels={["bug"]} assignees={[{ person, isLead: true }]} subIssues={{ done: 2, total: 5 }} attachmentCount={1} />
  * ```
  */
-export function ListRow({ issue, labels, assignees, subIssues, attachmentCount }: ListRowProps) {
+export function ListRow({
+  boardId,
+  issue,
+  labels,
+  assignees,
+  subIssues,
+  attachmentCount
+}: ListRowProps) {
   const { total, done } = subIssues;
   const pct = total === 0 ? 0 : Math.round((done / total) * 100);
   const ordered = [...assignees].sort((a, b) => Number(b.isLead) - Number(a.isLead));
 
   return (
-    <a data-list-row href={`/issues/${issue.id}`} data-issue-id={issue.id}>
+    <a
+      data-list-row
+      href={urls.toUrl("issue", { id: boardId, issueId: issue.id })}
+      data-issue-id={issue.id}
+    >
       <span data-cell="issue">
         <span data-row-title>{issue.title}</span>
         <span data-row-id>{issue.id}</span>
