@@ -26,6 +26,7 @@ import {
 } from "../lib/api";
 
 import { hideInsertionIndicator, positionInsertionIndicator } from "../lib/drag-indicator";
+import { getEmptyDept, onEmptyDept, setEmptyDept } from "../lib/empty-dept";
 import { openCustomize, openMenu, openModal, showToast } from "../lib/menu";
 import { loadBoards, navigate, onNavRefresh, refresh, resolveActive } from "../lib/nav";
 import type { Customization, Department } from "../lib/types";
@@ -82,6 +83,8 @@ function render(state: Readonly<DepartmentsState>): Spa.RenderResult {
 /**
  * Re-resolve the active navigation context and paint the index. Idempotent and safe from both
  * `onMount` and `onNavEnd` (the index persists across SPA navigation) and after an {@link onNavRefresh}.
+ * When an empty department is selected ({@link file://../lib/empty-dept.ts}) its tab carries the active
+ * underline instead of the URL's department — the URL can't represent an empty (boardless) department.
  *
  * @param ctx - The departments island context.
  * @returns A promise that resolves once the index is painted.
@@ -92,10 +95,11 @@ function render(state: Readonly<DepartmentsState>): Spa.RenderResult {
  */
 async function sync(ctx: DepartmentsContext): Promise<void> {
   const active = await resolveActive();
+  const empty = getEmptyDept();
   ctx.set({
     departments: active.departments,
     customizations: active.customizations,
-    activeDepartmentId: active.activeDepartmentId ?? ""
+    activeDepartmentId: empty?.id ?? active.activeDepartmentId ?? ""
   });
 }
 
@@ -142,14 +146,16 @@ function customizationFor(
 // ─── navigate to a department (its first board) ─────────────────────────────────
 
 /**
- * Navigate to a department by opening its FIRST board — departments are not their own route, so the
+ * Open a department by navigating to its FIRST board — departments are not their own route, so the
  * active department is derived from the active board (see {@link file://../lib/nav.ts} `resolveActive`).
- * A no-op (with a gentle toast) when the department has no boards yet.
+ * A department with NO boards has nothing to navigate to, so it selects the empty-department view
+ * instead ({@link file://../lib/empty-dept.ts}): this tab underlines active and the board area shows the
+ * editorial empty-state — no navigation, the URL is left untouched.
  *
  * @param ctx - The departments island context.
  * @param _event - The delegated click event (unused).
  * @param tab - The matched `[data-dept-tab]` element.
- * @returns A promise that resolves once navigation is dispatched (or skipped).
+ * @returns A promise that resolves once navigation is dispatched (or the empty view is selected).
  * @example
  * ```ts
  * events: { "click [data-dept-tab]": onTabClick };
@@ -165,9 +171,13 @@ async function onTabClick(ctx: DepartmentsContext, _event: Event, tab: Element):
   const boards = await loadBoards(department.id);
   const first = boards[0];
   if (!first) {
-    showToast("That department has no boards yet");
+    // No board to open — select the empty-department view (no navigation) and underline this tab.
+    setEmptyDept({ id: department.id, title: department.title });
+    ctx.set({ activeDepartmentId: department.id });
     return;
   }
+  // A real board opens — drop any empty-department selection before navigating.
+  setEmptyDept(undefined);
   navigate(urls.toUrl("board", { id: first.id }));
 }
 
@@ -530,6 +540,8 @@ function dropIndexForTab(ctx: DepartmentsContext, clientX: number, draggedId: st
 async function mount(ctx: DepartmentsContext): Promise<void> {
   await sync(ctx);
   ctx.cleanup(onNavRefresh(() => void sync(ctx)));
+  // An empty-department selection (or its clearing) moves the active underline — re-sync to apply it.
+  ctx.cleanup(onEmptyDept(() => void sync(ctx)));
 }
 
 /** Persistent chrome island: the numbered departments index (region B2). */
@@ -537,8 +549,11 @@ export const departments = createIsland<DepartmentsState>("departments", {
   state: initState,
   render,
   onMount: mount,
-  // eslint-disable-next-line jsdoc/require-jsdoc -- inline nav-end re-sync
-  onNavEnd: ctx => void sync(ctx),
+  // eslint-disable-next-line jsdoc/require-jsdoc -- inline nav-end re-sync (a real nav clears empty-dept)
+  onNavEnd: ctx => {
+    setEmptyDept(undefined);
+    void sync(ctx);
+  },
   events: {
     "click [data-dept-tab]": onTabClick,
     "click [data-action='add-department']": onAddDepartment,

@@ -18,6 +18,7 @@ import { createIsland } from "@moku-labs/web/browser";
 import { Fragment, h } from "preact";
 import { BoardHeader } from "../components/BoardHeader";
 import { getBoard } from "../lib/api";
+import { onEmptyDept } from "../lib/empty-dept";
 import { boardIdFromUrl, resolveActive } from "../lib/nav";
 import { onPatch } from "../lib/realtime";
 import type { Board, BoardPatch, Issue, IssueStatus } from "../lib/types";
@@ -234,6 +235,15 @@ async function mount(ctx: HeaderContext): Promise<void> {
   });
 
   ctx.cleanup(onPatch(patch => applyPatch(ctx, patch, scheduleRefetch)));
+
+  // An empty department has no board — clear the masthead so it never shows the previous board's
+  // title + stats. A real navigation restores it (onMount / onNavEnd re-run sync against the URL).
+  ctx.cleanup(
+    onEmptyDept(dept => {
+      // eslint-disable-next-line unicorn/no-null -- null is the HeaderState.board domain contract
+      if (dept) ctx.set({ board: null, stats: EMPTY_STATS });
+    })
+  );
 }
 
 /** Board-page island: the editorial board header with live stats (region B4). */

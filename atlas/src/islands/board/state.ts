@@ -21,6 +21,7 @@ export function initState(ctx: BoardContext): BoardState {
   return {
     boardId: ctx.params.id ?? "",
     snapshot: EMPTY_SNAPSHOT,
-    view: ctx.meta.view === "list" ? "list" : currentView()
+    view: ctx.meta.view === "list" ? "list" : currentView(),
+    emptyDepartment: false
   };
 }

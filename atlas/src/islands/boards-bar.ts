@@ -21,6 +21,7 @@ import { BoardsBar } from "../components/BoardsBar";
 import { createBoard, deleteBoard, renameBoard, reorderBoard } from "../lib/api";
 
 import { hideInsertionIndicator, positionInsertionIndicator } from "../lib/drag-indicator";
+import { getEmptyDept, onEmptyDept, setEmptyDept } from "../lib/empty-dept";
 import { openCustomize, openMenu, openModal, showToast } from "../lib/menu";
 import { navigate, onNavRefresh, refresh, resolveActive } from "../lib/nav";
 import type { Board, BoardSummary, Customization } from "../lib/types";
@@ -38,6 +39,12 @@ type BoardsBarState = {
   view: "board" | "list";
   /** Board-level customizations, matched to each pill by `elementId`. */
   customizations: Customization[];
+  /**
+   * Whether an empty department is selected ({@link file://../lib/empty-dept.ts}) — when true the bar
+   * shows only "Add board" (pointed at the empty department) and hides the board controls, since there
+   * is no board to view, filter, or toggle.
+   */
+  emptyDepartment: boolean;
 };
 
 /** The boards-bar island context (typed per-instance state). */
@@ -61,7 +68,8 @@ function initState(): BoardsBarState {
     activeBoardId: "",
     activeDepartmentId: "",
     view: "board",
-    customizations: []
+    customizations: [],
+    emptyDepartment: false
   };
 }
 
@@ -105,7 +113,8 @@ function render(state: Readonly<BoardsBarState>): Spa.RenderResult {
     boards: state.boards.map(summary => toBoard(summary)),
     activeBoardId: state.activeBoardId,
     view: state.view,
-    customizations: state.customizations
+    customizations: state.customizations,
+    emptyDepartment: state.emptyDepartment
   });
 }
 
@@ -113,7 +122,8 @@ function render(state: Readonly<BoardsBarState>): Spa.RenderResult {
  * Re-resolve the active navigation context and paint the bar. Idempotent and safe from `onMount`,
  * `onNavEnd` (the bar persists across SPA navigation), and after an {@link onNavRefresh}. The active
  * department's board customizations are not part of the nav index, so `[]` is passed (they arrive live
- * via the board snapshot).
+ * via the board snapshot). When an empty department is selected ({@link file://../lib/empty-dept.ts})
+ * the bar shows only its "Add board" — no pills, no controls — since it has no board to view.
  *
  * @param ctx - The boards-bar island context.
  * @returns A promise that resolves once the bar is painted.
@@ -124,12 +134,25 @@ function render(state: Readonly<BoardsBarState>): Spa.RenderResult {
  */
 async function sync(ctx: BoardsBarContext): Promise<void> {
   const active = await resolveActive();
+  const empty = getEmptyDept();
+  if (empty) {
+    ctx.set({
+      boards: [],
+      activeBoardId: "",
+      activeDepartmentId: empty.id,
+      view: "board",
+      customizations: [],
+      emptyDepartment: true
+    });
+    return;
+  }
   ctx.set({
     boards: active.boards,
     activeBoardId: active.activeBoardId ?? "",
     activeDepartmentId: active.activeDepartmentId ?? "",
     view: active.view,
-    customizations: []
+    customizations: [],
+    emptyDepartment: false
   });
 }
 
@@ -504,6 +527,8 @@ function dropIndexForPill(ctx: BoardsBarContext, clientX: number, draggedId: str
 async function mount(ctx: BoardsBarContext): Promise<void> {
   await sync(ctx);
   ctx.cleanup(onNavRefresh(() => void sync(ctx)));
+  // An empty-department selection (or its clearing) changes which department + pills the bar shows.
+  ctx.cleanup(onEmptyDept(() => void sync(ctx)));
 }
 
 /** Persistent chrome island: the active department's boards bar (region B3). */
@@ -511,8 +536,11 @@ export const boardsBar = createIsland<BoardsBarState>("boards-bar", {
   state: initState,
   render,
   onMount: mount,
-  // eslint-disable-next-line jsdoc/require-jsdoc -- inline nav-end re-sync
-  onNavEnd: ctx => void sync(ctx),
+  // eslint-disable-next-line jsdoc/require-jsdoc -- inline nav-end re-sync (a real nav clears empty-dept)
+  onNavEnd: ctx => {
+    setEmptyDept(undefined);
+    void sync(ctx);
+  },
   events: {
     "click [data-action='add-board']": onAddBoard,
     "click [data-action='menu']": onBoardMenu,

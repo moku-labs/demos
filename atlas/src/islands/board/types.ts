@@ -28,6 +28,13 @@ export type BoardState = {
   snapshot: BoardSnapshot;
   /** Which surface to render — board (kanban) or list (editorial table). */
   view: BoardViewMode;
+  /**
+   * Whether an empty department is selected — when true the board area renders the editorial
+   * empty-department state instead of the (stale) snapshot. Driven by {@link file://../../lib/empty-dept.ts}
+   * (a department has no board to navigate to, so the URL can't represent it); cleared on a real
+   * navigation that resolves a board id.
+   */
+  emptyDepartment: boolean;
 };
 
 /** The board island context (typed per-instance state). */

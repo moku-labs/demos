@@ -485,6 +485,37 @@ test.describe("F — Inline and transient elements", () => {
     const hasContent = await page.locator("[data-card]").count();
     expect(emptyCount > 0 || hasContent > 0).toBe(true);
   });
+
+  test("F3: Empty department shows the editorial empty-state, not a stale board (#4)", async ({
+    page
+  }) => {
+    // The seeded Operations department has no boards (no DB mutation needed — keeps the seed clean).
+    // Clicking its tab must NOT keep the previous board on screen (the #4 bug): the board area swaps
+    // to the editorial empty-department state, the dept underlines active, and the boards bar shows
+    // only "Add board" (the Board/List · Filter · Activity controls are gone — there is no board).
+    const board = page.locator('[data-region="board"]');
+    await expect(board.locator("[data-column]").first()).toBeVisible(); // Platform is showing first
+
+    const opsTab = page.locator("[data-dept-tab]", { hasText: "Operations" });
+    await opsTab.locator("[data-dept-name]").click();
+
+    await expect(
+      board.locator('[data-empty-state][data-variant="empty-department"]')
+    ).toBeVisible();
+    await expect(board.locator("[data-column]")).toHaveCount(0);
+    await expect(opsTab).toHaveAttribute("data-active", "");
+    await expect(page.locator("[data-add-board]")).toBeVisible();
+    await expect(page.locator("[data-boards-controls]")).toHaveCount(0);
+
+    // A real-board navigation clears the empty-state and restores the board (even to the same URL —
+    // Engineering's first board is the one already in the URL, so the clear can't rely on a URL change).
+    await page
+      .locator("[data-dept-tab]", { hasText: "Engineering" })
+      .locator("[data-dept-name]")
+      .click();
+    await expect(board.locator('[data-empty-state][data-variant="empty-department"]')).toBeHidden();
+    await expect(board.locator("[data-column]").first()).toBeVisible();
+  });
 });
 
 test.describe("G — Recurring components", () => {

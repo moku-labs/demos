@@ -24,23 +24,36 @@ export interface BoardsBarProps {
   view: "board" | "list";
   /** Board-level customizations; matched to each pill by `elementId`. */
   customizations?: Customization[];
+  /**
+   * Whether an empty department is selected — when true the controls cluster (Board / List · Filter ·
+   * Activity) is hidden, leaving only "Add board", since there is no board to view, filter, or toggle.
+   */
+  emptyDepartment?: boolean;
 }
 
 /**
- * Render the boards bar — board pills, "Add board", and the Board/List · Filter · Activity controls.
+ * Render the boards bar — board pills, "Add board", and (unless an empty department is selected) the
+ * Board/List · Filter · Activity controls.
  *
  * @param props - The boards-bar props.
  * @param props.boards - The active department's boards.
  * @param props.activeBoardId - Id of the active board.
  * @param props.view - Which view is showing (`board` | `list`).
  * @param props.customizations - Board-level customizations, matched by `elementId`.
+ * @param props.emptyDepartment - When true, hide the controls (only "Add board" shows).
  * @returns The boards bar element.
  * @example
  * ```tsx
  * <BoardsBar boards={boards} activeBoardId={board.id} view="board" customizations={customizations} />
  * ```
  */
-export function BoardsBar({ boards, activeBoardId, view, customizations = [] }: BoardsBarProps) {
+export function BoardsBar({
+  boards,
+  activeBoardId,
+  view,
+  customizations = [],
+  emptyDepartment = false
+}: BoardsBarProps) {
   const ordered = [...boards].sort((a, b) => a.position - b.position);
   const customByElement = new Map(customizations.map(c => [c.elementId, c]));
   return (
@@ -65,40 +78,42 @@ export function BoardsBar({ boards, activeBoardId, view, customizations = [] }: 
         <DropIndicator orientation="vertical" hidden />
       </div>
 
-      <div data-boards-controls>
-        <nav data-view-switch aria-label="Board or list view">
-          <a
-            href={urls.toUrl("board", { id: activeBoardId })}
-            data-seg
-            data-active={view === "board" ? "" : undefined}
-            aria-current={view === "board" ? "page" : undefined}
-          >
-            Board
-          </a>
-          <a
-            href={urls.toUrl("list", { id: activeBoardId })}
-            data-seg
-            data-active={view === "list" ? "" : undefined}
-            aria-current={view === "list" ? "page" : undefined}
-          >
-            List
-          </a>
-        </nav>
+      {emptyDepartment ? undefined : (
+        <div data-boards-controls>
+          <nav data-view-switch aria-label="Board or list view">
+            <a
+              href={urls.toUrl("board", { id: activeBoardId })}
+              data-seg
+              data-active={view === "board" ? "" : undefined}
+              aria-current={view === "board" ? "page" : undefined}
+            >
+              Board
+            </a>
+            <a
+              href={urls.toUrl("list", { id: activeBoardId })}
+              data-seg
+              data-active={view === "list" ? "" : undefined}
+              aria-current={view === "list" ? "page" : undefined}
+            >
+              List
+            </a>
+          </nav>
 
-        <button type="button" data-control="filter" data-action="open-filter" aria-label="Filter">
-          <Icon name="filter" />
-          <span data-control-text>Filter</span>
-        </button>
-        <button
-          type="button"
-          data-control="activity"
-          data-action="open-activity"
-          aria-label="Activity"
-        >
-          <Icon name="activity" />
-          <span data-control-text>Activity</span>
-        </button>
-      </div>
+          <button type="button" data-control="filter" data-action="open-filter" aria-label="Filter">
+            <Icon name="filter" />
+            <span data-control-text>Filter</span>
+          </button>
+          <button
+            type="button"
+            data-control="activity"
+            data-action="open-activity"
+            aria-label="Activity"
+          >
+            <Icon name="activity" />
+            <span data-control-text>Activity</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -7,6 +7,7 @@
  * an issue (which re-mounts this island) never flashes an empty board.
  */
 import { getBoard } from "../../lib/api";
+import { onEmptyDept, setEmptyDept } from "../../lib/empty-dept";
 import { onFilterChange } from "../../lib/filter";
 import { currentView, resolveActive } from "../../lib/nav";
 import { connect, disconnect, onPatch, ping, seed } from "../../lib/realtime";
@@ -77,6 +78,11 @@ export async function sync(ctx: BoardContext): Promise<void> {
     resetBoardScroll();
     return;
   }
+
+  // A real board resolved — a real navigation has won, so any empty-department selection is now stale.
+  // Clear the shared store (re-syncs the chrome islands) and drop this island's empty-state.
+  setEmptyDept(undefined);
+  if (ctx.state.emptyDepartment) ctx.set({ emptyDepartment: false });
 
   // Same board, already loaded live (its real snapshot is in state) — only the view changed.
   const loaded = ctx.state.boardId === boardId && ctx.state.snapshot.board.id === boardId;
@@ -160,6 +166,10 @@ export async function startBoard(ctx: BoardContext): Promise<void> {
   ctx.cleanup(() => globalThis.clearInterval(keepalive));
   ctx.cleanup(onFilterChange(() => ctx.set(previous => ({ snapshot: previous.snapshot }))));
   ctx.cleanup(() => disconnect());
+
+  // Selecting an empty department (no board to navigate to) swaps the board area for the editorial
+  // empty-state; clearing it (a real navigation) restores the board (its sync loads the new snapshot).
+  ctx.cleanup(onEmptyDept(dept => ctx.set({ emptyDepartment: Boolean(dept) })));
 
   // Flush the seeded render before measuring the deep-link target, then focus.
   ctx.flush();

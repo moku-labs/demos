@@ -32,4 +32,19 @@
   :scope[data-variant="no-results"] {
     padding: var(--space-8) var(--space-4);
   }
+
+  /* Empty department — the whole board area is blank, so this state fills it: a calm, vertically
+     generous panel with a larger headline (the editorial voice scaled up to carry the full region). */
+  :scope[data-variant="empty-department"] {
+    min-height: 50vh;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-10) var(--space-4);
+  }
+  :scope[data-variant="empty-department"] [data-empty-line] {
+    font-size: var(--text-xl);
+  }
+  :scope[data-variant="empty-department"] [data-empty-aside] {
+    font-size: var(--text-xs);
+  }
 }
