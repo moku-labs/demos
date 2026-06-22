@@ -41,12 +41,16 @@
     gap: var(--space-4);
   }
 
+  /* The Fraunces gate headline. A touch heavier than the prototype's hairline 460 so the serif
+     reads as a confident editorial title rather than a thin label (design context §2 — "big
+     confident headlines"). */
   [data-auth-title] {
     font-family: var(--font-display);
     font-size: var(--text-2xl);
-    font-weight: 460;
+    font-weight: 500;
     line-height: 1.05;
     letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
   }
 
   [data-field] {
@@ -79,6 +83,11 @@
     outline: none;
     border-color: var(--accent);
     background: var(--surface-card);
+  }
+  /* Quiet placeholder so the hint reads as guidance, not entered text — matching the muted
+     placeholder tone used across the app's sunken fields (e.g. FilterPanel search). */
+  input::placeholder {
+    color: var(--text-muted);
   }
 
   [data-field-row] {

@@ -108,8 +108,10 @@
 
   [data-issue-title] {
     font-family: var(--font-display);
-    font-size: var(--text-3xl);
-    font-weight: 460;
+    /* The big serif title is the article's masthead (design context §7) — scale it into the display
+       register so it reads grand, not like dense body type, settling at --text-3xl on roomy widths. */
+    font-size: clamp(var(--text-2xl), 1.6rem + 1.6vw, var(--text-3xl));
+    font-weight: 540;
     line-height: var(--leading-tight);
     letter-spacing: var(--tracking-tight);
     color: var(--text-strong);
@@ -209,7 +211,9 @@
     color: var(--text-faint);
   }
   /* The drop-cap: a large Fraunces initial on the first rendered paragraph (design context §7).
-     `:first-of-type` (not `:first-child`) so it still matches when a heading precedes the prose. */
+     `:first-of-type` (not `:first-child`) so it still matches when a heading precedes the prose.
+     Inked, not vermilion — the accent is reserved for what's live/primary/destructive (§2), so the
+     drop-cap stays an editorial ink flourish rather than diluting the hot accent. */
   [data-issue-body] > p:first-of-type::first-letter {
     float: left;
     font-family: var(--font-display);
@@ -217,7 +221,7 @@
     font-size: 3.2em;
     line-height: 0.82;
     margin: 0.04em 0.08em 0 0;
-    color: var(--accent);
+    color: var(--text-strong);
   }
 
   /* ── Description Preview/Edit toggle: a quiet mono segmented control above the body (§7) ── */

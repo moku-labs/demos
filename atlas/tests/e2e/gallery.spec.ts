@@ -42,6 +42,45 @@ async function goDark(page: import("@playwright/test").Page): Promise<void> {
   await page.waitForTimeout(250);
 }
 
+/**
+ * Seed the persisted theme (`atlas:theme`) and reload so the theme-toggle island applies it on mount.
+ *
+ * This is the deterministic path to dark mode on every viewport: unlike {@link goDark}, it does not
+ * depend on the masthead toggle being reachable (the toggle is `display:none` at ≤760px, where dark is
+ * otherwise only reachable through the mobile overflow sheet), so mobile dark captures composite
+ * reliably without touching app code.
+ *
+ * @param page - The Playwright page (must already be on an app route so the reload re-mounts islands).
+ * @param theme - The theme to persist and apply.
+ * @returns Resolves once the page has reloaded with the theme applied to the document root.
+ */
+async function setTheme(
+  page: import("@playwright/test").Page,
+  theme: "light" | "dark"
+): Promise<void> {
+  await page.evaluate(t => localStorage.setItem("atlas:theme", t), theme);
+  await page.reload();
+  await page.waitForLoadState("load");
+  await expect.poll(() => page.evaluate(() => document.documentElement.dataset.theme)).toBe(theme);
+}
+
+/**
+ * Clear the persisted filter selection (`atlas:filter`) and reload so the board/list renders the full,
+ * unnarrowed snapshot.
+ *
+ * The filter is "everywhere and remembered" (persisted in `localStorage`), and the board island feeds
+ * the same filter-narrowed snapshot to both the kanban and list surfaces — so a left-over selection can
+ * empty the list into its no-results state. Clearing it before a capture guarantees the populated table.
+ *
+ * @param page - The Playwright page (must already be on an app route so the reload re-mounts islands).
+ * @returns Resolves once the page has reloaded with no active filter.
+ */
+async function clearFilter(page: import("@playwright/test").Page): Promise<void> {
+  await page.evaluate(() => localStorage.removeItem("atlas:filter"));
+  await page.reload();
+  await page.waitForLoadState("load");
+}
+
 for (const [vp, size] of Object.entries(VIEWPORTS)) {
   test.describe(`gallery — ${vp}`, () => {
     test.use({ viewport: size });
@@ -67,10 +106,13 @@ for (const [vp, size] of Object.entries(VIEWPORTS)) {
       await expect(page.locator("[data-column]").first()).toBeVisible();
       await shot(page, `${vp}-A3-board`);
 
-      // A4 list
+      // A4 list — clear any persisted filter first so the populated table renders (not the
+      // filter-narrowed no-results state).
       await page.goto("/board/board-platform/list");
       await page.waitForLoadState("load");
+      await clearFilter(page);
       await expect(page.locator("[data-listview]")).toBeVisible();
+      await expect(page.locator("[data-list-group]").first()).toBeVisible();
       await shot(page, `${vp}-A4-list`);
 
       // A5 issue
@@ -100,6 +142,33 @@ for (const [vp, size] of Object.entries(VIEWPORTS)) {
       await page.waitForLoadState("load");
       await expect(page.locator("[data-board-header]")).toBeVisible();
       await shot(page, `${vp}-A3-board-brand`);
+    });
+
+    // C3 customize popover (from a column "⋯ → Customize") captured per viewport in both themes — so
+    // the mobile + dark variants are covered, not just the desktop/light `overlay-C3-customize` shot.
+    // The panel is a fixed-position overlay, so capture it with fullPage:false at its true coordinates.
+    test(`${vp}: C3 customize panel (light + dark)`, async ({ page }) => {
+      await page.clock.setFixedTime(FIXED_TIME);
+      await signIn(page);
+      await page.goto("/board/board-platform");
+      await page.waitForLoadState("load");
+      await expect(page.locator("[data-column]").first()).toBeVisible();
+
+      const openCustomize = async () => {
+        await page.locator("[data-column]").first().locator("[data-action='menu']").click();
+        await page.locator("[data-context-menu]").getByText("Customize").first().click();
+        await expect(page.locator("[data-customize-panel]")).toBeVisible();
+      };
+
+      await openCustomize();
+      await shot(page, `${vp}-C3-customize`, false);
+
+      // Dark: seed the persisted theme + reload (deterministic on mobile, where the masthead toggle is
+      // hidden), then re-open the panel since the reload dismisses the overlay.
+      await setTheme(page, "dark");
+      await expect(page.locator("[data-column]").first()).toBeVisible();
+      await openCustomize();
+      await shot(page, `${vp}-C3-customize-dark`, false);
     });
   });
 }

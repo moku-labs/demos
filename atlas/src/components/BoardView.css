@@ -59,6 +59,11 @@
       grid-auto-columns: minmax(16rem, 22rem);
       overflow-x: auto;
       scroll-snap-type: x proximity;
+      /* `[data-main]` zeroes its inline gutter in the phone/tablet band, so the scroll container
+         must restore the page gutter itself — otherwise the first column hugs the screen edge while
+         every sibling region keeps `--pad-page`. `scroll-padding-inline-start` only offsets the snap
+         rest position, not this static start inset, so both are needed. */
+      padding-inline: var(--pad-page);
       scroll-padding-inline-start: var(--pad-page);
     }
     :scope > * {
@@ -72,9 +77,9 @@
       grid-auto-columns: calc(100vw - 2 * var(--pad-page) - 2.5rem);
       gap: var(--space-5);
       scroll-snap-type: x mandatory;
+      /* Restore the page gutter the zeroed `[data-main]` no longer supplies (see the ≤1024px note). */
+      padding-inline: var(--pad-page);
       scroll-padding-inline-start: var(--pad-page);
-      /* A sparse single-column board still reads as a full, calm screen rather than a tall void. */
-      min-height: 60dvh;
     }
   }
 }

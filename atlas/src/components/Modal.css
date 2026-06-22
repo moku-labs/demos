@@ -60,11 +60,14 @@
     font-weight: 500;
     letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
-    color: var(--text-faint);
+    /* The mono eyebrow is the modal's live cue — vermilion, matching the accent discipline (§2):
+       the accent marks primary/destructive surfaces, and a modal is always one of those. */
+    color: var(--accent);
   }
   [data-modal-title] {
     font-family: var(--font-display);
-    font-size: var(--text-lg);
+    /* Lift the title into a confident editorial headline (--text-xl) rather than near-body size. */
+    font-size: var(--text-xl);
     font-weight: 480;
     letter-spacing: var(--tracking-tight);
     line-height: var(--leading-snug);

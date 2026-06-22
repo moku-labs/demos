@@ -36,6 +36,25 @@
     z-index: var(--z-popover);
   }
 
+  /* An OPEN menu overlay is a popover layer that must give its fixed panel a stable containing block —
+     without this the host stays an in-flow flex child of [data-main], so un-hiding it reflows the
+     column and the panel's `position:fixed` (set inline by positionPopover) lands detached at the
+     top-left (defect Group A: column/card/user menus park in the corner). Mirrors the customize pin,
+     but — unlike customize — the menu has NO scrim and must not block the board behind it: the host is
+     `pointer-events:none` so outside clicks pass through to the board (the island closes on the
+     resulting outside pointerdown), while the panel itself re-enables pointer events below. On phones
+     the panel promotes to a bottom sheet WITH a scrim (ContextMenu.css), which re-arms its own
+     pointer-events; this desktop pass-through only matters for the scrim-less popover. */
+  [data-overlay="menu"]:not([hidden]) {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-popover);
+    pointer-events: none;
+  }
+  [data-overlay="menu"]:not([hidden]) [data-context-menu] {
+    pointer-events: auto;
+  }
+
   @media (max-width: 760px) {
     [data-main] {
       padding-inline: 0;

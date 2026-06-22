@@ -3,7 +3,9 @@
  * board" sit on the left and scroll sideways when they overflow (phones swipe through boards — design
  * context §5); the controls cluster pins to the right. The Board / List toggle reuses the segmented
  * pattern from AuthForm's `[data-auth-switch]` (sunken track, the active segment lifted on card paper).
- * Filter / Activity are quiet icon buttons that warm to the accent on hover.
+ * Filter / Activity are quiet icon buttons that warm to the accent on hover; on phones they defer to
+ * the masthead "⋯" overflow sheet (D3), whose two `@scope`s are colocated at the foot of this file
+ * (the sheet owns no `.css` of its own — see the note there).
  */
 @scope ([data-boards-bar]) {
   :scope {
@@ -109,17 +111,144 @@
   }
 
   @media (max-width: 760px) {
-    :scope {
-      flex-wrap: wrap;
+    /* The pills row and the Board / List toggle share one line; the pills take the room and scroll
+       sideways, the toggle stays inline at the trailing edge. Filter / Activity defer to the masthead
+       "⋯" overflow sheet on phones (D3) — hidden here so the same action is not defined twice. */
+    [data-control="filter"],
+    [data-control="activity"] {
+      display: none;
     }
-    [data-boards-track] {
-      order: 2;
-      width: 100%;
-    }
-    [data-boards-controls] {
-      order: 1;
-      width: 100%;
-      justify-content: flex-end;
-    }
+  }
+}
+
+/**
+ * Overflow sheet (overlay D3) — the masthead mobile "⋯" bottom sheet. Its host + markup live in the
+ * masthead (authored in `Masthead.tsx`, wired by the `overflow-sheet` island) but it owns no `.css`
+ * file of its own, so its two `@scope`s are colocated here beside the boards-bar (the other place the
+ * Filter / Activity / view controls live). It is the reachable home on phones for the masthead tools
+ * that collapse — theme · Filter · Activity — plus Board / List view; making the theme toggle reachable
+ * here is what restores dark mode on phones (the masthead theme button is `display:none` ≤760px).
+ *
+ * The card pins to the bottom of the viewport over a full-bleed dimming scrim, mirroring the filter /
+ * context-menu sheets (`--shadow-sheet-up`, `--z-sheet`). The host carries `hidden` (UA-hidden) until
+ * the island un-hides it; on desktop the open button is `display:none`, so the sheet is phones-only.
+ */
+@scope ([data-overflow-sheet]) {
+  :scope {
+    position: fixed;
+    inset-block: auto 0;
+    inset-inline: 0;
+    z-index: var(--z-sheet);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-2) calc(var(--space-4) + env(safe-area-inset-bottom));
+    background: var(--surface-card);
+    border-top: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow: var(--shadow-sheet-up);
+    animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
+  }
+
+  /* Grab handle — a short pill centred above the sheet's content (mirrors the context-menu sheet). */
+  [data-sheet-grip] {
+    width: 2.25rem;
+    height: 4px;
+    margin: 0 auto var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--rule-strong);
+  }
+
+  /* The tool rows — full-width items that warm to sunken paper on press (touch has no hover). */
+  :scope > button {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: 0.85rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-base);
+    color: var(--text-body);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  :scope > button:active {
+    background: var(--surface-sunken);
+    color: var(--text-strong);
+  }
+  :scope > button [data-icon] {
+    width: 20px;
+    height: 20px;
+    color: var(--text-muted);
+  }
+
+  /* Theme toggle — show the current scheme's glyph, swapped off the button's `data-mode` (the island
+     sets it). Sun is the no-JS / light default; the moon shows in dark. */
+  [data-theme-moon] {
+    display: none;
+  }
+  [data-sheet-theme][data-mode="dark"] [data-theme-sun] {
+    display: none;
+  }
+  [data-sheet-theme][data-mode="dark"] [data-theme-moon] {
+    display: inline-flex;
+  }
+
+  /* Board / List view — a segmented toggle reusing the boards-bar pattern (sunken track, lifted segs). */
+  [data-sheet-views] {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    padding-top: var(--space-2);
+    border-top: var(--rule-width) solid var(--rule);
+  }
+  [data-sheet-views] button {
+    flex: 1;
+    padding: 0.7rem 0.8rem;
+    background: var(--surface-sunken);
+    border: var(--rule-width) solid var(--rule-strong);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 550;
+    color: var(--text-body);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-sheet-views] button:active {
+    border-color: var(--accent);
+    color: var(--accent-deep);
+  }
+
+  /* Done — the full-width dismiss, set apart above by a hairline rule. */
+  [data-sheet-done] {
+    justify-content: center;
+    margin-top: var(--space-2);
+    padding-top: var(--space-3);
+    border-top: var(--rule-width) solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+}
+
+/**
+ * The dimming scrim — a sibling of `[data-overflow-sheet]` inside the host. Scoped to the host's
+ * `[data-overlay="overflow"]` (the scrim is not a descendant of the sheet card, so it cannot live in
+ * the sheet's own `@scope`). It paints a full-bleed dimming layer one stack level below the sheet so a
+ * tap outside the sheet lands on a visibly dimmed page and dismisses it.
+ */
+@scope ([data-overlay="overflow"]) {
+  [data-scrim] {
+    position: fixed;
+    inset: 0;
+    background: var(--scrim);
+    z-index: calc(var(--z-sheet) - 1);
+    animation: atlas-fade var(--dur-normal) var(--ease-out);
   }
 }

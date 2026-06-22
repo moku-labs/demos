@@ -57,12 +57,15 @@
     letter-spacing: var(--tracking-tight);
     color: var(--text-strong);
   }
+  /* The count is the editorial numeral beside the status name — same Fraunces voice but a step
+     quieter in tone (and lighter in weight) so the status title stays the focal word and the
+     serif figure reads as a contents-page tally, not a second heading. */
   [data-group-count] {
     font-family: var(--font-display);
     font-size: var(--text-lg);
-    font-weight: 500;
+    font-weight: 400;
     font-variant-numeric: tabular-nums;
-    color: var(--text-strong);
+    color: var(--text-muted);
   }
 
   /* Quiet cap line when a status group exceeds its display limit (design context §6 F4). */
