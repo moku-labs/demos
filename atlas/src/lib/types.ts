@@ -169,6 +169,14 @@ export type CustomizationInput = {
 };
 /** Sign-in / sign-up credentials (demo auth). */
 export type Credentials = { email: string; password: string; name?: string };
+/** A resolved auth session (returned by sign-in/up; the token is also set as an HttpOnly cookie). */
+export type Session = {
+  userId: string;
+  name: string;
+  email: string;
+  token: string;
+  expiresAt: number;
+};
 
 /** Queue message body consumed by the activity worker. */
 export type ActivityMessage = {

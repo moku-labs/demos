@@ -102,6 +102,41 @@ const badRequest = (message = "bad request"): Response => new Response(message, 
  */
 const noContent = (): Response => new Response(undefined, { status: 204 });
 
+/** The session cookie name (mirrors `auth` config `cookieName`) — read by the worker's auth guard. */
+const SESSION_COOKIE = "atlas_session";
+
+/**
+ * Build the `Set-Cookie` value that stores a freshly minted session token as an HttpOnly, same-site
+ * cookie — the worker's auth guard (`auth.isAuthed`) reads it on every later `/api/*` + `/ws/*`
+ * request, so signing in is what makes the rest of the app reachable. `Secure` is intentionally
+ * omitted so the cookie also works over `http://localhost` under `wrangler dev`.
+ *
+ * @param token - The minted session token (the KV session key).
+ * @param expiresAt - The session expiry (epoch ms) — drives the cookie `Max-Age`.
+ * @returns The `Set-Cookie` header value.
+ * @example
+ * ```ts
+ * headers: { "set-cookie": sessionCookie(session.token, session.expiresAt) }
+ * ```
+ */
+function sessionCookie(token: string, expiresAt: number): string {
+  const maxAge = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
+  return `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`;
+}
+
+/**
+ * Build the `Set-Cookie` value that clears the session cookie (sign-out) — same attributes, zero age.
+ *
+ * @returns The cookie-clearing `Set-Cookie` header value.
+ * @example
+ * ```ts
+ * headers: { "set-cookie": clearedSessionCookie() }
+ * ```
+ */
+function clearedSessionCookie(): string {
+  return `${SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`;
+}
+
 /**
  * The Atlas endpoint table, grouped by resource. Wired into the worker app via `server: { endpoints }`
  * and dispatched by `server.server.handle`. See the file header for the per-endpoint comment
@@ -127,7 +162,11 @@ export const endpoints: Server.Endpoint[] = [
   endpoint("/api/auth/signin").post(async ctx => {
     const creds = (await ctx.request.json()) as Credentials;
     try {
-      return Response.json(await ctx.require(authPlugin).signIn(ctx.env, creds), { status: 201 });
+      const session = await ctx.require(authPlugin).signIn(ctx.env, creds);
+      return Response.json(session, {
+        status: 201,
+        headers: { "set-cookie": sessionCookie(session.token, session.expiresAt) }
+      });
     } catch {
       return badRequest("invalid credentials");
     }
@@ -138,7 +177,11 @@ export const endpoints: Server.Endpoint[] = [
   endpoint("/api/auth/signup").post(async ctx => {
     const creds = (await ctx.request.json()) as Credentials;
     try {
-      return Response.json(await ctx.require(authPlugin).signUp(ctx.env, creds), { status: 201 });
+      const session = await ctx.require(authPlugin).signUp(ctx.env, creds);
+      return Response.json(session, {
+        status: 201,
+        headers: { "set-cookie": sessionCookie(session.token, session.expiresAt) }
+      });
     } catch {
       return badRequest("invalid credentials");
     }
@@ -153,7 +196,10 @@ export const endpoints: Server.Endpoint[] = [
       const token = tokenFromRequest(ctx.request);
       if (token) await auth.signOut(ctx.env, token);
     }
-    return noContent();
+    return new Response(undefined, {
+      status: 204,
+      headers: { "set-cookie": clearedSessionCookie() }
+    });
   }),
   // GET /api/auth/session — the current Actor for the request, or 401 when unauthenticated.
   //   expects : Authorization: Bearer <token>  OR  the session cookie
@@ -221,6 +267,13 @@ export const endpoints: Server.Endpoint[] = [
     await ctx.require(departmentsPlugin).delete(ctx.env, ctx.params.id, actor);
     return noContent();
   }),
+  // GET /api/departments/{id}/boards — the department's board summaries (KV-indexed, D1 fallback).
+  //   expects : path {id}
+  //   returns : 200 · BoardSummary[]   (the boards-bar listing + the home default-board resolution)
+  // NOTE: more specific than /api/departments/{id}, so the literal `/boards` suffix wins the match.
+  endpoint("/api/departments/{id}/boards").get(async ctx =>
+    Response.json(await ctx.require(boardsPlugin).listForDepartment(ctx.env, ctx.params.id))
+  ),
 
   // ── Boards ──────────────────────────────────────────────────────────────
   // POST /api/boards — create a board (seeds the 4 default columns) + re-warm the KV index.
@@ -586,9 +639,6 @@ export const endpoints: Server.Endpoint[] = [
     ctx.require(durableObjectsPlugin).get(ctx.env, "board", ctx.params.id).fetch(ctx.request)
   )
 ];
-
-/** The session cookie name (mirrors `auth` config `cookieName`) for the sign-out token lookup. */
-const SESSION_COOKIE = "atlas_session";
 
 /**
  * Extract the session token from a request: prefer `Authorization: Bearer <token>`, then fall back

@@ -1,0 +1,132 @@
+/**
+ * @file board island — mount + nav lifecycle. `startBoard` (onMount) resolves the board id, connects
+ * the live socket, loads the snapshot, registers the realtime + filter subscriptions, seeds, then
+ * honours any deep-link focus. `sync` (run from onMount AND onNavEnd) re-derives the view + board id
+ * from the route so `/board/{id}` ↔ `/board/{id}/list` flips without a reload, and a different board id
+ * reloads. The last snapshot per board id is cached in a module Map and reused on re-mount, so opening
+ * an issue (which re-mounts this island) never flashes an empty board.
+ */
+import { getBoard } from "../../lib/api";
+import { onFilterChange } from "../../lib/filter";
+import { currentView, resolveActive } from "../../lib/nav";
+import { connect, disconnect, onPatch, ping, seed } from "../../lib/realtime";
+import type { BoardSnapshot } from "../../lib/types";
+import { applyPatch } from "./reconcile";
+import { type BoardContext, EMPTY_SNAPSHOT, KEEPALIVE_MS } from "./types";
+
+/** Per-board snapshot cache — reused on re-mount so navigation never flashes an empty board. */
+const snapshotCache = new Map<string, BoardSnapshot>();
+
+/**
+ * Resolve the board id this instance should bind to — the route param on a `/board/{id}` route, else
+ * the home route's active board (the first department's first board).
+ *
+ * @param ctx - The board island context.
+ * @returns The resolved board id, or an empty string when none can be resolved.
+ * @example
+ * ```ts
+ * const boardId = await resolveBoardId(ctx);
+ * ```
+ */
+async function resolveBoardId(ctx: BoardContext): Promise<string> {
+  if (ctx.params.id) return ctx.params.id;
+  const active = await resolveActive();
+  return active.activeBoardId ?? "";
+}
+
+/**
+ * Re-derive the view + (re)load the board for the current route. Safe to run on both onMount and
+ * onNavEnd: the view flips in place, and the snapshot only reloads when the board id actually changes.
+ *
+ * @param ctx - The board island context.
+ * @returns A promise that resolves once the view is set and (if needed) the board has loaded.
+ * @example
+ * ```ts
+ * onNavEnd: ctx => void sync(ctx);
+ * ```
+ */
+export async function sync(ctx: BoardContext): Promise<void> {
+  // The view is cheap to derive from the route — flip it first so a board↔list switch is instant.
+  const view = ctx.meta.view === "list" ? "list" : currentView();
+  ctx.set({ view });
+
+  const boardId = await resolveBoardId(ctx);
+  if (!boardId) return;
+
+  // Same board, already loaded live (its real snapshot is in state) — only the view changed.
+  const loaded = ctx.state.boardId === boardId && ctx.state.snapshot.board.id === boardId;
+  if (loaded) return;
+
+  await loadBoard(ctx, boardId);
+}
+
+/**
+ * Connect, load (or reuse the cached snapshot), wire the realtime + keepalive subscriptions, and seed.
+ * Reuses a cached snapshot for an instant first paint while the fresh one loads in the background.
+ *
+ * @param ctx - The board island context.
+ * @param boardId - The board to load.
+ * @returns A promise that resolves once the board has loaded and seeded.
+ * @example
+ * ```ts
+ * await loadBoard(ctx, boardId);
+ * ```
+ */
+async function loadBoard(ctx: BoardContext, boardId: string): Promise<void> {
+  // Connect BEFORE awaiting so live frames buffer into the pre-seed queue during the load.
+  connect(boardId);
+
+  // Paint the cached snapshot immediately (avoids the empty-board flash on re-mount).
+  const cached = snapshotCache.get(boardId);
+  ctx.set({ boardId, snapshot: cached ?? EMPTY_SNAPSHOT });
+
+  const snapshot = await getBoard(boardId);
+  snapshotCache.set(boardId, snapshot);
+  ctx.set({ boardId, snapshot });
+
+  // Register the realtime handler BEFORE seed() so the flushed pre-seed buffer reaches it.
+  ctx.cleanup(onPatch(patch => applyPatch(ctx, patch)));
+  seed();
+}
+
+/**
+ * Honour a deep-link focus after the board renders: `meta.focus === "activity"` scrolls to the sibling
+ * activity panel. The issue focus is owned by the issue island, not the board.
+ *
+ * @param meta - The route's `.meta()` bag (its `focus` selects the deep-link target).
+ * @example
+ * ```ts
+ * focusDeepLink(ctx.meta);
+ * ```
+ */
+function focusDeepLink(meta: Record<string, unknown>): void {
+  if (meta.focus !== "activity") return;
+  const panel = document.querySelector<HTMLElement>('[data-island="activity-panel"]');
+  panel?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/**
+ * Boot the live board on mount: sync the route (load + connect + seed), wire the keepalive ping + the
+ * filter subscription + the disconnect (all released via `ctx.cleanup`), flush, then honour any
+ * deep-link focus.
+ *
+ * @param ctx - The board island context.
+ * @returns A promise that resolves once the board is loaded and wired.
+ * @example
+ * ```ts
+ * createIsland("board", { onMount: startBoard });
+ * ```
+ */
+export async function startBoard(ctx: BoardContext): Promise<void> {
+  await sync(ctx);
+
+  // Keepalive holds the socket; re-render on any filter change; disconnect on destroy.
+  const keepalive = globalThis.setInterval(() => ping(), KEEPALIVE_MS);
+  ctx.cleanup(() => globalThis.clearInterval(keepalive));
+  ctx.cleanup(onFilterChange(() => ctx.set(previous => ({ snapshot: previous.snapshot }))));
+  ctx.cleanup(() => disconnect());
+
+  // Flush the seeded render before measuring the deep-link target, then focus.
+  ctx.flush();
+  focusDeepLink(ctx.meta);
+}
