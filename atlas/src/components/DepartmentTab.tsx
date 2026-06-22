@@ -78,7 +78,7 @@ export function DepartmentTab({ department, index, active, customization }: Depa
       data-drag="department"
       aria-current={active ? "true" : undefined}
     >
-      <span data-dept-handle aria-hidden="true" />
+      <span data-dept-handle aria-hidden="true" draggable={true} />
       <span data-dept-serial aria-hidden="true">
         {serial}
       </span>

@@ -69,7 +69,7 @@ export function BoardPill({ board, active, customization }: BoardPillProps) {
   const icon = toElementIcon(customization?.icon);
   return (
     <div data-board-pill data-active={active ? "" : undefined} data-drag="board">
-      <span data-board-handle aria-hidden="true" />
+      <span data-board-handle aria-hidden="true" draggable={true} />
       <a
         href={urls.toUrl("board", { id: board.id })}
         data-board-link
