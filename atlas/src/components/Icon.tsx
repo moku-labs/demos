@@ -110,7 +110,7 @@ export interface IconProps {
  * ```
  */
 export function Icon({ name, label }: IconProps) {
-  const filled = name === "more" || name === "grip";
+  const filled = name === "more" || name === "grip" || name === "google" || name === "apple";
   return (
     <svg
       data-icon={name}

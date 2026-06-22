@@ -52,19 +52,8 @@ export function Masthead({ homeHref, edition }: MastheadProps) {
             <Icon name="moon" />
           </span>
         </button>
-        <button type="button" data-tool="filter" data-action="open-filter" aria-label="Filter">
-          <Icon name="filter" />
-          <span data-tool-text>Filter</span>
-        </button>
-        <button
-          type="button"
-          data-tool="activity"
-          data-action="open-activity"
-          aria-label="Activity"
-        >
-          <Icon name="activity" />
-          <span data-tool-text>Activity</span>
-        </button>
+        {/* Filter + Activity live in the boards bar (B3) on desktop — not duplicated here. On phones
+            they fold into the "⋯" overflow sheet below. */}
         <button type="button" data-island="user-menu" data-tool="user" aria-label="Account" />
         <button
           type="button"
