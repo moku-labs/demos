@@ -136,6 +136,9 @@
   --shadow-pop-2: light-dark(0 12px 34px -10px rgba(22, 19, 15, 0.22), 0 16px 40px -12px rgba(0, 0, 0, 0.6));
   --shadow-pop: var(--shadow-pop-1), var(--shadow-pop-2);
   --shadow-sheet: light-dark(-18px 0 60px -24px rgba(22, 19, 15, 0.3), -18px 0 70px -24px rgba(0, 0, 0, 0.7));
+  /* A bottom-sheet's lift casts UPWARD (the sheet rises from the page bottom), so its shadow points
+     up rather than sideways like the right-hand drawer's `--shadow-sheet`. */
+  --shadow-sheet-up: light-dark(0 -18px 60px -24px rgba(22, 19, 15, 0.3), 0 -18px 70px -24px rgba(0, 0, 0, 0.7));
   --shadow-modal: light-dark(0 30px 80px -20px rgba(22, 19, 15, 0.5), 0 30px 90px -20px rgba(0, 0, 0, 0.75));
 }
 

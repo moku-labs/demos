@@ -30,6 +30,15 @@ type ChipFacet = "text" | "label" | "priority" | "assignee" | "status";
 /** Selector matching the open buttons in the masthead and boards bar (outside this island's host). */
 const OPEN_SELECTOR = '[data-action="open-filter"]';
 
+/** Document-element attribute that drives the background scroll-lock while the overlay is open. */
+const SCROLL_LOCK_ATTR = "data-overlay-filter";
+
+/** Gap (px) between the trigger and the anchored desktop popover. */
+const POPOVER_GAP = 8;
+
+/** Viewport margin (px) the popover keeps from the window edge when clamping its position. */
+const VIEWPORT_MARGIN = 12;
+
 /**
  * Build the initial (closed) filter state.
  *
@@ -57,23 +66,93 @@ function render(): Spa.RenderResult {
   return h(FilterPanel, { selected: getFilter() });
 }
 
+/** The media query matching the mobile bottom-sheet breakpoint (mirrors FilterPanel.css §C2). */
+const SHEET_QUERY = "(max-width: 760px)";
+
 /**
- * Open the popover — mark state open and unhide the host. A no-op when already open.
+ * Whether the panel currently renders as the mobile bottom sheet (CSS pins it to the viewport edge).
  *
- * @param ctx - The filter component context.
+ * @returns True below the 760px breakpoint, where the host must not carry desktop anchor styles.
  * @example
  * ```ts
- * open(ctx);
+ * if (isSheet()) clearAnchor(ctx.el);
  * ```
  */
-function open(ctx: FilterContext): void {
-  if (ctx.state.open) return;
-  ctx.set({ open: true });
-  ctx.el.toggleAttribute("hidden", false);
+function isSheet(): boolean {
+  return globalThis.matchMedia(SHEET_QUERY).matches;
 }
 
 /**
- * Close the popover — mark state closed and re-hide the host. A no-op when already closed.
+ * Anchor the desktop popover host to its trigger — `position:fixed` just below the button, with its
+ * right edge aligned to the trigger and clamped to stay on-screen. A no-op (and styles cleared) on the
+ * mobile sheet, where CSS pins the panel to the bottom of the viewport.
+ *
+ * @param host - The island host element (the positioned popover layer).
+ * @param trigger - The `open-filter` button the popover anchors to.
+ * @example
+ * ```ts
+ * anchorToTrigger(ctx.el, button);
+ * ```
+ */
+function anchorToTrigger(host: HTMLElement, trigger: Element): void {
+  if (isSheet()) {
+    clearAnchor(host);
+    return;
+  }
+
+  const rect = trigger.getBoundingClientRect();
+  const top = Math.round(rect.bottom + POPOVER_GAP);
+  const right = Math.round(Math.max(VIEWPORT_MARGIN, globalThis.innerWidth - rect.right));
+
+  host.style.position = "fixed";
+  host.style.top = `${top}px`;
+  host.style.right = `${right}px`;
+  host.style.left = "auto";
+  // setProperty (not .style.zIndex): the CSSOM numeric-property setter rejects a var() value, so write
+  // the custom property through the longhand to keep the host above the page within the popover layer.
+  host.style.setProperty("z-index", "var(--z-popover)");
+}
+
+/**
+ * Strip the inline desktop-anchor styles from the host so the mobile sheet (and the closed state) layout
+ * solely from the stylesheet.
+ *
+ * @param host - The island host element.
+ * @example
+ * ```ts
+ * clearAnchor(ctx.el);
+ * ```
+ */
+function clearAnchor(host: HTMLElement): void {
+  host.style.removeProperty("position");
+  host.style.removeProperty("top");
+  host.style.removeProperty("right");
+  host.style.removeProperty("left");
+  host.style.removeProperty("z-index");
+}
+
+/**
+ * Open the popover — mark state open, unhide the host, anchor it to its trigger (desktop), and lock the
+ * background scroll. A no-op when already open.
+ *
+ * @param ctx - The filter component context.
+ * @param trigger - The `open-filter` button the desktop popover anchors to (omitted re-opens in place).
+ * @example
+ * ```ts
+ * open(ctx, button);
+ * ```
+ */
+function open(ctx: FilterContext, trigger?: Element): void {
+  if (ctx.state.open) return;
+  ctx.set({ open: true });
+  ctx.el.toggleAttribute("hidden", false);
+  if (trigger) anchorToTrigger(ctx.el as HTMLElement, trigger);
+  document.documentElement.toggleAttribute(SCROLL_LOCK_ATTR, true);
+}
+
+/**
+ * Close the popover — mark state closed, re-hide the host, drop the anchor styles, and release the
+ * background scroll-lock. A no-op when already closed.
  *
  * @param ctx - The filter component context.
  * @example
@@ -85,6 +164,8 @@ function close(ctx: FilterContext): void {
   if (!ctx.state.open) return;
   ctx.set({ open: false });
   ctx.el.toggleAttribute("hidden", true);
+  clearAnchor(ctx.el as HTMLElement);
+  document.documentElement.toggleAttribute(SCROLL_LOCK_ATTR, false);
 }
 
 /**
@@ -332,6 +413,19 @@ function onClear(ctx: FilterContext): void {
 }
 
 /**
+ * Dismiss the panel — fired by the mobile sheet's Done button and a tap on the dimming scrim.
+ *
+ * @param ctx - The filter component context.
+ * @example
+ * ```ts
+ * events: { "click [data-action=close-filter]": onClose };
+ * ```
+ */
+function onClose(ctx: FilterContext): void {
+  close(ctx);
+}
+
+/**
  * Wire the self-open trigger and the dismissal listeners (Escape + outside pointer), all released via
  * `ctx.cleanup`. The open buttons live outside this host, so opening is a document-level delegated
  * click; the outside test ignores pointers on an open button and inside the panel itself.
@@ -345,7 +439,8 @@ function onClear(ctx: FilterContext): void {
 function mount(ctx: FilterContext): void {
   // eslint-disable-next-line jsdoc/require-jsdoc -- inline ctx-binding for the self-open click handler
   const onOpenClick = (event: Event): void => {
-    if ((event.target as Element).closest(OPEN_SELECTOR)) open(ctx);
+    const trigger = (event.target as Element).closest(OPEN_SELECTOR);
+    if (trigger) open(ctx, trigger);
   };
   // eslint-disable-next-line jsdoc/require-jsdoc -- inline ctx-binding for the Escape-to-close handler
   const onKey = (event: KeyboardEvent): void => {
@@ -379,6 +474,7 @@ export const filterPanel = createIsland<FilterState>("filter-panel", {
     "click [data-action=toggle-assignee]": onToggleAssignee,
     "click [data-action=toggle-status]": onToggleStatus,
     "click [data-action=remove-filter]": onRemove,
-    "click [data-action=clear-filters]": onClear
+    "click [data-action=clear-filters]": onClear,
+    "click [data-action=close-filter]": onClose
   }
 });

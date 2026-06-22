@@ -76,6 +76,7 @@ function render(state: Readonly<CustomizeState>): Spa.RenderResult {
 function open(ctx: CustomizeContext, request: CustomizeRequest): void {
   ctx.set({ request, color: request.color, icon: request.icon });
   ctx.el.toggleAttribute("hidden", false);
+  document.documentElement.toggleAttribute("data-overlay-customize", true);
 }
 
 /**
@@ -92,6 +93,7 @@ function close(ctx: CustomizeContext): void {
   // eslint-disable-next-line unicorn/no-null -- null is the customize domain contract
   ctx.set({ request: null });
   ctx.el.toggleAttribute("hidden", true);
+  document.documentElement.toggleAttribute("data-overlay-customize", false);
 }
 
 /**
@@ -184,8 +186,22 @@ async function onRemoveIcon(ctx: CustomizeContext): Promise<void> {
 }
 
 /**
+ * Close the panel when the dimmed scrim is clicked (the scrim carries `data-action="close"`).
+ *
+ * @param ctx - The customize component context.
+ * @example
+ * ```ts
+ * events: { "click [data-action=close]": onScrimClose };
+ * ```
+ */
+function onScrimClose(ctx: CustomizeContext): void {
+  close(ctx);
+}
+
+/**
  * Subscribe to the customize bus and add the dismissal listeners (Escape + outside pointer), all
- * released via `ctx.cleanup`. The outside test ignores pointers inside the panel itself.
+ * released via `ctx.cleanup`. The outside test ignores pointers inside the card itself — a pointer on
+ * the surrounding scrim (which fills the now-fixed overlay host) counts as outside and dismisses.
  *
  * @param ctx - The customize component context.
  * @example
@@ -203,7 +219,8 @@ function mount(ctx: CustomizeContext): void {
   // eslint-disable-next-line jsdoc/require-jsdoc -- inline outside-pointer dismissal handler
   const onOutside = (event: Event): void => {
     if (!ctx.state.request) return;
-    if (!ctx.el.contains(event.target as Node)) close(ctx);
+    const card = ctx.el.querySelector("[data-customize-card]");
+    if (card && !card.contains(event.target as Node)) close(ctx);
   };
 
   document.addEventListener("keydown", onKey);
@@ -220,6 +237,7 @@ export const customizePanel = createIsland<CustomizeState>("customize-panel", {
   events: {
     "click [data-action=pick-color]": onPickColor,
     "click [data-action=pick-icon]": onPickIcon,
-    "click [data-action=remove-icon]": onRemoveIcon
+    "click [data-action=remove-icon]": onRemoveIcon,
+    "click [data-action=close]": onScrimClose
   }
 });

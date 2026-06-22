@@ -49,5 +49,19 @@
     [data-departments-track] {
       gap: var(--space-3);
     }
+
+    /* On phones the index swipes sideways; a hard right edge reads as a clip, not as "more to come".
+       Fade the trailing edge to transparent so a half-cut tab signals scrollable content (design
+       context §5 — the index scrolls sideways). The fade sits past the gutter so the active underline
+       never dims. Paired -webkit- prefix for Safari/WebKit, which still needs it on mask-image. */
+    :scope {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(100% - 2.5rem),
+        transparent 100%
+      );
+      mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 2.5rem), transparent 100%);
+    }
   }
 }

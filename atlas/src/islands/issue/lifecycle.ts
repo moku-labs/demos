@@ -21,7 +21,10 @@ import { CLOSED_STATE, ESCAPE_KEY, ISSUE_FOCUS, type IssueContext } from "./type
 
 /**
  * Reveal or hide the host `<aside hidden>` — open the panel by clearing `hidden`, close it by setting
- * it. Toggling the attribute (never a CSS class) is the moku-web way to flip overlay visibility.
+ * it. Toggling the attribute (never a CSS class) is the moku-web way to flip overlay visibility. While
+ * open, a unique `data-overlay-issue` flag on the document element drives the shared scroll-lock (the
+ * chrome agent owns the matching `:root[data-overlay-issue]` rule in base.css) so the board behind the
+ * full-screen mobile panel can't scroll.
  *
  * @param host - The issue island host element.
  * @param open - True to reveal the panel, false to hide it.
@@ -32,6 +35,7 @@ import { CLOSED_STATE, ESCAPE_KEY, ISSUE_FOCUS, type IssueContext } from "./type
  */
 function setHostOpen(host: Element, open: boolean): void {
   host.toggleAttribute("hidden", !open);
+  document.documentElement.toggleAttribute("data-overlay-issue", open);
 }
 
 /**

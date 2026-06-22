@@ -1,8 +1,9 @@
 /**
  * @file IssuePanel — the full issue editor as a slide-over (desktop) / full-screen panel (mobile),
  * reading like an article + a quiet properties rail (design context §6 A5 + §7). The article (left)
- * carries the breadcrumb, the big Fraunces title, the byline, the markdown-rendered description with a
- * drop-cap on its first block, the attachments grid, and the sub-issue checklist. The properties rail
+ * carries the breadcrumb, the big Fraunces title, the byline, a Preview/Edit toggle over the
+ * markdown-rendered description (drop-cap on its first paragraph), the attachments grid, and the
+ * sub-issue checklist. The properties rail
  * (right) lists Status · Priority · Labels · Assignees · Due · Estimate · Reporter · Milestone · a
  * read-only Timeline · a Customize icon row · and a "+ Add property" affordance. The header carries the
  * universal "⋯" menu and a close control. Pure + SSR — the issue island wires the panel's behaviour.
@@ -32,6 +33,8 @@ export interface IssuePanelProps {
   reporter?: Person;
   /** The issue element's color/icon customization, if any (drives the rail's icon row). */
   customization?: Customization;
+  /** Whether the description is being edited — marks the Preview/Edit toggle's Edit segment active. */
+  editingDescription?: boolean;
 }
 
 /** Month abbreviations for the editorial dates (`"12 Mar 2026"`). */
@@ -91,13 +94,21 @@ function RailField({ label, children }: { label: string; children: ComponentChil
  * @param props.column - The column the issue currently sits in.
  * @param props.reporter - The issue's reporter, resolved.
  * @param props.customization - The issue element's customization, if any.
+ * @param props.editingDescription - Whether the description writer is open (marks Edit active).
  * @returns The issue-panel element.
  * @example
  * ```tsx
  * <IssuePanel detail={issueDetail} board={board} column={column} reporter={reporter} />
  * ```
  */
-export function IssuePanel({ detail, board, column, reporter, customization }: IssuePanelProps) {
+export function IssuePanel({
+  detail,
+  board,
+  column,
+  reporter,
+  customization,
+  editingDescription
+}: IssuePanelProps) {
   const { issue, subIssues, labels, assignees, attachments } = detail;
 
   const doneCount = subIssues.filter(sub => sub.done).length;
@@ -154,6 +165,27 @@ export function IssuePanel({ detail, board, column, reporter, customization }: I
                 </span>
                 <span data-byline-updated>Updated {formatDate(issue.updatedAt)}</span>
               </span>
+            </div>
+
+            <div data-desc-toggle>
+              <button
+                type="button"
+                data-action="preview-description"
+                {...(editingDescription ? {} : { "data-active": true })}
+                aria-pressed={!editingDescription}
+                aria-label="Preview description"
+              >
+                Preview
+              </button>
+              <button
+                type="button"
+                data-action="edit-description"
+                {...(editingDescription ? { "data-active": true } : {})}
+                aria-pressed={!!editingDescription}
+                aria-label="Edit description"
+              >
+                Edit
+              </button>
             </div>
 
             <div data-issue-body>{renderMarkdown(issue.description)}</div>

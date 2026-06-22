@@ -84,7 +84,7 @@ export function AuthForm({ mode, signinHref, signupHref }: AuthFormProps) {
             type="password"
             name="password"
             autocomplete={isSignup ? "new-password" : "current-password"}
-            placeholder="••••••••"
+            placeholder={isSignup ? "At least 8 characters" : "Your password"}
             required
           />
         </label>
@@ -96,7 +96,7 @@ export function AuthForm({ mode, signinHref, signupHref }: AuthFormProps) {
               type="password"
               name="confirm"
               autocomplete="new-password"
-              placeholder="••••••••"
+              placeholder="Repeat your password"
               required
             />
           </label>

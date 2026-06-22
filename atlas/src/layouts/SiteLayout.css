@@ -26,6 +26,16 @@
     display: none;
   }
 
+  /* An OPEN customize overlay is a modal layer, not an in-flow block: lift the host out of the flex
+     column and pin it across the whole viewport so the panel agent's scrim+card fills the screen
+     (design context §6 C3 — popover on desktop, sheet on mobile). While hidden it stays `display:none`
+     above, so this only takes effect once the island clears `[hidden]`. */
+  [data-overlay="customize"]:not([hidden]) {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-popover);
+  }
+
   @media (max-width: 760px) {
     [data-main] {
       padding-inline: 0;
@@ -33,8 +43,14 @@
   }
 }
 
-/* The page gutter compacts on phones (design context §5). Declared as a token override so every
-   region (masthead, boards bar, footer, board) tightens together. */
+/* The page gutter compacts through the phone/tablet band (design context §5). Declared as a token
+   override so every region (masthead, boards bar, board header, board, footer) tightens together. An
+   intermediate 760px step keeps the whole 481–760px band on one gutter before the tightest phone step. */
+@media (max-width: 760px) {
+  :root {
+    --pad-page: 1.5rem;
+  }
+}
 @media (max-width: 480px) {
   :root {
     --pad-page: 1.1rem;

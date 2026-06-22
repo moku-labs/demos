@@ -95,7 +95,7 @@
     gap: var(--space-7);
     flex: 1;
     overflow-y: auto;
-    padding: var(--space-7) var(--space-6) var(--space-10);
+    padding: var(--space-10) var(--space-6);
   }
 
   /* ── Article ── */
@@ -103,12 +103,12 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-5);
+    gap: var(--space-6);
   }
 
   [data-issue-title] {
     font-family: var(--font-display);
-    font-size: var(--text-2xl);
+    font-size: var(--text-3xl);
     font-weight: 460;
     line-height: var(--leading-tight);
     letter-spacing: var(--tracking-tight);
@@ -205,8 +205,9 @@
   [data-issue-body] li::marker {
     color: var(--text-faint);
   }
-  /* The drop-cap: a large Fraunces initial on the first rendered paragraph (design context §7). */
-  [data-issue-body] > p:first-child::first-letter {
+  /* The drop-cap: a large Fraunces initial on the first rendered paragraph (design context §7).
+     `:first-of-type` (not `:first-child`) so it still matches when a heading precedes the prose. */
+  [data-issue-body] > p:first-of-type::first-letter {
     float: left;
     font-family: var(--font-display);
     font-weight: 500;
@@ -214,6 +215,36 @@
     line-height: 0.82;
     margin: 0.04em 0.08em 0 0;
     color: var(--accent);
+  }
+
+  /* ── Description Preview/Edit toggle: a quiet mono segmented control above the body (§7) ── */
+  [data-desc-toggle] {
+    display: inline-flex;
+    align-self: flex-start;
+    gap: var(--space-1);
+    padding: 0.2rem;
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-pill);
+  }
+  [data-desc-toggle] button {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    border-radius: var(--radius-pill);
+    color: var(--text-muted);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-desc-toggle] button:hover {
+    color: var(--text-strong);
+  }
+  [data-desc-toggle] button[data-active] {
+    background: var(--accent-tint);
+    color: var(--accent-deep);
   }
 
   /* ── Section heads (Attachments, Sub-issues) ── */
@@ -288,8 +319,8 @@
     background: var(--accent);
   }
   [data-sub-count] {
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
+    font-family: var(--font-display);
+    font-size: var(--text-base);
     color: var(--text-muted);
   }
   [data-sub-list] {
@@ -335,7 +366,7 @@
   [data-rail] {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-5);
     align-self: start;
     padding-left: var(--space-6);
     border-left: var(--rule-width) solid var(--rule);
@@ -352,7 +383,7 @@
     font-weight: 500;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
-    color: var(--text-faint);
+    color: var(--text-muted);
   }
   [data-rail-value] {
     display: flex;
@@ -497,6 +528,9 @@
     [data-panel-surface] {
       width: min(46rem, 100%);
     }
+    [data-issue-title] {
+      font-size: var(--text-2xl);
+    }
     [data-panel-body] {
       grid-template-columns: minmax(0, 1fr);
       gap: var(--space-6);
@@ -516,21 +550,26 @@
   }
 
   @media (max-width: 760px) {
+    /* Full-screen on phones — the surface fills the viewport so nothing behind it bleeds through
+       (the lifecycle locks the board scroll via `:root[data-overlay-issue]`). */
     :scope {
       justify-content: stretch;
+      height: 100dvh;
     }
     [data-panel-surface] {
       width: 100%;
+      height: 100dvh;
       border-left: none;
+      box-shadow: var(--shadow-sheet-up);
     }
     [data-panel-bar] {
       padding: var(--space-4) var(--pad-page);
     }
     [data-panel-body] {
-      padding: var(--space-5) var(--pad-page) var(--space-8);
+      padding: var(--space-7) var(--pad-page) var(--space-8);
     }
     [data-issue-title] {
-      font-size: var(--text-xl);
+      font-size: var(--text-2xl);
     }
     [data-rail] {
       grid-template-columns: minmax(0, 1fr);
@@ -539,11 +578,11 @@
   }
 
   @media (max-width: 480px) {
-    [data-issue-body] > p:first-child::first-letter {
+    [data-issue-body] > p:first-of-type::first-letter {
       font-size: 2.6em;
     }
     [data-issue-title] {
-      font-size: var(--text-lg);
+      font-size: var(--text-xl);
     }
   }
 

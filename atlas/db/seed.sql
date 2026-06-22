@@ -297,26 +297,26 @@ INSERT INTO customizations (element_type, element_id, board_id, color, icon) VAL
 -- kind, target_type, target_id, summary, at  (ascending timestamps)
 INSERT INTO activity (id, department_id, board_id, actor_id, actor_name, kind, target_type, target_id, summary, at) VALUES
   ('act-0001', 'dept-eng', 'board-platform', 'js', 'June Sato',  'created',  'board',  'board-platform',
-    'Created the Platform board', 1768435200000),  -- 2026-01-15
+    'Created the Platform board', 1768435200000 + 33120000),  -- 2026-01-15 09:12
   ('act-0002', 'dept-eng', 'board-platform', 'js', 'June Sato',  'created',  'issue',  'issue-schema-denorm',
-    'Added “Denormalize scope columns”', 1768521600000),
+    'Added “Denormalize scope columns”', 1768521600000 + 52500000),  -- 2026-01-16 14:35
   ('act-0003', 'dept-eng', 'board-platform', 'rt', 'Robin Tao',  'moved',    'issue',  'issue-broadcast-service',
-    'Moved “Realtime broadcast service” to Done', 1769904000000),  -- 2026-02-01
+    'Moved “Realtime broadcast service” to Done', 1769904000000 + 31620000),  -- 2026-02-01 08:47
   ('act-0004', 'dept-eng', 'board-platform', 'ml', 'Mateo Luna', 'updated',  'issue',  'issue-auth-kv-gate',
-    'Set priority of “KV-backed auth session gate” to High', 1769990400000),
+    'Set priority of “KV-backed auth session gate” to High', 1769990400000 + 39780000),  -- 2026-02-02 11:03
   ('act-0005', 'dept-eng', 'board-platform', 'ml', 'Mateo Luna', 'moved',    'issue',  'issue-auth-kv-gate',
-    'Moved “KV-backed auth session gate” to Done', 1770076800000),
+    'Moved “KV-backed auth session gate” to Done', 1770076800000 + 59280000),  -- 2026-02-03 16:28
   ('act-0006', 'dept-eng', 'board-platform', 'ak', 'Anya Kovač', 'created',  'issue',  'issue-ws-reconnect',
-    'Added “Fix flaky WebSocket reconnect”', 1768435200000 + 86400000),
+    'Added “Fix flaky WebSocket reconnect”', 1768521600000 + 37140000),  -- 2026-01-16 10:19
   ('act-0007', 'dept-eng', 'board-platform', 'ak', 'Anya Kovač', 'attached', 'issue',  'issue-r2-thumbnails',
-    'Attached design-mock.png to “R2 attachment thumbnails”', 1770854400000),  -- 2026-02-12
+    'Attached design-mock.png to “R2 attachment thumbnails”', 1770854400000 + 49860000),  -- 2026-02-12 13:51
   ('act-0008', 'dept-eng', 'board-platform', 'js', 'June Sato',  'moved',    'issue',  'issue-attachment-cascade',
-    'Moved “Cascade-purge R2 on delete” to In Review', 1771200000000),  -- 2026-02-16
+    'Moved “Cascade-purge R2 on delete” to In Review', 1771200000000 + 33960000),  -- 2026-02-16 09:26
   ('act-0009', 'dept-eng', 'board-platform', 'rt', 'Robin Tao',  'updated',  'column', 'col-progress',
-    'Customized the In Progress column', 1771286400000),
+    'Customized the In Progress column', 1771286400000 + 56400000),  -- 2026-02-17 15:40
   ('act-0010', 'dept-eng', 'board-platform', 'ml', 'Mateo Luna', 'deleted',  'issue',  'issue-legacy-poller',
-    'Deleted “Legacy long-poll fallback”', 1771372800000),
+    'Deleted “Legacy long-poll fallback”', 1771372800000 + 43620000),  -- 2026-02-18 12:07
   ('act-0011', 'dept-eng', 'board-platform', 'ak', 'Anya Kovač', 'updated',  'issue',  'issue-ws-reconnect',
-    'Set priority of “Fix flaky WebSocket reconnect” to Urgent', 1771459200000),
+    'Set priority of “Fix flaky WebSocket reconnect” to Urgent', 1771459200000 + 63180000),  -- 2026-02-19 17:33
   ('act-0012', 'dept-design', 'board-brand', 'js', 'June Sato',  'created',  'issue',  'issue-brn-tokens',
-    'Added “Design token pipeline”', 1771545600000);  -- 2026-02-20
+    'Added “Design token pipeline”', 1771545600000 + 39120000);  -- 2026-02-20 10:52

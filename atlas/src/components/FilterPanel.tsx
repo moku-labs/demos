@@ -94,6 +94,8 @@ export function FilterPanel({ selected = {} }: FilterPanelProps) {
 
   return (
     <div data-filter-panel role="dialog" aria-label="Filter issues">
+      {/* Mobile-only dimming backdrop — a tap dismisses the sheet (hidden on desktop via CSS). */}
+      <div data-scrim data-action="close-filter" aria-hidden="true" />
       <header data-filter-head>
         <h2 data-filter-title>Filter</h2>
         <span data-filter-remembered>
@@ -214,6 +216,11 @@ export function FilterPanel({ selected = {} }: FilterPanelProps) {
           <p data-filter-empty>No filters yet — pick a facet to narrow the board.</p>
         )}
       </footer>
+
+      {/* Bottom-sheet dismiss — only shown at the mobile sheet breakpoint via CSS. */}
+      <button type="button" data-filter-done data-action="close-filter">
+        Done
+      </button>
     </div>
   );
 }

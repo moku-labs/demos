@@ -1,16 +1,38 @@
 /**
- * CustomizePanel — the Customize popover/sheet. Scoped to `[data-customize-panel]`. A bordered card:
- * an eyebrow + Fraunces element name, a curated colour palette of token-painted dots (the selected
- * swatch gets an accent ring), and a cohesive icon grid of quiet cells that warm to the accent tint
- * when picked, with a "Remove icon" affordance. Each swatch paints from its own `--swatch` custom
- * property so no colour is hardcoded. On phones it drops to a bottom sheet (design context §4/§6 C3).
+ * CustomizePanel — the Customize popover/sheet. Scoped to `[data-customize-panel]`. The panel is its
+ * own modal layer: a dimmed `[data-scrim]` fills the (already fixed) overlay host and a bordered
+ * `[data-customize-card]` floats centred above it. The card carries an eyebrow + Fraunces element
+ * name, a curated colour palette of token-painted dots (the selected swatch gets an accent ring), and
+ * a cohesive icon grid of quiet cells that warm to the accent tint when picked, with a "Remove icon"
+ * affordance. Each swatch paints from its own `--swatch` custom property so no colour is hardcoded.
+ * The card is height-capped and scrolls internally so the full icon grid is always reachable. On
+ * phones it drops to a bottom sheet (design context §4/§6 C3).
  */
 @scope ([data-customize-panel]) {
   :scope {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6);
+  }
+
+  [data-scrim] {
+    position: fixed;
+    inset: 0;
+    background: var(--scrim);
+    animation: atlas-fade var(--dur-normal) var(--ease-out);
+  }
+
+  [data-customize-card] {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
-    width: min(18rem, 92vw);
+    width: min(21rem, 92vw);
+    max-height: min(80vh, 40rem);
+    overflow-y: auto;
     padding: var(--space-4);
     background: var(--surface-card);
     border: var(--rule-width) solid var(--rule);
@@ -43,15 +65,16 @@
   [data-customize-section] {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: var(--space-3);
   }
   [data-customize-heading],
   [data-customize-heading-row] [data-customize-heading] {
+    font-family: var(--font-mono);
     font-size: var(--text-2xs);
     font-weight: 600;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
-    color: var(--text-faint);
+    color: var(--text-muted);
   }
   [data-customize-heading-row] {
     display: flex;
@@ -60,6 +83,7 @@
     gap: var(--space-3);
   }
   [data-remove-icon] {
+    font-family: var(--font-mono);
     font-size: var(--text-2xs);
     font-weight: 600;
     letter-spacing: var(--tracking-wide);
@@ -77,7 +101,7 @@
   [data-swatch-grid] {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2);
+    gap: var(--space-3);
   }
   [data-swatch] {
     display: inline-flex;
@@ -108,7 +132,7 @@
   [data-icon-grid] {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
-    gap: var(--space-2);
+    gap: var(--space-3);
   }
   [data-icon-cell] {
     display: inline-flex;
@@ -139,14 +163,22 @@
 
   @media (max-width: 760px) {
     :scope {
+      align-items: stretch;
+      justify-content: stretch;
+      padding: 0;
+    }
+    [data-customize-card] {
       position: fixed;
       inset-block: auto 0;
       inset-inline: 0;
       width: auto;
+      max-width: none;
+      max-height: 85vh;
       border-inline: none;
       border-bottom: none;
       border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-      box-shadow: var(--shadow-sheet);
+      box-shadow: var(--shadow-sheet-up);
+      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
       animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
     }
     [data-icon-grid] {

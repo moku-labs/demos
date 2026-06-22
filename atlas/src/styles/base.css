@@ -70,3 +70,24 @@ hr {
   border: none;
   border-top: var(--rule-width) solid var(--rule);
 }
+
+/**
+ * Overlay scroll-lock — while any full-viewport overlay is open, the document behind it must not
+ * scroll (design context §5: overlays are modal layers, never floating mid-page). Each overlay island
+ * toggles its own boolean attribute on the document element when it opens; this locks the root and
+ * body so the underlying board/footer stays put. The `:is()` list keeps the four overlays additive.
+ */
+html:is(
+    [data-overlay-issue],
+    [data-overlay-activity],
+    [data-overlay-filter],
+    [data-overlay-customize]
+  ),
+html:is(
+    [data-overlay-issue],
+    [data-overlay-activity],
+    [data-overlay-filter],
+    [data-overlay-customize]
+  ) body {
+  overflow: hidden;
+}

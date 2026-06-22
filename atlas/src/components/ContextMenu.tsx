@@ -3,9 +3,12 @@
  * universal "⋯" menu shared by every hierarchy element (design context §4 + §6 D1): Rename ·
  * Customize · Delete, plus an optional context "Move to…"; Delete is the vermilion danger item.
  * `variant="user"` is the avatar menu (D2): the signed-in name + email, then "Sign out". Every item
- * carries a `data-action` for the wiring island. A small popover on desktop, a bottom sheet on phones.
+ * carries a `data-action` for the wiring island. A small popover on desktop, a bottom sheet on phones —
+ * the sheet leads with a grab handle over a full-bleed scrim (the scrim's `data-action="close"` dismisses).
  * Pure + SSR shared markup: the Phase-C menu island re-renders it via `h(ContextMenu, props)`.
  */
+
+import { Fragment } from "preact";
 
 import type { IconName } from "./Icon";
 import { Icon } from "./Icon";
@@ -76,41 +79,49 @@ function elementItems(canMove: boolean | undefined): MenuItem[] {
 export function ContextMenu({ variant, elementLabel, canMove, user }: ContextMenuProps) {
   if (variant === "user") {
     return (
-      <div data-context-menu data-variant="user" role="menu" aria-label="Account">
-        <div data-user-card>
-          <span data-user-name>{user?.name ?? "Signed in"}</span>
-          {user?.email && <span data-user-email>{user.email}</span>}
+      <Fragment>
+        <div data-scrim data-action="close" aria-hidden="true" />
+        <div data-context-menu data-variant="user" role="menu" aria-label="Account">
+          <span data-sheet-grip aria-hidden="true" />
+          <div data-user-card>
+            <span data-user-name>{user?.name ?? "Signed in"}</span>
+            {user?.email && <span data-user-email>{user.email}</span>}
+          </div>
+          <div data-menu-rule aria-hidden="true" />
+          <button type="button" data-menu-item data-action="sign-out" role="menuitem">
+            <Icon name="logout" />
+            Sign out
+          </button>
         </div>
-        <div data-menu-rule aria-hidden="true" />
-        <button type="button" data-menu-item data-action="sign-out" role="menuitem">
-          <Icon name="close" />
-          Sign out
-        </button>
-      </div>
+      </Fragment>
     );
   }
 
   const items = elementItems(canMove);
   return (
-    <div
-      data-context-menu
-      data-variant="element"
-      role="menu"
-      aria-label={elementLabel ? `${elementLabel} menu` : "Menu"}
-    >
-      {items.map(item => (
-        <button
-          key={item.action}
-          type="button"
-          data-menu-item
-          data-action={item.action}
-          data-danger={item.danger ? "" : undefined}
-          role="menuitem"
-        >
-          <Icon name={item.icon} />
-          {item.label}
-        </button>
-      ))}
-    </div>
+    <Fragment>
+      <div data-scrim data-action="close" aria-hidden="true" />
+      <div
+        data-context-menu
+        data-variant="element"
+        role="menu"
+        aria-label={elementLabel ? `${elementLabel} menu` : "Menu"}
+      >
+        <span data-sheet-grip aria-hidden="true" />
+        {items.map(item => (
+          <button
+            key={item.action}
+            type="button"
+            data-menu-item
+            data-action={item.action}
+            data-danger={item.danger ? "" : undefined}
+            role="menuitem"
+          >
+            <Icon name={item.icon} />
+            {item.label}
+          </button>
+        ))}
+      </div>
+    </Fragment>
   );
 }

@@ -2,14 +2,19 @@
  * ContextMenu — the universal "⋯" / user popover. Scoped to `[data-context-menu]`. A quiet bordered
  * card of full-width items that warm to sunken paper on hover; the destructive item (`data-danger`)
  * reads vermilion and warms to the accent tint. The `user` variant leads with a name + mono email
- * card above a hairline rule. On phones it drops to a bottom sheet with roomier tap targets (design
- * context §6 D1/D2).
+ * card above a hairline rule. On phones it drops to a bottom sheet — a full-bleed scrim dims the page,
+ * a grab handle tops the card, and the sheet shadow lifts upward (`--shadow-sheet-up`) with roomier
+ * tap targets (design context §6 D1/D2).
+ *
+ * The scrim is a sibling of the menu (rendered before it); it is inert on desktop and only paints as a
+ * dimming layer under the bottom sheet on phones. The grab handle (`[data-sheet-grip]`) is likewise
+ * desktop-hidden.
  */
 @scope ([data-context-menu]) {
   :scope {
     display: flex;
     flex-direction: column;
-    min-width: 11rem;
+    min-width: 12rem;
     padding: var(--space-1);
     background: var(--surface-card);
     border: var(--rule-width) solid var(--rule);
@@ -19,12 +24,17 @@
     animation: atlas-pop var(--dur-fast) var(--ease-out);
   }
 
+  /* The grab handle is a phones-only affordance — hidden in the desktop popover. */
+  [data-sheet-grip] {
+    display: none;
+  }
+
   [data-menu-item] {
     display: flex;
     align-items: center;
     gap: var(--space-3);
     width: 100%;
-    padding: 0.5rem 0.65rem;
+    padding: 0.6rem 0.8rem;
     border-radius: var(--radius-sm);
     font-size: var(--text-sm);
     color: var(--text-body);
@@ -64,7 +74,7 @@
   [data-user-card] {
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
+    gap: var(--space-1);
     padding: 0.55rem 0.65rem 0.45rem;
   }
   [data-user-name] {
@@ -93,12 +103,45 @@
       border-inline: none;
       border-bottom: none;
       border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-      box-shadow: var(--shadow-sheet);
+      box-shadow: var(--shadow-sheet-up);
+      z-index: var(--z-sheet);
       animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
+    }
+    /* Grab handle — a short pill centred above the sheet's content. */
+    [data-sheet-grip] {
+      display: block;
+      width: 2.25rem;
+      height: 4px;
+      margin: 0 auto var(--space-2);
+      border-radius: var(--radius-pill);
+      background: var(--rule-strong);
     }
     [data-menu-item] {
       padding: 0.85rem 0.75rem;
       font-size: var(--text-base);
+    }
+  }
+}
+
+/**
+ * The dimming scrim — a sibling of `[data-context-menu]` inside the menu overlay host. Scoped to the
+ * host's `[data-overlay="menu"]` (the scrim is not a descendant of the menu card, so it cannot live in
+ * the menu's own `@scope`). Inert on desktop; on phones it paints a full-bleed dimming layer one stack
+ * level below the bottom sheet so taps outside the sheet land on a visibly dimmed page.
+ */
+@scope ([data-overlay="menu"]) {
+  [data-scrim] {
+    display: none;
+  }
+
+  @media (max-width: 760px) {
+    [data-scrim] {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: var(--scrim);
+      z-index: calc(var(--z-sheet) - 1);
+      animation: atlas-fade var(--dur-normal) var(--ease-out);
     }
   }
 }

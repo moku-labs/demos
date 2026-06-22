@@ -12,12 +12,13 @@
 
   [data-main] {
     display: grid;
-    place-items: center;
-    padding: var(--space-8) var(--pad-page);
+    place-items: start center;
+    align-content: center;
+    padding: var(--space-10) var(--pad-page);
   }
   [data-main] > section {
     width: 100%;
-    max-width: 25rem;
+    max-width: 26rem;
     animation: atlas-rise var(--dur-enter) var(--ease-out) both;
   }
 
@@ -26,7 +27,8 @@
       grid-template-columns: 1fr;
     }
     [data-main] {
-      padding: var(--space-6) var(--pad-page) var(--space-8);
+      align-content: start;
+      padding: var(--space-7) var(--pad-page) var(--space-8);
     }
   }
 }

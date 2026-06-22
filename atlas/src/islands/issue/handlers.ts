@@ -77,7 +77,9 @@ export function onTitleEdit(ctx: IssueContext): void {
 
 /**
  * Edit the markdown description via the prompt modal pre-filled with the raw source — the Preview/Edit
- * affordance. The panel renders markdown by default; double-clicking the body opens the writer.
+ * affordance. The panel renders markdown by default; the Edit segment of the visible `[data-desc-toggle]`
+ * control (or double-clicking the body) opens the writer. `editingDescription` stays true while the
+ * modal is open so the toggle marks Edit active.
  *
  * @param ctx - The issue component context.
  * @returns A promise that resolves once the description persists (or is cancelled).
@@ -667,8 +669,9 @@ function revealNextProperty(ctx: IssueContext): void {
 
 /**
  * The single delegated `[data-action]` dispatcher — every action button in the panel (the header ×
- * and ⋯, the scrim, "Attach file", the rail icon "Customize", "+ Add property", and each sub-issue's
- * ⋯) routes here by its `data-action` token. Sub-issue menus are told apart by their `data-sub-id`.
+ * and ⋯, the scrim, the description Preview/Edit toggle, "Attach file", the rail icon "Customize",
+ * "+ Add property", and each sub-issue's ⋯) routes here by its `data-action` token. Sub-issue menus
+ * are told apart by their `data-sub-id`.
  *
  * @param ctx - The issue component context.
  * @param event - The delegated click event.
@@ -708,6 +711,12 @@ export function onAction(ctx: IssueContext, event: Event, element: Element): voi
     }
     case "add-property": {
       revealNextProperty(ctx);
+      return;
+    }
+    case "edit-description": {
+      // The visible Preview/Edit control's Edit segment — open the markdown writer (§7). The Preview
+      // segment is the resting state (the body always renders), so it falls through the default no-op.
+      void editDescription(ctx);
       return;
     }
     default: {

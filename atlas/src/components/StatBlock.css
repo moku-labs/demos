@@ -11,12 +11,21 @@
 
   [data-stat-value] {
     font-family: var(--font-display);
-    font-size: var(--text-xl);
+    /* Push the numeral into the display register so the stat trio reads as confident editorial figures,
+       not labels (design context §2 — serif numerals, big and quiet). Scales between --text-xl and
+       --text-2xl with viewport, then locks to the full --text-2xl on roomy widths. */
+    font-size: clamp(var(--text-xl), 1.4rem + 1.4vw, var(--text-2xl));
     font-weight: 460;
     line-height: 1;
     letter-spacing: var(--tracking-tight);
     color: var(--text-strong);
     font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  @media (min-width: 1025px) {
+    [data-stat-value] {
+      font-size: var(--text-2xl);
+    }
   }
 
   [data-stat-label] {

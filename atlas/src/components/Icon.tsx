@@ -1,7 +1,7 @@
 /**
  * @file Icon — the one cohesive, enterprise-appropriate icon set (design context §4 "Customize" + §6
  * recurring components). A single inline-SVG component keyed by name: the curated element icons
- * (rocket, bug, target, flag, …) plus the UI glyphs (theme, filter, activity, close, …). All strokes
+ * (rocket, bug, target, flag, …) plus the UI glyphs (theme, filter, activity, close, logout, …). All strokes
  * are `currentColor` so an icon inherits its context's ink or accent; sizing is via the `[data-icon]`
  * scope. Pure + island-safe (rendered server-side AND by islands).
  */
@@ -38,6 +38,7 @@ export type IconName =
   | "attach"
   | "clock"
   | "trash"
+  | "logout"
   | "google"
   | "apple";
 
@@ -80,6 +81,7 @@ const PATHS: Record<IconName, string> = {
   clock: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18m0 4v5l3.5 2",
   trash:
     "M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7M10 11v6m4-6v6",
+  logout: "M14 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 8l-4 4 4 4M6 12h11",
   google:
     "M21 12.2c0-.6 0-1.2-.1-1.7H12v3.5h5a4.3 4.3 0 0 1-1.9 2.8v2.3h3A9 9 0 0 0 21 12.2M12 21c2.4 0 4.5-.8 6-2.2l-3-2.3a5.4 5.4 0 0 1-8-2.8H4v2.4A9 9 0 0 0 12 21M7 11.7a5.4 5.4 0 0 1 0-3.4V5.9H4a9 9 0 0 0 0 8.1M12 6.6c1.3 0 2.5.5 3.4 1.3l2.6-2.5A9 9 0 0 0 4 5.9l3 2.4a5.4 5.4 0 0 1 5-1.7",
   apple:

@@ -14,7 +14,7 @@
   }
 
   [data-scrim] {
-    position: absolute;
+    position: fixed;
     inset: 0;
     background: var(--scrim);
     animation: atlas-fade var(--dur-normal) var(--ease-out);
@@ -48,7 +48,7 @@
   }
   [data-drawer-title] {
     font-family: var(--font-display);
-    font-size: var(--text-lg);
+    font-size: var(--text-xl);
     font-weight: 480;
     letter-spacing: var(--tracking-tight);
     color: var(--text-strong);
@@ -96,7 +96,7 @@
     font-weight: 600;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
-    color: var(--text-faint);
+    color: var(--text-muted);
   }
   [data-filter-chips] {
     display: flex;
@@ -117,10 +117,14 @@
       background var(--dur-fast) var(--ease-out),
       border-color var(--dur-fast) var(--ease-out);
   }
-  [data-kind-filter]:hover,
-  [data-kind-filter][data-active] {
+  [data-kind-filter]:hover {
     background: var(--surface-sunken);
     border-color: var(--rule-strong);
+  }
+  [data-kind-filter][data-active] {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+    color: var(--text-strong);
   }
   [data-kind-mark] {
     display: inline-flex;
@@ -155,20 +159,22 @@
     font-size: var(--text-2xs);
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
-    color: var(--text-faint);
+    color: var(--text-muted);
+    margin-bottom: var(--space-3);
     padding-bottom: var(--space-2);
     border-bottom: var(--rule-width) solid var(--rule);
   }
   [data-day-entries] {
     display: flex;
     flex-direction: column;
+    padding-top: var(--space-2);
   }
 
   [data-entry] {
     display: flex;
     align-items: flex-start;
     gap: var(--space-3);
-    padding: var(--space-3) 0;
+    padding: var(--space-4) 0;
     border-bottom: var(--rule-width) solid var(--rule);
   }
   [data-entry-system] {
@@ -195,9 +201,10 @@
   }
   [data-entry-line] {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.4rem;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 0.3rem;
     font-size: var(--text-sm);
     color: var(--text-body);
     line-height: var(--leading-snug);
@@ -254,14 +261,35 @@
 
   @media (max-width: 760px) {
     [data-drawer] {
+      position: fixed;
       inset-block: auto 0;
       inset-inline: 0;
       width: auto;
-      max-height: 85vh;
+      height: auto;
+      max-height: min(85dvh, 85vh);
       border-inline-start: none;
       border-top: var(--rule-width) solid var(--rule);
       border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      box-shadow: var(--shadow-sheet-up);
       animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
+    }
+    /* Grab handle — the sheet's affordance to drag/dismiss. */
+    [data-drawer]::before {
+      content: "";
+      position: absolute;
+      inset-block-start: var(--space-2);
+      inset-inline: 0;
+      margin-inline: auto;
+      width: 36px;
+      height: 4px;
+      border-radius: var(--radius-pill);
+      background: var(--rule-strong);
+    }
+    [data-drawer-head] {
+      padding-top: var(--space-5);
+    }
+    [data-record-feed] {
+      padding-bottom: max(var(--space-6), env(safe-area-inset-bottom));
     }
   }
 }

@@ -113,8 +113,9 @@ async function loadFeed(ctx: ActivityContext): Promise<void> {
 }
 
 /**
- * Open the drawer — mark state open, unhide the host, and (re)load the feed for the current route.
- * A no-op when already open.
+ * Open the drawer — mark state open, unhide the host, lock background scroll (via the
+ * `data-overlay-activity` document flag), and (re)load the feed for the current route. A no-op when
+ * already open.
  *
  * @param ctx - The activity component context.
  * @example
@@ -126,11 +127,13 @@ function open(ctx: ActivityContext): void {
   if (ctx.state.open) return;
   ctx.set({ open: true });
   ctx.el.toggleAttribute("hidden", false);
+  document.documentElement.toggleAttribute("data-overlay-activity", true);
   void loadFeed(ctx);
 }
 
 /**
- * Close the drawer — mark state closed and re-hide the host. A no-op when already closed.
+ * Close the drawer — mark state closed, re-hide the host, and release the background scroll-lock
+ * (clearing the `data-overlay-activity` document flag). A no-op when already closed.
  *
  * @param ctx - The activity component context.
  * @example
@@ -142,6 +145,7 @@ function close(ctx: ActivityContext): void {
   if (!ctx.state.open) return;
   ctx.set({ open: false });
   ctx.el.toggleAttribute("hidden", true);
+  document.documentElement.toggleAttribute("data-overlay-activity", false);
 }
 
 /**
@@ -279,6 +283,8 @@ function mount(ctx: ActivityContext): void {
   ctx.cleanup(() => {
     if (refetchTimer) clearTimeout(refetchTimer);
   });
+  // Release the background scroll-lock if the island tears down while the drawer is still open.
+  ctx.cleanup(() => document.documentElement.toggleAttribute("data-overlay-activity", false));
 
   // Deep link: a hard load of /board/{id}/activity focuses the Record — open the drawer.
   if (isActivityRoute()) open(ctx);

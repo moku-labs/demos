@@ -44,6 +44,7 @@ export function Modal({ variant, title, message, confirmLabel, placeholder }: Mo
   const isDelete = variant === "delete";
   const isDate = variant === "date";
   const confirm = confirmLabel ?? (isDelete ? "Delete" : isDate ? "Save" : "Create");
+  const eyebrow = isDelete ? "Confirm" : isDate ? "Schedule" : "Create";
 
   return (
     <div data-modal data-variant={variant}>
@@ -51,7 +52,10 @@ export function Modal({ variant, title, message, confirmLabel, placeholder }: Mo
       <div data-dialog role="dialog" aria-modal="true" aria-label={title}>
         <form data-modal-form data-action="confirm-modal" method="dialog">
           <header data-modal-head>
-            <h2 data-modal-title>{title}</h2>
+            <div data-modal-heading>
+              <span data-modal-eyebrow>{eyebrow}</span>
+              <h2 data-modal-title>{title}</h2>
+            </div>
             <button type="button" data-action="dismiss-modal" aria-label="Close">
               <Icon name="close" />
             </button>

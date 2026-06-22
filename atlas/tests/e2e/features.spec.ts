@@ -14,7 +14,7 @@
  *   - G: Component checks (label dot, priority mark, avatar, stat block)
  */
 import { expect, test } from "@playwright/test";
-import { FIXED_TIME, prepareScreenshot, signIn } from "./_auth";
+import { FIXED_TIME, signIn } from "./_auth";
 
 // ── shared beforeEach for authenticated tests ─────────────────────────────────
 
@@ -244,16 +244,13 @@ test.describe("A — Screens", () => {
     test("A5: Issue page close button returns to board", async ({ page }) => {
       await page.goto("/board/board-platform/issue/issue-ws-reconnect");
       await page.waitForLoadState("load");
-      const closeBtn = page.locator("[data-issue-panel] [data-action='close'], [data-issue-close]");
-      if (await closeBtn.isVisible()) {
-        await closeBtn.click();
-        await page.waitForURL(/\/board\/board-platform$/);
-        await expect(page.locator("[data-column]").first()).toBeVisible();
-      } else {
-        // Escape fallback
-        await page.keyboard.press("Escape");
-        await page.waitForURL(/\/board\/board-platform$/);
-      }
+      // The close button carries aria-label "Close issue" (the scrim also has data-action="close",
+      // so target the labelled button, not the action attr).
+      const closeBtn = page.locator("[data-issue-panel] [aria-label='Close issue']");
+      await expect(closeBtn).toBeVisible();
+      await closeBtn.click();
+      await page.waitForURL(/\/board\/board-platform$/);
+      await expect(page.locator("[data-column]").first()).toBeVisible();
     });
   });
 });
@@ -421,7 +418,7 @@ test.describe("E — Modals", () => {
   test("E1: Delete confirmation modal appears with cancel/delete buttons", async ({ page }) => {
     const menuBtn = page.locator("[data-column]").first().locator("[data-action='menu']");
     await menuBtn.click();
-    await page.getByText("Delete").click();
+    await page.locator("[data-context-menu] [data-action='delete']").click();
     const modal = page.locator("[data-modal], dialog");
     await expect(modal).toBeVisible();
     await expect(modal.getByText(/can't be undone/i)).toBeVisible();
@@ -470,10 +467,10 @@ test.describe("F — Inline and transient elements", () => {
     // itself is defined: navigate to a board with guaranteed-empty columns (Marketing/Design get 1 board each)
     await page.goto("/board/board-brand");
     await page.waitForLoadState("load");
-    // Brand board: Done column may be empty
-    const emptyState = page.locator("[data-empty-state]");
-    // Either empty state or cards may be present — just check the element exists somewhere
-    const emptyCount = await emptyState.count();
+    // Wait for the board island to render before counting (cards/empty-states load async).
+    await expect(page.locator("[data-column]").first()).toBeVisible();
+    // Either an empty column (EmptyState) or cards must be present.
+    const emptyCount = await page.locator("[data-empty-state]").count();
     const hasContent = await page.locator("[data-card]").count();
     expect(emptyCount > 0 || hasContent > 0).toBe(true);
   });
@@ -500,7 +497,8 @@ test.describe("G — Recurring components", () => {
 
   test("G: Avatar renders for assignees", async ({ page }) => {
     const card = page.locator("[data-card-id='issue-ws-reconnect']");
-    await expect(card.locator("[data-avatar]")).toBeVisible();
+    // The card has multiple assignees → multiple avatars; assert the first is visible.
+    await expect(card.locator("[data-avatar]").first()).toBeVisible();
   });
 
   test("G: Due chip renders for issues with due dates", async ({ page }) => {
@@ -535,7 +533,8 @@ test.describe("Navigation — SPA links", () => {
     await page.goto("/board/board-platform");
     await page.waitForLoadState("load");
     // List view link in boards bar
-    const listLink = page.locator("[data-view='list'], a[href*='/list']").first();
+    const listLink = page.getByRole("link", { name: "List", exact: true });
+    await expect(listLink).toBeVisible();
     await listLink.click();
     await page.waitForURL(/\/list$/);
     await expect(page.locator("[data-listview]")).toBeVisible();
@@ -598,12 +597,9 @@ test.describe("Theme toggle", () => {
     await toggle.click();
     await page.waitForTimeout(350); // allow CSS transition
 
-    const newTheme = await page.locator("html, :root").getAttribute("data-theme");
-    // Theme should have changed (or the attribute may not be on root — tolerate both)
-    // At minimum the toggle should not error
-    expect(newTheme !== initialTheme || true).toBe(true); // always true but documents intent
-
-    await prepareScreenshot(page);
-    await expect(page.locator("[data-masthead]")).toHaveScreenshot("masthead-after-toggle.png");
+    const newTheme = await page.locator("html").getAttribute("data-theme");
+    // The toggle flips the document theme attribute (light ⇄ dark).
+    expect(newTheme).not.toBe(initialTheme);
+    await expect(page.locator("[data-masthead]")).toBeVisible();
   });
 });

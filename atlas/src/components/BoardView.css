@@ -47,6 +47,7 @@
       grid-auto-columns: minmax(16rem, 22rem);
       overflow-x: auto;
       scroll-snap-type: x proximity;
+      scroll-padding-inline-start: var(--pad-page);
     }
     :scope > * {
       scroll-snap-align: start;
@@ -55,9 +56,11 @@
 
   @media (max-width: 480px) {
     :scope {
-      grid-auto-columns: 88vw;
+      /* One full column with a deliberate peek of the next — the gutter plus a sliver of gap. */
+      grid-auto-columns: calc(100vw - 2 * var(--pad-page) - 2.5rem);
       gap: var(--space-5);
       scroll-snap-type: x mandatory;
+      scroll-padding-inline-start: var(--pad-page);
     }
   }
 }

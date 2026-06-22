@@ -1,8 +1,9 @@
 /**
  * @file issue island — the declarative delegated event map (selector → handler): one delegated
  * listener per event type on the host. The handler bodies live in handlers.ts. A single
- * `click [data-action]` dispatcher covers the header (× / ⋯ / scrim), "Attach file", the rail's
- * "Customize", "+ Add property", and each sub-issue's ⋯ (told apart inside the dispatcher).
+ * `click [data-action]` dispatcher covers the header (× / ⋯ / scrim), the description Preview/Edit
+ * toggle, "Attach file", the rail's "Customize", "+ Add property", and each sub-issue's ⋯ (told apart
+ * inside the dispatcher).
  */
 import type { Spa } from "@moku-labs/web/browser";
 import {

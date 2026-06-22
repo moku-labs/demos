@@ -18,6 +18,25 @@ import { type BoardContext, EMPTY_SNAPSHOT, KEEPALIVE_MS } from "./types";
 const snapshotCache = new Map<string, BoardSnapshot>();
 
 /**
+ * Reset the kanban scroller to its start after a paint. On every viewport that triggers
+ * `overflow-x:auto` (≤1024px) the framework reconcile of `[data-region=board]` leaves the horizontal
+ * scroller anchored at its end, so the board opens scrolled past the first column (Backlog) into a void.
+ * Spec §5: the board starts showing Backlog and horizontal scroll is only ever a user gesture, never an
+ * initial state. Deferred to the next frame so it runs after the snapshot has painted.
+ *
+ * @example
+ * ```ts
+ * resetBoardScroll();
+ * ```
+ */
+function resetBoardScroll(): void {
+  requestAnimationFrame(() => {
+    const scroller = document.querySelector<HTMLElement>('[data-region="board"] [data-board]');
+    if (scroller) scroller.scrollLeft = 0;
+  });
+}
+
+/**
  * Resolve the board id this instance should bind to — the route param on a `/board/{id}` route, else
  * the home route's active board (the first department's first board).
  *
@@ -51,13 +70,23 @@ export async function sync(ctx: BoardContext): Promise<void> {
   ctx.set({ view });
 
   const boardId = await resolveBoardId(ctx);
-  if (!boardId) return;
+  if (!boardId) {
+    // Even with no board to load, a view swap reconciles the scroller — pin it back to the start.
+    resetBoardScroll();
+    return;
+  }
 
   // Same board, already loaded live (its real snapshot is in state) — only the view changed.
   const loaded = ctx.state.boardId === boardId && ctx.state.snapshot.board.id === boardId;
-  if (loaded) return;
+  if (loaded) {
+    resetBoardScroll();
+    return;
+  }
 
   await loadBoard(ctx, boardId);
+
+  // Pin the freshly-loaded board to its first column (Backlog) — see resetBoardScroll.
+  resetBoardScroll();
 }
 
 /**
