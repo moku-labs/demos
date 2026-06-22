@@ -11,22 +11,36 @@
  * resolves; applying it to an empty board would be lost. So frames received before {@link seed} are
  * queued and flushed (in arrival order) the moment the island seeds — after which frames pass straight
  * through. This closes the connect→load race without dropping a single live change.
+ *
+ * **Auto-reconnect.** A live socket can drop on a network blip, a worker redeploy, or a Durable Object
+ * hibernation cycle. Rather than silently going dead, an unexpected close schedules a reconnect with
+ * exponential backoff (capped) as long as a board is still {@link desiredBoardId desired}; an explicit
+ * {@link disconnect} cancels it. Handlers stay registered across the gap, so delivery resumes the moment
+ * the socket re-opens.
  */
 import type { BoardPatch } from "./types";
 
 /** Keepalive frame the Board DO answers with `"pong"`. */
 const PING = "ping";
+/** Reconnect backoff: first retry delay (ms). Doubles each attempt up to {@link RECONNECT_MAX_MS}. */
+const RECONNECT_BASE_MS = 500;
+/** Reconnect backoff ceiling (ms) — caps the exponential growth so retries never stall out. */
+const RECONNECT_MAX_MS = 8000;
 
 /** The live socket, or undefined when disconnected. */
 let socket: WebSocket | undefined;
-/** The board id the live socket is subscribed to, or undefined when disconnected. */
-let connectedBoardId: string | undefined;
+/** The board we WANT to stay subscribed to (drives auto-reconnect); undefined ⇒ intentionally off. */
+let desiredBoardId: string | undefined;
 /** Whether the consuming island has seeded — gates live delivery vs. buffering. */
 let seeded = false;
 /** Frames received before {@link seed}, replayed in arrival order on seed. */
 let buffer: BoardPatch[] = [];
 /** Patch handlers fanned out on every delivered frame. */
 const handlers = new Set<(patch: BoardPatch) => void>();
+/** Consecutive closes since the last clean open — drives the backoff delay. */
+let reconnectAttempts = 0;
+/** Pending reconnect timer handle, or undefined when none is scheduled. */
+let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
 
 /**
  * Build the `ws(s)://` URL for a board's live channel on the same origin as the page.
@@ -85,8 +99,57 @@ function dispatch(event: MessageEvent): void {
 }
 
 /**
+ * Open the live socket for {@link desiredBoardId}, wiring delivery + auto-reconnect. Shared by the
+ * first {@link connect} and every backoff retry — so a retry resumes delivery to the still-registered
+ * handlers WITHOUT re-arming the pre-seed buffer (the consuming island has long since seeded).
+ *
+ * @example
+ * ```ts
+ * openSocket();
+ * ```
+ */
+function openSocket(): void {
+  const boardId = desiredBoardId;
+  if (boardId === undefined) return;
+
+  const ws = new WebSocket(socketUrl(boardId));
+  socket = ws;
+  ws.addEventListener("message", dispatch);
+  ws.addEventListener("open", () => {
+    reconnectAttempts = 0;
+  });
+  ws.addEventListener("close", () => {
+    // Only this socket's close matters — a stale close after we moved on (disconnect / board switch)
+    // must not trigger a reconnect to the wrong board.
+    if (socket !== ws || desiredBoardId === undefined) return;
+    socket = undefined;
+    scheduleReconnect();
+  });
+}
+
+/**
+ * Schedule a reconnect to {@link desiredBoardId} with exponential backoff (capped), unless one is
+ * already pending or reconnection has been switched off.
+ *
+ * @example
+ * ```ts
+ * scheduleReconnect();
+ * ```
+ */
+function scheduleReconnect(): void {
+  if (reconnectTimer !== undefined || desiredBoardId === undefined) return;
+  const delay = Math.min(RECONNECT_BASE_MS * 2 ** reconnectAttempts, RECONNECT_MAX_MS);
+  reconnectAttempts += 1;
+  reconnectTimer = setTimeout(() => {
+    reconnectTimer = undefined;
+    if (desiredBoardId !== undefined) openSocket();
+  }, delay);
+}
+
+/**
  * Open (or reuse) the live socket for a board. A live socket for the same board is left in place;
- * switching boards tears the old socket down first and re-arms the pre-seed buffer.
+ * switching boards tears the old socket down first and re-arms the pre-seed buffer. An unexpected
+ * drop auto-reconnects until {@link disconnect} is called.
  *
  * @param boardId - The board to subscribe to.
  * @example
@@ -97,14 +160,14 @@ function dispatch(event: MessageEvent): void {
 export function connect(boardId: string): void {
   const alive =
     socket?.readyState === WebSocket.CONNECTING || socket?.readyState === WebSocket.OPEN;
-  if (connectedBoardId === boardId && alive) return;
+  if (desiredBoardId === boardId && alive) return;
 
   disconnect();
-  connectedBoardId = boardId;
+  desiredBoardId = boardId;
   seeded = false;
   buffer = [];
-  socket = new WebSocket(socketUrl(boardId));
-  socket.addEventListener("message", dispatch);
+  reconnectAttempts = 0;
+  openSocket();
 }
 
 /**
@@ -165,8 +228,10 @@ export function ping(): void {
 }
 
 /**
- * Close the live socket, clear the connected-board marker, and re-arm the pre-seed buffer. Registered
- * handlers are kept so a later {@link connect} resumes delivering to them.
+ * Close the live socket, cancel any pending reconnect, clear the desired-board marker, and re-arm the
+ * pre-seed buffer. Registered handlers are kept so a later {@link connect} resumes delivering to them.
+ * Clearing {@link desiredBoardId} BEFORE closing is what tells the socket's `close` handler the drop was
+ * intentional (no reconnect).
  *
  * @example
  * ```ts
@@ -174,12 +239,16 @@ export function ping(): void {
  * ```
  */
 export function disconnect(): void {
+  desiredBoardId = undefined;
+  if (reconnectTimer !== undefined) {
+    clearTimeout(reconnectTimer);
+    reconnectTimer = undefined;
+  }
   if (socket) {
     socket.removeEventListener("message", dispatch);
     socket.close();
     socket = undefined;
   }
-  connectedBoardId = undefined;
   seeded = false;
   buffer = [];
 }

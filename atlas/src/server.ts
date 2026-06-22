@@ -84,6 +84,21 @@ export const server = createApp({
       entry: "src/cloudflare/worker.ts",
       nodeCompat: true,
       assets: { binding: "ASSETS", directory: "dist/client", spa: true },
+      // Run the Worker BEFORE static assets so the server-side auth gate (cloudflare/worker.ts) sees
+      // every request: it bounces a logged-out visitor off an app-route *document* (`/`, `/board/*`)
+      // to /signin/ before any board chrome is served, and routes `/api/*` + `/ws/*`. A scoped route
+      // list would skip the Worker for everything else — including `/api/*`, which would then 405 at
+      // the asset layer — so the Worker fronts all requests and delegates true assets via
+      // `env.ASSETS.fetch` (which still honours the SPA fallback below). The escape-hatch
+      // `wrangler.assets` fully replaces the generated assets block (shallow, last-wins).
+      wrangler: {
+        assets: {
+          binding: "ASSETS",
+          directory: "dist/client",
+          not_found_handling: "single-page-application",
+          run_worker_first: true
+        }
+      },
       seed: { file: "db/seed.sql", resetKv: [{ binding: "BOARDS_KV", key: "boards:index" }] }
     },
     server: { endpoints }

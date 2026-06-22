@@ -12,7 +12,7 @@
 import type { Spa } from "@moku-labs/web/browser";
 import { createIsland } from "@moku-labs/web/browser";
 import { signIn, signUp } from "../lib/api";
-import { navigate } from "../lib/nav";
+import { hardNavigate } from "../lib/hard-nav";
 import { urls } from "../routes";
 
 /** The stateless auth context (its `el` is the auth form; per-instance state is unused). */
@@ -61,6 +61,10 @@ function showError(form: Element, message: string): void {
 /**
  * Persist the signed-in `{ name, email }` record and navigate to the home board.
  *
+ * Crossing from the auth split to the app chrome is a layout-boundary change the SPA cannot swap
+ * in place, so this is a real full-page load ({@link hardNavigate}) — the home board then renders
+ * against a fresh, authenticated document.
+ *
  * @param name - The display name.
  * @param email - The email address.
  * @example
@@ -70,7 +74,7 @@ function showError(form: Element, message: string): void {
  */
 function finishAuth(name: string, email: string): void {
   localStorage.setItem(USER_KEY, JSON.stringify({ name, email }));
-  navigate(urls.toUrl("home", {}));
+  hardNavigate(urls.toUrl("home", {}));
 }
 
 /**

@@ -7,6 +7,7 @@
 import { createApp } from "@moku-labs/web/browser";
 import { SITE } from "./config";
 import { islands } from "./islands";
+import { registerHardNavigate } from "./lib/hard-nav";
 import { routes } from "./routes";
 
 const app = createApp({
@@ -19,3 +20,12 @@ const app = createApp({
 });
 
 await app.start();
+
+// The SPA swaps only `main > section`, so it cannot turn the app chrome into the auth split (or
+// back). Crossing that boundary (sign-in / sign-out / a 401) needs a TRUE full-page load — but the
+// Navigation-API interceptor catches even `location.assign`. Stopping the app first removes that
+// interceptor (spa kernel `dispose`), so the subsequent assign is a real document load. See hard-nav.ts.
+registerHardNavigate(async url => {
+  await app.stop();
+  globalThis.location.assign(url);
+});

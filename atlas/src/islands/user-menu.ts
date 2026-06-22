@@ -11,8 +11,8 @@ import { createIsland } from "@moku-labs/web/browser";
 import { Fragment, h } from "preact";
 import { Avatar } from "../components/Avatar";
 import { getSession, signOut } from "../lib/api";
+import { hardNavigate } from "../lib/hard-nav";
 import { openMenu } from "../lib/menu";
-import { navigate } from "../lib/nav";
 import type { Person } from "../lib/types";
 import { urls } from "../routes";
 
@@ -147,8 +147,9 @@ function onClick(ctx: UserContext): void {
     onAction: action => {
       if (action === "sign-out")
         signOut().then(
-          () => navigate(urls.toUrl("signin", {})),
-          () => {}
+          // Full-page load back to the auth split — the SPA cannot swap the app chrome for it.
+          () => hardNavigate(urls.toUrl("signin", {})),
+          () => hardNavigate(urls.toUrl("signin", {}))
         );
     }
   });

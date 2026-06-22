@@ -56,8 +56,14 @@ export function navigate(path: string): void {
 
 /** Cached departments index (departments + customizations), or undefined until first load. */
 let indexCache: { departments: Department[]; customizations: Customization[] } | undefined;
+/** In-flight index load shared by concurrent callers (single-flight), or undefined when idle. */
+let indexInFlight:
+  | Promise<{ departments: Department[]; customizations: Customization[] }>
+  | undefined;
 /** Cached board summaries per department id. */
 const boardsCache = new Map<string, BoardSummary[]>();
+/** In-flight board-summary loads per department id (single-flight), cleared once each settles. */
+const boardsInFlight = new Map<string, Promise<BoardSummary[]>>();
 /** Subscribers notified on {@link refresh}. */
 const listeners = new Set<() => void>();
 
@@ -100,14 +106,21 @@ export async function loadIndex(): Promise<{
   departments: Department[];
   customizations: Customization[];
 }> {
-  if (!indexCache) {
-    const index = await listDepartments();
-    indexCache = {
-      departments: index.departments.toSorted((a, b) => a.position - b.position),
-      customizations: index.customizations
-    };
-  }
-  return indexCache;
+  if (indexCache) return indexCache;
+  // Single-flight: the three chrome islands all resolve nav context on mount at once; share one
+  // request instead of each firing its own `/api/departments` (drop the in-flight ref once settled).
+  indexInFlight ??= listDepartments()
+    .then(index => {
+      indexCache = {
+        departments: index.departments.toSorted((a, b) => a.position - b.position),
+        customizations: index.customizations
+      };
+      return indexCache;
+    })
+    .finally(() => {
+      indexInFlight = undefined;
+    });
+  return indexInFlight;
 }
 
 /**
@@ -123,9 +136,20 @@ export async function loadIndex(): Promise<{
 export async function loadBoards(departmentId: string): Promise<BoardSummary[]> {
   const cached = boardsCache.get(departmentId);
   if (cached) return cached;
-  const boards = await listBoards(departmentId);
-  boardsCache.set(departmentId, boards);
-  return boards;
+  // Single-flight per department: `resolveActive` loads every department's boards in parallel and
+  // several islands call it together — share one request per id (cleared once it settles).
+  const existing = boardsInFlight.get(departmentId);
+  if (existing) return existing;
+  const inFlight = listBoards(departmentId)
+    .then(boards => {
+      boardsCache.set(departmentId, boards);
+      return boards;
+    })
+    .finally(() => {
+      boardsInFlight.delete(departmentId);
+    });
+  boardsInFlight.set(departmentId, inFlight);
+  return inFlight;
 }
 
 /**
@@ -203,6 +227,8 @@ export function onNavRefresh(listener: () => void): () => void {
  */
 export function refresh(): void {
   indexCache = undefined;
+  indexInFlight = undefined;
   boardsCache.clear();
+  boardsInFlight.clear();
   for (const listener of listeners) listener();
 }

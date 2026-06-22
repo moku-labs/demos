@@ -9,6 +9,7 @@
  * patch, not the return value, is what drives the live board. Each call throws on a non-2xx response
  * (sign-out and the session probe degrade gracefully instead) so callers can surface failures.
  */
+import { hardNavigate } from "./hard-nav";
 import type {
   Activity,
   Attachment,
@@ -59,7 +60,10 @@ function redirectedOnUnauthorized(status: number): boolean {
   if (status !== 401) return false;
   const path = globalThis.location?.pathname ?? "";
   if (path !== "/signin" && path !== "/signup") {
-    globalThis.location.assign("/signin");
+    // A full-page load (not an intercepted SPA swap) so the auth split actually renders — see
+    // hard-nav.ts. The server-side gate (cloudflare/worker.ts) catches the common logged-out
+    // landing; this is the mid-session-expiry fallback.
+    hardNavigate("/signin/");
   }
   return true;
 }
