@@ -64,7 +64,8 @@
     text-overflow: ellipsis;
   }
   [data-crumb-id] {
-    color: var(--text-faint);
+    /* --text-muted (not --text-faint): the faint ink failed WCAG AA (~2.9:1) for the breadcrumb ID. */
+    color: var(--text-muted);
   }
   [data-crumb-sep] {
     color: var(--text-ghost);
