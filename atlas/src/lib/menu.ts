@@ -9,7 +9,7 @@
  * host. Routing every menu / confirm / prompt / toast / customize through one module is what makes the
  * interaction language identical everywhere — the core Atlas design principle.
  */
-import type { ElementType } from "./types";
+import type { ElementType, IssueStatus, LabelKey, Priority } from "./types";
 
 // ─── universal "⋯" menu (D1 element · D2 user) ───────────────────────────────
 
@@ -84,6 +84,52 @@ export interface CustomizeRequest {
   onApplied?: (color: string | null, icon: string | null) => void;
 }
 
+// ─── generic chooser (D-series dropdown for the issue rail) ───────────────────
+
+/**
+ * Leading ornament for one chooser option — a small mark mirroring how the field renders its value
+ * elsewhere (a status dot, the ascending priority bars, a label dot, a person's avatar). The
+ * {@link file://../components/Chooser.tsx} component switches on `kind`; `none` renders a plain row.
+ */
+export type ChooserOrnament =
+  | { kind: "status"; status: IssueStatus }
+  | { kind: "priority"; priority: Priority }
+  | { kind: "label"; label: LabelKey }
+  | { kind: "person"; personId: string }
+  | { kind: "none" };
+
+/** One selectable row in the {@link ChooserRequest} popover. */
+export interface ChooserOption {
+  /** The stable value token reported back on select/commit. */
+  value: string;
+  /** The visible row label. */
+  label: string;
+  /** The leading mark (defaults to `none`). */
+  ornament?: ChooserOrnament;
+  /** Whether the option starts selected (a trailing check; seeds the multi-select set). */
+  selected?: boolean;
+}
+
+/**
+ * A request to open the generic chooser popover under a rail field. Single-select fires `onSelect`
+ * with the chosen value and closes immediately; multi-select toggles its checks live and fires
+ * `onCommit` once on dismiss (outside pointer / Escape / Done) with the final value set.
+ */
+export interface ChooserRequest {
+  /** The field the popover anchors under (positioned against its rect). */
+  anchor: HTMLElement;
+  /** The popover heading (the field name). */
+  title: string;
+  /** The selectable options, in display order. */
+  options: ChooserOption[];
+  /** Allow selecting several values at once (default single-select). */
+  multi?: boolean;
+  /** Single-select: invoked with the chosen value just before the popover closes. */
+  onSelect?: (value: string) => void;
+  /** Multi-select: invoked once on dismiss with the final selected values (only when they changed). */
+  onCommit?: (values: string[]) => void;
+}
+
 // ─── toast (F1) ──────────────────────────────────────────────────────────────
 
 /** A request to show a transient confirmation toast. */
@@ -100,6 +146,7 @@ export interface ToastRequest {
 let menuListener: ((request: MenuRequest) => void) | undefined;
 let modalListener: ((request: ModalRequest) => Promise<ModalResult>) | undefined;
 let customizeListener: ((request: CustomizeRequest) => void) | undefined;
+let chooserListener: ((request: ChooserRequest) => void) | undefined;
 let toastListener: ((request: ToastRequest) => void) | undefined;
 
 /**
@@ -198,6 +245,36 @@ export function openCustomize(request: CustomizeRequest): void {
 }
 
 /**
+ * Register the chooser island as the chooser subscriber.
+ *
+ * @param listener - Called with each {@link ChooserRequest}.
+ * @returns An unsubscribe function.
+ * @example
+ * ```ts
+ * ctx.cleanup(onChooser(request => openChooser(ctx, request)));
+ * ```
+ */
+export function onChooser(listener: (request: ChooserRequest) => void): () => void {
+  chooserListener = listener;
+  return () => {
+    if (chooserListener === listener) chooserListener = undefined;
+  };
+}
+
+/**
+ * Open the generic chooser popover (no-op if the chooser island has not mounted).
+ *
+ * @param request - The chooser request (anchor, title, options, callbacks).
+ * @example
+ * ```ts
+ * openChooser({ anchor: field, title: "Status", options, onSelect: value => setStatus(value) });
+ * ```
+ */
+export function openChooser(request: ChooserRequest): void {
+  chooserListener?.(request);
+}
+
+/**
  * Register the toast island as the toast subscriber.
  *
  * @param listener - Called with each {@link ToastRequest}.
@@ -235,6 +312,12 @@ export function showToast(message: string, tone?: "info" | "danger"): void {
 const VIEWPORT_MARGIN = 8;
 
 /**
+ * Viewport width (px) at/below which a popover is a full-width bottom sheet, not an anchored drop-down.
+ * Matches the `@media (max-width: 760px)` band the overlay component CSS uses (ContextMenu / Chooser).
+ */
+const SHEET_BREAKPOINT = 760;
+
+/**
  * Which anchor edge a popover's inline edge aligns to before clamping.
  *
  * - `"start"` (default) — the popover's left edge tracks the anchor's left edge (drop-down).
@@ -269,6 +352,17 @@ export function positionPopover(
   anchor: HTMLElement,
   align: PopoverAlign = "start"
 ): void {
+  // On the phone band the component CSS promotes the panel to a full-width bottom sheet pinned with
+  // `inset-block: auto 0` (top:auto, bottom:0). An inline `top`/`left` from a desktop placement would
+  // override that (inline beats the stylesheet), pinning `top` while `bottom:0` stays — stretching the
+  // sheet to nearly full height. So clear any prior inline placement and let the sheet CSS own it.
+  if (globalThis.innerWidth <= SHEET_BREAKPOINT) {
+    panel.style.removeProperty("position");
+    panel.style.removeProperty("left");
+    panel.style.removeProperty("top");
+    return;
+  }
+
   const anchorRect = anchor.getBoundingClientRect();
   // A zero-area anchor rect means the anchor has not been laid out yet — bail rather than clamp the
   // panel into the top-left corner against the viewport margin.

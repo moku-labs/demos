@@ -8,8 +8,8 @@
  * - **Working surface** — `board` (kanban + list, drag, realtime) · `issue` (the slide-over editor).
  * - **Chrome / nav** — `departments` · `boardsBar` · `boardHeader` · `themeToggle` · `userMenu` ·
  *   `overflowSheet` (the mobile masthead "⋯" overflow bottom sheet).
- * - **Overlay singletons** — `contextMenu` · `modal` · `toast` · `customizePanel` · `filterPanel` ·
- *   `activityPanel` (the transient-overlay bus consumers, persistent across navigation).
+ * - **Overlay singletons** — `contextMenu` · `chooser` · `modal` · `toast` · `customizePanel` ·
+ *   `filterPanel` · `activityPanel` (the transient-overlay bus consumers, persistent across navigation).
  * - **Auth** — `auth` (the sign-in / sign-up form).
  */
 import { activityPanel } from "./activity-panel";
@@ -17,6 +17,7 @@ import { auth } from "./auth";
 import { board } from "./board";
 import { boardHeader } from "./board-header";
 import { boardsBar } from "./boards-bar";
+import { chooser } from "./chooser";
 import { contextMenu } from "./context-menu";
 import { customizePanel } from "./customize-panel";
 import { departments } from "./departments";
@@ -42,6 +43,7 @@ export const islands = [
   overflowSheet,
   // Overlay singletons (the lib/menu bus consumers + the persistent panels)
   contextMenu,
+  chooser,
   modal,
   toast,
   customizePanel,

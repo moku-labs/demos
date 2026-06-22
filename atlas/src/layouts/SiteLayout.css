@@ -55,6 +55,22 @@
     pointer-events: auto;
   }
 
+  /* The chooser overlay is the rail's generic select popover. It opens FROM the issue panel (a drawer
+     at `--z-drawer`), so unlike the menu it must layer ABOVE that drawer — its panel sets `--z-modal`
+     (Chooser.css). The host mirrors the menu pin: a fixed full-viewport containing block that is
+     `pointer-events:none` so the scrim-less desktop popover lets outside clicks reach the page (the
+     island closes on the resulting outside pointerdown); the panel itself re-enables pointer events.
+     On phones the panel promotes to a bottom sheet WITH a scrim that re-arms its own pointer-events. */
+  [data-overlay="chooser"]:not([hidden]) {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    pointer-events: none;
+  }
+  [data-overlay="chooser"]:not([hidden]) [data-chooser] {
+    pointer-events: auto;
+  }
+
   @media (max-width: 760px) {
     [data-main] {
       padding-inline: 0;

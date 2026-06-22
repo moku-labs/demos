@@ -17,8 +17,9 @@ import {
 } from "../../lib/api";
 
 import { LABEL_KEYS, LABELS, PRIORITIES, STATUS_ORDER, STATUS_TITLES } from "../../lib/labels";
-import { openCustomize, openMenu, openModal, showToast } from "../../lib/menu";
-import { PEOPLE, personById } from "../../lib/people";
+import type { ChooserOption } from "../../lib/menu";
+import { openChooser, openCustomize, openMenu, openModal, showToast } from "../../lib/menu";
+import { PEOPLE } from "../../lib/people";
 import type { IssueStatus, LabelKey, Priority } from "../../lib/types";
 import { closeToBoard } from "./lifecycle";
 import type { IssueContext } from "./types";
@@ -381,172 +382,234 @@ export async function onSubToggle(ctx: IssueContext, _event: Event, box: Element
   await toggleSubIssue(detail.issue.id, subId, (box as HTMLInputElement).checked);
 }
 
-// ─── properties rail: scalar edits ───────────────────────────────────────────
+// ─── properties rail: chooser-backed edits ───────────────────────────────────
+
+/** Priority ranks in chooser order — `none` first as the "clear" row, then strongest → weakest. */
+const PRIORITY_CHOICES: readonly Priority[] = ["none", "urgent", "high", "medium", "low"];
 
 /**
- * Cycle the issue status to the next one in board order (Backlog → In Progress → In Review → Done →
- * Backlog) — the quiet rail Status field advances on click.
+ * Open the Status chooser under the rail field — a single-select list of the board statuses, each with
+ * its status dot, the current one checked. Picking persists via {@link applyStatus}.
  *
  * @param ctx - The issue component context.
- * @returns A promise that resolves once the status change persists.
+ * @param anchor - The rail field the popover anchors under.
  * @example
  * ```ts
- * await cycleStatus(ctx);
+ * chooseStatus(ctx, field);
  * ```
  */
-async function cycleStatus(ctx: IssueContext): Promise<void> {
+function chooseStatus(ctx: IssueContext, anchor: HTMLElement): void {
   const detail = ctx.state.detail;
   if (!detail) return;
 
-  const current = STATUS_ORDER.indexOf(detail.issue.status);
-  const next = STATUS_ORDER[(current + 1) % STATUS_ORDER.length] as IssueStatus;
-  await patchIssue(detail.issue.id, { status: next });
-  showToast(`Status → ${STATUS_TITLES[next]}`);
-}
-
-/**
- * Cycle the issue priority (none → Low → Medium → High → Urgent → none) — the rail Priority field.
- *
- * @param ctx - The issue component context.
- * @returns A promise that resolves once the priority change persists.
- * @example
- * ```ts
- * await cyclePriority(ctx);
- * ```
- */
-async function cyclePriority(ctx: IssueContext): Promise<void> {
-  const detail = ctx.state.detail;
-  if (!detail) return;
-
-  const order: Priority[] = ["none", "low", "medium", "high", "urgent"];
-  const current = order.indexOf(detail.issue.priority ?? "none");
-  const next = order[(current + 1) % order.length] as Priority;
-  await patchIssue(detail.issue.id, { priority: next });
-  showToast(next === "none" ? "Priority cleared" : `Priority → ${PRIORITIES[next]}`);
-}
-
-/**
- * Edit the issue's labels via a comma-separated prompt against the label taxonomy. Unknown keys are
- * dropped; an empty value clears all labels.
- *
- * @param ctx - The issue component context.
- * @returns A promise that resolves once the label set persists.
- * @example
- * ```ts
- * await editLabels(ctx);
- * ```
- */
-async function editLabels(ctx: IssueContext): Promise<void> {
-  const detail = ctx.state.detail;
-  if (!detail) return;
-
-  const current = detail.labels.map(({ label }) => label).join(", ");
-  const result = await openModal({
-    variant: "prompt",
-    title: "Labels",
-    message: `Comma-separated from: ${LABEL_KEYS.map(key => LABELS[key]).join(", ")}`,
-    placeholder: "bug, feature",
-    initialValue: current
+  const options: ChooserOption[] = STATUS_ORDER.map(status => ({
+    value: status,
+    label: STATUS_TITLES[status],
+    ornament: { kind: "status", status },
+    selected: status === detail.issue.status
+  }));
+  openChooser({
+    anchor,
+    title: "Status",
+    options,
+    // eslint-disable-next-line jsdoc/require-jsdoc -- inline onSelect: persist the chosen status
+    onSelect: value => void applyStatus(ctx, value as IssueStatus)
   });
-  if (result.kind !== "submit") return;
+}
 
-  const labels = parseLabels(result.value);
-  await patchIssue(detail.issue.id, { labels });
+/**
+ * Persist a chosen status (no-op when unchanged) and confirm with a toast.
+ *
+ * @param ctx - The issue component context.
+ * @param status - The chosen status.
+ * @returns A promise that resolves once the change persists.
+ * @example
+ * ```ts
+ * await applyStatus(ctx, "in_progress");
+ * ```
+ */
+async function applyStatus(ctx: IssueContext, status: IssueStatus): Promise<void> {
+  const detail = ctx.state.detail;
+  if (!detail || status === detail.issue.status) return;
+
+  await patchIssue(detail.issue.id, { status });
+  showToast(`Status → ${STATUS_TITLES[status]}`);
+}
+
+/**
+ * Open the Priority chooser under the rail field — a single-select list (No priority · Urgent → Low),
+ * each rank with its ascending-bars mark, the current one checked. Picking persists via
+ * {@link applyPriority}.
+ *
+ * @param ctx - The issue component context.
+ * @param anchor - The rail field the popover anchors under.
+ * @example
+ * ```ts
+ * choosePriority(ctx, field);
+ * ```
+ */
+function choosePriority(ctx: IssueContext, anchor: HTMLElement): void {
+  const detail = ctx.state.detail;
+  if (!detail) return;
+
+  const current = detail.issue.priority ?? "none";
+  const options: ChooserOption[] = PRIORITY_CHOICES.map(priority => ({
+    value: priority,
+    label: priority === "none" ? "No priority" : PRIORITIES[priority],
+    ornament: priority === "none" ? { kind: "none" } : { kind: "priority", priority },
+    selected: priority === current
+  }));
+  openChooser({
+    anchor,
+    title: "Priority",
+    options,
+    // eslint-disable-next-line jsdoc/require-jsdoc -- inline onSelect: persist the chosen priority
+    onSelect: value => void applyPriority(ctx, value as Priority)
+  });
+}
+
+/**
+ * Persist a chosen priority (no-op when unchanged) and confirm with a toast.
+ *
+ * @param ctx - The issue component context.
+ * @param priority - The chosen priority rank (`none` clears it).
+ * @returns A promise that resolves once the change persists.
+ * @example
+ * ```ts
+ * await applyPriority(ctx, "high");
+ * ```
+ */
+async function applyPriority(ctx: IssueContext, priority: Priority): Promise<void> {
+  const detail = ctx.state.detail;
+  if (!detail || priority === (detail.issue.priority ?? "none")) return;
+
+  await patchIssue(detail.issue.id, { priority });
+  showToast(priority === "none" ? "Priority cleared" : `Priority → ${PRIORITIES[priority]}`);
+}
+
+/**
+ * Open the Labels chooser under the rail field — a multi-select list of the label taxonomy, each with
+ * its coloured dot and the applied ones checked. Toggling stays open; dismissing persists the set via
+ * {@link applyLabels}.
+ *
+ * @param ctx - The issue component context.
+ * @param anchor - The rail field the popover anchors under.
+ * @example
+ * ```ts
+ * chooseLabels(ctx, field);
+ * ```
+ */
+function chooseLabels(ctx: IssueContext, anchor: HTMLElement): void {
+  const detail = ctx.state.detail;
+  if (!detail) return;
+
+  const applied = new Set(detail.labels.map(({ label }) => label));
+  const options: ChooserOption[] = LABEL_KEYS.map(key => ({
+    value: key,
+    label: LABELS[key],
+    ornament: { kind: "label", label: key },
+    selected: applied.has(key)
+  }));
+  openChooser({
+    anchor,
+    title: "Labels",
+    options,
+    multi: true,
+    // eslint-disable-next-line jsdoc/require-jsdoc -- inline onCommit: persist the chosen label set
+    onCommit: values => void applyLabels(ctx, values as LabelKey[])
+  });
+}
+
+/**
+ * Persist the chosen label set (taxonomy order) and confirm with a toast.
+ *
+ * @param ctx - The issue component context.
+ * @param values - The chosen label keys.
+ * @returns A promise that resolves once the change persists.
+ * @example
+ * ```ts
+ * await applyLabels(ctx, ["bug", "docs"]);
+ * ```
+ */
+async function applyLabels(ctx: IssueContext, values: LabelKey[]): Promise<void> {
+  const detail = ctx.state.detail;
+  if (!detail) return;
+
+  const chosen = new Set(values);
+  const labels = LABEL_KEYS.filter(key => chosen.has(key));
+  await patchIssue(detail.issue.id, { labels: [...labels] });
   showToast("Labels updated");
 }
 
 /**
- * Parse a comma-separated label prompt into the known {@link LabelKey} set (case-insensitive on key or
- * display name; unknown tokens and duplicates are dropped).
- *
- * @param value - The raw comma-separated prompt value.
- * @returns The recognized, de-duplicated label keys.
- * @example
- * ```ts
- * parseLabels("Bug, feature, nope"); // ["bug", "feature"]
- * ```
- */
-function parseLabels(value: string): LabelKey[] {
-  const tokens = new Set(
-    value
-      .split(",")
-      .map(token => token.trim().toLowerCase())
-      .filter(Boolean)
-  );
-  const keys = LABEL_KEYS.filter(key => tokens.has(key) || tokens.has(LABELS[key].toLowerCase()));
-  return [...keys];
-}
-
-/**
- * Edit the issue's assignees via a comma-separated prompt of names/initials; the first listed becomes
- * the lead. Unknown people are dropped; an empty value unassigns everyone.
+ * Open the Assignees chooser under the rail field — a multi-select list of the demo cast, each with
+ * their avatar and the assigned ones checked. Toggling stays open; dismissing persists the set via
+ * {@link applyAssignees}.
  *
  * @param ctx - The issue component context.
- * @returns A promise that resolves once the assignee set persists.
+ * @param anchor - The rail field the popover anchors under.
  * @example
  * ```ts
- * await editAssignees(ctx);
+ * chooseAssignees(ctx, field);
  * ```
  */
-async function editAssignees(ctx: IssueContext): Promise<void> {
+function chooseAssignees(ctx: IssueContext, anchor: HTMLElement): void {
   const detail = ctx.state.detail;
   if (!detail) return;
 
-  const current = detail.assignees
-    .map(({ personId }) => personById(personId)?.name ?? personId)
-    .join(", ");
-  const result = await openModal({
-    variant: "prompt",
+  const assigned = new Set(detail.assignees.map(({ personId }) => personId));
+  const options: ChooserOption[] = PEOPLE.map(person => ({
+    value: person.id,
+    label: person.name,
+    ornament: { kind: "person", personId: person.id },
+    selected: assigned.has(person.id)
+  }));
+  openChooser({
+    anchor,
     title: "Assignees",
-    message: `Comma-separated names (first = lead): ${PEOPLE.map(p => p.name).join(", ")}`,
-    placeholder: "Anya Kovač, Mateo Luna",
-    initialValue: current
+    options,
+    multi: true,
+    // eslint-disable-next-line jsdoc/require-jsdoc -- inline onCommit: persist the chosen assignees
+    onCommit: values => void applyAssignees(ctx, values)
   });
-  if (result.kind !== "submit") return;
-
-  const assignees = parseAssignees(result.value);
-  await patchIssue(detail.issue.id, { assignees });
-  showToast("Assignees updated");
 }
 
 /**
- * Parse a comma-separated assignee prompt into `{ personId, isLead }[]` — matching on name or initials
- * (case-insensitive). The first recognized person is the lead; unknowns and duplicates are dropped.
+ * Persist the chosen assignees (cast order; the first becomes the lead) and confirm with a toast.
  *
- * @param value - The raw comma-separated prompt value.
- * @returns The recognized assignees, the first marked as lead.
+ * @param ctx - The issue component context.
+ * @param values - The chosen person ids.
+ * @returns A promise that resolves once the change persists.
  * @example
  * ```ts
- * parseAssignees("Anya Kovač, RT"); // [{ personId: "ak", isLead: true }, { personId: "rt", isLead: false }]
+ * await applyAssignees(ctx, ["ak", "rt"]);
  * ```
  */
-function parseAssignees(value: string): { personId: string; isLead: boolean }[] {
-  const tokens = value
-    .split(",")
-    .map(token => token.trim().toLowerCase())
-    .filter(Boolean);
+async function applyAssignees(ctx: IssueContext, values: string[]): Promise<void> {
+  const detail = ctx.state.detail;
+  if (!detail) return;
 
-  const ids: string[] = [];
-  for (const token of tokens) {
-    const person = PEOPLE.find(
-      p => p.name.toLowerCase() === token || p.initials.toLowerCase() === token
-    );
-    if (person && !ids.includes(person.id)) ids.push(person.id);
-  }
-  return ids.map((personId, index) => ({ personId, isLead: index === 0 }));
+  const chosen = new Set(values);
+  const assignees = PEOPLE.filter(person => chosen.has(person.id)).map((person, index) => ({
+    personId: person.id,
+    isLead: index === 0
+  }));
+  await patchIssue(detail.issue.id, { assignees });
+  showToast("Assignees updated");
 }
 
 /**
  * Set or clear the issue's due date via the date modal (Clear / Cancel / Save).
  *
  * @param ctx - The issue component context.
+ * @param _anchor - Unused; the rail field anchor (the date editor is a modal, not an anchored popover).
  * @returns A promise that resolves once the due date persists.
  * @example
  * ```ts
  * await editDueDate(ctx);
  * ```
  */
-async function editDueDate(ctx: IssueContext): Promise<void> {
+async function editDueDate(ctx: IssueContext, _anchor?: HTMLElement): Promise<void> {
   const detail = ctx.state.detail;
   if (!detail) return;
 
@@ -606,13 +669,14 @@ function fromDateInput(value: string): number | null {
  * Edit the issue's estimate (story points) via a prompt; an empty/invalid value clears it.
  *
  * @param ctx - The issue component context.
+ * @param _anchor - Unused; the rail field anchor (estimate is a free number, edited via a prompt).
  * @returns A promise that resolves once the estimate persists.
  * @example
  * ```ts
  * await editEstimate(ctx);
  * ```
  */
-async function editEstimate(ctx: IssueContext): Promise<void> {
+async function editEstimate(ctx: IssueContext, _anchor?: HTMLElement): Promise<void> {
   const detail = ctx.state.detail;
   if (!detail) return;
 
@@ -632,35 +696,59 @@ async function editEstimate(ctx: IssueContext): Promise<void> {
 }
 
 /**
- * Edit the issue's reporter via a name/initials prompt; an empty value clears it.
+ * Open the Reporter chooser under the rail field — a single-select list of the demo cast (with a "No
+ * reporter" clear row), each with their avatar and the current one checked. Picking persists via
+ * {@link applyReporter}.
  *
  * @param ctx - The issue component context.
- * @returns A promise that resolves once the reporter persists.
+ * @param anchor - The rail field the popover anchors under.
  * @example
  * ```ts
- * await editReporter(ctx);
+ * chooseReporter(ctx, field);
  * ```
  */
-async function editReporter(ctx: IssueContext): Promise<void> {
+function chooseReporter(ctx: IssueContext, anchor: HTMLElement): void {
   const detail = ctx.state.detail;
   if (!detail) return;
 
-  const current = detail.issue.reporterId ? (personById(detail.issue.reporterId)?.name ?? "") : "";
-  const result = await openModal({
-    variant: "prompt",
+  const current = detail.issue.reporterId;
+  const options: ChooserOption[] = [
+    { value: "", label: "No reporter", ornament: { kind: "none" }, selected: !current },
+    ...PEOPLE.map(person => ({
+      value: person.id,
+      label: person.name,
+      ornament: { kind: "person" as const, personId: person.id },
+      selected: current === person.id
+    }))
+  ];
+  openChooser({
+    anchor,
     title: "Reporter",
-    message: `One of: ${PEOPLE.map(p => p.name).join(", ")}`,
-    placeholder: "Anya Kovač",
-    initialValue: current
+    options,
+    // eslint-disable-next-line jsdoc/require-jsdoc -- inline onSelect: persist the chosen reporter
+    onSelect: value => void applyReporter(ctx, value)
   });
-  if (result.kind !== "submit") return;
+}
 
-  const token = result.value.trim().toLowerCase();
-  const person = token
-    ? PEOPLE.find(p => p.name.toLowerCase() === token || p.initials.toLowerCase() === token)
-    : undefined;
+/**
+ * Persist the chosen reporter (the empty value clears it) and confirm with a toast.
+ *
+ * @param ctx - The issue component context.
+ * @param value - The chosen person id, or `""` to clear the reporter.
+ * @returns A promise that resolves once the change persists.
+ * @example
+ * ```ts
+ * await applyReporter(ctx, "ak");
+ * ```
+ */
+async function applyReporter(ctx: IssueContext, value: string): Promise<void> {
+  const detail = ctx.state.detail;
+  if (!detail) return;
+
   // eslint-disable-next-line unicorn/no-null -- null is the reporterId domain contract (clears the reporter)
-  await patchIssue(detail.issue.id, { reporterId: person?.id ?? null });
+  const reporterId = value === "" ? null : value;
+  if (reporterId === detail.issue.reporterId) return;
+  await patchIssue(detail.issue.id, { reporterId });
   showToast("Reporter updated");
 }
 
@@ -668,13 +756,14 @@ async function editReporter(ctx: IssueContext): Promise<void> {
  * Edit the issue's milestone / cycle via a prompt; an empty value clears it.
  *
  * @param ctx - The issue component context.
+ * @param _anchor - Unused; the rail field anchor (milestone is free text, edited via a prompt).
  * @returns A promise that resolves once the milestone persists.
  * @example
  * ```ts
  * await editMilestone(ctx);
  * ```
  */
-async function editMilestone(ctx: IssueContext): Promise<void> {
+async function editMilestone(ctx: IssueContext, _anchor?: HTMLElement): Promise<void> {
   const detail = ctx.state.detail;
   if (!detail) return;
 
@@ -692,21 +781,26 @@ async function editMilestone(ctx: IssueContext): Promise<void> {
   showToast("Milestone updated");
 }
 
-/** Maps each editable rail field's label to its edit action. */
-const RAIL_EDITS: Record<string, (ctx: IssueContext) => void | Promise<void>> = {
-  Status: cycleStatus,
-  Priority: cyclePriority,
-  Labels: editLabels,
-  Assignees: editAssignees,
-  "Due date": editDueDate,
-  Estimate: editEstimate,
-  Reporter: editReporter,
-  "Milestone / Cycle": editMilestone
-};
+/**
+ * Maps each editable rail field's label to its edit action. List-valued fields (Status · Priority ·
+ * Labels · Assignees · Reporter) open the anchored chooser popover; the free-form fields (Due date ·
+ * Estimate · Milestone) open a modal and ignore the anchor.
+ */
+const RAIL_EDITS: Record<string, (ctx: IssueContext, anchor: HTMLElement) => void | Promise<void>> =
+  {
+    Status: chooseStatus,
+    Priority: choosePriority,
+    Labels: chooseLabels,
+    Assignees: chooseAssignees,
+    "Due date": editDueDate,
+    Estimate: editEstimate,
+    Reporter: chooseReporter,
+    "Milestone / Cycle": editMilestone
+  };
 
 /**
  * Handle a click within the properties rail: route the clicked `[data-rail-field]` to its edit action,
- * keyed by the field's `[data-rail-label]` caption.
+ * keyed by the field's `[data-rail-label]` caption, anchoring any chooser popover to the field itself.
  *
  * @param ctx - The issue component context.
  * @param _event - The delegated click event (unused).
@@ -717,10 +811,11 @@ const RAIL_EDITS: Record<string, (ctx: IssueContext) => void | Promise<void>> = 
  * ```
  */
 export function onRailEdit(ctx: IssueContext, _event: Event, field: Element): void {
+  if (!(field instanceof HTMLElement)) return;
   const label = field.querySelector<HTMLElement>("[data-rail-label]")?.textContent?.trim();
   if (!label) return;
   const edit = RAIL_EDITS[label];
-  if (edit) void edit(ctx);
+  if (edit) void edit(ctx, field);
 }
 
 // ─── properties rail: customize + add property ───────────────────────────────
