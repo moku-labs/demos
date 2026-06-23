@@ -31,6 +31,7 @@ import { allPeople } from "../../lib/people";
 import { deliverLocal } from "../../lib/realtime";
 import type { IssuePatch, IssueStatus, LabelKey, Priority } from "../../lib/types";
 import { closeToBoard } from "./lifecycle";
+import { openAttachmentPreview } from "./lightbox";
 import type { IssueContext } from "./types";
 
 /** MIME type used when a selected file reports none. */
@@ -246,122 +247,6 @@ async function uploadFile(ctx: IssueContext, file: File): Promise<void> {
 }
 
 /**
- * Show a full-screen lightbox preview for an image attachment within the panel. The lightbox is a
- * vanilla DOM element layered on top of the panel surface (no Preact re-render needed). It is
- * dismissed by clicking the backdrop, clicking the × button, or pressing Escape.
- *
- * @param href - The attachment URL to preview.
- * @param filename - The attachment filename (shown as the caption).
- * @param size - The formatted byte count (shown as the caption).
- * @example
- * ```ts
- * showLightbox("/api/attachments/abc", "screenshot.png", "1.2 MB");
- * ```
- */
-function showLightbox(href: string, filename: string, size: string): void {
-  const overlay = document.createElement("div");
-  overlay.dataset.lightbox = "";
-
-  // Styles are inline so the lightbox works regardless of @scope containment.
-  Object.assign(overlay.style, {
-    position: "fixed",
-    inset: "0",
-    zIndex: "200",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "rgba(0,0,0,0.82)",
-    backdropFilter: "blur(6px)"
-  });
-
-  const img = document.createElement("img");
-  img.src = href;
-  img.alt = filename;
-  Object.assign(img.style, {
-    maxWidth: "min(90vw, 72rem)",
-    maxHeight: "80vh",
-    objectFit: "contain",
-    borderRadius: "6px",
-    boxShadow: "0 8px 40px rgba(0,0,0,0.6)"
-  });
-
-  const caption = document.createElement("div");
-  caption.textContent = `${filename}  ·  ${size}`;
-  Object.assign(caption.style, {
-    marginTop: "1rem",
-    fontFamily: "var(--font-mono, monospace)",
-    fontSize: "var(--text-2xs, 0.75rem)",
-    letterSpacing: "0.04em",
-    color: "rgba(255,255,255,0.65)"
-  });
-
-  const closeButton = document.createElement("button");
-  closeButton.type = "button";
-  closeButton.setAttribute("aria-label", "Close preview");
-  closeButton.textContent = "×";
-  Object.assign(closeButton.style, {
-    position: "absolute",
-    top: "1rem",
-    right: "1rem",
-    width: "2.4rem",
-    height: "2.4rem",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "rgba(255,255,255,0.12)",
-    border: "none",
-    borderRadius: "999px",
-    color: "#fff",
-    fontSize: "1.5rem",
-    lineHeight: "1",
-    cursor: "pointer"
-  });
-
-  // appendChild (not append): @cloudflare/workers-types merges Element.append into a conflicting
-  // overload set in this project (see nav.ts), so the DOM helper is used explicitly.
-  /* eslint-disable unicorn/prefer-dom-node-append -- workers-types overload conflict, see above */
-  overlay.appendChild(img);
-  overlay.appendChild(caption);
-  overlay.appendChild(closeButton);
-  document.body.appendChild(overlay);
-  /* eslint-enable unicorn/prefer-dom-node-append */
-
-  /**
-   * Dismiss the lightbox and remove its DOM node.
-   *
-   * @example
-   * ```ts
-   * dismiss();
-   * ```
-   */
-  function dismiss(): void {
-    overlay.remove();
-    document.removeEventListener("keydown", onKey);
-  }
-
-  /**
-   * Close the lightbox on Escape.
-   *
-   * @param event - The keyboard event.
-   * @example
-   * ```ts
-   * document.addEventListener("keydown", onKey);
-   * ```
-   */
-  function onKey(event: KeyboardEvent): void {
-    if (event.key === "Escape") dismiss();
-  }
-
-  overlay.addEventListener("click", event => {
-    // Dismiss when clicking the backdrop (not the image itself).
-    if (event.target === overlay) dismiss();
-  });
-  closeButton.addEventListener("click", dismiss);
-  document.addEventListener("keydown", onKey);
-}
-
-/**
  * Handle a click on an attachment chip: a plain click on an image shows a lightbox preview; a plain
  * click on a file chip opens in a new tab; an Alt-modified click confirms and deletes the attachment.
  *
@@ -386,16 +271,11 @@ export async function onAttachmentClick(
     const href = (link as HTMLAnchorElement).href;
     if (!href) return;
 
-    // Image attachment → in-panel lightbox preview.
+    // Image attachment → open the deep-linkable in-panel lightbox preview (#15).
     if ((link as HTMLElement).dataset.kind === "image") {
-      const detail = ctx.state.detail;
       const path = (link as HTMLAnchorElement).getAttribute("href") ?? "";
       const attachmentId = path.split("/").pop();
-      const attachment = detail?.attachments.find(att => att.id === attachmentId);
-      const { formatBytes } = await import("../../lib/attachments");
-      const size = attachment ? formatBytes(attachment.size) : "";
-      const filename = attachment?.filename ?? path.split("/").pop() ?? "attachment";
-      showLightbox(href, filename, size);
+      if (attachmentId) openAttachmentPreview(ctx, attachmentId, { updateUrl: true });
       return;
     }
 

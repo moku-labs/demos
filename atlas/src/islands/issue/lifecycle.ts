@@ -18,6 +18,7 @@ import type {
 } from "../../lib/types";
 import { loadUsers } from "../../lib/users";
 import { urls } from "../../routes";
+import { closeLightbox, openAttachmentPreview } from "./lightbox";
 import { CLOSED_STATE, ESCAPE_KEY, ISSUE_FOCUS, type IssueContext } from "./types";
 
 /**
@@ -125,6 +126,8 @@ async function openIssue(ctx: IssueContext, boardId: string, issueId: string): P
  * ```
  */
 function closePanel(ctx: IssueContext): void {
+  // A body-level lightbox would outlive the panel on navigation away — tear it down too.
+  closeLightbox();
   setHostOpen(ctx.el, false);
   ctx.set(CLOSED_STATE);
 }
@@ -152,13 +155,20 @@ export async function sync(ctx: IssueContext): Promise<void> {
     return;
   }
 
-  // Already showing this exact issue → nothing to do (a same-issue nav, e.g. board ⇄ issue toggle).
+  // Already showing this exact issue → just ensure it's visible (a same-issue nav, e.g. board ⇄ issue).
   if (ctx.state.issueId === issueId && ctx.state.detail) {
     setHostOpen(ctx.el, true);
-    return;
+  } else {
+    await openIssue(ctx, boardId, issueId);
   }
 
-  await openIssue(ctx, boardId, issueId);
+  // Deep-link: the attachment route opens its image preview once the issue detail is loaded (#15).
+  const attachmentId = ctx.params.attachmentId;
+  if (attachmentId && ctx.state.detail && ctx.state.issueId === issueId) {
+    openAttachmentPreview(ctx, attachmentId, { updateUrl: false });
+  } else {
+    closeLightbox();
+  }
 }
 
 /**

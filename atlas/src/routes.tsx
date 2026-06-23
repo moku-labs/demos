@@ -10,6 +10,7 @@
  *   board     /board/{id}                      — a single board, kanban view
  *   list      /board/{id}/list                 — the same board, editorial list view
  *   issue     /board/{id}/issue/{issueId}      — a board with one issue open (the article editor)
+ *   attachment /board/{id}/issue/{issueId}/attachment/{attachmentId} — an issue with an image preview open
  *   activity  /board/{id}/activity             — a board, focused on the live activity record
  *
  * Auth routes wear the {@link AuthLayout} split; every app route shares the {@link SiteLayout} chrome
@@ -60,6 +61,10 @@ export const routes = defineRoutes({
     .meta({ view: "list" })
     .render(() => <BoardPage />),
   issue: route("/board/{id}/issue/{issueId}")
+    .layout(SiteLayout)
+    .meta({ focus: "issue" })
+    .render(() => <BoardPage />),
+  attachment: route("/board/{id}/issue/{issueId}/attachment/{attachmentId}")
     .layout(SiteLayout)
     .meta({ focus: "issue" })
     .render(() => <BoardPage />),

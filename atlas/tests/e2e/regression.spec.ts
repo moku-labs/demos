@@ -94,6 +94,49 @@ test.describe("Board/department change transition", () => {
   });
 });
 
+test.describe("Deep-linkable attachment preview (#15)", () => {
+  // A 1×1 transparent PNG — an inline-safe image so its chip renders as an image (gets the lightbox).
+  const PNG = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+    "base64"
+  );
+
+  test("image preview is a shareable URL — opens on click, closes on Escape, reopens on deep-link", async ({
+    page
+  }) => {
+    const id = await freshIssue(page, "Preview deeplink probe");
+    await page.goto(`/board/board-platform/issue/${id}`);
+    await page.waitForLoadState("load");
+    await page
+      .locator("[data-attach-input]")
+      .setInputFiles({ name: "shot.png", mimeType: "image/png", buffer: PNG });
+    await expect(page.locator("[data-attachment]")).toHaveCount(1, { timeout: 6000 });
+
+    // Reload so the persisted attachment renders as its image chip (with the real content type).
+    await page.goto(`/board/board-platform/issue/${id}`);
+    await page.waitForLoadState("load");
+    const chip = page.locator('[data-attachment][data-kind="image"]');
+    await expect(chip).toHaveCount(1);
+    const href = await chip.getAttribute("href");
+    const attId = (href ?? "").split("/").pop() ?? "";
+
+    // Click → the lightbox opens AND the URL becomes the shareable attachment route.
+    await chip.click();
+    await expect(page.locator("[data-lightbox]")).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`/issue/${id}/attachment/${attId}$`));
+
+    // Escape → the lightbox closes AND the URL restores to the issue route.
+    await page.keyboard.press("Escape");
+    await expect(page.locator("[data-lightbox]")).toHaveCount(0);
+    await expect(page).toHaveURL(new RegExp(`/issue/${id}$`));
+
+    // Deep-link straight to the attachment URL → the preview opens on load.
+    await page.goto(`/board/board-platform/issue/${id}/attachment/${attId}`);
+    await page.waitForLoadState("load");
+    await expect(page.locator("[data-lightbox]")).toBeVisible({ timeout: 6000 });
+  });
+});
+
 test.describe("Realtime / optimistic updates", () => {
   test("attachment appears immediately after upload (no reload)", async ({ page }) => {
     const id = await freshIssue(page, "Attach-live probe");
