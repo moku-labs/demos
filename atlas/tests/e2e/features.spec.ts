@@ -15,6 +15,7 @@
  */
 import { expect, test } from "@playwright/test";
 import { FIXED_TIME, signIn } from "./_auth";
+import { freshBoardWithIssue } from "./_fixtures";
 
 // ── shared beforeEach for authenticated tests ─────────────────────────────────
 
@@ -666,22 +667,21 @@ test.describe("Round-2 regressions — issue editor", () => {
   });
 
   test("#10: changing an issue's status moves its card to that column", async ({ page }) => {
-    // Self-contained: create a fresh Backlog issue so this never mutates seed issues other tests read.
-    const created = await page.request.post(
-      "/api/boards/board-platform/columns/col-backlog/issues",
-      { data: { title: "Status-move probe" } }
+    // Self-contained on a throwaway board so this never touches board-platform (the baselines screenshot it).
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Status-move board",
+      "Status-move probe"
     );
-    expect(created.ok()).toBeTruthy();
-    const { id } = (await created.json()) as { id: string };
 
-    await page.goto(`/board/board-platform/issue/${id}`);
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     await page.locator('[data-rail-field]:has([data-rail-label]:text-is("Status"))').click();
     await page.locator('[data-chooser-option][data-value="in_review"]').click();
 
-    await page.goto("/board/board-platform");
+    await page.goto(`/board/${boardId}`);
     await page.waitForLoadState("load");
     const reviewColumn = page.locator('[data-column][aria-label="In Review"]');
-    await expect(reviewColumn.locator(`[data-card-id="${id}"]`)).toBeVisible();
+    await expect(reviewColumn.locator(`[data-card-id="${issueId}"]`)).toBeVisible();
   });
 });

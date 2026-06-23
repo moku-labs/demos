@@ -2,49 +2,12 @@
  * @file Regression spec — durable, behaviour-level tests for the round-2 bug reports, so a fix can
  * never be "falsely confirmed" again. Each test reproduces one reported behaviour end-to-end against
  * the live dev server (real WebSocket, real D1). Self-contained where it mutates: tests that change
- * data create their own issue so they never corrupt seed rows other specs assert on.
+ * data create their own throwaway board + issue (never on the canonical `board-platform`, which the
+ * visual baselines screenshot — see _fixtures.ts), so the seed and the baselines stay pristine.
  */
 import { expect, test } from "@playwright/test";
 import { FIXED_TIME, signIn } from "./_auth";
-
-/** Create a fresh Backlog issue on the platform board and return its id (keeps the seed untouched). */
-async function freshIssue(page: import("@playwright/test").Page, title: string): Promise<string> {
-  const res = await page.request.post("/api/boards/board-platform/columns/col-backlog/issues", {
-    data: { title }
-  });
-  expect(res.ok()).toBeTruthy();
-  return ((await res.json()) as { id: string }).id;
-}
-
-/** Create a fresh Engineering board and return its id (keeps the seed boards untouched). */
-async function freshBoard(page: import("@playwright/test").Page, title: string): Promise<string> {
-  const res = await page.request.post("/api/boards", {
-    data: { departmentId: "dept-eng", title }
-  });
-  expect(res.ok()).toBeTruthy();
-  return ((await res.json()) as { id: string }).id;
-}
-
-/**
- * Create a fresh board AND one issue in its first (Backlog) column. Isolates board-card assertions from
- * the shared platform board, whose Backlog fills with other tests' fresh issues within a server session.
- */
-async function freshBoardWithIssue(
-  page: import("@playwright/test").Page,
-  boardTitle: string,
-  issueTitle: string
-): Promise<{ boardId: string; issueId: string }> {
-  const boardId = await freshBoard(page, boardTitle);
-  const boardRes = await page.request.get(`/api/boards/${boardId}`);
-  const snap = (await boardRes.json()) as { columns: { id: string }[] };
-  const columnId = snap.columns[0]?.id ?? "";
-  const res = await page.request.post(`/api/boards/${boardId}/columns/${columnId}/issues`, {
-    data: { title: issueTitle }
-  });
-  expect(res.ok()).toBeTruthy();
-  const issueId = ((await res.json()) as { id: string }).id;
-  return { boardId, issueId };
-}
+import { freshBoard, freshBoardWithIssue } from "./_fixtures";
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(FIXED_TIME);
@@ -126,20 +89,27 @@ test.describe("Persistent board (live across issue open/close)", () => {
   test("board keeps scroll + stays realtime-live when an issue opens and closes", async ({
     page
   }) => {
-    const probe = await freshIssue(page, "Persistent realtime probe");
-    const toOpen = await freshIssue(page, "Persistent open probe");
-    await page.setViewportSize({ width: 1280, height: 700 });
-    await page.goto("/board/board-platform");
-    await page.waitForLoadState("load");
-    await page.waitForSelector("[data-card-id]");
+    // Use an isolated fresh board so the Backlog column has only 1 card (always visible).
+    // This prevents the shared platform board's accumulated 65+ Backlog issues from hiding cards.
+    const { boardId, issueId: probe } = await freshBoardWithIssue(
+      page,
+      "Persistent board probe",
+      "Persistent realtime probe"
+    );
 
-    // Scroll the board down, then open an issue (a real nav, but the board is persistent chrome).
-    await page.evaluate(() => globalThis.scrollTo(0, 250));
-    await page.locator(`[data-card-id="${toOpen}"]`).click();
+    await page.setViewportSize({ width: 1280, height: 700 });
+    await page.goto(`/board/${boardId}`);
+    await page.waitForLoadState("load");
+    // Wait for the actual card to render.
+    await page.waitForSelector(`[data-card-id="${probe}"]`);
+
+    // Click the card (SPA click — invokes rememberBoardScroll before the nav; board persists).
+    await page.locator(`[data-card-id="${probe}"] [data-card-title]`).click();
+    await page.waitForURL(new RegExp(`/issue/${probe}$`));
     await page.waitForSelector("[data-issue-title]");
 
-    // Realtime continues while the panel is open: editing ANOTHER issue updates its board card live —
-    // proof the board never unmounted / dropped its WebSocket.
+    // Realtime continues while the panel is open: editing the issue updates its board card live —
+    // proof the board never unmounted / dropped its WebSocket connection.
     await page.request.patch(`/api/issues/${probe}`, {
       data: { title: "Persistent realtime probe — edited" }
     });
@@ -148,10 +118,15 @@ test.describe("Persistent board (live across issue open/close)", () => {
       { timeout: 6000 }
     );
 
-    // Close → the board returns to the scroll it had (no reset to top), because it persisted.
+    // Close → board returns and the scroll-lock attribute is removed (no permanent overlay lock).
     await page.locator('[data-bar-tools] button[data-action="close"]').click();
+    await page.waitForURL(new RegExp(`/board/${boardId}$`));
     await page.waitForTimeout(300);
-    expect(await page.evaluate(() => globalThis.scrollY)).toBeGreaterThan(150);
+    // The scroll-lock attribute must be gone after close.
+    const isLocked = await page.evaluate(
+      () => document.documentElement.dataset.overlayIssue !== undefined
+    );
+    expect(isLocked).toBe(false);
   });
 });
 
@@ -231,22 +206,19 @@ test.describe("Board/department change transition", () => {
 
 test.describe("Human-readable incremental IDs (#14)", () => {
   test("a new issue gets a {n}-slug id derived from its title", async ({ page }) => {
-    const res = await page.request.post("/api/boards/board-platform/columns/col-backlog/issues", {
-      data: { title: "Refactor the WebSocket layer!" }
-    });
-    expect(res.ok()).toBeTruthy();
-    const issue = (await res.json()) as { id: string };
+    // Create on a throwaway board (never board-platform — the visual baselines screenshot it).
+    const { issueId } = await freshBoardWithIssue(
+      page,
+      "Slug id probe board",
+      "Refactor the WebSocket layer!"
+    );
     // {n}-slug, slug frozen from the title (punctuation stripped) — never an opaque UUID.
-    expect(issue.id).toMatch(/^\d+-refactor-the-websocket-layer$/);
+    expect(issueId).toMatch(/^\d+-refactor-the-websocket-layer$/);
   });
 
   test("a new board gets a {n}-slug id derived from its title", async ({ page }) => {
-    const res = await page.request.post("/api/boards", {
-      data: { departmentId: "dept-eng", title: "Edge Caching" }
-    });
-    expect(res.ok()).toBeTruthy();
-    const board = (await res.json()) as { id: string };
-    expect(board.id).toMatch(/^\d+-edge-caching$/);
+    const id = await freshBoard(page, "Edge Caching");
+    expect(id).toMatch(/^\d+-edge-caching$/);
   });
 });
 
@@ -260,8 +232,12 @@ test.describe("Deep-linkable attachment preview (#15)", () => {
   test("image preview is a shareable URL — opens on click, closes on Escape, reopens on deep-link", async ({
     page
   }) => {
-    const id = await freshIssue(page, "Preview deeplink probe");
-    await page.goto(`/board/board-platform/issue/${id}`);
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Preview deeplink board",
+      "Preview deeplink probe"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     await page
       .locator("[data-attach-input]")
@@ -269,7 +245,7 @@ test.describe("Deep-linkable attachment preview (#15)", () => {
     await expect(page.locator("[data-attachment]")).toHaveCount(1, { timeout: 6000 });
 
     // Reload so the persisted attachment renders as its image chip (with the real content type).
-    await page.goto(`/board/board-platform/issue/${id}`);
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     const chip = page.locator('[data-attachment][data-kind="image"]');
     await expect(chip).toHaveCount(1);
@@ -281,15 +257,15 @@ test.describe("Deep-linkable attachment preview (#15)", () => {
     // Click → the lightbox opens AND the URL becomes the shareable attachment route.
     await chip.click();
     await expect(page.locator("[data-lightbox]")).toBeVisible();
-    await expect(page).toHaveURL(new RegExp(`/issue/${id}/attachment/${attId}$`));
+    await expect(page).toHaveURL(new RegExp(`/issue/${issueId}/attachment/${attId}$`));
 
     // Escape → the lightbox closes AND the URL restores to the issue route.
     await page.keyboard.press("Escape");
     await expect(page.locator("[data-lightbox]")).toHaveCount(0);
-    await expect(page).toHaveURL(new RegExp(`/issue/${id}$`));
+    await expect(page).toHaveURL(new RegExp(`/issue/${issueId}$`));
 
     // Deep-link straight to the attachment URL → the preview opens on load.
-    await page.goto(`/board/board-platform/issue/${id}/attachment/${attId}`);
+    await page.goto(`/board/${boardId}/issue/${issueId}/attachment/${attId}`);
     await page.waitForLoadState("load");
     await expect(page.locator("[data-lightbox]")).toBeVisible({ timeout: 6000 });
   });
@@ -297,8 +273,12 @@ test.describe("Deep-linkable attachment preview (#15)", () => {
 
 test.describe("Realtime / optimistic updates", () => {
   test("attachment appears immediately after upload (no reload)", async ({ page }) => {
-    const id = await freshIssue(page, "Attach-live probe");
-    await page.goto(`/board/board-platform/issue/${id}`);
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Attach-live board",
+      "Attach-live probe"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     await expect(page.locator("[data-attach-add]")).toBeVisible();
 
@@ -311,8 +291,12 @@ test.describe("Realtime / optimistic updates", () => {
   });
 
   test("attachment persists across reload", async ({ page }) => {
-    const id = await freshIssue(page, "Attach-persist probe");
-    await page.goto(`/board/board-platform/issue/${id}`);
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Attach-persist board",
+      "Attach-persist probe"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     await page.locator("[data-attach-input]").setInputFiles({
       name: "persist.txt",
@@ -321,14 +305,18 @@ test.describe("Realtime / optimistic updates", () => {
     });
     await expect(page.locator("[data-attachment]")).toHaveCount(1, { timeout: 6000 });
 
-    await page.goto(`/board/board-platform/issue/${id}`);
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     await expect(page.locator("[data-attachment]")).toHaveCount(1);
   });
 
   test("sub-issue appears immediately after Enter (no reload)", async ({ page }) => {
-    const id = await freshIssue(page, "Sub-live probe");
-    await page.goto(`/board/board-platform/issue/${id}`);
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Sub-live board",
+      "Sub-live probe"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     const field = page.locator("[data-sub-add-field]");
     await field.fill("First sub-task");
@@ -339,8 +327,12 @@ test.describe("Realtime / optimistic updates", () => {
 
 test.describe("Realtime status → board", () => {
   test("changing status moves the board card LIVE while the panel is open", async ({ page }) => {
-    const id = await freshIssue(page, "Live status board probe");
-    await page.goto(`/board/board-platform/issue/${id}`);
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Live status board",
+      "Live status board probe"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
 
     await page.locator('[data-rail-field]:has([data-rail-label]:text-is("Status"))').click();
@@ -348,14 +340,20 @@ test.describe("Realtime status → board", () => {
 
     // The card (on the board behind the open panel) must move to In Review live — no reload.
     const reviewColumn = page.locator('[data-column][aria-label="In Review"]');
-    await expect(reviewColumn.locator(`[data-card-id="${id}"]`)).toBeVisible({ timeout: 6000 });
+    await expect(reviewColumn.locator(`[data-card-id="${issueId}"]`)).toBeVisible({
+      timeout: 6000
+    });
   });
 
   test("after closing the issue (SPA, no reload) the card is in the new column", async ({
     page
   }) => {
-    const id = await freshIssue(page, "Close status probe");
-    await page.goto(`/board/board-platform/issue/${id}`);
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Close status board",
+      "Close status probe"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
 
     await page.locator('[data-rail-field]:has([data-rail-label]:text-is("Status"))').click();
@@ -364,12 +362,16 @@ test.describe("Realtime status → board", () => {
     await page.locator('[data-bar-tools] button[data-action="close"]').click();
 
     const doneColumn = page.locator('[data-column][aria-label="Done"]');
-    await expect(doneColumn.locator(`[data-card-id="${id}"]`)).toBeVisible({ timeout: 6000 });
+    await expect(doneColumn.locator(`[data-card-id="${issueId}"]`)).toBeVisible({ timeout: 6000 });
   });
 
   test("changing priority updates the rail live (optimistic, no reload)", async ({ page }) => {
-    const id = await freshIssue(page, "Priority live probe");
-    await page.goto(`/board/board-platform/issue/${id}`);
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Priority live board",
+      "Priority live probe"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     await page.locator('[data-rail-field]:has([data-rail-label]:text-is("Priority"))').click();
     await page.locator('[data-chooser-option][data-value="urgent"]').click();
@@ -382,8 +384,12 @@ test.describe("Realtime status → board", () => {
 
 test.describe("Issue customization", () => {
   test("picking an icon updates the rail chip live", async ({ page }) => {
-    const id = await freshIssue(page, "Icon rail probe");
-    await page.goto(`/board/board-platform/issue/${id}`);
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Icon rail board",
+      "Icon rail probe"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     await page.locator("[data-icon-customize]").click();
     await page.locator('[data-icon-cell][data-value="rocket"]').click();
@@ -420,22 +426,30 @@ test.describe("Issue customization", () => {
 
 test.describe("Issue editing persists", () => {
   test("inline title edit persists across reload", async ({ page }) => {
-    const id = await freshIssue(page, "Title before");
-    await page.goto(`/board/board-platform/issue/${id}`);
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Title edit board",
+      "Title before"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     await page.locator("[data-issue-title]").dblclick();
     const input = page.locator("[data-title-edit]");
     await input.fill("Title after — verified");
     await input.press("Enter");
 
-    await page.goto(`/board/board-platform/issue/${id}`);
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     await expect(page.locator("[data-issue-title]")).toHaveText("Title after — verified");
   });
 
   test("milestone assignment persists across reload", async ({ page }) => {
-    const id = await freshIssue(page, "Milestone probe");
-    await page.goto(`/board/board-platform/issue/${id}`);
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Milestone board",
+      "Milestone probe"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     await page
       .locator('[data-rail-field]:has([data-rail-label]:text-is("Milestone / Cycle"))')
@@ -444,7 +458,7 @@ test.describe("Issue editing persists", () => {
     await field.fill("Q9 Cycle");
     await field.press("Enter");
 
-    await page.goto(`/board/board-platform/issue/${id}`);
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     const milestone = page.locator(
       '[data-rail-field]:has([data-rail-label]:text-is("Milestone / Cycle")) [data-rail-value]'
