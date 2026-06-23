@@ -25,6 +25,27 @@ async function freshBoard(page: import("@playwright/test").Page, title: string):
   return ((await res.json()) as { id: string }).id;
 }
 
+/**
+ * Create a fresh board AND one issue in its first (Backlog) column. Isolates board-card assertions from
+ * the shared platform board, whose Backlog fills with other tests' fresh issues within a server session.
+ */
+async function freshBoardWithIssue(
+  page: import("@playwright/test").Page,
+  boardTitle: string,
+  issueTitle: string
+): Promise<{ boardId: string; issueId: string }> {
+  const boardId = await freshBoard(page, boardTitle);
+  const boardRes = await page.request.get(`/api/boards/${boardId}`);
+  const snap = (await boardRes.json()) as { columns: { id: string }[] };
+  const columnId = snap.columns[0]?.id ?? "";
+  const res = await page.request.post(`/api/boards/${boardId}/columns/${columnId}/issues`, {
+    data: { title: issueTitle }
+  });
+  expect(res.ok()).toBeTruthy();
+  const issueId = ((await res.json()) as { id: string }).id;
+  return { boardId, issueId };
+}
+
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(FIXED_TIME);
   await signIn(page);
@@ -54,6 +75,22 @@ test.describe("Board name + subtitle edit", () => {
     await page.waitForLoadState("load");
     await expect(headerTitle).toHaveText("Edited board");
     await expect(page.locator("[data-board-standfirst]")).toHaveText("A crisp new subtitle.");
+  });
+});
+
+test.describe("Board/department change transition", () => {
+  test("the working content has an entry transition (animates on navigation)", async ({ page }) => {
+    await page.goto("/board/board-platform");
+    await page.waitForLoadState("load");
+    // The suite globally emulates prefers-reduced-motion (for stable visual baselines), which correctly
+    // disables this transition — opt back into motion at runtime to assert the animation is actually wired.
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    const animation = await page
+      .locator('[data-page="board"]')
+      .evaluate(el => getComputedStyle(el).animationName);
+    // The board content carries a (non-"none") entry animation so board/department swaps transition.
+    expect(animation).not.toBe("none");
+    expect(animation).toContain("atlas-rise");
   });
 });
 
@@ -155,18 +192,27 @@ test.describe("Issue customization", () => {
   });
 
   test("an issue's customized icon shows on its board card after reload", async ({ page }) => {
-    const id = await freshIssue(page, "Icon card probe");
-    await page.goto(`/board/board-platform/issue/${id}`);
+    // Use a fresh single-issue board so the card is always rendered (immune to platform Backlog buildup).
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Icon card board",
+      "Icon card probe"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     await page.locator("[data-icon-customize]").click();
-    await page.locator('[data-icon-cell][data-value="beaker"]').click();
+    // Wait for the customize POST to persist before reloading — else the board re-fetch races the write.
+    await Promise.all([
+      page.waitForResponse(r => r.url().includes("/api/customize") && r.ok()),
+      page.locator('[data-icon-cell][data-value="beaker"]').click()
+    ]);
     await expect(page.locator('[data-icon-chip] [data-icon="beaker"]')).toBeVisible({
       timeout: 6000
     });
 
-    await page.goto("/board/board-platform");
+    await page.goto(`/board/${boardId}`);
     await page.waitForLoadState("load");
-    const card = page.locator(`[data-card-id="${id}"]`);
+    const card = page.locator(`[data-card-id="${issueId}"]`);
     await expect(card.locator('[data-card-icon] [data-icon="beaker"]')).toBeVisible();
   });
 });

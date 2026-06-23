@@ -170,6 +170,10 @@
   :scope {
     display: flex;
     flex-direction: column;
+    /* Content transition: the working screen rises + fades in on every board/department change (the SPA
+       re-mounts this page on navigation), so switching boards reads as a calm settle, not an abrupt cut.
+       Restrained per design §2 — disabled under prefers-reduced-motion below. */
+    animation: atlas-rise var(--dur-normal) var(--ease-out) both;
   }
 
   [data-region="board-header"] {
@@ -182,5 +186,11 @@
 
   [data-overlay="issue"][hidden] {
     display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :scope {
+      animation: none;
+    }
   }
 }

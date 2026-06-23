@@ -29,6 +29,12 @@ export type BoardState = {
   /** Which surface to render — board (kanban) or list (editorial table). */
   view: BoardViewMode;
   /**
+   * Whether the LIVE snapshot has been fetched this mount. False when `snapshot` is only the cached
+   * paint-on-mount seed — so `sync` re-fetches on a fresh mount (avoiding stale data after a re-mount)
+   * but skips the re-fetch on a same-board view flip (board ⇄ list) of the persisted instance.
+   */
+  loaded: boolean;
+  /**
    * Whether an empty department is selected — when true the board area renders the editorial
    * empty-department state instead of the (stale) snapshot. Driven by {@link file://../../lib/empty-dept.ts}
    * (a department has no board to navigate to, so the URL can't represent it); cleared on a real

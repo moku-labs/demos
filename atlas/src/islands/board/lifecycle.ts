@@ -100,9 +100,12 @@ export async function sync(ctx: BoardContext): Promise<void> {
   setEmptyDept(undefined);
   if (ctx.state.emptyDepartment) ctx.set({ emptyDepartment: false });
 
-  // Same board, already loaded live (its real snapshot is in state) — only the view changed.
-  const loaded = ctx.state.boardId === boardId && ctx.state.snapshot.board.id === boardId;
-  if (loaded) {
+  // Same board, already loaded live this mount — only the view changed (board ⇄ list), so skip the
+  // re-fetch. We require `loaded` (not just a matching snapshot id): on a fresh re-mount the snapshot is
+  // only the cached paint-on-mount seed, which may be stale after a mutation — so we must still re-fetch.
+  const sameBoardLive =
+    ctx.state.loaded && ctx.state.boardId === boardId && ctx.state.snapshot.board.id === boardId;
+  if (sameBoardLive) {
     resetBoardScroll();
     return;
   }
@@ -139,7 +142,7 @@ async function loadBoard(ctx: BoardContext, boardId: string): Promise<void> {
 
   const snapshot = await getBoard(boardId);
   snapshotCache.set(boardId, snapshot);
-  ctx.set({ boardId, snapshot });
+  ctx.set({ boardId, snapshot, loaded: true });
 
   // Register the realtime handler BEFORE seed() so the flushed pre-seed buffer reaches it.
   ctx.cleanup(onPatch(patch => applyPatch(ctx, patch)));

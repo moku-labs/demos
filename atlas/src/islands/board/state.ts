@@ -26,6 +26,9 @@ export function initState(ctx: BoardContext): BoardState {
     boardId,
     snapshot: cachedSnapshot(boardId) ?? EMPTY_SNAPSHOT,
     view: ctx.meta.view === "list" ? "list" : currentView(),
+    // The cached snapshot is only a paint-on-mount seed (avoids the empty flash) — `sync` must still
+    // re-fetch the live snapshot on a fresh mount, so this stays false until loadBoard completes.
+    loaded: false,
     emptyDepartment: false
   };
 }
