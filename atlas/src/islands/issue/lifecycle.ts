@@ -1,9 +1,11 @@
 /**
  * @file issue island — the route-driven lifecycle. `sync(ctx)` is the single idempotent entry called
- * from BOTH `onMount` (the panel re-mounts inside BoardPage on every nav) and `onNavEnd` (defensive,
- * in case it ever persists): it opens + loads the issue when the route targets one, and hides + clears
- * otherwise. It also wires the realtime subscription (live edits to the OPEN issue) and an Escape key
- * (close back to the board) once, releasing both via `ctx.cleanup`.
+ * from BOTH `onMount` (the first mount) and `onNavEnd` (every subsequent navigation): it opens + loads
+ * the issue when the route targets one, and hides + clears otherwise. The overlay host lives OUTSIDE the
+ * `main > section` swap region, so this island is PERSISTENT — never nav-unmounted — and `onNavEnd`
+ * (not a fresh `onMount`) is what drives every open/close after the first. It also wires the realtime
+ * subscription (live edits to the OPEN issue) and an Escape key (close back to the board) once,
+ * releasing both via `ctx.cleanup`.
  */
 import { getBoard, getIssue } from "../../lib/api";
 import { rememberedBoardScroll } from "../../lib/board-scroll";
@@ -20,7 +22,7 @@ import type {
 import { loadUsers } from "../../lib/users";
 import { urls } from "../../routes";
 import { closeLightbox, openAttachmentPreview } from "./lightbox";
-import { CLOSED_STATE, ESCAPE_KEY, ISSUE_FOCUS, type IssueContext } from "./types";
+import { ESCAPE_KEY, ISSUE_FOCUS, type IssueContext } from "./types";
 
 /**
  * Reveal or hide the host `<aside hidden>` — open the panel by clearing `hidden`, close it by setting
@@ -141,7 +143,17 @@ function closePanel(ctx: IssueContext): void {
   // A body-level lightbox would outlive the panel on navigation away — tear it down too.
   closeLightbox();
   setHostOpen(ctx.el, false);
-  ctx.set(CLOSED_STATE);
+
+  // Clear only the routing identity (issueId/boardId) + edit flags — NOT the loaded detail. The issue
+  // overlay is a PERSISTENT island (its host lives outside the `main > section` swap region since the
+  // persistent-board refactor), so it is never nav-unmounted; its render runs on every `ctx.set`. A
+  // render-on-change island that returns an empty result tears down its Preact subtree, and the next
+  // non-empty render does NOT re-commit into the reused host — so cycling detail→""→detail left the
+  // panel blank ("only the first issue ever opens"). Keeping the last detail in state means render
+  // always returns the panel (invisible, because the host is `hidden`), and the next open diffs the new
+  // issue in place. issueId="" also makes the realtime reconcile ignore patches while closed, and the
+  // sync() identity check re-load the issue on re-open.
+  ctx.set({ boardId: "", issueId: "", editingDescription: false, editingTitle: false });
 }
 
 /**

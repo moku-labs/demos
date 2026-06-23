@@ -186,7 +186,8 @@ test.describe("gallery — overlays (desktop)", () => {
   });
 
   test("C2 filter panel", async ({ page }) => {
-    await page.locator("[data-masthead] [data-tool='filter']").click();
+    // Filter lives in the boards bar (B3) on desktop, not the masthead (see Masthead.tsx / BoardsBar.tsx).
+    await page.locator("[data-boards-bar] [data-action='open-filter']").click();
     await expect(page.locator("[data-filter-panel]")).toBeVisible();
     await shot(page, "overlay-C2-filter", false);
   });

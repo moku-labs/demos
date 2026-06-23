@@ -23,7 +23,10 @@ import type { IssueState } from "./types";
  * ```
  */
 export function render(state: Readonly<IssueState>): Spa.RenderResult {
-  // Closed: nothing loaded yet — render an empty host (the lifecycle keeps it `hidden`).
+  // Nothing loaded yet (only before the FIRST open) — render an empty host. After an issue has opened,
+  // `closePanel` keeps the last detail in state precisely so this never returns empty again: the issue
+  // overlay is a persistent island, and a render-on-change island that returns empty tears down its
+  // Preact subtree and won't re-commit into the reused host (see closePanel in lifecycle.ts).
   if (!state.detail || !state.board || !state.column) return "";
 
   // Resolve the reporter from the issue (the panel shows it in the byline + the rail).

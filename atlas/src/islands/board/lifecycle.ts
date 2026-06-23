@@ -139,6 +139,7 @@ async function loadBoard(ctx: BoardContext, boardId: string): Promise<void> {
 
   // Register the signed-in user(s) so a card assignee that is the current user resolves to their
   // name + avatar colour (cached; non-blocking — the seed cast resolves without it on first paint).
+  // loadUsers self-catches (degrades to the static cast), so this fire-and-forget never rejects.
   void loadUsers();
 
   // Paint the cached snapshot immediately (avoids the empty-board flash on re-mount).

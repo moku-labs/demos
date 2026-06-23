@@ -11,8 +11,9 @@
  *
  * The host is the page-level overlay `data-island="issue"` (an `<aside hidden>` in BoardPage). The
  * panel opens for `/board/{id}/issue/{issueId}` and hides on any other board route — driven entirely
- * from the route context (`ctx.meta.focus` / `ctx.params`). Because BoardPage's islands re-mount on
- * each navigation, the same idempotent `sync` runs from `onMount` (via `startIssue`) AND `onNavEnd`.
+ * from the route context (`ctx.meta.focus` / `ctx.params`). The host lives OUTSIDE the swap region, so
+ * the island is PERSISTENT (never nav-unmounted): the same idempotent `sync` runs from `onMount` (via
+ * `startIssue`, once) AND `onNavEnd` (every navigation after).
  */
 import { createIsland } from "@moku-labs/web/browser";
 import { issueEvents } from "./events";
