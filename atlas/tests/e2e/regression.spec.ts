@@ -79,18 +79,37 @@ test.describe("Board name + subtitle edit", () => {
 });
 
 test.describe("Board/department change transition", () => {
-  test("the working content has an entry transition (animates on navigation)", async ({ page }) => {
+  test("the board content has an entry transition (animates on navigation)", async ({ page }) => {
     await page.goto("/board/board-platform");
     await page.waitForLoadState("load");
     // The suite globally emulates prefers-reduced-motion (for stable visual baselines), which correctly
     // disables this transition — opt back into motion at runtime to assert the animation is actually wired.
     await page.emulateMedia({ reducedMotion: "no-preference" });
+    // The animation lives on the CONTENT region, never the page wrapper (a transform on the wrapper would
+    // trap the fixed issue overlay — see the overlay-covers-viewport guard below).
     const animation = await page
-      .locator('[data-page="board"]')
+      .locator('[data-region="board"]')
       .evaluate(el => getComputedStyle(el).animationName);
-    // The board content carries a (non-"none") entry animation so board/department swaps transition.
     expect(animation).not.toBe("none");
     expect(animation).toContain("atlas-rise");
+  });
+
+  test("the open issue overlay covers the full viewport (not trapped in the board box)", async ({
+    page
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/board/board-platform/issue/issue-ws-reconnect");
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-issue-title]");
+    // The panel is position:fixed inset:0 — it MUST span ~the whole viewport. A lingering transform on
+    // an ancestor (the content-transition bug) would make it the panel's containing block and shrink it
+    // to the board box. This guards that regression.
+    const box = await page.locator("[data-issue-panel]").boundingBox();
+    expect(box).not.toBeNull();
+    if (box) {
+      expect(box.width).toBeGreaterThan(1280 * 0.95);
+      expect(box.height).toBeGreaterThan(900 * 0.95);
+    }
   });
 });
 
