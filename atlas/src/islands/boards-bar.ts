@@ -18,12 +18,13 @@ import type { Spa } from "@moku-labs/web/browser";
 import { createIsland } from "@moku-labs/web/browser";
 import { h } from "preact";
 import { BoardsBar } from "../components/BoardsBar";
-import { createBoard, deleteBoard, renameBoard, reorderBoard } from "../lib/api";
+import { createBoard, deleteBoard, getBoard, renameBoard, reorderBoard } from "../lib/api";
 
 import { hideInsertionIndicator, positionInsertionIndicator } from "../lib/drag-indicator";
 import { getEmptyDept, onEmptyDept, setEmptyDept } from "../lib/empty-dept";
 import { openCustomize, openMenu, openModal, showToast } from "../lib/menu";
 import { navigate, onNavRefresh, refresh, resolveActive } from "../lib/nav";
+import { deliverLocal } from "../lib/realtime";
 import type { Board, BoardSummary, Customization } from "../lib/types";
 import { urls } from "../routes";
 
@@ -311,31 +312,38 @@ function openCustomizeFor(ctx: BoardsBarContext, board: BoardSummary): void {
 }
 
 /**
- * Rename a board via the prompt modal (also the double-click faster path), then {@link refresh}.
+ * Edit a board's name AND subtitle (standfirst) via the board modal, then {@link refresh}. The current
+ * subtitle is fetched (it isn't in the lightweight nav index) so the field prefills.
  *
- * @param board - The board to rename.
- * @returns A promise that resolves once the rename persists (or is cancelled).
+ * @param board - The board to edit.
+ * @returns A promise that resolves once the edit persists (or is cancelled).
  * @example
  * ```ts
  * await renameBoardFlow(board);
  * ```
  */
 async function renameBoardFlow(board: BoardSummary): Promise<void> {
+  const snapshot = await getBoard(board.id);
   const result = await openModal({
-    variant: "prompt",
-    title: "Rename board",
+    variant: "board",
+    title: "Edit board",
     placeholder: "Board title",
     initialValue: board.title,
-    confirmLabel: "Rename"
+    initialSubtitle: snapshot.board.standfirst,
+    confirmLabel: "Save"
   });
   if (result.kind !== "submit") return;
 
   const title = result.value.trim();
-  if (!title || title === board.title) return;
+  if (!title) return;
+  const subtitle = result.subtitle ?? snapshot.board.standfirst;
+  if (title === board.title && subtitle === snapshot.board.standfirst) return;
 
-  await renameBoard(board.id, title);
+  await renameBoard(board.id, title, subtitle);
+  // Update the board header live (its title + standfirst) without waiting for the dev-flaky WS echo.
+  deliverLocal({ type: "board.renamed", boardId: board.id, title, standfirst: subtitle });
   refresh();
-  showToast("Board renamed");
+  showToast("Board updated");
 }
 
 /**

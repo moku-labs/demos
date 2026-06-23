@@ -238,5 +238,5 @@ export type BoardPatch =
       color: string | null;
       icon: string | null;
     }
-  | { type: "board.renamed"; boardId: string; title: string }
+  | { type: "board.renamed"; boardId: string; title: string; standfirst?: string }
   | { type: "board.deleted"; boardId: string };

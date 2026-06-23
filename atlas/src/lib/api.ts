@@ -324,18 +324,20 @@ export async function getBoard(boardId: string): Promise<BoardSnapshot> {
 }
 
 /**
- * Rename a board (broadcasts `board.renamed`).
+ * Rename a board + edit its subtitle/standfirst (broadcasts `board.renamed`).
  *
  * @param id - The board to rename.
  * @param title - The new title.
+ * @param standfirst - The new subtitle/standfirst (omit to leave it unchanged).
  * @returns The updated board.
  * @example
  * ```ts
- * const board = await renameBoard(boardId, "Platform");
+ * const board = await renameBoard(boardId, "Platform", "The Cloudflare backbone.");
  * ```
  */
-export async function renameBoard(id: string, title: string): Promise<Board> {
-  return request<Board>(`/api/boards/${id}`, jsonInit("PATCH", { title }));
+export async function renameBoard(id: string, title: string, standfirst?: string): Promise<Board> {
+  const body = standfirst === undefined ? { title } : { title, standfirst };
+  return request<Board>(`/api/boards/${id}`, jsonInit("PATCH", body));
 }
 
 /**

@@ -45,29 +45,31 @@ export interface ModalSwatch {
 /** A request to open the centered modal. */
 export interface ModalRequest {
   /** Which dialog to render. */
-  variant: "delete" | "prompt" | "date" | "profile";
+  variant: "delete" | "prompt" | "date" | "profile" | "board";
   /** The dialog title. */
   title: string;
   /** The body copy (delete) or helper line. */
   message?: string;
   /** Label for the primary/confirm button (defaults per variant). */
   confirmLabel?: string;
-  /** Placeholder for the text field (prompt/profile variant). */
+  /** Placeholder for the text field (prompt/profile/board variant). */
   placeholder?: string;
-  /** Initial field value (prompt/date/profile prefill). */
+  /** Initial field value (prompt/date/profile/board name prefill). */
   initialValue?: string;
   /** The avatar-colour palette (profile variant) — rendered as selectable swatches. */
   palette?: ModalSwatch[];
   /** The initially-selected colour token (profile variant), or `null`. */
   initialColor?: string | null;
+  /** Initial subtitle/standfirst value (board variant) — prefills the second field. */
+  initialSubtitle?: string;
 }
 
 /** The outcome of a modal — what the user chose. */
 export type ModalResult =
   /** The delete confirm was accepted. */
   | { kind: "confirm" }
-  /** A prompt/date/profile field was submitted (profile also carries the chosen colour token). */
-  | { kind: "submit"; value: string; color?: string | null }
+  /** A prompt/date/profile/board field was submitted (profile carries colour; board carries subtitle). */
+  | { kind: "submit"; value: string; color?: string | null; subtitle?: string }
   /** The date variant's "Clear" was pressed. */
   | { kind: "clear" }
   /** Cancelled or dismissed (scrim / close / Escape). */

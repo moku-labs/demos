@@ -116,6 +116,44 @@
     background: var(--surface-card);
   }
 
+  /* Board variant — the subtitle (standfirst) field below the name: a small mono label + a textarea. */
+  [data-modal-subtitle-field] {
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+  [data-modal-sublabel] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  [data-modal-subtitle] {
+    width: 100%;
+    padding: 0.55rem 0.8rem;
+    background: var(--surface-sunken);
+    border: var(--rule-width) solid var(--rule-strong);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: var(--text-body);
+    resize: vertical;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  [data-modal-subtitle]:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--surface-card);
+  }
+  [data-modal-subtitle]::placeholder {
+    color: var(--text-faint);
+  }
+
   /* Profile variant — the avatar-colour swatch row beneath the name field. Round, token-painted dots;
      the selected one gets an accent ring. (Same visual language as the Customize panel swatches.) */
   [data-modal-swatches] {

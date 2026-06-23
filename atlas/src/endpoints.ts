@@ -365,16 +365,19 @@ export const endpoints: Server.Endpoint[] = [
     await ctx.require(issuesPlugin).deleteMilestone(ctx.env, ctx.params.id, name, actor);
     return new Response(undefined, { status: 204 });
   }),
-  // PATCH /api/boards/{id} — rename a board (broadcasts board.renamed).
-  //   expects : path {id} · JSON body { title }
+  // PATCH /api/boards/{id} — rename a board + edit its subtitle (broadcasts board.renamed).
+  //   expects : path {id} · JSON body { title, standfirst? }
   //   returns : 200 · Board   ·   401 when no actor   ·   404 when the id is unknown
   endpoint("/api/boards/{id}").patch(async ctx => {
     const actor = await ctx.require(authPlugin).resolveActor(ctx.request, ctx.env);
     if (!actor) return unauthorized();
-    const { title } = (await ctx.request.json()) as { title: string };
+    const { title, standfirst } = (await ctx.request.json()) as {
+      title: string;
+      standfirst?: string;
+    };
     try {
       return Response.json(
-        await ctx.require(boardsPlugin).rename(ctx.env, ctx.params.id, title, actor)
+        await ctx.require(boardsPlugin).rename(ctx.env, ctx.params.id, title, actor, standfirst)
       );
     } catch {
       return notFound();

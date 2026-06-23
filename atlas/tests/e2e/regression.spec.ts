@@ -16,9 +16,45 @@ async function freshIssue(page: import("@playwright/test").Page, title: string):
   return ((await res.json()) as { id: string }).id;
 }
 
+/** Create a fresh Engineering board and return its id (keeps the seed boards untouched). */
+async function freshBoard(page: import("@playwright/test").Page, title: string): Promise<string> {
+  const res = await page.request.post("/api/boards", {
+    data: { departmentId: "dept-eng", title }
+  });
+  expect(res.ok()).toBeTruthy();
+  return ((await res.json()) as { id: string }).id;
+}
+
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(FIXED_TIME);
   await signIn(page);
+});
+
+test.describe("Board name + subtitle edit", () => {
+  test("editing a board's name + subtitle persists and shows in the header", async ({ page }) => {
+    const id = await freshBoard(page, "Board edit probe");
+    await page.goto(`/board/${id}`);
+    await page.waitForLoadState("load");
+
+    await page.locator('[data-board-pill][data-active] [data-action="menu"]').click();
+    await page.locator('[data-context-menu] [data-action="rename"]').click();
+    await page.locator('[data-modal] [data-action="modal-input"]').fill("Edited board");
+    await page.locator("[data-modal-subtitle]").fill("A crisp new subtitle.");
+    await page.locator('[data-modal] button[data-action="confirm-modal"]').click();
+
+    // Live in the header (scope to the header — [data-board-title] also marks the board pills).
+    const headerTitle = page.locator("[data-board-header] [data-board-title]");
+    await expect(headerTitle).toHaveText("Edited board", { timeout: 6000 });
+    await expect(page.locator("[data-board-standfirst]")).toHaveText("A crisp new subtitle.", {
+      timeout: 6000
+    });
+
+    // Persists across reload.
+    await page.goto(`/board/${id}`);
+    await page.waitForLoadState("load");
+    await expect(headerTitle).toHaveText("Edited board");
+    await expect(page.locator("[data-board-standfirst]")).toHaveText("A crisp new subtitle.");
+  });
 });
 
 test.describe("Realtime / optimistic updates", () => {

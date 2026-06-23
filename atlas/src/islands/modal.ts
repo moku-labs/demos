@@ -112,6 +112,9 @@ function present(ctx: ModalContext, request: ModalRequest): Promise<ModalResult>
       if (request.initialValue !== undefined) input.value = request.initialValue;
       input.focus();
     }
+    // The board variant carries a second (subtitle) field — prefill it from the request.
+    const subtitle = ctx.el.querySelector<HTMLTextAreaElement>("[data-modal-subtitle]");
+    if (subtitle && request.initialSubtitle !== undefined) subtitle.value = request.initialSubtitle;
   });
 }
 
@@ -144,6 +147,14 @@ function onConfirm(ctx: ModalContext, event: Event): void {
       .value;
     // eslint-disable-next-line unicorn/no-null -- null clears the colour per the profile contract
     settle(ctx, { kind: "submit", value, color: picked ?? null });
+    return;
+  }
+
+  // The board variant also reports the edited subtitle (standfirst).
+  if (request.variant === "board") {
+    const subtitle =
+      ctx.el.querySelector<HTMLTextAreaElement>("[data-modal-subtitle]")?.value ?? "";
+    settle(ctx, { kind: "submit", value, subtitle });
     return;
   }
 

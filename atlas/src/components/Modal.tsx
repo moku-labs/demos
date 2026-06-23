@@ -13,7 +13,7 @@ import { Icon } from "./Icon";
 /** Props for {@link Modal}. */
 export interface ModalProps {
   /** Which dialog to render. */
-  variant: "delete" | "prompt" | "date" | "profile";
+  variant: "delete" | "prompt" | "date" | "profile" | "board";
   /** The dialog title (e.g. "Delete column", "New board", "Set due date"). */
   title: string;
   /** The body copy (delete variant) or helper line. */
@@ -57,8 +57,15 @@ export function Modal({
   const isDelete = variant === "delete";
   const isDate = variant === "date";
   const isProfile = variant === "profile";
+  const isBoard = variant === "board";
   const confirm = confirmLabel ?? (isDelete ? "Delete" : isDate ? "Save" : "Create");
-  const eyebrow = isDelete ? "Confirm" : isDate ? "Schedule" : isProfile ? "Edit" : "Create";
+  const eyebrow = isDelete
+    ? "Confirm"
+    : isDate
+      ? "Schedule"
+      : isProfile || isBoard
+        ? "Edit"
+        : "Create";
 
   return (
     <div data-modal data-variant={variant}>
@@ -77,7 +84,7 @@ export function Modal({
 
           {message && <p data-modal-message>{message}</p>}
 
-          {(variant === "prompt" || isProfile) && (
+          {(variant === "prompt" || isProfile || isBoard) && (
             <label data-modal-field>
               <input
                 type="text"
@@ -86,6 +93,17 @@ export function Modal({
                 placeholder={placeholder ?? "Title"}
                 autocomplete="off"
                 required
+              />
+            </label>
+          )}
+
+          {isBoard && (
+            <label data-modal-field data-modal-subtitle-field>
+              <span data-modal-sublabel>Subtitle</span>
+              <textarea
+                data-modal-subtitle
+                placeholder="A line of context for this board…"
+                rows={2}
               />
             </label>
           )}

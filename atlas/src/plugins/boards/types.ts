@@ -23,8 +23,14 @@ export type Api = {
   ): Promise<{ board: Board; columns: Column[] } | null>;
   /** Create a board (seeds default columns) + warm KV; emit boards:created (list-level — no broadcast). */
   create(env: WorkerEnv, input: NewBoard, actor: Actor): Promise<Board>;
-  /** Rename a board; broadcast board.renamed + emit boards:renamed. */
-  rename(env: WorkerEnv, boardId: string, title: string, actor: Actor): Promise<Board>;
+  /** Rename a board (+ optional standfirst/subtitle); broadcast board.renamed + emit boards:renamed. */
+  rename(
+    env: WorkerEnv,
+    boardId: string,
+    title: string,
+    actor: Actor,
+    standfirst?: string
+  ): Promise<Board>;
   /** Reorder a board within its department; emit boards:reordered (list-level — no broadcast). */
   reorder(env: WorkerEnv, boardId: string, position: number, actor: Actor): Promise<void>;
   /** Purge R2 (cascade) → broadcast board.deleted → delete row → re-warm KV; emit boards:deleted. */

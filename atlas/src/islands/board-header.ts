@@ -193,7 +193,13 @@ function applyPatch(ctx: HeaderContext, patch: BoardPatch, scheduleRefetch: () =
   if (patch.type === "board.renamed") {
     const board = ctx.state.board;
     if (board && board.id === patch.boardId) {
-      ctx.set({ board: { ...board, title: patch.title } });
+      ctx.set({
+        board: {
+          ...board,
+          title: patch.title,
+          ...(patch.standfirst === undefined ? {} : { standfirst: patch.standfirst })
+        }
+      });
     }
     return;
   }

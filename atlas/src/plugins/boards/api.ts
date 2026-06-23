@@ -271,13 +271,20 @@ export function createBoardsApi(ctx: BoardsContext): Api {
      * @param boardId - The board to rename.
      * @param title - The new title.
      * @param actor - The signed-in actor.
+     * @param standfirst - The new subtitle/standfirst (omit to leave it unchanged).
      * @returns The updated `Board`.
      * @example
      * ```ts
      * const board = await app.boards.rename(env, boardId, "New Title", actor);
      * ```
      */
-    async rename(env: WorkerEnv, boardId: string, title: string, actor: Actor): Promise<Board> {
+    async rename(
+      env: WorkerEnv,
+      boardId: string,
+      title: string,
+      actor: Actor,
+      standfirst?: string
+    ): Promise<Board> {
       const row = await d1.first<BoardRow>(
         env,
         "SELECT id, department_id, title, standfirst, eyebrow, position, created_at FROM boards WHERE id = ?",
@@ -286,14 +293,27 @@ export function createBoardsApi(ctx: BoardsContext): Api {
       if (!row)
         throw new Error(`[boards] Board not found: ${boardId}.\n  Ensure the board id is valid.`);
 
-      await d1.run(env, "UPDATE boards SET title = ? WHERE id = ?", title, boardId);
+      // The standfirst (subtitle) is edited alongside the title; omit it to leave it unchanged.
+      const nextStandfirst = standfirst ?? row.standfirst;
+      await d1.run(
+        env,
+        "UPDATE boards SET title = ?, standfirst = ? WHERE id = ?",
+        title,
+        nextStandfirst,
+        boardId
+      );
 
       // Re-warm KV with updated title
       await reWarmDepartment(env, row.department_id);
 
-      const updatedBoard: Board = rowToBoard({ ...row, title });
+      const updatedBoard: Board = rowToBoard({ ...row, title, standfirst: nextStandfirst });
 
-      await realtime.broadcast(env, boardId, { type: "board.renamed", boardId, title });
+      await realtime.broadcast(env, boardId, {
+        type: "board.renamed",
+        boardId,
+        title,
+        standfirst: nextStandfirst
+      });
 
       ctx.emit("boards:renamed", {
         env,
