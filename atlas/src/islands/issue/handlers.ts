@@ -28,7 +28,8 @@ import {
   showToast
 } from "../../lib/menu";
 import { allPeople } from "../../lib/people";
-import type { IssueStatus, LabelKey, Priority } from "../../lib/types";
+import { deliverLocal } from "../../lib/realtime";
+import type { IssuePatch, IssueStatus, LabelKey, Priority } from "../../lib/types";
 import { closeToBoard } from "./lifecycle";
 import type { IssueContext } from "./types";
 
@@ -482,6 +483,26 @@ export async function onSubToggle(ctx: IssueContext, _event: Event, box: Element
 const PRIORITY_CHOICES: readonly Priority[] = ["none", "urgent", "high", "medium", "low"];
 
 /**
+ * Persist a rail-property patch AND apply it locally immediately (this panel's rail + the board card)
+ * via {@link deliverLocal} — so edits update in real time without waiting for the dev-flaky WebSocket
+ * echo. The server's returning `property.changed` broadcast reconciles the same patch idempotently.
+ *
+ * @param ctx - The issue component context.
+ * @param patch - The rail property patch to persist + apply.
+ * @returns A promise that resolves once the patch persists.
+ * @example
+ * ```ts
+ * await applyProperty(ctx, { priority: "high" });
+ * ```
+ */
+async function applyProperty(ctx: IssueContext, patch: IssuePatch): Promise<void> {
+  const detail = ctx.state.detail;
+  if (!detail) return;
+  await patchIssue(detail.issue.id, patch);
+  deliverLocal({ type: "property.changed", issueId: detail.issue.id, patch });
+}
+
+/**
  * Open the Status chooser under the rail field — a single-select list of the board statuses, each with
  * its status dot, the current one checked. Picking persists via {@link applyStatus}.
  *
@@ -530,9 +551,21 @@ async function applyStatus(ctx: IssueContext, status: IssueStatus): Promise<void
   if (!detail || status === detail.issue.status) return;
 
   const targetColumn = ctx.state.columns.find(column => column.title === STATUS_TITLES[status]);
-  await (targetColumn && targetColumn.id !== detail.issue.columnId
-    ? moveIssue(detail.issue.id, { toColumnId: targetColumn.id, position: 0, status })
-    : patchIssue(detail.issue.id, { status }));
+  if (targetColumn && targetColumn.id !== detail.issue.columnId) {
+    await moveIssue(detail.issue.id, { toColumnId: targetColumn.id, position: 0, status });
+    // Apply the move locally NOW (board card + this panel's rail) — don't wait for the WS echo, which
+    // the dev workerd can drop; the returning broadcast reconciles the same move idempotently.
+    deliverLocal({
+      type: "issue.moved",
+      issueId: detail.issue.id,
+      toColumnId: targetColumn.id,
+      position: 0,
+      status
+    });
+  } else {
+    await patchIssue(detail.issue.id, { status });
+    deliverLocal({ type: "property.changed", issueId: detail.issue.id, patch: { status } });
+  }
   showToast(`Status → ${STATUS_TITLES[status]}`);
 }
 
@@ -583,7 +616,7 @@ async function applyPriority(ctx: IssueContext, priority: Priority): Promise<voi
   const detail = ctx.state.detail;
   if (!detail || priority === (detail.issue.priority ?? "none")) return;
 
-  await patchIssue(detail.issue.id, { priority });
+  await applyProperty(ctx, { priority });
   showToast(priority === "none" ? "Priority cleared" : `Priority → ${PRIORITIES[priority]}`);
 }
 
@@ -637,7 +670,7 @@ async function applyLabels(ctx: IssueContext, values: LabelKey[]): Promise<void>
 
   const chosen = new Set(values);
   const labels = LABEL_KEYS.filter(key => chosen.has(key));
-  await patchIssue(detail.issue.id, { labels: [...labels] });
+  await applyProperty(ctx, { labels: [...labels] });
   showToast("Labels updated");
 }
 
@@ -693,7 +726,7 @@ async function applyAssignees(ctx: IssueContext, values: string[]): Promise<void
   const assignees = allPeople()
     .filter(person => chosen.has(person.id))
     .map((person, index) => ({ personId: person.id, isLead: index === 0 }));
-  await patchIssue(detail.issue.id, { assignees });
+  await applyProperty(ctx, { assignees });
   showToast("Assignees updated");
 }
 
@@ -719,14 +752,14 @@ async function editDueDate(ctx: IssueContext, _anchor?: HTMLElement): Promise<vo
   });
   if (result.kind === "clear") {
     // eslint-disable-next-line unicorn/no-null -- null is the dueAt domain contract (clears the date)
-    await patchIssue(detail.issue.id, { dueAt: null });
+    await applyProperty(ctx, { dueAt: null });
     showToast("Due date cleared");
     return;
   }
   if (result.kind !== "submit") return;
 
   const dueAt = fromDateInput(result.value);
-  await patchIssue(detail.issue.id, { dueAt });
+  await applyProperty(ctx, { dueAt });
   showToast("Due date set");
 }
 
@@ -790,7 +823,7 @@ async function editEstimate(ctx: IssueContext, _anchor?: HTMLElement): Promise<v
   const parsed = Number.parseInt(result.value.trim(), 10);
   // eslint-disable-next-line unicorn/no-null -- null is the estimate domain contract (clears the estimate)
   const estimate = Number.isNaN(parsed) ? null : parsed;
-  await patchIssue(detail.issue.id, { estimate });
+  await applyProperty(ctx, { estimate });
   showToast("Estimate updated");
 }
 
@@ -847,7 +880,7 @@ async function applyReporter(ctx: IssueContext, value: string): Promise<void> {
   // eslint-disable-next-line unicorn/no-null -- null is the reporterId domain contract (clears the reporter)
   const reporterId = value === "" ? null : value;
   if (reporterId === detail.issue.reporterId) return;
-  await patchIssue(detail.issue.id, { reporterId });
+  await applyProperty(ctx, { reporterId });
   showToast("Reporter updated");
 }
 
@@ -891,7 +924,7 @@ async function applyMilestone(ctx: IssueContext, milestone: string | null): Prom
   const detail = ctx.state.detail;
   if (!detail || milestone === detail.issue.milestone) return;
 
-  await patchIssue(detail.issue.id, { milestone });
+  await applyProperty(ctx, { milestone });
   showToast(milestone ? "Milestone updated" : "Milestone cleared");
 }
 

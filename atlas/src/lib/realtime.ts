@@ -190,6 +190,26 @@ export function onPatch(handler: (patch: BoardPatch) => void): () => void {
 }
 
 /**
+ * Deliver a patch to the registered handlers IMMEDIATELY — the optimistic local-update path. The
+ * acting client applies its own mutation without waiting for the (dev-flaky) WebSocket echo, so the
+ * board + open panel update in real time even if the broadcast never arrives. The server's returning
+ * broadcast reconciles the same patch idempotently (reconcilers place/dedupe by id), so a double
+ * delivery is harmless.
+ *
+ * @param patch - The patch to apply locally right now.
+ * @example
+ * ```ts
+ * await moveIssue(id, move);
+ * deliverLocal({ type: "issue.moved", issueId: id, toColumnId, position: 0, status });
+ * ```
+ */
+export function deliverLocal(patch: BoardPatch): void {
+  for (const handler of handlers) {
+    handler(patch);
+  }
+}
+
+/**
  * Mark the consuming island seeded and flush the pre-seed buffer to the registered handlers, in
  * arrival order. Idempotent — a second call is a no-op once seeded.
  *

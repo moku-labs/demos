@@ -63,6 +63,49 @@ test.describe("Realtime / optimistic updates", () => {
   });
 });
 
+test.describe("Realtime status → board", () => {
+  test("changing status moves the board card LIVE while the panel is open", async ({ page }) => {
+    const id = await freshIssue(page, "Live status board probe");
+    await page.goto(`/board/board-platform/issue/${id}`);
+    await page.waitForLoadState("load");
+
+    await page.locator('[data-rail-field]:has([data-rail-label]:text-is("Status"))').click();
+    await page.locator('[data-chooser-option][data-value="in_review"]').click();
+
+    // The card (on the board behind the open panel) must move to In Review live — no reload.
+    const reviewColumn = page.locator('[data-column][aria-label="In Review"]');
+    await expect(reviewColumn.locator(`[data-card-id="${id}"]`)).toBeVisible({ timeout: 6000 });
+  });
+
+  test("after closing the issue (SPA, no reload) the card is in the new column", async ({
+    page
+  }) => {
+    const id = await freshIssue(page, "Close status probe");
+    await page.goto(`/board/board-platform/issue/${id}`);
+    await page.waitForLoadState("load");
+
+    await page.locator('[data-rail-field]:has([data-rail-label]:text-is("Status"))').click();
+    await page.locator('[data-chooser-option][data-value="done"]').click();
+    // Close via the × (SPA nav back to the board — not a full page reload).
+    await page.locator('[data-bar-tools] button[data-action="close"]').click();
+
+    const doneColumn = page.locator('[data-column][aria-label="Done"]');
+    await expect(doneColumn.locator(`[data-card-id="${id}"]`)).toBeVisible({ timeout: 6000 });
+  });
+
+  test("changing priority updates the rail live (optimistic, no reload)", async ({ page }) => {
+    const id = await freshIssue(page, "Priority live probe");
+    await page.goto(`/board/board-platform/issue/${id}`);
+    await page.waitForLoadState("load");
+    await page.locator('[data-rail-field]:has([data-rail-label]:text-is("Priority"))').click();
+    await page.locator('[data-chooser-option][data-value="urgent"]').click();
+    const railPriority = page.locator(
+      '[data-rail-field]:has([data-rail-label]:text-is("Priority")) [data-rail-value]'
+    );
+    await expect(railPriority).toContainText("Urgent", { timeout: 6000 });
+  });
+});
+
 test.describe("Issue customization", () => {
   test("picking an icon updates the rail chip live", async ({ page }) => {
     const id = await freshIssue(page, "Icon rail probe");

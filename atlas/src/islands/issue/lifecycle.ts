@@ -196,6 +196,7 @@ function concernsOpenIssue(patch: BoardPatch, issueId: string): boolean {
     case "issue.updated": {
       return patch.issue.id === issueId;
     }
+    case "issue.moved":
     case "property.changed":
     case "subIssue.toggled":
     case "subIssue.removed":
@@ -235,6 +236,16 @@ function applyPatch(ctx: IssueContext, patch: BoardPatch): void {
       // The whole issue row changed (title / status / any property) — replace + re-resolve reporter.
       case "issue.updated": {
         return { detail: { ...detail, issue: patch.issue } };
+      }
+
+      // A move (status change from this or another client) — reflect the new column + status in the rail.
+      case "issue.moved": {
+        return {
+          detail: {
+            ...detail,
+            issue: { ...detail.issue, columnId: patch.toColumnId, status: patch.status }
+          }
+        };
       }
 
       // A property edit broadcast — merge the patch fields into the issue, labels, and assignees.
