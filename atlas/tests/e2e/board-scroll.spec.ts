@@ -162,7 +162,7 @@ test.describe("Board scroll — vertical (window scroll behind open issue)", () 
 
     // Close issue.
     await page.locator('[data-bar-tools] button[data-action="close"]').click();
-    await page.waitForURL(new RegExp(`/board/board-platform$`));
+    await page.waitForURL(/\/board\/board-platform$/);
     await page.waitForTimeout(300);
 
     // The scroll-lock attribute must be gone (so the board page can scroll again).
@@ -176,6 +176,50 @@ test.describe("Board scroll — vertical (window scroll behind open issue)", () 
     await page.waitForTimeout(100);
     const scrollY = await page.evaluate(() => globalThis.scrollY);
     expect(scrollY).toBeGreaterThan(50);
+  });
+
+  test("opening AND closing an issue keeps the board visually STILL (no scroll-to-top jump, no snap-back)", async ({
+    page
+  }) => {
+    // The board is persistent and sits behind the issue overlay's SEMI-TRANSPARENT scrim, so it must not
+    // visibly move when an issue opens. Before the fix the SPA nav scrolled the window to 0 — the board
+    // lurched to its top (seen through the scrim) — and the close restore ran a beat late (a snap-back).
+    // The position:fixed body-pin keeps the board pinned at its exact scroll across the whole open/close.
+    await page.setViewportSize({ width: 1280, height: 600 });
+    await page.goto("/board/board-platform");
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-card-id]");
+
+    await page.evaluate(() => globalThis.scrollTo(0, 300));
+    await page.waitForTimeout(100);
+    expect(await page.evaluate(() => globalThis.scrollY)).toBeGreaterThan(150); // we actually scrolled
+
+    // Track the on-screen position of a stable board element across the open/close.
+    const boardColumnTop = (): Promise<number> =>
+      page
+        .locator('[data-region="board"] [data-column]')
+        .first()
+        .evaluate((el: HTMLElement) => Math.round(el.getBoundingClientRect().top));
+    const topBefore = await boardColumnTop();
+
+    // Open via a REAL card click (onCardOpen pins the scroll BEFORE the navigation).
+    await page.locator("[data-card-id]").first().locator("[data-card-title]").click();
+    await page.waitForURL(/\/issue\//);
+    await expect(page.locator("[data-issue-panel]")).toBeVisible({ timeout: 6000 });
+    // The board behind the scrim must NOT have moved (was a ~300px jump to the top before the fix).
+    expect(Math.abs((await boardColumnTop()) - topBefore)).toBeLessThanOrEqual(2);
+
+    // Close → still no movement; scroll restored; lock released; body unpinned; the page scrolls again.
+    await page.locator('[data-bar-tools] button[data-action="close"]').click();
+    await page.waitForURL(/\/board\/board-platform$/);
+    await expect(page.locator("[data-issue-panel]")).toBeHidden();
+    expect(Math.abs((await boardColumnTop()) - topBefore)).toBeLessThanOrEqual(2);
+
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.dataset.overlayIssue !== undefined))
+      .toBe(false);
+    expect(await page.evaluate(() => globalThis.scrollY)).toBeGreaterThan(150);
+    expect(await page.evaluate(() => getComputedStyle(document.body).position)).toBe("static");
   });
 });
 

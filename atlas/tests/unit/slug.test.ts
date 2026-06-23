@@ -6,8 +6,9 @@ import { describe, expect, it } from "vitest";
 import { nextHumanId, slugify } from "../../src/lib/slug";
 
 describe("slugify", () => {
-  it("lowercases, hyphenates words, and strips punctuation", () => {
-    expect(slugify("Fix flaky WebSocket reconnect!")).toBe("fix-flaky-websocket-reconnect");
+  it("lowercases, hyphenates words, and strips punctuation (clamped short, on a word boundary)", () => {
+    // Clamped to MAX_SLUG_LENGTH (24) on a whole-word boundary — "reconnect" would overflow, so it drops.
+    expect(slugify("Fix flaky WebSocket reconnect!")).toBe("fix-flaky-websocket");
   });
 
   it("collapses separator runs and trims edges", () => {
@@ -23,10 +24,43 @@ describe("slugify", () => {
     expect(slugify("")).toBe("untitled");
   });
 
-  it("clamps long titles and leaves no trailing hyphen", () => {
-    const slug = slugify(`${"word ".repeat(40)}`);
-    expect(slug.length).toBeLessThanOrEqual(48);
+  it("keeps the slug short, clamped on a whole-word boundary (never mid-word, no trailing hyphen)", () => {
+    const slug = slugify("Platform infrastructure observability redesign initiative");
+    expect(slug.length).toBeLessThanOrEqual(24);
     expect(slug.endsWith("-")).toBe(false);
+    // Only whole words survive the clamp — "observability" would overflow 24, so it stops at two words.
+    expect(slug).toBe("platform-infrastructure");
+  });
+
+  it("hard-clamps a single over-long word", () => {
+    const slug = slugify("Supercalifragilisticexpialidocious");
+    expect(slug.length).toBeLessThanOrEqual(24);
+    expect(slug.endsWith("-")).toBe(false);
+  });
+});
+
+describe("slugify — always English (transliterates non-Latin scripts)", () => {
+  it("romanises Ukrainian Cyrillic to ASCII", () => {
+    expect(slugify("Привіт світ")).toBe("pryvit-svit");
+    expect(slugify("Платформа")).toBe("platforma");
+  });
+
+  it("romanises Russian Cyrillic to ASCII", () => {
+    expect(slugify("Привет мир")).toBe("pryvet-myr");
+  });
+
+  it("romanises Greek to ASCII", () => {
+    expect(slugify("Δοκιμή")).toBe("dokimi");
+  });
+
+  it("produces only ASCII URL-safe characters from a mixed-script title", () => {
+    const slug = slugify("Мобільний App 2.0");
+    expect(slug).toMatch(/^[a-z0-9-]+$/);
+    expect(slug).toContain("app");
+  });
+
+  it("falls back to 'untitled' for an unmappable script (e.g. CJK)", () => {
+    expect(slugify("こんにちは")).toBe("untitled");
   });
 });
 

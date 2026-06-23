@@ -27,9 +27,19 @@ export function applyPatch(ctx: BoardContext, patch: BoardPatch): void {
   switch (patch.type) {
     // ─── columns ─────────────────────────────────────────────────────────────
     case "column.created": {
-      ctx.set(previous => ({
-        snapshot: { ...previous.snapshot, columns: [...previous.snapshot.columns, patch.column] }
-      }));
+      // Dedupe by id — append only when this column is new. The acting client's own create round-trips
+      // back as this same patch, and a reconciler MUST be idempotent (one create can be delivered more
+      // than once), so a re-delivery never grows a second, duplicate-keyed column.
+      ctx.set(previous =>
+        previous.snapshot.columns.some(column => column.id === patch.column.id)
+          ? {}
+          : {
+              snapshot: {
+                ...previous.snapshot,
+                columns: [...previous.snapshot.columns, patch.column]
+              }
+            }
+      );
       return;
     }
     case "column.renamed": {
@@ -65,9 +75,19 @@ export function applyPatch(ctx: BoardContext, patch: BoardPatch): void {
 
     // ─── issues ──────────────────────────────────────────────────────────────
     case "issue.created": {
-      ctx.set(previous => ({
-        snapshot: { ...previous.snapshot, issues: [...previous.snapshot.issues, patch.issue] }
-      }));
+      // Dedupe by id — append only when this issue is new. The acting client's own create round-trips
+      // back as this same patch, and a reconciler MUST be idempotent (one create can be delivered more
+      // than once), so a re-delivery never grows a second copy of the card.
+      ctx.set(previous =>
+        previous.snapshot.issues.some(issue => issue.id === patch.issue.id)
+          ? {}
+          : {
+              snapshot: {
+                ...previous.snapshot,
+                issues: [...previous.snapshot.issues, patch.issue]
+              }
+            }
+      );
       return;
     }
     case "issue.moved": {

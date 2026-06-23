@@ -62,7 +62,7 @@ describe("realtime (integration)", () => {
     expect(JSON.parse(init.body)).toEqual(patch);
   });
 
-  it("propagates DO fetch rejection through broadcast", async () => {
+  it("swallows a DO fetch rejection through broadcast — best-effort fan-out never fails the mutation", async () => {
     const doFetch = vi.fn(async () => {
       throw new Error("DO error");
     });
@@ -82,7 +82,10 @@ describe("realtime (integration)", () => {
     });
 
     const patch: BoardPatch = { type: "issue.deleted", issueId: "err" };
-    await expect(app.realtime.broadcast(fakeEnv, "board-1", patch)).rejects.toThrow("DO error");
+    // The mutation is already persisted; a Board DO hiccup must NOT turn it into a 5xx — broadcast
+    // swallows the transport error and resolves (any other client re-syncs from its next snapshot).
+    await expect(app.realtime.broadcast(fakeEnv, "board-1", patch)).resolves.toBeUndefined();
+    expect(doFetch).toHaveBeenCalledTimes(1);
   });
 
   describe("types", () => {

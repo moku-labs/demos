@@ -18,7 +18,7 @@ import {
   reorderColumn
 } from "../../lib/api";
 
-import { rememberBoardScroll } from "../../lib/board-scroll";
+import { lockBoardScroll } from "../../lib/board-scroll";
 import { openCustomize, openMenu, openModal, showToast } from "../../lib/menu";
 import { navigate } from "../../lib/nav";
 import type { Column, Issue } from "../../lib/types";
@@ -88,9 +88,11 @@ export function onCardOpen(ctx: BoardContext, event: Event, card: Element): void
   if (event.target instanceof Element && event.target.closest("button, a, input")) return;
   const issue = issueForCard(ctx, card);
   if (!issue) return;
-  // Remember the board's scroll before navigating — the board is persistent, so the issue overlay closes
-  // back onto this exact same board, and we restore this scroll when it does (see board-scroll).
-  rememberBoardScroll();
+  // Pin the board at its current scroll BEFORE navigating. The board is persistent and sits behind the
+  // issue overlay's semi-transparent scrim, so without this it would visibly lurch to the top as the SPA
+  // swap scrolls the window to 0. Locking first makes that scroll a no-op; the panel close releases it
+  // and restores the exact position (see board-scroll + issue/lifecycle setHostOpen).
+  lockBoardScroll();
   navigate(urls.toUrl("issue", { id: ctx.state.boardId, issueId: issue.id }));
 }
 

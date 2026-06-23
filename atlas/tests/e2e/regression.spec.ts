@@ -205,15 +205,16 @@ test.describe("Board/department change transition", () => {
 });
 
 test.describe("Human-readable incremental IDs (#14)", () => {
-  test("a new issue gets a {n}-slug id derived from its title", async ({ page }) => {
+  test("a new issue gets a short {n}-slug id derived from its title", async ({ page }) => {
     // Create on a throwaway board (never board-platform — the visual baselines screenshot it).
     const { issueId } = await freshBoardWithIssue(
       page,
       "Slug id probe board",
       "Refactor the WebSocket layer!"
     );
-    // {n}-slug, slug frozen from the title (punctuation stripped) — never an opaque UUID.
-    expect(issueId).toMatch(/^\d+-refactor-the-websocket-layer$/);
+    // {n}-slug, slug frozen from the title (punctuation stripped) — never an opaque UUID. The slug is
+    // kept short (clamped to 24 chars on a whole-word boundary), so the trailing "layer" word drops.
+    expect(issueId).toMatch(/^\d+-refactor-the-websocket$/);
   });
 
   test("a new board gets a {n}-slug id derived from its title", async ({ page }) => {

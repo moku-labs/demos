@@ -3,8 +3,10 @@
  * the live socket, loads the snapshot, registers the realtime + filter subscriptions, seeds, then
  * honours any deep-link focus. `sync` (run from onMount AND onNavEnd) re-derives the view + board id
  * from the route so `/board/{id}` ↔ `/board/{id}/list` flips without a reload, and a different board id
- * reloads. The last snapshot per board id is cached in a module Map and reused on re-mount, so opening
- * an issue (which re-mounts this island) never flashes an empty board.
+ * reloads. This island is PERSISTENT — it lives in the chrome (SiteLayout), outside the `main > section`
+ * swap region, so navigation NEVER unmounts it: opening an issue keeps the board mounted, connected, and
+ * still. The last snapshot per board id is cached in a module Map and reused when a board re-resolves
+ * (board switch, or a genuine re-mount after a hard nav) so the board never flashes empty.
  */
 import { getBoard } from "../../lib/api";
 import { onEmptyDept, setEmptyDept } from "../../lib/empty-dept";
@@ -150,8 +152,10 @@ async function loadBoard(ctx: BoardContext, boardId: string): Promise<void> {
   snapshotCache.set(boardId, snapshot);
   ctx.set({ boardId, snapshot, loaded: true });
 
-  // Register the realtime handler BEFORE seed() so the flushed pre-seed buffer reaches it.
-  ctx.cleanup(onPatch(patch => applyPatch(ctx, patch)));
+  // The realtime handler is registered ONCE in startBoard (this island is persistent — it never
+  // unmounts on navigation, so a per-load `ctx.cleanup(onPatch())` would leak a handler on every board
+  // switch and a single broadcast would reconcile N times → duplicate cards/columns). Registering it on
+  // mount and only flushing here keeps exactly one handler. seed() replays the pre-seed buffer to it.
   seed();
 }
 
@@ -184,6 +188,13 @@ function focusDeepLink(meta: Record<string, unknown>): void {
  * ```
  */
 export async function startBoard(ctx: BoardContext): Promise<void> {
+  // Register the SINGLE realtime handler for this persistent island — once, on mount. applyPatch reads
+  // `ctx.state` live, so one handler serves every board this instance loads over its lifetime. It is
+  // registered BEFORE the first sync()/loadBoard() so the flushed pre-seed buffer reaches it. (Doing
+  // this per-loadBoard instead leaked a handler on every board switch — the island never unmounts, so
+  // ctx.cleanup never ran — which made one issue.created/column.created broadcast reconcile N times.)
+  ctx.cleanup(onPatch(patch => applyPatch(ctx, patch)));
+
   await sync(ctx);
 
   // Keepalive holds the socket; re-render on any filter change; disconnect on destroy.

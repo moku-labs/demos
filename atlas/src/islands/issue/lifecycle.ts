@@ -8,7 +8,7 @@
  * releasing both via `ctx.cleanup`.
  */
 import { getBoard, getIssue } from "../../lib/api";
-import { rememberedBoardScroll } from "../../lib/board-scroll";
+import { lockBoardScroll, unlockBoardScroll } from "../../lib/board-scroll";
 import { navigate } from "../../lib/nav";
 import { onPatch } from "../../lib/realtime";
 import type {
@@ -31,10 +31,11 @@ import { ESCAPE_KEY, ISSUE_FOCUS, type IssueContext } from "./types";
  * chrome agent owns the matching `:root[data-overlay-issue]` rule in base.css) so the board behind the
  * full-screen mobile panel can't scroll.
  *
- * The board now lives in the persistent chrome (it is never unmounted by opening an issue), so its
- * scroll position must SURVIVE the open/close. The `overflow:hidden` scroll-lock clamps the document's
- * `scrollY` to 0 while open, so on the open→closed transition we restore the board to the scroll the
- * overlay bus captured before opening — the board returns to exactly where you left it, no jump.
+ * The board lives in the persistent chrome (never unmounted by opening an issue) and stays visible
+ * behind the semi-transparent scrim, so it must not move at all across the open/close. Opening pins
+ * `<body>` at its current scroll ({@link lockBoardScroll}) so the framework's scroll-to-0 is invisible;
+ * closing releases the pin and restores the exact scroll in one turn ({@link unlockBoardScroll}) — no
+ * lurch to the top on open, no snap-back when the view transition settles on close.
  *
  * @param host - The issue island host element.
  * @param open - True to reveal the panel, false to hide it.
@@ -44,14 +45,13 @@ import { ESCAPE_KEY, ISSUE_FOCUS, type IssueContext } from "./types";
  * ```
  */
 function setHostOpen(host: Element, open: boolean): void {
-  const wasOpen = document.documentElement.dataset.overlayIssue !== undefined;
   host.toggleAttribute("hidden", !open);
   document.documentElement.toggleAttribute("data-overlay-issue", open);
 
-  // Restore the board to its pre-open scroll once the lock is released (open→closed transition). This
-  // runs inside the close navigation's swap, AFTER the framework's scroll-to-0 (applyPendingScroll fires
-  // in the swap's beforeCapture), so it wins — the board lands back at its remembered position.
-  if (!open && wasOpen) globalThis.scrollTo({ top: rememberedBoardScroll(), behavior: "instant" });
+  // Keep the board perfectly still for the whole open/close. A card click already pinned it before
+  // navigating; a deep-link open pins it here (both idempotent). Closing unpins + restores in one turn.
+  if (open) lockBoardScroll();
+  else unlockBoardScroll();
 }
 
 /**

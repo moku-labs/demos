@@ -102,14 +102,16 @@ describe("createRealtimeApi", () => {
       expect(result).toBeUndefined();
     });
 
-    it("propagates a stub .fetch rejection to the caller", async () => {
+    it("swallows a stub .fetch rejection — best-effort fan-out never rejects to the caller", async () => {
       const { ctx } = createMockCtx("board", async () => {
         throw new Error("DO unavailable");
       });
       const api = createRealtimeApi(ctx);
       const patch: BoardPatch = { type: "issue.deleted", issueId: "y" };
 
-      await expect(api.broadcast(fakeEnv, "board-1", patch)).rejects.toThrow("DO unavailable");
+      // The mutation is already persisted, so a DO transport error must NOT turn it into a 5xx —
+      // broadcast swallows the error and resolves (the actor keeps its optimistic update).
+      await expect(api.broadcast(fakeEnv, "board-1", patch)).resolves.toBeUndefined();
     });
 
     it("requires the durableObjectsPlugin dependency via ctx.require", async () => {
