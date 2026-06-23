@@ -232,7 +232,15 @@ async function uploadFile(ctx: IssueContext, file: File): Promise<void> {
 
   // `addAttachment` reads `file.type`; default an empty type so the worker still stores it.
   const safeFile = file.type ? file : new File([file], file.name, { type: FALLBACK_TYPE });
-  await addAttachment(detail.issue.id, safeFile);
+  const attachment = await addAttachment(detail.issue.id, safeFile);
+
+  // Optimistically add it now — don't wait for the realtime round-trip (the dev WS broadcast can drop).
+  // The returning `attachment.added` patch is deduped by id (see lifecycle.applyPatch).
+  ctx.set(previous => {
+    const current = previous.detail;
+    if (!current || current.attachments.some(att => att.id === attachment.id)) return {};
+    return { detail: { ...current, attachments: [...current.attachments, attachment] } };
+  });
   showToast("File attached");
 }
 
@@ -436,7 +444,15 @@ export async function onSubAdd(ctx: IssueContext, event: Event, field: Element):
 
   event.preventDefault();
   input.value = "";
-  await addSubIssue(detail.issue.id, { title });
+  const sub = await addSubIssue(detail.issue.id, { title });
+
+  // Optimistically append it now (don't wait for the realtime round-trip); the returning
+  // `subIssue.added` patch is deduped by id (see lifecycle.applyPatch).
+  ctx.set(previous => {
+    const current = previous.detail;
+    if (!current || current.subIssues.some(item => item.id === sub.id)) return {};
+    return { detail: { ...current, subIssues: [...current.subIssues, sub] } };
+  });
 }
 
 /**

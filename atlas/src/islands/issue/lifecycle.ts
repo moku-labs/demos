@@ -242,8 +242,10 @@ function applyPatch(ctx: IssueContext, patch: BoardPatch): void {
         return { detail: mergeProperty(detail, patch.patch) };
       }
 
-      // Sub-issue list edits.
+      // Sub-issue list edits. Dedupe by id — the acting client adds optimistically, so its own
+      // returning broadcast must not double-insert.
       case "subIssue.added": {
+        if (detail.subIssues.some(sub => sub.id === patch.subIssue.id)) return {};
         return { detail: { ...detail, subIssues: [...detail.subIssues, patch.subIssue] } };
       }
       case "subIssue.toggled": {
@@ -263,8 +265,10 @@ function applyPatch(ctx: IssueContext, patch: BoardPatch): void {
         };
       }
 
-      // Attachment edits.
+      // Attachment edits. Dedupe by id — the acting client adds optimistically (the dev WS broadcast
+      // is crash-prone), so its own returning patch must not double-insert.
       case "attachment.added": {
+        if (detail.attachments.some(att => att.id === patch.attachment.id)) return {};
         return { detail: { ...detail, attachments: [...detail.attachments, patch.attachment] } };
       }
       case "attachment.removed": {
