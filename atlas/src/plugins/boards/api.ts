@@ -18,6 +18,7 @@
 import type { WorkerEnv } from "@moku-labs/worker";
 import { d1Plugin, kvPlugin } from "@moku-labs/worker";
 
+import { nextHumanId } from "../../lib/slug";
 import type { Actor, Board, BoardSummary, Column, NewBoard, NewColumn } from "../../lib/types";
 import { attachmentsPlugin } from "../attachments";
 import { realtimePlugin } from "../realtime";
@@ -208,7 +209,12 @@ export function createBoardsApi(ctx: BoardsContext): Api {
       );
       const position = existing.length;
 
-      const id = crypto.randomUUID();
+      // Human-readable `{n}-{slug}` id from the title (#14) — readable in the board URL.
+      const { results: idRows } = await d1.query<{ id: string }>(env, "SELECT id FROM boards");
+      const id = nextHumanId(
+        input.title,
+        idRows.map(row => row.id)
+      );
       const createdAt = Date.now();
       const standfirst = input.standfirst ?? "";
       const eyebrow = input.eyebrow ?? "";

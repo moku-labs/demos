@@ -11,6 +11,7 @@
 
 import type { WorkerEnv } from "@moku-labs/worker";
 import { d1Plugin, storagePlugin } from "@moku-labs/worker";
+import { nextHumanId } from "../../lib/slug";
 import type { Actor, Attachment, AttachmentInput } from "../../lib/types";
 import { realtimePlugin } from "../realtime";
 import type { AttachmentRow } from "./helpers";
@@ -90,7 +91,12 @@ export function createAttachmentsApi(ctx: AttachmentsContext): Api {
       file: AttachmentInput,
       actor: Actor
     ): Promise<Attachment> {
-      const id = crypto.randomUUID();
+      // Human-readable `{n}-{slug}` id from the filename (#14) — readable in the attachment URL/deep-link.
+      const { results: idRows } = await d1.query<{ id: string }>(env, "SELECT id FROM attachments");
+      const id = nextHumanId(
+        file.filename,
+        idRows.map(row => row.id)
+      );
       const key = buildKey(config.attachmentPrefix);
       const createdAt = Date.now();
       const size = file.body.byteLength;

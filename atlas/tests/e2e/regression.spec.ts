@@ -94,6 +94,27 @@ test.describe("Board/department change transition", () => {
   });
 });
 
+test.describe("Human-readable incremental IDs (#14)", () => {
+  test("a new issue gets a {n}-slug id derived from its title", async ({ page }) => {
+    const res = await page.request.post("/api/boards/board-platform/columns/col-backlog/issues", {
+      data: { title: "Refactor the WebSocket layer!" }
+    });
+    expect(res.ok()).toBeTruthy();
+    const issue = (await res.json()) as { id: string };
+    // {n}-slug, slug frozen from the title (punctuation stripped) — never an opaque UUID.
+    expect(issue.id).toMatch(/^\d+-refactor-the-websocket-layer$/);
+  });
+
+  test("a new board gets a {n}-slug id derived from its title", async ({ page }) => {
+    const res = await page.request.post("/api/boards", {
+      data: { departmentId: "dept-eng", title: "Edge Caching" }
+    });
+    expect(res.ok()).toBeTruthy();
+    const board = (await res.json()) as { id: string };
+    expect(board.id).toMatch(/^\d+-edge-caching$/);
+  });
+});
+
 test.describe("Deep-linkable attachment preview (#15)", () => {
   // A 1×1 transparent PNG — an inline-safe image so its chip renders as an image (gets the lightbox).
   const PNG = Buffer.from(
@@ -119,6 +140,8 @@ test.describe("Deep-linkable attachment preview (#15)", () => {
     await expect(chip).toHaveCount(1);
     const href = await chip.getAttribute("href");
     const attId = (href ?? "").split("/").pop() ?? "";
+    // The attachment id is also a human-readable {n}-slug derived from the filename (#14).
+    expect(attId).toMatch(/^\d+-shot-png$/);
 
     // Click → the lightbox opens AND the URL becomes the shareable attachment route.
     await chip.click();

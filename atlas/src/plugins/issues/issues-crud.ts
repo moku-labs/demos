@@ -10,6 +10,7 @@
 /* eslint-disable unicorn/no-null -- null is the domain contract for absent nullable fields */
 import type { WorkerEnv } from "@moku-labs/worker";
 import { d1Plugin } from "@moku-labs/worker";
+import { nextHumanId } from "../../lib/slug";
 import type { Actor, Issue, IssueDetail, IssueMove, IssuePatch, NewIssue } from "../../lib/types";
 import { attachmentsPlugin } from "../attachments";
 import { realtimePlugin } from "../realtime";
@@ -136,7 +137,12 @@ export function createIssueCrud(
       input: NewIssue,
       actor: Actor
     ): Promise<Issue> {
-      const id = crypto.randomUUID();
+      // Human-readable `{n}-{slug}` id from the title (#14) — readable in the URL + the list ref column.
+      const { results: idRows } = await d1.query<{ id: string }>(env, "SELECT id FROM issues");
+      const id = nextHumanId(
+        input.title,
+        idRows.map(row => row.id)
+      );
       const now = Date.now();
       const description = input.description ?? "";
 

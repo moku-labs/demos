@@ -105,9 +105,10 @@ function applyBoardMutation(s: string, params: unknown[], store: D1Store): void 
       created_at: createdAt
     });
   } else if (s.includes("update boards set title")) {
-    const [title, id] = params;
+    // rename sets title AND standfirst together: params = [title, standfirst, id].
+    const [title, standfirst, id] = params;
     const row = store.boards.get(id as string);
-    if (row) store.boards.set(id as string, { ...row, title });
+    if (row) store.boards.set(id as string, { ...row, title, standfirst });
   } else if (s.includes("update boards set position")) {
     const [position, id] = params;
     const row = store.boards.get(id as string);

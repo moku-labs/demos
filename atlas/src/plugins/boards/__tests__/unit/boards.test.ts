@@ -409,7 +409,8 @@ describe("createBoardsApi — create", () => {
         query: vi
           .fn()
           .mockResolvedValueOnce({ results: [] }) // position query
-          .mockResolvedValueOnce({ results: [] }), // issueCount re-warm
+          .mockResolvedValueOnce({ results: [] }) // id query (SELECT id FROM boards)
+          .mockResolvedValue({ results: [] }), // issueCount re-warm
         first: vi.fn(async () => boardRow)
       }
     });
@@ -435,7 +436,8 @@ describe("createBoardsApi — create", () => {
         query: vi
           .fn()
           .mockResolvedValueOnce({ results: [] })
-          .mockResolvedValueOnce({ results: [] }),
+          .mockResolvedValueOnce({ results: [] })
+          .mockResolvedValue({ results: [] }),
         first: vi.fn(async () => boardRow)
       }
     });
@@ -466,7 +468,8 @@ describe("createBoardsApi — create", () => {
         query: vi
           .fn()
           .mockResolvedValueOnce({ results: [] })
-          .mockResolvedValueOnce({ results: [] }),
+          .mockResolvedValueOnce({ results: [] })
+          .mockResolvedValue({ results: [] }),
         first: vi.fn(async () => boardRow)
       }
     });
@@ -492,7 +495,8 @@ describe("createBoardsApi — create", () => {
         query: vi
           .fn()
           .mockResolvedValueOnce({ results: [] })
-          .mockResolvedValueOnce({ results: [] }),
+          .mockResolvedValueOnce({ results: [] })
+          .mockResolvedValue({ results: [] }),
         first: vi.fn(async () => boardRow)
       }
     });
