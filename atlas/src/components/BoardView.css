@@ -170,6 +170,12 @@
   :scope {
     display: flex;
     flex-direction: column;
+    /* Contain the board's stacking (incl. the issue panel's `--z-drawer`) in one context, so the
+       app-shell overlay singletons that open OVER an issue (customize/menu at `--z-popover`, below the
+       drawer) still paint above it. The board is persistent chrome now, a sibling of those overlays, so
+       without this its issue panel would intercept their clicks. `isolation` makes a stacking context
+       WITHOUT a containing block — the fixed issue panel still fills the viewport (see the overlay guard). */
+    isolation: isolate;
   }
 
   /* Content transition on board/department change is handled by the SPA View Transitions mode (a

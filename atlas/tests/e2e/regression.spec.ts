@@ -122,6 +122,39 @@ test.describe("Boards bar overflow scrolling (#many-boards)", () => {
   });
 });
 
+test.describe("Persistent board (live across issue open/close)", () => {
+  test("board keeps scroll + stays realtime-live when an issue opens and closes", async ({
+    page
+  }) => {
+    const probe = await freshIssue(page, "Persistent realtime probe");
+    const toOpen = await freshIssue(page, "Persistent open probe");
+    await page.setViewportSize({ width: 1280, height: 700 });
+    await page.goto("/board/board-platform");
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-card-id]");
+
+    // Scroll the board down, then open an issue (a real nav, but the board is persistent chrome).
+    await page.evaluate(() => globalThis.scrollTo(0, 250));
+    await page.locator(`[data-card-id="${toOpen}"]`).click();
+    await page.waitForSelector("[data-issue-title]");
+
+    // Realtime continues while the panel is open: editing ANOTHER issue updates its board card live —
+    // proof the board never unmounted / dropped its WebSocket.
+    await page.request.patch(`/api/issues/${probe}`, {
+      data: { title: "Persistent realtime probe — edited" }
+    });
+    await expect(page.locator(`[data-card-id="${probe}"]`)).toContainText(
+      "Persistent realtime probe — edited",
+      { timeout: 6000 }
+    );
+
+    // Close → the board returns to the scroll it had (no reset to top), because it persisted.
+    await page.locator('[data-bar-tools] button[data-action="close"]').click();
+    await page.waitForTimeout(300);
+    expect(await page.evaluate(() => globalThis.scrollY)).toBeGreaterThan(150);
+  });
+});
+
 test.describe("Board/department change transition", () => {
   test("navigation runs a SPA view transition (crossfade mode, no per-mount re-animation)", async ({
     page

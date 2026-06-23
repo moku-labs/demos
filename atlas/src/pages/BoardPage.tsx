@@ -1,29 +1,27 @@
 /**
- * @file BoardPage — the working screen content (board / list / issue / activity routes), rendered into
- * the SiteLayout's `main > section` swap region. Static markup is the island mount points: the board
- * header (B4), the board body (A3 board view / A4 list view — the same island switches on
- * `ctx.meta.view`), and the issue slide-over (A5, page-level overlay). The islands read the board id +
- * deep-link focus straight off their route context — `ctx.params.id`, `ctx.params.issueId`,
- * `ctx.meta.focus`, `ctx.meta.view` (declared via the route's `.meta()`; see routes.tsx) — so the
- * page emits no `data-*` focus bridge. The `data-page="board"` wrapper carries the page CSS and rides
- * the swap.
+ * @file BoardPage — the route render for the app routes (board / list / issue / activity). The board
+ * working screen (header + board body + issue overlay) is NOT here: it lives in the persistent chrome
+ * ({@link file://../layouts/SiteLayout.tsx}) so it is never unmounted by navigation — the board stays
+ * mounted, WebSocket-connected, and live across issue open/close (no re-fetch, no flicker, no scroll
+ * reset). Those islands read the board id + deep-link focus straight off their route context
+ * (`ctx.params.id`, `ctx.params.issueId`, `ctx.meta.focus`, `ctx.meta.view`) via their `onNavEnd` sync.
+ *
+ * This route render therefore produces NO content of its own — it is only the SPA swap anchor that
+ * fires the navigation lifecycle (which re-syncs the persistent islands). Every app route shares this
+ * empty render; the visible difference between them is driven entirely by the route's params/meta.
  */
+import { Fragment } from "preact";
 
 /**
- * Render the board page shell — the board-header, board-body, and issue-panel island mount points.
+ * Render the (empty) app-route body. The board working screen is persistent chrome (see file header);
+ * this is just the swap anchor.
  *
- * @returns The board page content.
+ * @returns An empty fragment — the route's content lives in the persistent chrome.
  * @example
  * ```tsx
  * route("/board/{id}").layout(SiteLayout).render(() => <BoardPage />);
  * ```
  */
 export function BoardPage() {
-  return (
-    <div data-page="board">
-      <div data-island="board-header" data-region="board-header" />
-      <div data-island="board" data-region="board" />
-      <aside data-island="issue" data-overlay="issue" hidden />
-    </div>
-  );
+  return <Fragment />;
 }

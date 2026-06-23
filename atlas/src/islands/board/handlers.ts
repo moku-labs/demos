@@ -18,6 +18,7 @@ import {
   reorderColumn
 } from "../../lib/api";
 
+import { rememberBoardScroll } from "../../lib/board-scroll";
 import { openCustomize, openMenu, openModal, showToast } from "../../lib/menu";
 import { navigate } from "../../lib/nav";
 import type { Column, Issue } from "../../lib/types";
@@ -87,6 +88,9 @@ export function onCardOpen(ctx: BoardContext, event: Event, card: Element): void
   if (event.target instanceof Element && event.target.closest("button, a, input")) return;
   const issue = issueForCard(ctx, card);
   if (!issue) return;
+  // Remember the board's scroll before navigating — the board is persistent, so the issue overlay closes
+  // back onto this exact same board, and we restore this scroll when it does (see board-scroll).
+  rememberBoardScroll();
   navigate(urls.toUrl("issue", { id: ctx.state.boardId, issueId: issue.id }));
 }
 

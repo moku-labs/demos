@@ -159,6 +159,10 @@ async function sync(ctx: HeaderContext): Promise<void> {
     ctx.set({ board: null, stats: EMPTY_STATS });
     return;
   }
+  // This island is persistent (never unmounts on nav), so an issue open/close fires `sync` on the SAME
+  // board. Skip the re-fetch then — realtime patches (applyPatch) keep the title + stats current — so the
+  // header never re-fetches or flickers behind the issue panel. A real board change re-fetches below.
+  if (ctx.state.board?.id === boardId) return;
   await loadHeader(ctx, boardId);
 }
 

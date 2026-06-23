@@ -6,6 +6,7 @@
  * (close back to the board) once, releasing both via `ctx.cleanup`.
  */
 import { getBoard, getIssue } from "../../lib/api";
+import { rememberedBoardScroll } from "../../lib/board-scroll";
 import { navigate } from "../../lib/nav";
 import { onPatch } from "../../lib/realtime";
 import type {
@@ -28,6 +29,11 @@ import { CLOSED_STATE, ESCAPE_KEY, ISSUE_FOCUS, type IssueContext } from "./type
  * chrome agent owns the matching `:root[data-overlay-issue]` rule in base.css) so the board behind the
  * full-screen mobile panel can't scroll.
  *
+ * The board now lives in the persistent chrome (it is never unmounted by opening an issue), so its
+ * scroll position must SURVIVE the open/close. The `overflow:hidden` scroll-lock clamps the document's
+ * `scrollY` to 0 while open, so on the open→closed transition we restore the board to the scroll the
+ * overlay bus captured before opening — the board returns to exactly where you left it, no jump.
+ *
  * @param host - The issue island host element.
  * @param open - True to reveal the panel, false to hide it.
  * @example
@@ -36,8 +42,14 @@ import { CLOSED_STATE, ESCAPE_KEY, ISSUE_FOCUS, type IssueContext } from "./type
  * ```
  */
 function setHostOpen(host: Element, open: boolean): void {
+  const wasOpen = document.documentElement.dataset.overlayIssue !== undefined;
   host.toggleAttribute("hidden", !open);
   document.documentElement.toggleAttribute("data-overlay-issue", open);
+
+  // Restore the board to its pre-open scroll once the lock is released (open→closed transition). This
+  // runs inside the close navigation's swap, AFTER the framework's scroll-to-0 (applyPendingScroll fires
+  // in the swap's beforeCapture), so it wins — the board lands back at its remembered position.
+  if (!open && wasOpen) globalThis.scrollTo({ top: rememberedBoardScroll(), behavior: "instant" });
 }
 
 /**
@@ -172,8 +184,9 @@ export async function sync(ctx: IssueContext): Promise<void> {
 }
 
 /**
- * Navigate back to the open issue's board (the close gesture for × / scrim / Escape). The subsequent
- * route change re-runs {@link sync}, which hides the panel — so closing is just "go to the board."
+ * Navigate back to the open issue's board (the × / scrim / Escape gesture). The board is persistent, so
+ * this nav does NOT reload it — `onNavEnd` just hides the panel and the board stays live; its scroll is
+ * restored by {@link setHostOpen}. Closing is simply "go to the board."
  *
  * @param ctx - The issue component context.
  * @example

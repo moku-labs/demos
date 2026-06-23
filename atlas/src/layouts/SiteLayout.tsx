@@ -39,6 +39,18 @@ export function SiteLayout(
       <div data-island="boards-bar" data-region="boards-bar" />
 
       <main data-main>
+        {/*
+          The board working screen lives in the PERSISTENT chrome (outside the `main > section` swap
+          region), so navigating board⇄issue⇄list NEVER unmounts it: the WebSocket stays connected,
+          realtime patches keep reconciling, scroll is kept, and there is nothing to flicker. These
+          islands react to the route via `onNavEnd` (idempotent `sync`) — the board reloads only when the
+          board id actually changes. The (now content-free) `section` remains the SPA swap anchor.
+        */}
+        <div data-page="board">
+          <div data-island="board-header" data-region="board-header" />
+          <div data-island="board" data-region="board" />
+          <aside data-island="issue" data-overlay="issue" hidden />
+        </div>
         <section>{children}</section>
       </main>
 

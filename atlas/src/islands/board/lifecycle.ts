@@ -85,8 +85,11 @@ async function resolveBoardId(ctx: BoardContext): Promise<string> {
  */
 export async function sync(ctx: BoardContext): Promise<void> {
   // The view is cheap to derive from the route — flip it first so a board↔list switch is instant.
+  // Only re-render when it ACTUALLY changes: this island is persistent (it never unmounts on nav), so an
+  // issue open/close fires `sync` on the SAME board+view — skipping the no-op `ctx.set` keeps that path
+  // from re-rendering the whole board (the big-board flicker), leaving it perfectly still behind the panel.
   const view = ctx.meta.view === "list" ? "list" : currentView();
-  ctx.set({ view });
+  if (view !== ctx.state.view) ctx.set({ view });
 
   const boardId = await resolveBoardId(ctx);
   if (!boardId) {
@@ -106,7 +109,9 @@ export async function sync(ctx: BoardContext): Promise<void> {
   const sameBoardLive =
     ctx.state.loaded && ctx.state.boardId === boardId && ctx.state.snapshot.board.id === boardId;
   if (sameBoardLive) {
-    resetBoardScroll();
+    // Same board — only the focus/view changed (an issue overlay opened/closed, or a board⇄list flip).
+    // Do NOT reload or re-pin the scroll: the persistent board keeps its exact position, so opening or
+    // closing an issue never jumps it. (A board⇄list flip swaps the inner DOM, resetting its own scroll.)
     return;
   }
 
