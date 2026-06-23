@@ -78,6 +78,50 @@ test.describe("Board name + subtitle edit", () => {
   });
 });
 
+test.describe("Boards bar overflow scrolling (#many-boards)", () => {
+  test("a board bar with many boards scrolls, flags overflow, and keeps the active pill in view", async ({
+    page
+  }) => {
+    // Create enough boards on Engineering to overflow the bar at desktop width (8 ≈ 1100px of pills > the
+    // ~870px track at 1280, with the seed boards on top — kept modest to limit load on the dev server).
+    for (let i = 0; i < 8; i++) {
+      const res = await page.request.post("/api/boards", {
+        data: { departmentId: "dept-eng", title: `Overflow scroll probe ${i}` }
+      });
+      expect(res.ok()).toBeTruthy();
+    }
+    const boardsRes = await page.request.get("/api/departments/dept-eng/boards");
+    const deptBoards = (await boardsRes.json()) as Array<{ id: string }>;
+    const lastId = deptBoards.at(-1)?.id ?? "";
+
+    await page.setViewportSize({ width: 1280, height: 860 });
+    // Open the LAST board — its pill would sit far off the right edge if nothing scrolled it into view.
+    await page.goto(`/board/${lastId}`);
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-board-pill][data-active]");
+
+    const track = page.locator("[data-boards-track]");
+    // The track genuinely overflows (content wider than the box) and is flagged for the fade affordance.
+    const metrics = await track.evaluate(el => ({
+      scrollable: el.scrollWidth > el.clientWidth + 1,
+      overflow: el.dataset.overflow !== undefined
+    }));
+    expect(metrics.scrollable).toBe(true);
+    expect(metrics.overflow).toBe(true);
+
+    // The active pill must be within the track's visible range (scrolled into view, not clipped).
+    const visible = await page.evaluate(() => {
+      const t = document.querySelector("[data-boards-track]");
+      const a = document.querySelector("[data-board-pill][data-active]");
+      if (!t || !a) return false;
+      const tr = t.getBoundingClientRect();
+      const ar = a.getBoundingClientRect();
+      return ar.left >= tr.left - 1 && ar.right <= tr.right + 1;
+    });
+    expect(visible).toBe(true);
+  });
+});
+
 test.describe("Board/department change transition", () => {
   test("the board content has an entry transition (animates on navigation)", async ({ page }) => {
     await page.goto("/board/board-platform");

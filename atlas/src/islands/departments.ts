@@ -29,6 +29,7 @@ import { hideInsertionIndicator, positionInsertionIndicator } from "../lib/drag-
 import { getEmptyDept, onEmptyDept, setEmptyDept } from "../lib/empty-dept";
 import { openCustomize, openMenu, openModal, showToast } from "../lib/menu";
 import { loadBoards, navigate, onNavRefresh, refresh, resolveActive } from "../lib/nav";
+import { syncTrackOverflow } from "../lib/track-overflow";
 import type { Customization, Department } from "../lib/types";
 import { urls } from "../routes";
 
@@ -101,6 +102,26 @@ async function sync(ctx: DepartmentsContext): Promise<void> {
     customizations: active.customizations,
     activeDepartmentId: empty?.id ?? active.activeDepartmentId ?? ""
   });
+  applyTrackOverflow(ctx);
+}
+
+/**
+ * After a paint, flag the index when its tabs overflow (so CSS shows the trailing fade) and scroll the
+ * active department's tab into view so the current department is never left clipped.
+ *
+ * @param ctx - The departments island context.
+ * @example
+ * ```ts
+ * applyTrackOverflow(ctx);
+ * ```
+ */
+function applyTrackOverflow(ctx: DepartmentsContext): void {
+  // Render the tabs into the DOM before measuring them.
+  ctx.flush();
+  syncTrackOverflow(
+    ctx.el.querySelector<HTMLElement>("[data-departments]"),
+    ctx.el.querySelector<HTMLElement>("[data-dept-tab][data-active]")
+  );
 }
 
 // ─── lookups ─────────────────────────────────────────────────────────────────
@@ -542,6 +563,11 @@ async function mount(ctx: DepartmentsContext): Promise<void> {
   ctx.cleanup(onNavRefresh(() => void sync(ctx)));
   // An empty-department selection (or its clearing) moves the active underline — re-sync to apply it.
   ctx.cleanup(onEmptyDept(() => void sync(ctx)));
+  // Re-evaluate the overflow affordance when the viewport width changes.
+  // eslint-disable-next-line jsdoc/require-jsdoc -- inline resize handler
+  const onResize = (): void => applyTrackOverflow(ctx);
+  globalThis.addEventListener("resize", onResize);
+  ctx.cleanup(() => globalThis.removeEventListener("resize", onResize));
 }
 
 /** Persistent chrome island: the numbered departments index (region B2). */

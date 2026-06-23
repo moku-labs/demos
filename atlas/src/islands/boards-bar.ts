@@ -25,6 +25,7 @@ import { getEmptyDept, onEmptyDept, setEmptyDept } from "../lib/empty-dept";
 import { openCustomize, openMenu, openModal, showToast } from "../lib/menu";
 import { navigate, onNavRefresh, refresh, resolveActive } from "../lib/nav";
 import { deliverLocal } from "../lib/realtime";
+import { syncTrackOverflow } from "../lib/track-overflow";
 import type { Board, BoardSummary, Customization } from "../lib/types";
 import { urls } from "../routes";
 
@@ -156,6 +157,26 @@ async function sync(ctx: BoardsBarContext): Promise<void> {
     customizations: active.customizations,
     emptyDepartment: false
   });
+  applyTrackOverflow(ctx);
+}
+
+/**
+ * After a paint, flag the pills track when it overflows (so CSS shows the trailing fade) and scroll the
+ * active board pill into view so the current board is never left clipped behind the controls.
+ *
+ * @param ctx - The boards-bar island context.
+ * @example
+ * ```ts
+ * applyTrackOverflow(ctx);
+ * ```
+ */
+function applyTrackOverflow(ctx: BoardsBarContext): void {
+  // Render the pills into the DOM before measuring them.
+  ctx.flush();
+  syncTrackOverflow(
+    ctx.el.querySelector<HTMLElement>("[data-boards-track]"),
+    ctx.el.querySelector<HTMLElement>("[data-board-pill][data-active]")
+  );
 }
 
 // ─── lookups ─────────────────────────────────────────────────────────────────
@@ -538,6 +559,11 @@ async function mount(ctx: BoardsBarContext): Promise<void> {
   ctx.cleanup(onNavRefresh(() => void sync(ctx)));
   // An empty-department selection (or its clearing) changes which department + pills the bar shows.
   ctx.cleanup(onEmptyDept(() => void sync(ctx)));
+  // Re-evaluate the overflow affordance when the viewport width changes.
+  // eslint-disable-next-line jsdoc/require-jsdoc -- inline resize handler
+  const onResize = (): void => applyTrackOverflow(ctx);
+  globalThis.addEventListener("resize", onResize);
+  ctx.cleanup(() => globalThis.removeEventListener("resize", onResize));
 }
 
 /** Persistent chrome island: the active department's boards bar (region B3). */

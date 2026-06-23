@@ -28,6 +28,13 @@
   [data-boards-track]::-webkit-scrollbar {
     display: none;
   }
+  /* When the pills overflow (flagged by the island), fade the trailing edge so a half-cut pill signals
+     "scroll for more" instead of reading as a hard clip. Only present with [data-overflow], so a row that
+     fits is never dimmed. Paired -webkit- prefix for Safari/WebKit. */
+  [data-boards-track][data-overflow] {
+    -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 2rem), transparent 100%);
+    mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 2rem), transparent 100%);
+  }
 
   [data-add-board] {
     display: inline-flex;
