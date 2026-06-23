@@ -172,31 +172,20 @@
     flex-direction: column;
   }
 
-  /* Content transition: the board content (header + columns) rises + fades in on every board/department
-     change (the SPA re-mounts this page on navigation), so switching boards reads as a calm settle, not
-     an abrupt cut. Restrained per design §2 — disabled under prefers-reduced-motion below.
-     CRITICAL: the animation lives on the CONTENT regions, never on the `:scope` page wrapper — the wrapper
-     is the ancestor of the `position: fixed` issue overlay, and a lingering `transform` (translateY, even
-     at rest with fill `both`) would make the wrapper the overlay's containing block and trap it inside the
-     board box instead of the viewport. Siblings-only keeps the overlay anchored to the viewport. */
+  /* Content transition on board/department change is handled by the SPA View Transitions mode (a
+     crossfade wrapping the region swap — see src/spa.tsx + styles/view-transitions.css), NOT a per-mount
+     CSS animation here. A mount animation replayed on EVERY section swap — including opening/closing an
+     issue (same board) — which read as the board flickering. The view transition is visual-diff based, so
+     a same-board nav is seamless and only a real board change animates. */
   [data-region="board-header"] {
     display: block;
-    animation: atlas-rise var(--dur-normal) var(--ease-out) both;
   }
 
   [data-region="board"] {
     display: block;
-    animation: atlas-rise var(--dur-normal) var(--ease-out) both;
   }
 
   [data-overlay="issue"][hidden] {
     display: none;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    [data-region="board-header"],
-    [data-region="board"] {
-      animation: none;
-    }
   }
 }

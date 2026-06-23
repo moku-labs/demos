@@ -51,3 +51,21 @@
     transform: translateY(0);
   }
 }
+
+/* SPA View Transitions — the navigation crossfade for the working area, wrapping each region swap (see
+   src/spa.tsx `viewTransitions: true`). This tunes the browser's default root cross-fade to the design's
+   motion tokens, so board↔board / board↔issue / board↔list navigations dissolve calmly instead of
+   hard-cutting. The framework gates `startViewTransition` off under prefers-reduced-motion (and on UAs
+   without the API), so no transition runs there; the explicit guard below is belt-and-suspenders. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-normal);
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

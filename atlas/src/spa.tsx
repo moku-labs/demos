@@ -15,7 +15,12 @@ const app = createApp({
   pluginConfigs: {
     site: { name: SITE.name, url: SITE.url, author: SITE.author, description: SITE.description },
     router: { routes },
-    spa: { islands }
+    // viewTransitions: the SPA wraps each region swap in document.startViewTransition, so navigation
+    // crossfades the working area (board↔board, board↔issue, board↔list) instead of hard-cutting and
+    // re-running per-mount animations. It is a visual-diff transition — a same-board nav (open/close an
+    // issue) reads as seamless, a real board/department change reads as a calm crossfade. The framework
+    // disables it under prefers-reduced-motion and on browsers without the API (graceful raw swap).
+    spa: { islands, viewTransitions: true }
   }
 });
 

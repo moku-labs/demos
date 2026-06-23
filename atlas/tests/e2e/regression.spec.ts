@@ -123,19 +123,58 @@ test.describe("Boards bar overflow scrolling (#many-boards)", () => {
 });
 
 test.describe("Board/department change transition", () => {
-  test("the board content has an entry transition (animates on navigation)", async ({ page }) => {
+  test("navigation runs a SPA view transition (crossfade mode, no per-mount re-animation)", async ({
+    page
+  }) => {
+    // The suite globally emulates prefers-reduced-motion (for stable baselines), which the framework
+    // honours by skipping view transitions — opt back into motion to assert the transition is wired.
+    await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("/board/board-platform");
     await page.waitForLoadState("load");
-    // The suite globally emulates prefers-reduced-motion (for stable visual baselines), which correctly
-    // disables this transition — opt back into motion at runtime to assert the animation is actually wired.
-    await page.emulateMedia({ reducedMotion: "no-preference" });
-    // The animation lives on the CONTENT region, never the page wrapper (a transform on the wrapper would
-    // trap the fixed issue overlay — see the overlay-covers-viewport guard below).
-    const animation = await page
-      .locator('[data-region="board"]')
-      .evaluate(el => getComputedStyle(el).animationName);
-    expect(animation).not.toBe("none");
-    expect(animation).toContain("atlas-rise");
+    await page.waitForSelector("[data-card-id]");
+
+    // Count startViewTransition calls AND board-content animation restarts across a nav.
+    await page.evaluate(() => {
+      const w = globalThis as unknown as { __vt: number; __rise: number };
+      w.__vt = 0;
+      w.__rise = 0;
+      document.addEventListener(
+        "animationstart",
+        e => {
+          if ((e.target as Element).matches?.("[data-region]")) w.__rise += 1;
+        },
+        true
+      );
+      const d = document as Document & { startViewTransition?: (cb: () => void) => unknown };
+      const orig = d.startViewTransition?.bind(d);
+      if (orig) {
+        d.startViewTransition = cb => {
+          w.__vt += 1;
+          return orig(cb);
+        };
+      }
+    });
+    // The transition mode only works where the API exists (Playwright's Chromium has it).
+    expect(await page.evaluate(() => typeof document.startViewTransition === "function")).toBe(
+      true
+    );
+
+    // Open then close an issue (two same-board section swaps) — the flicker scenario.
+    const firstId = await page.locator("[data-card-id]").first().getAttribute("data-card-id");
+    await page.locator(`[data-card-id="${firstId}"]`).click();
+    await page.waitForSelector("[data-issue-title]");
+    await page.locator('[data-bar-tools] button[data-action="close"]').click();
+    await page.waitForSelector("[data-card-id]");
+    await page.waitForTimeout(200);
+
+    const counters = await page.evaluate(() => {
+      const w = globalThis as unknown as { __vt: number; __rise: number };
+      return { vt: w.__vt, rise: w.__rise };
+    });
+    // Each swap goes through a view transition (the crossfade), and the board no longer re-runs a
+    // per-mount rise animation (the old flicker — was 4 restarts for this cycle).
+    expect(counters.vt).toBeGreaterThan(0);
+    expect(counters.rise).toBe(0);
   });
 
   test("the open issue overlay covers the full viewport (not trapped in the board box)", async ({
