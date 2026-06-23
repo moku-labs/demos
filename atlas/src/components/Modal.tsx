@@ -1,0 +1,161 @@
+/**
+ * @file Modal (modals E1/E2/E3) — one centered dialog with a dimmed backdrop, switched by `variant`
+ * (design context §6 E1/E2/E3). `delete`: a danger confirm ("…This can't be undone.") with Cancel /
+ * Delete. `prompt`: a "New …" single text field with Cancel / Create — used for Add column / board /
+ * card. `date`: a "Set …" date field with Clear / Cancel / Save — used for the issue Due date. The
+ * primary/danger action paints in the vermilion accent. Pure + SSR shared markup: the Phase-C island
+ * re-renders it via `h(Modal, props)` and wires submit/dismiss off the `data-action`/`data-scrim`
+ * hooks; the form degrades to a real submit with no JS.
+ */
+import type { ModalSwatch } from "../lib/menu";
+import { Icon } from "./Icon";
+
+/** Props for {@link Modal}. */
+export interface ModalProps {
+  /** Which dialog to render. */
+  variant: "delete" | "prompt" | "date" | "profile" | "board";
+  /** The dialog title (e.g. "Delete column", "New board", "Set due date"). */
+  title: string;
+  /** The body copy (delete variant) or helper line. */
+  message?: string;
+  /** Label for the primary/confirm button (defaults per variant). */
+  confirmLabel?: string;
+  /** Placeholder for the text field (prompt/profile variant). */
+  placeholder?: string;
+  /** The avatar-colour palette (profile variant). */
+  palette?: ModalSwatch[];
+  /** The selected colour token (profile variant) — marks the active swatch. */
+  selectedColor?: string | null;
+}
+
+/**
+ * Render a centered modal for the given variant — delete confirm, add prompt, or date prompt.
+ *
+ * @param props - The modal props.
+ * @param props.variant - Which dialog to render (`delete` | `prompt` | `date`).
+ * @param props.title - The dialog title.
+ * @param props.message - The body copy (delete) or helper line.
+ * @param props.confirmLabel - Label for the primary/confirm button (defaults per variant).
+ * @param props.placeholder - Placeholder for the text field (prompt variant).
+ * @returns The modal element.
+ * @example
+ * ```tsx
+ * <Modal variant="delete" title="Delete this column?" message="This can't be undone." />
+ * <Modal variant="prompt" title="New board" placeholder="Board title" />
+ * <Modal variant="date" title="Set due date" />
+ * ```
+ */
+export function Modal({
+  variant,
+  title,
+  message,
+  confirmLabel,
+  placeholder,
+  palette = [],
+  selectedColor = null
+}: ModalProps) {
+  const isDelete = variant === "delete";
+  const isDate = variant === "date";
+  const isProfile = variant === "profile";
+  const isBoard = variant === "board";
+  const confirm = confirmLabel ?? (isDelete ? "Delete" : isDate ? "Save" : "Create");
+  const eyebrow = isDelete
+    ? "Confirm"
+    : isDate
+      ? "Schedule"
+      : isProfile || isBoard
+        ? "Edit"
+        : "Create";
+
+  return (
+    <div data-modal data-variant={variant}>
+      <div data-scrim data-action="dismiss-modal" aria-hidden="true" />
+      <div data-dialog role="dialog" aria-modal="true" aria-label={title}>
+        <form data-modal-form data-action="confirm-modal" method="dialog">
+          <header data-modal-head>
+            <div data-modal-heading>
+              <span data-modal-eyebrow>{eyebrow}</span>
+              <h2 data-modal-title>{title}</h2>
+            </div>
+            <button type="button" data-action="dismiss-modal" aria-label="Close">
+              <Icon name="close" />
+            </button>
+          </header>
+
+          {message && <p data-modal-message>{message}</p>}
+
+          {(variant === "prompt" || isProfile || isBoard) && (
+            <label data-modal-field>
+              <input
+                type="text"
+                name="value"
+                data-action="modal-input"
+                placeholder={placeholder ?? "Title"}
+                autocomplete="off"
+                required
+              />
+            </label>
+          )}
+
+          {isBoard && (
+            <label data-modal-field data-modal-subtitle-field>
+              <span data-modal-sublabel>Subtitle</span>
+              <textarea
+                data-modal-subtitle
+                placeholder="A line of context for this board…"
+                rows={2}
+              />
+            </label>
+          )}
+
+          {isProfile && (
+            <div data-modal-swatches>
+              {palette.map(swatch => (
+                <button
+                  key={swatch.token}
+                  type="button"
+                  data-modal-swatch
+                  data-action="pick-color"
+                  data-value={swatch.token}
+                  data-selected={selectedColor === swatch.token ? "" : undefined}
+                  style={`--swatch:var(${swatch.token})`}
+                  aria-pressed={selectedColor === swatch.token ? "true" : "false"}
+                  aria-label={swatch.name}
+                  title={swatch.name}
+                >
+                  <span data-modal-swatch-dot aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {isDate && (
+            <label data-modal-field>
+              <input type="date" name="value" data-action="modal-input" />
+            </label>
+          )}
+
+          <footer data-modal-actions>
+            {isDate && (
+              <button type="button" data-modal-btn data-tone="ghost" data-action="clear-date">
+                Clear
+              </button>
+            )}
+            <span data-modal-spacer />
+            <button type="button" data-modal-btn data-tone="quiet" data-action="dismiss-modal">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              data-modal-btn
+              data-tone={isDelete ? "danger" : "primary"}
+              data-action="confirm-modal"
+            >
+              {confirm}
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  );
+}

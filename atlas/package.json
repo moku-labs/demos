@@ -10,15 +10,17 @@
   },
   "dependencies": {
     "@moku-labs/web": "2.0.0",
-    "@moku-labs/worker": "0.9.1",
+    "@moku-labs/worker": "0.10.0",
     "preact": "10.29.2",
     "preact-render-to-string": "6.7.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.3",
     "@arethetypeswrong/core": "0.18.3",
+    "@axe-core/playwright": "4.11.3",
     "@biomejs/biome": "2.4.16",
     "@cloudflare/workers-types": "4.20260617.1",
+    "@playwright/test": "1.61.0",
     "@types/bun": "1.3.14",
     "@vitest/coverage-istanbul": "4.0.18",
     "eslint": "9.39.3",
@@ -29,15 +31,19 @@
     "globals": "17.4.0",
     "jiti": "2.6.1",
     "lefthook": "2.1.1",
+    "playwright": "1.61.0",
     "publint": "0.3.21",
     "tsdown": "0.22.1",
     "typescript": "6.0.3",
     "typescript-eslint": "8.58.0",
     "vitest": "4.0.18",
-    "wrangler": "4.102.0"
+    "wrangler": "4.103.0"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "bun run scripts/build.ts",
+    "build:worker": "wrangler deploy --dry-run --outdir dist/worker",
+    "dev": "bun scripts/dev.ts",
+    "deploy": "bun scripts/deploy.ts",
     "typecheck": "tsc --noEmit",
     "lint": "biome check . && eslint .",
     "lint:fix": "biome check --write . && eslint --fix .",
@@ -45,6 +51,9 @@
     "test": "vitest run",
     "test:unit": "vitest run --project unit",
     "test:integration": "vitest run --project integration",
-    "test:coverage": "vitest run --project unit --project integration --coverage"
+    "test:coverage": "vitest run --project unit --project integration --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots",
+    "test:e2e:update:linux": "docker run --rm -v $(pwd):/work -w /work mcr.microsoft.com/playwright:v1.61.0-noble bunx playwright test --update-snapshots"
   }
 }

@@ -1,0 +1,52 @@
+/**
+ * Components aggregator — `@import`s every colocated, `@scope`d component + layout sheet. No rules of
+ * its own. Adding a component = create `Foo.tsx` + `Foo.css`, then add one `@import` line here.
+ */
+
+/* Layout chrome */
+@import "../layouts/SiteLayout.css";
+@import "../layouts/AuthLayout.css";
+
+/* Shared atoms */
+@import "../components/Icon.css";
+@import "../components/Avatar.css";
+@import "../components/LabelDot.css";
+@import "../components/PriorityMark.css";
+@import "../components/StatBlock.css";
+
+/* Masthead + footer + auth */
+@import "../components/Masthead.css";
+@import "../components/Footer.css";
+@import "../components/AuthAside.css";
+@import "../components/AuthForm.css";
+
+/* Nav regions — departments index + boards bar */
+@import "../components/DepartmentsIndex.css";
+@import "../components/DepartmentTab.css";
+@import "../components/BoardsBar.css";
+@import "../components/BoardPill.css";
+
+/* Board surface — header, columns, cards */
+@import "../components/BoardHeader.css";
+@import "../components/BoardView.css";
+@import "../components/ColumnView.css";
+@import "../components/CardView.css";
+@import "../components/EmptyState.css";
+@import "../components/DropIndicator.css";
+
+/* List view + issue page */
+@import "../components/ListView.css";
+@import "../components/ListRow.css";
+@import "../components/IssuePanel.css";
+@import "../components/SubIssueRow.css";
+@import "../components/AttachmentThumb.css";
+
+/* Overlays — activity, filter, customize, menu, modal, toast */
+@import "../components/ActivityPanel.css";
+@import "../components/FilterPanel.css";
+@import "../components/CustomizePanel.css";
+@import "../components/ContextMenu.css";
+@import "../components/Chooser.css";
+@import "../components/MilestonePicker.css";
+@import "../components/Modal.css";
+@import "../components/Toast.css";

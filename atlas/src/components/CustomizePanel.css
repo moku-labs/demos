@@ -1,0 +1,202 @@
+/**
+ * CustomizePanel — the Customize popover/sheet. Scoped to `[data-customize-panel]`. The panel is its
+ * own modal layer: a dimmed `[data-scrim]` fills the (already fixed) overlay host and a bordered
+ * `[data-customize-card]` floats centred above it. The card carries an eyebrow + Fraunces element
+ * name, a curated colour palette of token-painted dots (the selected swatch gets an accent ring), and
+ * a cohesive icon grid of quiet cells that warm to the accent tint when picked, with a "Remove icon"
+ * affordance. Each swatch paints from its own `--swatch` custom property so no colour is hardcoded.
+ * The card is height-capped and scrolls internally so the full icon grid is always reachable. On
+ * phones it drops to a bottom sheet (design context §4/§6 C3).
+ */
+@scope ([data-customize-panel]) {
+  :scope {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6);
+  }
+
+  [data-scrim] {
+    position: fixed;
+    inset: 0;
+    background: var(--scrim);
+    animation: atlas-fade var(--dur-normal) var(--ease-out);
+  }
+
+  [data-customize-card] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    width: min(24rem, 92vw);
+    max-height: min(80vh, 40rem);
+    overflow-y: auto;
+    overflow-x: clip;
+    padding: var(--space-5);
+    background: var(--surface-card);
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-pop);
+    z-index: var(--z-popover);
+    animation: atlas-pop var(--dur-fast) var(--ease-out);
+  }
+
+  [data-customize-head] {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  [data-customize-eyebrow] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  [data-customize-title] {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+  }
+
+  [data-customize-section] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  [data-customize-section] + [data-customize-section] {
+    border-block-start: var(--rule-width) solid var(--rule);
+    padding-block-start: var(--space-4);
+  }
+  [data-customize-heading],
+  [data-customize-heading-row] [data-customize-heading] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  [data-customize-heading-row] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  [data-remove-icon] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  [data-remove-icon]:hover {
+    color: var(--accent);
+  }
+  [data-remove-icon][data-selected] {
+    color: var(--accent-deep);
+  }
+
+  [data-swatch-grid] {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-3);
+    justify-items: center;
+  }
+  [data-swatch] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.85rem;
+    /* aspect-ratio + flex:none guarantee a perfect square (and so a perfect circle), immune to any
+       flex/grid sizing pressure; border-radius:50% is the unambiguous circle (not a pill clamp). */
+    aspect-ratio: 1;
+    flex: none;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+  [data-swatch]:hover {
+    transform: translateY(-1px);
+  }
+  [data-swatch][data-selected] {
+    border-color: var(--accent);
+  }
+  [data-swatch-dot] {
+    width: 1.2rem;
+    aspect-ratio: 1;
+    flex: none;
+    border-radius: 50%;
+    background: var(--swatch);
+    box-shadow: inset 0 0 0 1px var(--inset-soft);
+  }
+
+  [data-icon-grid] {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+  [data-icon-cell] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    aspect-ratio: 1;
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-md);
+    color: var(--text-body);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-icon-cell]:hover {
+    background: var(--surface-sunken);
+    border-color: var(--rule-strong);
+  }
+  [data-icon-cell][data-selected] {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+    color: var(--accent-deep);
+  }
+  [data-icon-cell] [data-icon] {
+    width: 17px;
+    height: 17px;
+  }
+
+  @media (max-width: 760px) {
+    :scope {
+      align-items: stretch;
+      justify-content: stretch;
+      padding: 0;
+    }
+    [data-customize-card] {
+      position: fixed;
+      inset-block: auto 0;
+      inset-inline: 0;
+      width: auto;
+      max-width: none;
+      max-height: 85vh;
+      border-inline: none;
+      border-bottom: none;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      box-shadow: var(--shadow-sheet-up);
+      padding-bottom: max(var(--space-5), env(safe-area-inset-bottom));
+      animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
+    }
+  }
+
+  @media (max-width: 480px) {
+    [data-icon-grid] {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+}

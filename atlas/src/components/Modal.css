@@ -1,0 +1,299 @@
+/**
+ * Modal — the centered dialog. Scoped to `[data-modal]`. A dimmed scrim covers the page; the dialog
+ * is a raised card that pops in over it. A Fraunces title with a quiet close, optional body copy, an
+ * optional field on sunken paper, and a footer action row. The primary action paints in the accent;
+ * the danger action (delete variant) reads the same vermilion to mark the destructive confirm; quiet
+ * and ghost actions stay neutral (design context §6 E1/E2/E3).
+ */
+@scope ([data-modal]) {
+  :scope {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    display: grid;
+    place-items: center;
+    padding: var(--space-5);
+  }
+
+  [data-scrim] {
+    position: absolute;
+    inset: 0;
+    background: var(--scrim);
+    animation: atlas-fade var(--dur-fast) var(--ease-out);
+  }
+
+  [data-dialog] {
+    position: relative;
+    width: min(26rem, 100%);
+    background: var(--surface-card);
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+    animation: atlas-pop var(--dur-normal) var(--ease-out);
+  }
+
+  [data-modal-form] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding: var(--space-6);
+  }
+
+  [data-modal-head] {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: var(--rule-width) solid var(--rule);
+  }
+  [data-modal-heading] {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  [data-modal-eyebrow] {
+    display: block;
+    margin-bottom: var(--space-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    /* The mono eyebrow is the modal's live cue — vermilion, matching the accent discipline (§2):
+       the accent marks primary/destructive surfaces, and a modal is always one of those. */
+    color: var(--accent);
+  }
+  [data-modal-title] {
+    font-family: var(--font-display);
+    /* Lift the title into a confident editorial headline (--text-xl) rather than near-body size. */
+    font-size: var(--text-xl);
+    font-weight: 480;
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-snug);
+    color: var(--text-strong);
+  }
+  [data-modal-head] button {
+    display: inline-flex;
+    flex: none;
+    padding: 0.3rem;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-modal-head] button:hover {
+    background: var(--surface-sunken);
+    color: var(--text-strong);
+  }
+
+  [data-modal-message] {
+    max-width: 32ch;
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    color: var(--text-body);
+  }
+
+  [data-modal-field] {
+    display: flex;
+  }
+  [data-modal-field] input {
+    width: 100%;
+    padding: 0.65rem 0.8rem;
+    background: var(--surface-sunken);
+    border: var(--rule-width) solid var(--rule-strong);
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    color: var(--text-strong);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  [data-modal-field] input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--surface-card);
+  }
+
+  /* Board variant — the subtitle (standfirst) field below the name: a small mono label + a textarea. */
+  [data-modal-subtitle-field] {
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+  [data-modal-sublabel] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  [data-modal-subtitle] {
+    width: 100%;
+    padding: 0.55rem 0.8rem;
+    background: var(--surface-sunken);
+    border: var(--rule-width) solid var(--rule-strong);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: var(--text-body);
+    resize: vertical;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  [data-modal-subtitle]:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--surface-card);
+  }
+  [data-modal-subtitle]::placeholder {
+    color: var(--text-faint);
+  }
+
+  /* Profile variant — the avatar-colour swatch row beneath the name field. Round, token-painted dots;
+     the selected one gets an accent ring. (Same visual language as the Customize panel swatches.) */
+  [data-modal-swatches] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-1);
+  }
+  [data-modal-swatch] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.85rem;
+    aspect-ratio: 1;
+    flex: none;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+  [data-modal-swatch]:hover {
+    transform: translateY(-1px);
+  }
+  [data-modal-swatch][data-selected] {
+    border-color: var(--accent);
+  }
+  [data-modal-swatch-dot] {
+    width: 1.2rem;
+    aspect-ratio: 1;
+    flex: none;
+    border-radius: 50%;
+    background: var(--swatch);
+    box-shadow: inset 0 0 0 1px var(--inset-soft);
+  }
+
+  [data-modal-actions] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-top: var(--space-4);
+    border-top: var(--rule-width) solid var(--rule);
+  }
+  [data-modal-spacer] {
+    flex: 1;
+  }
+  [data-modal-btn] {
+    padding: 0.55rem 0.9rem;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border: var(--rule-width) solid transparent;
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-modal-btn][data-tone="quiet"] {
+    color: var(--text-body);
+    border-color: var(--rule-strong);
+  }
+  [data-modal-btn][data-tone="quiet"]:hover {
+    background: var(--surface-sunken);
+    border-color: var(--text-faint);
+  }
+  [data-modal-btn][data-tone="ghost"] {
+    color: var(--text-muted);
+  }
+  [data-modal-btn][data-tone="ghost"]:hover {
+    color: var(--accent);
+  }
+  [data-modal-btn][data-tone="primary"],
+  [data-modal-btn][data-tone="danger"] {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  [data-modal-btn][data-tone="primary"]:hover,
+  [data-modal-btn][data-tone="danger"]:hover {
+    background: var(--accent-deep);
+  }
+  [data-modal-btn]:active {
+    transform: translateY(1px);
+  }
+
+  /* Delete confirm: give the warning copy room to breathe before the danger row. */
+  :scope[data-variant="delete"] [data-modal-message] {
+    margin-block: var(--space-1) 0;
+  }
+  :scope[data-variant="delete"] [data-modal-actions] {
+    padding-top: var(--space-5);
+  }
+
+  @media (max-width: 760px) {
+    :scope {
+      place-items: end center;
+      padding: 0;
+    }
+    /*
+     * Phone sheet: cap the height and turn the dialog into a flex column so the body scrolls and the
+     * action row pins — the field + Cancel/confirm can never be buried below the keyboard. A grab
+     * handle (a phones-only ::before pill) tops the sheet, matching the ContextMenu sheet family.
+     */
+    [data-dialog] {
+      width: 100%;
+      max-height: 92dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-inline: none;
+      border-bottom: none;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      box-shadow: var(--shadow-sheet-up);
+      animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
+    }
+    [data-dialog]::before {
+      content: "";
+      flex: none;
+      width: 2.25rem;
+      height: 4px;
+      margin: var(--space-2) auto 0;
+      border-radius: var(--radius-pill);
+      background: var(--rule-strong);
+    }
+    [data-modal-form] {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: var(--space-5);
+    }
+    [data-modal-field] input {
+      padding: 0.85rem 0.9rem;
+    }
+    [data-modal-actions] {
+      position: sticky;
+      bottom: 0;
+      background: var(--surface-card);
+    }
+    [data-modal-btn] {
+      min-height: 44px;
+      padding: 0.75rem 1.1rem;
+    }
+  }
+}

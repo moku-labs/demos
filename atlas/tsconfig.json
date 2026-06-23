@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",
     "moduleResolution": "bundler",
     "verbatimModuleSyntax": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "noEmit": true,
     "strict": true,
     "exactOptionalPropertyTypes": true,
@@ -13,7 +15,7 @@
     "noImplicitOverride": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
-    "types": ["bun"]
+    "types": ["@cloudflare/workers-types", "bun"]
   },
-  "include": ["src", "tests", "declarations.d.ts", "*.config.ts"]
+  "include": ["src", "tests", "scripts", "declarations.d.ts", "*.config.ts"]
 }

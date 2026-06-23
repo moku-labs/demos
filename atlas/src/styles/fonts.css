@@ -1,0 +1,42 @@
+/**
+ * @font-face — self-hosted, subset, swap. The three voices of the design context §2: Fraunces (the
+ * characterful display serif, with italics for emphasis/captions), Hanken Grotesk (the calm body/UI
+ * voice), and Spline Sans Mono (the "byline" data texture). Vendored under `public/fonts/` (no font
+ * npm deps); the build leaves the `url()`s external. Kept OUT of `@layer` so font loading is
+ * independent of cascade order. `font-display: swap` shows the fallback immediately.
+ */
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(/fonts/fraunces/fraunces-latin-variable-normal.woff2) format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2074, U+20AC, U+2122, U+2191-2193;
+}
+
+@font-face {
+  font-family: "Fraunces";
+  font-style: italic;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(/fonts/fraunces/fraunces-latin-variable-italic.woff2) format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2074, U+20AC, U+2122, U+2191-2193;
+}
+
+@font-face {
+  font-family: "Hanken Grotesk";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(/fonts/hanken-grotesk/hanken-grotesk-latin-variable-normal.woff2) format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2074, U+20AC, U+2122, U+2191-2193;
+}
+
+@font-face {
+  font-family: "Spline Sans Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url(/fonts/spline-sans-mono/spline-sans-mono-latin-variable-normal.woff2) format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2074, U+20AC, U+2122, U+2191-2193;
+}

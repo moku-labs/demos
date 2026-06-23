@@ -1,0 +1,98 @@
+/**
+ * ListView — the editorial issues table. Scoped to `[data-listview]`. Defines the shared column
+ * template (`--list-cols`, inherited by every `[data-list-row]` so cells align to the page grid), a
+ * sticky mono header row of column labels, and per-status groups each headed by a Fraunces count.
+ * Hairline dividers and generous rhythm read like a contents page. On narrow viewports the sticky
+ * header hides and the rows collapse to two lines (handled in ListRow.css).
+ */
+@scope ([data-listview]) {
+  :scope {
+    /* The single source of truth for column widths — ListRow inherits this custom property. The
+       Labels track is held to a tight `0.7fr` so the lone label dot sits under its header, not
+       adrift across a wide gap. */
+    --list-cols: minmax(0, 3fr) 7rem 3.5rem minmax(4rem, 0.7fr) 6rem 3.5rem 4.5rem auto;
+    display: block;
+    border-top: var(--rule-width) solid var(--rule);
+  }
+
+  [data-list-head] {
+    display: grid;
+    grid-template-columns: var(--list-cols);
+    gap: var(--space-4);
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-page);
+    border-bottom: var(--rule-width) solid var(--rule-strong);
+  }
+  [data-head-cell] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  [data-list-group] {
+    border-bottom: var(--rule-width) solid var(--rule);
+  }
+  [data-list-group]:last-child {
+    border-bottom: none;
+  }
+
+  [data-group-head] {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-4) var(--space-3);
+  }
+  [data-group-title] {
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: 500;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+  }
+  /* The count is the editorial numeral beside the status name — same Fraunces voice but a step
+     quieter in tone (and lighter in weight) so the status title stays the focal word and the
+     serif figure reads as a contents-page tally, not a second heading. */
+  [data-group-count] {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+  }
+
+  /* Quiet cap line when a status group exceeds its display limit (design context §6 F4). */
+  [data-list-more] {
+    padding: var(--space-3) var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-faint);
+  }
+
+  @media (max-width: 1024px) {
+    :scope {
+      --list-cols: minmax(0, 3fr) 6rem 3rem minmax(3.5rem, 0.7fr) 5rem 3rem 4rem auto;
+    }
+  }
+
+  /* On phones the sticky header drops away — the rows carry their own two-line meta (ListRow.css). */
+  @media (max-width: 760px) {
+    [data-list-head] {
+      display: none;
+    }
+    [data-group-head] {
+      padding: var(--space-5) var(--pad-page) var(--space-3);
+    }
+    [data-list-more] {
+      padding-inline: var(--pad-page);
+    }
+  }
+}

@@ -1,0 +1,158 @@
+/**
+ * CardView — a quiet card that lifts gently on hover. Scoped to `[data-card]`. A warm card surface on
+ * a hairline rule, soft `--shadow-card` at rest rising to `--shadow-pop` on hover (it nudges up a
+ * hair). The title is the body voice; the meta row is a calm strip of mono counts and small avatars.
+ * Depth stays subtle — never glassy (design context §2 "Surface & rules").
+ */
+@scope ([data-card]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--surface-card);
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    cursor: grab;
+    transition:
+      box-shadow var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+  :scope:hover {
+    border-color: var(--rule-strong);
+    box-shadow: var(--shadow-pop);
+    transform: translateY(-1px);
+  }
+  :scope:active {
+    cursor: grabbing;
+  }
+
+  [data-card-head] {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  [data-action="card-menu"] {
+    display: inline-flex;
+    flex: none;
+    padding: 0.2rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-ghost);
+    opacity: 0;
+    transition:
+      opacity var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  :scope:hover [data-action="card-menu"],
+  :scope:focus-within [data-action="card-menu"],
+  [data-action="card-menu"]:focus {
+    opacity: 1;
+  }
+  [data-action="card-menu"]:hover,
+  [data-action="card-menu"]:focus {
+    background: var(--accent-tint);
+    color: var(--accent-deep);
+  }
+
+  [data-card-icon] {
+    display: inline-flex;
+    flex: none;
+    margin-top: 0.1rem;
+    font-size: var(--text-sm);
+    /* The issue's customized colour tints its leading icon; falls back to muted ink. */
+    color: var(--element-color, var(--text-muted));
+  }
+  /* Colour-only customization (no icon): a small dot carries the chosen colour. */
+  [data-card-dot] {
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-top: 0.35rem;
+    border-radius: 50%;
+    background: var(--element-color, var(--text-muted));
+  }
+
+  [data-card-title] {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    font-weight: 520;
+    line-height: var(--leading-snug);
+    /* A customized issue colour tints the card title too (#6); falls back to strong ink. */
+    color: var(--element-color, var(--text-strong));
+  }
+
+  [data-card-head] [data-priority] {
+    flex: none;
+    margin-top: 0.15rem;
+  }
+
+  /* A derived one-to-two-line description excerpt, sitting just under the head as quiet supporting
+     prose — clamped so a long description never grows the card (design context §6 G card anatomy). */
+  [data-card-desc] {
+    margin-top: calc(-1 * var(--space-1));
+    font-size: var(--text-sm);
+    line-height: var(--leading-snug);
+    color: var(--text-muted);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+
+  [data-card-labels] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  [data-card-meta] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-top: var(--space-1);
+    border-top: var(--rule-width) solid var(--rule);
+  }
+
+  [data-card-assignees] {
+    display: inline-flex;
+    align-items: center;
+  }
+  [data-card-assignees] [data-avatar] {
+    margin-inline-end: -0.3rem;
+    box-shadow: 0 0 0 2px var(--surface-card);
+  }
+
+  [data-card-tail] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-inline-start: auto;
+  }
+
+  [data-card-stat] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  [data-card-stat] [data-icon] {
+    color: var(--text-faint);
+  }
+
+  [data-card-count] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-muted);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+}

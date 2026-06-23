@@ -1,0 +1,34 @@
+/**
+ * AuthLayout — the editorial split. Scoped to `[data-auth-shell]`. Two full-height columns on
+ * desktop: the editorial aside (warm raised paper, hairline divider) and the form panel centred in
+ * the remaining space. On phones it stacks — the aside compacts above the form.
+ */
+@scope ([data-auth-shell]) {
+  :scope {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(28rem, 1fr);
+    min-height: 100dvh;
+  }
+
+  [data-main] {
+    display: grid;
+    place-items: start center;
+    align-content: center;
+    padding: var(--space-10) var(--pad-page);
+  }
+  [data-main] > section {
+    width: 100%;
+    max-width: 26rem;
+    animation: atlas-rise var(--dur-enter) var(--ease-out) both;
+  }
+
+  @media (max-width: 760px) {
+    :scope {
+      grid-template-columns: 1fr;
+    }
+    [data-main] {
+      align-content: start;
+      padding: var(--space-7) var(--pad-page) var(--space-8);
+    }
+  }
+}

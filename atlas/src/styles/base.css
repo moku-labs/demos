@@ -1,0 +1,115 @@
+/**
+ * Element defaults — the editorial ground. The page is a flowing document (no viewport-height lock):
+ * it grows with its content and the whole page scrolls (design context §5). The warm paper carries
+ * two faint radial glows; headings speak in Fraunces, body in Hanken Grotesk, data in Spline Sans Mono.
+ */
+html {
+  /* The page scrolls as a document; never smooth-scroll the root (it strands SPA scroll-to-top). */
+  scroll-behavior: auto;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-strong);
+  background-color: var(--surface-page);
+  background-image:
+    radial-gradient(circle at 18% -10%, var(--bg-glow-1), transparent 38%),
+    radial-gradient(circle at 108% 0%, var(--bg-glow-2), transparent 40%);
+  background-attachment: fixed;
+  transition:
+    background-color var(--dur-theme) var(--ease-out),
+    color var(--dur-theme) var(--ease-out);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 460;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-strong);
+  text-wrap: balance;
+}
+
+h5,
+h6 {
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+small {
+  font-size: var(--text-sm);
+}
+
+code,
+kbd,
+samp {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+b,
+strong {
+  font-weight: 650;
+}
+
+::placeholder {
+  color: var(--text-faint);
+  opacity: 1;
+}
+
+hr {
+  border: none;
+  border-top: var(--rule-width) solid var(--rule);
+}
+
+/**
+ * Interactive element cursors — buttons already carry `cursor: pointer` from reset.css; these rules
+ * extend the same affordance to anchors (which navigate or preview) and to label+input pairs (the
+ * sub-issue checkboxes, theme-toggle labels) so every clickable surface feels clickable.
+ * Disabled controls revert to `not-allowed` so the user understands the constraint immediately.
+ */
+a[href] {
+  cursor: pointer;
+}
+
+label {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/**
+ * Overlay scroll-lock — while any full-viewport overlay is open, the document behind it must not
+ * scroll (design context §5: overlays are modal layers, never floating mid-page). Each overlay island
+ * toggles its own boolean attribute on the document element when it opens; this locks the root and
+ * body so the underlying board/footer stays put. The `:is()` list keeps the four overlays additive.
+ */
+html:is(
+    [data-overlay-issue],
+    [data-overlay-activity],
+    [data-overlay-filter],
+    [data-overlay-customize]
+  ),
+html:is(
+    [data-overlay-issue],
+    [data-overlay-activity],
+    [data-overlay-filter],
+    [data-overlay-customize]
+  ) body {
+  overflow: hidden;
+}

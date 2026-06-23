@@ -1,0 +1,70 @@
+/**
+ * @file SiteLayout — the persistent chrome wrapping every *app* route (board / list / issue /
+ * activity), AND the route layout itself: it has the framework layout signature
+ * `(ctx, children) => VNode`, so routes use `.layout(SiteLayout)` directly. The flowing document runs
+ * masthead → departments index → boards bar → `main > section` (the swapped page) → footer (design
+ * context §5). The departments index + boards bar are island mount points (live worker data, Phase C);
+ * the global overlay singletons (activity drawer, filter, customize, menu, modal, toast) live here so
+ * they persist across SPA navigation. The home link is built from the route map via `ctx.url` — never
+ * a hardcoded URL.
+ */
+import type { Router } from "@moku-labs/web/browser";
+import type { ComponentChildren, VNode } from "preact";
+import { Footer } from "../components/Footer";
+import { Masthead } from "../components/Masthead";
+
+/** The magazine edition line carried in the masthead (design context §2 "Masthead flavour"). */
+const EDITION = "Vol. 4 · No. 12 · Spring Cycle — Mar 2026";
+
+/**
+ * Frame an app page in the persistent editorial chrome + the swappable main region.
+ *
+ * @param ctx - The route layout context; its `url` builds links from the route map.
+ * @param children - Page content rendered into the `main > section` swap region.
+ * @returns The framed layout.
+ * @example
+ * ```tsx
+ * route("/board/{id}").layout(SiteLayout).render(() => <BoardPage />);
+ * ```
+ */
+export function SiteLayout(
+  ctx: Router.LayoutContext<Router.RouteState>,
+  children: ComponentChildren
+): VNode {
+  return (
+    <div data-app-shell>
+      <Masthead homeHref={ctx.url("home", {})} edition={EDITION} />
+
+      <nav data-island="departments" data-region="departments-index" aria-label="Departments" />
+      <div data-island="boards-bar" data-region="boards-bar" />
+
+      <main data-main>
+        {/*
+          The board working screen lives in the PERSISTENT chrome (outside the `main > section` swap
+          region), so navigating board⇄issue⇄list NEVER unmounts it: the WebSocket stays connected,
+          realtime patches keep reconciling, scroll is kept, and there is nothing to flicker. These
+          islands react to the route via `onNavEnd` (idempotent `sync`) — the board reloads only when the
+          board id actually changes. The (now content-free) `section` remains the SPA swap anchor.
+        */}
+        <div data-page="board">
+          <div data-island="board-header" data-region="board-header" />
+          <div data-island="board" data-region="board" />
+          <aside data-island="issue" data-overlay="issue" hidden />
+        </div>
+        <section>{children}</section>
+      </main>
+
+      <Footer />
+
+      {/* Global overlay singletons — empty until a Phase-C island opens them (design context §6 C/D/E/F). */}
+      <aside data-island="activity-panel" data-overlay="activity" hidden />
+      <div data-island="filter-panel" data-overlay="filter" hidden />
+      <div data-island="customize-panel" data-overlay="customize" hidden />
+      <div data-island="context-menu" data-overlay="menu" hidden />
+      <div data-island="chooser" data-overlay="chooser" hidden />
+      <div data-island="milestone-picker" data-overlay="milestone" hidden />
+      <div data-island="modal" data-overlay="modal" hidden />
+      <div data-island="toast" data-overlay="toast" aria-live="polite" />
+    </div>
+  );
+}

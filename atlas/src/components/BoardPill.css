@@ -1,0 +1,122 @@
+/**
+ * BoardPill — one rounded board affordance. Scoped to `[data-board-pill]`. A quiet pill on sunken
+ * paper that warms to the accent on hover; the active board fills with the accent tint and inks its
+ * title. The "⋯" menu and drag handle stay hidden until hover/focus to keep the bar calm. The whole
+ * title is a link, so the pill navigates even with no JS.
+ */
+@scope ([data-board-pill]) {
+  :scope {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-pill);
+    background: var(--surface-sunken);
+    white-space: nowrap;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  :scope:hover {
+    border-color: var(--rule-strong);
+  }
+  :scope[data-active] {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+  }
+
+  [data-board-link] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.5rem;
+    font-size: var(--text-sm);
+    font-weight: 550;
+    color: var(--text-body);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  [data-board-link]:hover {
+    color: var(--text-strong);
+  }
+  :scope[data-active] [data-board-link] {
+    color: var(--accent-deep);
+  }
+
+  [data-board-icon] {
+    display: inline-flex;
+    font-size: var(--text-xs);
+    /* The element's customized colour wins; falls back to muted ink (or accent when active). */
+    color: var(--element-color, var(--text-muted));
+  }
+  :scope[data-active] [data-board-icon] {
+    color: var(--element-color, var(--accent));
+  }
+  /* Colour-only customization (no icon): a small dot carries the chosen colour. */
+  [data-board-dot] {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--element-color, var(--text-muted));
+  }
+  /* A customized board colour tints its pill title too (#6); inherits the link colour otherwise. */
+  [data-board-title] {
+    color: var(--element-color, inherit);
+  }
+
+  button[data-action="menu"] {
+    display: inline-flex;
+    padding: 0.2rem;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    color: var(--text-ghost);
+    opacity: 0;
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out),
+      opacity var(--dur-fast) var(--ease-out);
+  }
+  :scope:hover button[data-action="menu"],
+  button[data-action="menu"]:focus-visible {
+    opacity: 1;
+  }
+  button[data-action="menu"]:hover {
+    background: var(--accent-tint-strong);
+    color: var(--accent-deep);
+  }
+
+  [data-board-handle] {
+    width: 0.6rem;
+    height: 0.8rem;
+    flex: none;
+    cursor: grab;
+    opacity: 0;
+    background-image: radial-gradient(currentColor 1.1px, transparent 1.1px);
+    background-size: 0.3rem 0.3rem;
+    color: var(--text-ghost);
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+  :scope:hover [data-board-handle] {
+    opacity: 1;
+  }
+
+  @media (max-width: 760px) {
+    /* On phones the boards bar swipes sideways. The "⋯" menu (carrying "Move to…") is the
+       touch path for reorder + customize, so it stays visible; the drag handle is a
+       desktop-only hover affordance and is dropped to keep the pill calm (design context §4–5). */
+    button[data-action="menu"] {
+      opacity: 1;
+    }
+    [data-board-handle] {
+      display: none;
+    }
+
+    /* Comfortable tap target — the link grows a touch taller so the whole pill is easy to hit
+       while it scrolls past (design context §5 — nothing cramped). */
+    [data-board-link] {
+      padding-block: 0.55rem;
+    }
+  }
+}

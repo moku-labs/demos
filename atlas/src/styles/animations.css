@@ -1,0 +1,71 @@
+/**
+ * Keyframes + entrance choreography. Motion is restrained (design context §2): a staggered
+ * fade-and-rise as a board loads, smooth popovers/sheets, a soft theme cross-dissolve. The
+ * `utilities` layer disables all of it under `prefers-reduced-motion`.
+ */
+@keyframes atlas-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes atlas-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes atlas-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes atlas-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes atlas-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* SPA View Transitions — the navigation crossfade for the working area, wrapping each region swap (see
+   src/spa.tsx `viewTransitions: true`). This tunes the browser's default root cross-fade to the design's
+   motion tokens, so board↔board / board↔issue / board↔list navigations dissolve calmly instead of
+   hard-cutting. The framework gates `startViewTransition` off under prefers-reduced-motion (and on UAs
+   without the API), so no transition runs there; the explicit guard below is belt-and-suspenders. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-normal);
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

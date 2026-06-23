@@ -1,0 +1,213 @@
+/**
+ * Chooser — the generic single/multi select dropdown. Scoped to `[data-chooser]`. A quiet bordered
+ * card: a mono caption heading over full-width option rows that warm to sunken paper on hover; the
+ * selected row(s) show a trailing check and read in strong ink. Each row leads with the field's own
+ * mark (status dot · priority bars · label dot · avatar). On phones it drops to a bottom sheet — a
+ * full-bleed scrim dims the page, a grab handle tops the card, the shadow lifts upward — with roomier
+ * tap targets (design context §6 D3, mirroring the universal "⋯" menu D1/D2).
+ *
+ * The scrim is a sibling of the card (rendered before it); it is inert on desktop and only paints as a
+ * dimming layer under the bottom sheet on phones, scoped to the host's `[data-overlay="chooser"]`.
+ */
+@scope ([data-chooser]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    /* Size to content (not the full-viewport host it is pinned inside) so positionPopover measures the
+       real popover width — otherwise the panel stretches and clamps to the top-left. */
+    width: max-content;
+    min-width: 13rem;
+    max-width: min(20rem, calc(100vw - 2 * var(--space-2)));
+    padding: var(--space-1);
+    background: var(--surface-card);
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-pop);
+    z-index: var(--z-modal);
+    animation: atlas-pop var(--dur-fast) var(--ease-out);
+  }
+
+  /* The grab handle is a phones-only affordance — hidden in the desktop popover. */
+  [data-sheet-grip] {
+    display: none;
+  }
+
+  [data-chooser-title] {
+    padding: 0.4rem 0.65rem 0.35rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  [data-chooser-list] {
+    display: flex;
+    flex-direction: column;
+    max-height: min(20rem, 60vh);
+    overflow-y: auto;
+  }
+
+  [data-chooser-option] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    color: var(--text-body);
+    text-align: start;
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-chooser-option]:hover {
+    background: var(--surface-sunken);
+    color: var(--text-strong);
+  }
+  /* The current selection reads as a filled, accented row — a persistent tint (distinct from the
+     plain hover) plus heavier ink + the trailing check, so it stands out even with nothing hovered. */
+  [data-chooser-option][data-selected] {
+    background: var(--accent-tint);
+    color: var(--accent-deep);
+    font-weight: 550;
+  }
+  [data-chooser-option][data-selected]:hover {
+    background: var(--accent-tint-strong);
+  }
+
+  /* The mark slot keeps a fixed width so labels line up whether or not a row has an ornament. */
+  [data-chooser-mark] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 1.25rem;
+  }
+  [data-chooser-label] {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* The trailing check is reserved (no layout shift) and only paints on a selected row. */
+  [data-chooser-check] {
+    flex: 0 0 auto;
+    display: inline-flex;
+    opacity: 0;
+    color: var(--accent);
+  }
+  [data-chooser-check] [data-icon] {
+    width: 16px;
+    height: 16px;
+  }
+  [data-chooser-option][data-selected] [data-chooser-check] {
+    opacity: 1;
+  }
+
+  /* A palette colour dot (profile avatar-colour picker, #6) — its hue comes from the inline --swatch. */
+  [data-chooser-swatch] {
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: var(--radius-pill);
+    box-shadow: inset 0 0 0 1px var(--inset-soft);
+  }
+
+  /* The status dot mirrors the rail's own dot (IssuePanel.css), recoloured by status. */
+  [data-chooser-status] {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--text-faint);
+  }
+  [data-chooser-status][data-status="in_progress"] {
+    background: var(--accent);
+  }
+  [data-chooser-status][data-status="in_review"] {
+    background: var(--label-amber);
+  }
+  [data-chooser-status][data-status="done"] {
+    background: var(--label-green);
+  }
+
+  [data-chooser-done] {
+    margin-block-start: var(--space-1);
+    padding: 0.5rem 0.65rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--accent);
+    text-align: center;
+    transition: background var(--dur-fast) var(--ease-out);
+  }
+  [data-chooser-done]:hover {
+    background: var(--accent-tint);
+    color: var(--accent-deep);
+  }
+
+  @media (max-width: 760px) {
+    :scope {
+      position: fixed;
+      inset-block: auto 0;
+      inset-inline: 0;
+      /* The bottom sheet fills the width via inset-inline:0 — override the desktop max-content. */
+      width: auto;
+      min-width: 0;
+      max-width: none;
+      padding: var(--space-2) var(--space-2) var(--space-4);
+      border-inline: none;
+      border-bottom: none;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      box-shadow: var(--shadow-sheet-up);
+      z-index: var(--z-sheet);
+      animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
+    }
+    [data-sheet-grip] {
+      display: block;
+      width: 2.25rem;
+      height: 4px;
+      margin: 0 auto var(--space-2);
+      border-radius: var(--radius-pill);
+      background: var(--rule-strong);
+    }
+    [data-chooser-list] {
+      max-height: 60vh;
+    }
+    [data-chooser-option] {
+      padding: 0.85rem 0.75rem;
+      font-size: var(--text-base);
+    }
+    [data-chooser-done] {
+      padding: 0.85rem 0.75rem;
+      font-size: var(--text-base);
+    }
+  }
+}
+
+/**
+ * The dimming scrim — a sibling of `[data-chooser]` inside the chooser overlay host. Scoped to the
+ * host's `[data-overlay="chooser"]`. Inert on desktop; on phones it paints a full-bleed dimming layer
+ * one stack level below the bottom sheet so taps outside the sheet land on a visibly dimmed page.
+ */
+@scope ([data-overlay="chooser"]) {
+  [data-scrim] {
+    display: none;
+  }
+
+  @media (max-width: 760px) {
+    [data-scrim] {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: var(--scrim);
+      z-index: calc(var(--z-sheet) - 1);
+      animation: atlas-fade var(--dur-normal) var(--ease-out);
+      /* The host is pinned `pointer-events:none` (SiteLayout.css) so the scrim-less DESKTOP popover
+         lets outside clicks reach the page. On phones the chooser is a modal bottom sheet WITH this
+         dimming scrim, so re-arm pointer events here: the scrim must absorb the outside tap. */
+      pointer-events: auto;
+    }
+  }
+}

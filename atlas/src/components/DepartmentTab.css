@@ -1,0 +1,121 @@
+/**
+ * DepartmentTab — one numbered contents-page line. Scoped to `[data-dept-tab]`. The serial reads as
+ * Fraunces editorial numerals, the name in calm body, both warming to the accent on hover. The active
+ * tab carries a vermilion underline drawn as a thick bottom border; the "⋯" menu and the drag handle
+ * stay quiet until hover/focus. Buttons inherit the page ink and lift to the accent.
+ */
+@scope ([data-dept-tab]) {
+  :scope {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-1) calc(var(--space-2) - 2px);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    color: var(--text-body);
+    cursor: pointer;
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+  :scope:hover {
+    color: var(--text-strong);
+  }
+  :scope[data-active] {
+    border-bottom-color: var(--accent);
+    color: var(--text-strong);
+  }
+
+  [data-dept-serial] {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: 460;
+    font-variant-numeric: lining-nums tabular-nums;
+    color: var(--text-faint);
+  }
+  :scope[data-active] [data-dept-serial] {
+    color: var(--accent);
+  }
+
+  [data-dept-icon] {
+    align-self: center;
+    display: inline-flex;
+    font-size: var(--text-sm);
+    /* The element's customized colour wins; falls back to muted ink (or accent when active). */
+    color: var(--element-color, var(--text-muted));
+  }
+  :scope[data-active] [data-dept-icon] {
+    color: var(--element-color, var(--accent));
+  }
+  /* Colour-only customization (no icon): a small dot carries the chosen colour. */
+  [data-dept-dot] {
+    align-self: center;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--element-color, var(--text-muted));
+  }
+
+  [data-dept-name] {
+    font-size: var(--text-base);
+    font-weight: 550;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  button[data-action="menu"] {
+    align-self: center;
+    display: inline-flex;
+    padding: 0.1rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    color: var(--text-ghost);
+    opacity: 0;
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out),
+      opacity var(--dur-fast) var(--ease-out);
+  }
+  :scope:hover button[data-action="menu"],
+  button[data-action="menu"]:focus-visible {
+    opacity: 1;
+  }
+  button[data-action="menu"]:hover {
+    background: var(--accent-tint);
+    color: var(--accent-deep);
+  }
+
+  [data-dept-handle] {
+    align-self: center;
+    width: 0.7rem;
+    height: 0.85rem;
+    flex: none;
+    cursor: grab;
+    opacity: 0;
+    background-image: radial-gradient(currentColor 1.1px, transparent 1.1px);
+    background-size: 0.35rem 0.35rem;
+    color: var(--text-ghost);
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+  :scope:hover [data-dept-handle] {
+    opacity: 1;
+  }
+
+  @media (max-width: 760px) {
+    :scope {
+      gap: var(--space-1);
+      padding-top: var(--space-2);
+      padding-bottom: calc(var(--space-2) - 1px);
+    }
+
+    /* Touch has no hover, so the "⋯" menu (which carries "Move to…") is always visible — it
+       is the mobile path for reorder + customize (design context §4). The drag handle is a
+       desktop-only hover affordance, so it is removed entirely on phones to keep the swipeable
+       index calm and uncluttered rather than forced-on. */
+    button[data-action="menu"] {
+      opacity: 1;
+    }
+    [data-dept-handle] {
+      display: none;
+    }
+  }
+}

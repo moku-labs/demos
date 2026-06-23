@@ -1,0 +1,52 @@
+/**
+ * Avatar — initials on the person's signature colour, selected by `data-person`. A true cross-context
+ * atom, so it is scoped to its own `[data-avatar]` root and looks identical on cards, the list, the
+ * byline, and the rail. The lead assignee carries a thin accent ring.
+ */
+@scope ([data-avatar]) {
+  :scope {
+    display: inline-grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--avatar-fallback, var(--text-faint));
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    user-select: none;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
+  }
+
+  :scope[data-person="ak"] {
+    background: var(--avatar-ak);
+  }
+  :scope[data-person="ml"] {
+    background: var(--avatar-ml);
+  }
+  :scope[data-person="rt"] {
+    background: var(--avatar-rt);
+  }
+  :scope[data-person="js"] {
+    background: var(--avatar-js);
+  }
+
+  :scope[data-size="sm"] {
+    width: 1.35rem;
+    height: 1.35rem;
+    font-size: 0.55rem;
+  }
+  :scope[data-size="lg"] {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 0.82rem;
+  }
+
+  :scope[data-lead] {
+    outline: 1.5px solid var(--accent);
+    outline-offset: 1.5px;
+  }
+}

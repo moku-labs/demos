@@ -1,0 +1,746 @@
+/**
+ * IssuePanel — the article-style issue editor. Scoped to `[data-issue-panel]`. A dimming `[data-scrim]`
+ * backdrop sits behind a slide-over surface (large panel on desktop, full-screen on mobile). The body
+ * is a two-column grid: a prose article on the left (breadcrumb · big Fraunces title · byline ·
+ * markdown body with a drop-cap on its first block · attachments grid · sub-issue checklist) and a
+ * quiet properties rail on the right. The surface slides in with `--ease-out`; `prefers-reduced-motion`
+ * swaps the slide for a plain fade. Below 1024px the rail drops beneath the article; below 760px the
+ * panel goes full-screen.
+ */
+@scope ([data-issue-panel]) {
+  :scope {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-drawer);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  [data-scrim] {
+    position: absolute;
+    inset: 0;
+    background: var(--scrim);
+    animation: scrim-in var(--dur-normal) var(--ease-out);
+  }
+
+  [data-panel-surface] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(58rem, 100%);
+    height: 100%;
+    background: var(--surface-page);
+    border-left: var(--rule-width) solid var(--rule-strong);
+    box-shadow: var(--shadow-sheet);
+    overflow: hidden;
+    animation: panel-in var(--dur-enter) var(--ease-out);
+  }
+
+  /* ── Header bar: breadcrumb + the universal menu + close ── */
+  [data-panel-bar] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-shrink: 0;
+    padding: var(--space-4) var(--space-6);
+    border-bottom: var(--rule-width) solid var(--rule);
+    background: var(--surface-page);
+  }
+  [data-breadcrumb] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  [data-crumb] {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  [data-crumb-id] {
+    /* --text-muted (not --text-faint): the faint ink failed WCAG AA (~2.9:1) for the breadcrumb ID. */
+    color: var(--text-muted);
+  }
+  [data-crumb-sep] {
+    color: var(--text-ghost);
+  }
+  [data-bar-tools] {
+    display: inline-flex;
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+  [data-bar-tools] button {
+    display: inline-flex;
+    padding: 0.4rem;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-bar-tools] button:hover {
+    background: var(--accent-tint);
+    color: var(--accent-deep);
+  }
+
+  /* ── Body grid: article + rail ── */
+  [data-panel-body] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    gap: var(--space-7);
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-10) var(--space-6);
+  }
+
+  /* ── Article ── */
+  [data-article] {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  [data-issue-title] {
+    font-family: var(--font-display);
+    /* The big serif title is the article's masthead (design context §7) — scale it into the display
+       register so it reads grand, not like dense body type, settling at --text-3xl on roomy widths. */
+    font-size: clamp(var(--text-2xl), 1.6rem + 1.6vw, var(--text-3xl));
+    font-weight: 540;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+    cursor: text;
+  }
+
+  /* The inline title editor (double-click the title) — matches the h1 register so the swap is seamless,
+     with a quiet underline + focus ring so it clearly reads as an editable field. */
+  [data-title-edit] {
+    width: 100%;
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-2xl), 1.6rem + 1.6vw, var(--text-3xl));
+    font-weight: 540;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+    background: var(--surface-sunken);
+    border: var(--rule-width) solid var(--rule-strong);
+    border-radius: var(--radius-md);
+    padding: var(--space-1) var(--space-3);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
+  }
+  [data-title-edit]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 var(--rule-width) var(--accent-tint);
+  }
+
+  [data-byline] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  [data-byline-text] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  [data-reporter] {
+    color: var(--text-body);
+    font-weight: 550;
+  }
+  [data-byline-sep] {
+    color: var(--text-ghost);
+  }
+  [data-byline-updated] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  /* ── Markdown body + editorial drop-cap on the first block ── */
+  [data-issue-body] {
+    max-width: var(--width-prose);
+    font-size: var(--text-md);
+    line-height: var(--leading-normal);
+    color: var(--text-body);
+  }
+  [data-issue-body] > * + * {
+    margin-top: var(--space-4);
+  }
+  [data-issue-body] :is(h1, h2, h3) {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+  }
+  /* In-body headings (## Symptom / ## Plan) read as editorial section breaks, not near-body text —
+     a clear size step and extra space above each (the first block keeps the body's flow margin). */
+  [data-issue-body] :is(h1, h2, h3):not(:first-child) {
+    margin-top: var(--space-5);
+  }
+  [data-issue-body] h1 {
+    font-size: var(--text-xl);
+  }
+  [data-issue-body] h2 {
+    font-size: var(--text-lg);
+  }
+  [data-issue-body] h3 {
+    font-size: var(--text-md);
+  }
+  [data-issue-body] a {
+    color: var(--accent-deep);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  [data-issue-body] code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    border-radius: var(--radius-sm);
+    background: var(--surface-sunken);
+    color: var(--text-strong);
+  }
+  [data-issue-body] pre {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--surface-sunken);
+    border: var(--rule-width) solid var(--rule);
+    overflow-x: auto;
+  }
+  [data-issue-body] pre code {
+    padding: 0;
+    background: none;
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+  }
+  [data-issue-body] ul,
+  [data-issue-body] ol {
+    padding-left: var(--space-5);
+  }
+  [data-issue-body] li + li {
+    margin-top: var(--space-1);
+  }
+  [data-issue-body] li::marker {
+    color: var(--text-faint);
+  }
+  /* The drop-cap: a large Fraunces initial on the first rendered paragraph (design context §7).
+     `:first-of-type` (not `:first-child`) so it still matches when a heading precedes the prose.
+     Inked, not vermilion — the accent is reserved for what's live/primary/destructive (§2), so the
+     drop-cap stays an editorial ink flourish rather than diluting the hot accent. */
+  [data-issue-body] > p:first-of-type::first-letter {
+    float: left;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 3.2em;
+    line-height: 0.82;
+    margin: 0.04em 0.08em 0 0;
+    color: var(--text-strong);
+  }
+
+  /* ── Description Preview/Edit toggle: a quiet mono segmented control above the body (§7) ── */
+  [data-desc-toggle] {
+    display: inline-flex;
+    align-self: flex-start;
+    gap: var(--space-1);
+    padding: 0.2rem;
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-pill);
+  }
+  [data-desc-toggle] button {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    border-radius: var(--radius-pill);
+    color: var(--text-muted);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-desc-toggle] button:hover {
+    color: var(--text-strong);
+  }
+  [data-desc-toggle] button[data-active] {
+    background: var(--accent-tint);
+    color: var(--accent-deep);
+  }
+
+  /* ── Inline markdown writer: the Edit segment swaps the rendered body for this textarea (§7).
+     Full-width, generous height, raw monospace-free body voice — the whole source stays visible.
+     Committing happens on the Preview segment (see issue/handlers.ts). ── */
+  [data-desc-edit] {
+    width: 100%;
+    min-height: 12rem;
+    max-width: var(--width-prose);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-sunken);
+    border: var(--rule-width) solid var(--rule-strong);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--text-md);
+    line-height: var(--leading-normal);
+    color: var(--text-body);
+    resize: vertical;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
+  }
+  [data-desc-edit]::placeholder {
+    color: var(--text-faint);
+  }
+  [data-desc-edit]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 var(--rule-width) var(--accent-tint);
+  }
+
+  /* ── Section heads (Attachments, Sub-issues) ── */
+  [data-section-head] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  [data-attach-section],
+  [data-sub-section] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: var(--rule-width) solid var(--rule);
+  }
+
+  /* ── Attachments grid ── */
+  [data-attach-grid] {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+    gap: var(--space-3);
+  }
+  [data-attach-add] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 7rem;
+    border: 1px dashed var(--rule-strong);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  /* With no attachments the "Attach file" tile is the only cell — span the full width as a dropzone
+     so it never strands beside a wide empty gutter (it packs back into the grid once files exist). */
+  [data-attach-add]:only-child {
+    grid-column: 1 / -1;
+  }
+  [data-attach-add]:hover {
+    border-color: var(--accent);
+    color: var(--accent-deep);
+    background: var(--accent-tint);
+  }
+  /* The real file input is visually hidden (NOT display:none — that can block the dialog); the wrapping
+     label opens it natively on click. */
+  [data-attach-input] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ── Sub-issues ── */
+  [data-sub-head] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  [data-sub-progress] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  [data-sub-track] {
+    width: 6rem;
+    height: 4px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-sunken);
+    overflow: hidden;
+  }
+  [data-sub-fill] {
+    display: block;
+    width: var(--pct, 0%);
+    height: 100%;
+    background: var(--accent);
+  }
+  [data-sub-count] {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    color: var(--text-muted);
+  }
+  [data-sub-list] {
+    display: flex;
+    flex-direction: column;
+  }
+  /* The add-sub-issue row reads as a real text field: a bordered shell that warms on hover and lights
+     its border + ring on focus (mirrors the description editor), so users know they can type into it. */
+  [data-sub-add] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    padding: 0.4rem var(--space-3);
+    background: var(--surface-card);
+    border: var(--rule-width) solid var(--rule-strong);
+    border-radius: var(--radius-md);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
+  }
+  [data-sub-add]:hover {
+    border-color: var(--accent);
+  }
+  [data-sub-add]:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 var(--rule-width) var(--accent-tint);
+  }
+  [data-sub-add-box] {
+    display: inline-grid;
+    place-items: center;
+    width: 1.1rem;
+    height: 1.1rem;
+    flex-shrink: 0;
+    color: var(--text-faint);
+  }
+  [data-sub-add]:focus-within [data-sub-add-box] {
+    color: var(--accent);
+  }
+  [data-sub-add-box] [data-icon] {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+  [data-sub-add-field] {
+    flex: 1;
+    padding: 0.2rem 0;
+    background: none;
+    border: none;
+    font-size: var(--text-base);
+    color: var(--text-strong);
+  }
+  [data-sub-add-field]:focus {
+    outline: none;
+  }
+  [data-sub-add-field]::placeholder {
+    color: var(--text-faint);
+  }
+
+  /* ── Properties rail ── */
+  [data-rail] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    align-self: start;
+    padding-left: var(--space-6);
+    border-left: var(--rule-width) solid var(--rule);
+  }
+  [data-rail-field],
+  [data-rail-icon] {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  /* Editable rail rows (every field except the read-only Timeline) open a chooser/modal on click —
+     give them a clear pointer + hover fill so they read as interactive (#10). The negative inline
+     margin + matching padding keep the hover fill flush without shifting the rail's rhythm. */
+  [data-rail-field]:not([data-rail-timeline]) {
+    cursor: pointer;
+    margin-inline: calc(var(--space-2) * -1);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    transition: background var(--dur-fast) var(--ease-out);
+  }
+  [data-rail-field]:not([data-rail-timeline]):hover {
+    background: var(--surface-sunken);
+  }
+  [data-rail-field]:not([data-rail-timeline]):hover [data-rail-label] {
+    color: var(--text-strong);
+  }
+  /* Quiet blocks: a hairline + lead-in space sets the read-only Timeline and the icon group apart from
+     the editable fields above, so the rail reads as distinct stanzas. */
+  [data-rail-timeline],
+  [data-rail-icon] {
+    padding-top: var(--space-5);
+    border-top: var(--rule-width) solid var(--rule);
+  }
+  [data-rail-label] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  [data-rail-value] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: var(--text-sm);
+    color: var(--text-body);
+  }
+  [data-rail-empty] {
+    color: var(--text-ghost);
+  }
+
+  [data-rail-value] [data-status-dot] {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--text-faint);
+  }
+  [data-rail-value] [data-status-dot][data-status="in_progress"] {
+    background: var(--accent);
+  }
+  [data-rail-value] [data-status-dot][data-status="in_review"] {
+    background: var(--label-amber);
+  }
+  [data-rail-value] [data-status-dot][data-status="done"] {
+    background: var(--label-green);
+  }
+
+  [data-priority-value] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  [data-rail-labels] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  [data-rail-assignees] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    width: 100%;
+  }
+  [data-assignee] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  [data-assignee-name] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  [data-lead-tag] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--accent-deep);
+  }
+  [data-rail-reporter],
+  [data-estimate] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  [data-rail-timeline] [data-rail-value] {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+  }
+  [data-timeline-line] {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  [data-timeline-key] {
+    color: var(--text-muted);
+  }
+  [data-timeline-val] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--text-faint);
+  }
+
+  [data-icon-customize] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    align-self: flex-start;
+    padding: 0.35rem 0.6rem 0.35rem 0.35rem;
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+    color: var(--text-body);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-icon-customize]:hover {
+    border-color: var(--accent);
+    color: var(--accent-deep);
+  }
+  [data-icon-chip] {
+    display: inline-grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-sunken);
+    color: var(--text-muted);
+  }
+  [data-icon-chip] [data-icon] {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* ── Responsive: rail drops beneath the article, then full-screen ── */
+  @media (max-width: 1024px) {
+    [data-panel-surface] {
+      width: min(46rem, 100%);
+    }
+    [data-issue-title] {
+      font-size: var(--text-2xl);
+    }
+    [data-panel-body] {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-6);
+    }
+    [data-rail] {
+      padding-left: 0;
+      border-left: none;
+      padding-top: var(--space-5);
+      border-top: var(--rule-width) solid var(--rule);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-5) var(--space-6);
+    }
+    /* The desktop per-block separators would land mid-grid here — drop them once the rail is a grid. */
+    [data-rail-timeline],
+    [data-rail-icon] {
+      padding-top: 0;
+      border-top: none;
+    }
+    [data-rail-assignees] {
+      width: auto;
+    }
+  }
+
+  @media (max-width: 760px) {
+    /* Full-screen on phones — the surface fills the viewport so nothing behind it bleeds through
+       (the lifecycle locks the board scroll via `:root[data-overlay-issue]`). */
+    :scope {
+      justify-content: stretch;
+      height: 100dvh;
+    }
+    [data-panel-surface] {
+      width: 100%;
+      height: 100dvh;
+      border-left: none;
+      box-shadow: var(--shadow-sheet-up);
+    }
+    [data-panel-bar] {
+      padding: var(--space-4) var(--pad-page);
+    }
+    /* Crumbs wrap instead of every one clipping to an ellipsis — only the long ISSUE-ID truncates. */
+    [data-breadcrumb] {
+      flex-wrap: wrap;
+    }
+    [data-crumb] {
+      overflow: visible;
+      text-overflow: clip;
+    }
+    [data-crumb-id] {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 14rem;
+    }
+    [data-panel-body] {
+      padding: var(--space-7) var(--pad-page) var(--space-8);
+    }
+    /* More air on phones so the panel doesn't read flat/cramped vs. desktop. */
+    [data-article] {
+      gap: var(--space-7);
+    }
+    [data-attach-section],
+    [data-sub-section] {
+      padding-top: var(--space-5);
+    }
+    [data-desc-toggle] {
+      margin-bottom: var(--space-1);
+    }
+    [data-issue-title] {
+      font-size: var(--text-2xl);
+    }
+    [data-rail] {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-4);
+    }
+  }
+
+  @media (max-width: 480px) {
+    [data-issue-body] > p:first-of-type::first-letter {
+      font-size: 2.6em;
+    }
+    [data-issue-title] {
+      font-size: var(--text-xl);
+    }
+  }
+
+  /* ── Restrained motion (design context §2): reduce-motion swaps slide/fade for an instant show ── */
+  @keyframes panel-in {
+    from {
+      transform: translateX(2rem);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  @keyframes scrim-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-panel-surface],
+    [data-scrim] {
+      animation: none;
+    }
+  }
+}

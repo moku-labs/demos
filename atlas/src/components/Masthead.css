@@ -1,0 +1,127 @@
+/**
+ * Masthead — the editorial header rail. Scoped to `[data-masthead]`. Wordmark in Fraunces with the
+ * vermilion full-stop; edition line in mono; the tool buttons are quiet icon affordances that warm to
+ * the accent on hover. The theme button shows the *current* scheme's glyph — the `theme-toggle` island
+ * sets `data-mode` to flip sun↔moon (SSR shows the sun as a no-JS fallback). On phones the labelled
+ * tools collapse behind the "⋯" overflow.
+ */
+@scope ([data-masthead]) {
+  :scope {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-5);
+    padding: var(--space-5) var(--pad-page) var(--space-4);
+    border-bottom: var(--rule-width) solid var(--rule);
+  }
+
+  [data-mast-brand] {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  [data-wordmark] {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 540;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-strong);
+    line-height: 1;
+  }
+  [data-stop] {
+    color: var(--accent);
+  }
+
+  [data-edition] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  [data-tools] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.7rem;
+    border: var(--rule-width) solid transparent;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--text-body);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+  button:hover {
+    background: var(--accent-tint);
+    color: var(--accent-deep);
+    border-color: var(--rule);
+  }
+
+  [data-tool="user"] {
+    width: 2.1rem;
+    height: 2.1rem;
+    padding: 0;
+    /* Center the avatar in the round button — the base `button` only sets align-items, so without this
+       the (now md) avatar sat against the leading edge instead of centered (#5). */
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    background: var(--surface-sunken);
+    border-color: var(--rule);
+  }
+  [data-tool="overflow"] {
+    display: none;
+  }
+
+  [data-theme-moon] {
+    display: none;
+  }
+  [data-tool="theme"][data-mode="dark"] [data-theme-sun] {
+    display: none;
+  }
+  [data-tool="theme"][data-mode="dark"] [data-theme-moon] {
+    display: inline-flex;
+  }
+
+  @media (max-width: 760px) {
+    :scope {
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--pad-page);
+    }
+    [data-tools] {
+      gap: var(--space-1);
+    }
+    [data-tool-text] {
+      display: none;
+    }
+
+    /* D3 — the labelled tools collapse behind a single "⋯". Theme, Filter, and Activity all
+       fold into the overflow bottom sheet so the rail reads wordmark + avatar + overflow.
+       The icon-only buttons square up to a comfortable tap target (design context §5 — nothing
+       cramped) and the avatar / overflow keep their resting size. */
+    [data-tool="theme"],
+    [data-tool="filter"],
+    [data-tool="activity"] {
+      display: none;
+    }
+    [data-tool="overflow"] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      /* 44×44px minimum tap target (WCAG 2.5.5 / design context §5 "Tap targets are comfortable"). */
+      min-width: 2.75rem;
+      min-height: 2.75rem;
+      padding: 0;
+    }
+  }
+}

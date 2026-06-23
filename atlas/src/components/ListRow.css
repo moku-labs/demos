@@ -1,0 +1,224 @@
+/**
+ * ListRow — one issue row in the editorial table. Scoped to `[data-list-row]`. A grid whose column
+ * template (`--list-cols`) is shared with the ListView's sticky header so cells align to the page
+ * grid. Hairline-divided, generous rhythm, lifts gently to the accent on hover. On narrow viewports
+ * the row collapses to two clean lines: the title + status up top, the meta (priority · labels ·
+ * progress · files · due · who) beneath.
+ */
+@scope ([data-list-row]) {
+  :scope {
+    display: grid;
+    grid-template-columns: var(
+      --list-cols,
+      minmax(0, 3fr) 7rem 3.5rem minmax(4rem, 1fr) 6rem 3.5rem 4.5rem auto
+    );
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border-bottom: var(--rule-width) solid var(--rule);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
+  }
+  /* Pointer-only hover lift — a touch tap must not leave a sticky accent bar on the row. */
+  @media (hover: hover) {
+    :scope:hover {
+      background: var(--surface-card);
+      box-shadow: inset 2px 0 0 var(--accent);
+    }
+  }
+
+  [data-cell] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  [data-cell="issue"] {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
+  }
+  [data-row-title] {
+    font-size: var(--text-base);
+    color: var(--text-strong);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  /* A derived one-line description excerpt under the title — quiet supporting prose, clipped so the
+     row height stays compact (design context §6 A4 list). */
+  [data-row-desc] {
+    max-width: 100%;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  [data-row-id] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  [data-status-dot] {
+    width: 0.5rem;
+    height: 0.5rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-pill);
+    background: var(--text-faint);
+  }
+  [data-status-dot][data-status="in_progress"] {
+    background: var(--accent);
+  }
+  [data-status-dot][data-status="in_review"] {
+    background: var(--label-amber);
+  }
+  [data-status-dot][data-status="done"] {
+    background: var(--label-green);
+  }
+  [data-status-text] {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  [data-cell="labels"] {
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  [data-progress-track] {
+    flex: 1;
+    height: 4px;
+    min-width: 2.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--rule);
+    box-shadow: inset 0 0 0 1px var(--rule);
+    overflow: hidden;
+  }
+  [data-progress-fill] {
+    display: block;
+    width: var(--pct, 0%);
+    height: 100%;
+    border-radius: inherit;
+    background: var(--accent);
+  }
+  [data-progress-count] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--text-muted);
+  }
+
+  [data-file-count] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+  [data-file-count] [data-icon] {
+    width: 0.9rem;
+    height: 0.9rem;
+    color: var(--text-faint);
+  }
+
+  [data-due] {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  [data-avatars] {
+    display: inline-flex;
+    align-items: center;
+  }
+  [data-avatars] [data-avatar] {
+    margin-left: -0.35rem;
+    box-shadow: 0 0 0 2px var(--surface-page);
+  }
+  [data-avatars] [data-avatar]:first-child {
+    margin-left: 0;
+  }
+
+  [data-empty-cell] {
+    color: var(--text-ghost);
+    font-size: var(--text-sm);
+  }
+
+  /* ── Two-line collapse on narrow viewports (design context §6 A4): line one = title + status
+        (status hugs the right end), then the meta facets fall left-aligned beneath. Flex flow lets
+        the cells reflow without a wrapper element in the markup. ── */
+  @media (max-width: 760px) {
+    :scope {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      /* A roomier row-gap (0.75rem) than column-gap so the wrapped meta facets read as distinct
+         lines rather than a cramped run; the per-cell margin-top below reinforces the same rhythm. */
+      gap: var(--space-3) var(--space-4);
+      padding: var(--space-4) var(--pad-page);
+    }
+    /* Line one = title + status: the title flexes to fill, status hugs the right end (margin-auto).
+       The meta cells then fall to the lines beneath, every one left-aligned to the gutter — the
+       priority cell's full-row basis (below) is what forces the break off line one. */
+    [data-cell="issue"] {
+      flex: 1 1 0;
+      min-width: 0;
+      order: 1;
+    }
+    [data-cell="status"] {
+      flex: 0 0 auto;
+      order: 1;
+      margin-left: auto;
+    }
+    [data-cell="labels"],
+    [data-cell="progress"],
+    [data-cell="files"],
+    [data-cell="due"],
+    [data-cell="who"] {
+      flex: 0 0 auto;
+      margin-top: var(--space-3);
+    }
+    [data-cell="labels"] {
+      order: 4;
+    }
+    [data-cell="progress"] {
+      order: 5;
+    }
+    [data-cell="files"] {
+      order: 6;
+    }
+    [data-cell="due"] {
+      order: 7;
+    }
+    [data-cell="who"] {
+      order: 8;
+    }
+    /* Priority opens line two: its full-row basis forces the wrap off line one so the priority mark
+       sits flush to the left gutter, with the remaining facets in their own left-aligned run below. */
+    [data-cell="priority"] {
+      order: 3;
+      flex: 0 1 100%;
+      margin-top: var(--space-3);
+    }
+    /* Hide empty placeholders so the meta line reads as a clean run of present facets only. */
+    [data-cell]:has([data-empty-cell]) {
+      display: none;
+    }
+    [data-cell="labels"]:empty {
+      display: none;
+    }
+    [data-progress-track] {
+      min-width: 3rem;
+      max-width: 4rem;
+    }
+  }
+}

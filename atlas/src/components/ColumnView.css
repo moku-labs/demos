@@ -1,0 +1,121 @@
+/**
+ * ColumnView — a stage of the board. Scoped to `[data-column]`. A quiet header (drag handle · title ·
+ * Fraunces count · "⋯" menu) over a card stack that sizes to its content — no internal scrollbar, the
+ * page scrolls (design context §5). The In Progress column (`[data-status="in_progress"]`) carries the
+ * accent treatment: a vermilion top-rule and an accent-tinted eyebrow marking what is live. The
+ * "N more not shown" line and the Add-card foot stay calm and muted.
+ */
+@scope ([data-column]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding-top: var(--space-3);
+    border-top: 2px solid var(--rule-strong);
+  }
+  :scope[data-status="in_progress"] {
+    border-top-color: var(--accent);
+  }
+
+  [data-column-head] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  [data-handle] {
+    display: inline-flex;
+    color: var(--text-ghost);
+    cursor: grab;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  [data-handle]:hover {
+    color: var(--text-muted);
+  }
+
+  [data-column-title] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    /* A customized column colour tints the title text too (#6); falls back to muted ink. */
+    color: var(--element-color, var(--text-muted));
+  }
+  :scope[data-status="in_progress"] [data-column-title] {
+    color: var(--element-color, var(--accent));
+  }
+  /* Customized column colour tints its icon; a colour-only customization shows a small dot. */
+  [data-column-icon] {
+    display: inline-flex;
+    align-items: center;
+    color: var(--element-color, var(--text-muted));
+  }
+  [data-column-dot] {
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--element-color, var(--text-muted));
+  }
+
+  [data-column-count] {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: 460;
+    line-height: 1;
+    color: var(--text-faint);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  [data-action="menu"] {
+    display: inline-flex;
+    margin-inline-start: auto;
+    padding: 0.2rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-faint);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-action="menu"]:hover {
+    background: var(--accent-tint);
+    color: var(--accent-deep);
+  }
+
+  [data-column-body] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  [data-column-more] {
+    padding: var(--space-2) var(--space-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-faint);
+    text-align: center;
+  }
+
+  [data-add-card] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: var(--space-3);
+    border: var(--rule-width) dashed var(--rule-strong);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  [data-add-card]:hover {
+    border-color: var(--accent);
+    color: var(--accent-deep);
+    background: var(--accent-tint);
+  }
+}

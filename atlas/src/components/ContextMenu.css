@@ -1,0 +1,172 @@
+/**
+ * ContextMenu — the universal "⋯" / user popover. Scoped to `[data-context-menu]`. A quiet bordered
+ * card of full-width items that warm to sunken paper on hover; the destructive item (`data-danger`)
+ * reads vermilion and warms to the accent tint. The `user` variant leads with a name + mono email
+ * card above a hairline rule. On phones it drops to a bottom sheet — a full-bleed scrim dims the page,
+ * a grab handle tops the card, and the sheet shadow lifts upward (`--shadow-sheet-up`) with roomier
+ * tap targets (design context §6 D1/D2).
+ *
+ * The scrim is a sibling of the menu (rendered before it); it is inert on desktop and only paints as a
+ * dimming layer under the bottom sheet on phones. The grab handle (`[data-sheet-grip]`) is likewise
+ * desktop-hidden.
+ */
+@scope ([data-context-menu]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    /* Size to content (not the full-viewport menu host it is pinned inside) so positionPopover measures
+       the real popover width — otherwise the panel stretches and the popover clamps to the top-left. */
+    width: max-content;
+    min-width: 12rem;
+    padding: var(--space-1);
+    background: var(--surface-card);
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-pop);
+    z-index: var(--z-popover);
+    animation: atlas-pop var(--dur-fast) var(--ease-out);
+  }
+
+  /* The grab handle is a phones-only affordance — hidden in the desktop popover. */
+  [data-sheet-grip] {
+    display: none;
+  }
+
+  [data-menu-item] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: 0.55rem 0.9rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    color: var(--text-body);
+    text-align: start;
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  [data-menu-item] [data-icon] {
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+  }
+  [data-menu-item]:hover {
+    background: var(--surface-sunken);
+    color: var(--text-strong);
+  }
+  [data-menu-item]:hover [data-icon] {
+    color: var(--text-strong);
+  }
+
+  /*
+   * The destructive item reads vermilion and is set apart with a hairline rule above it (mirroring the
+   * user variant's [data-menu-rule]). The rule is a ::before that bleeds past the card's --space-1
+   * padding so it spans the full card width, with a small gap so Delete reads as its own quiet block.
+   */
+  [data-menu-item][data-danger] {
+    position: relative;
+    margin-block-start: calc(var(--space-1) + var(--rule-width));
+    color: var(--accent);
+  }
+  [data-menu-item][data-danger]::before {
+    content: "";
+    position: absolute;
+    inset-inline: calc(-1 * var(--space-1));
+    inset-block-start: calc(-0.5 * var(--space-1) - var(--rule-width));
+    height: var(--rule-width);
+    background: var(--rule);
+  }
+  [data-menu-item][data-danger] [data-icon] {
+    color: var(--accent);
+  }
+  [data-menu-item][data-danger]:hover {
+    background: var(--accent-tint);
+    color: var(--accent-deep);
+  }
+  [data-menu-item][data-danger]:hover [data-icon] {
+    color: var(--accent-deep);
+  }
+
+  /* ── User variant ── */
+  [data-user-card] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: 0.55rem 0.65rem 0.45rem;
+  }
+  [data-user-name] {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-strong);
+  }
+  [data-user-email] {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--text-faint);
+  }
+  [data-menu-rule] {
+    height: var(--rule-width);
+    margin: var(--space-1) 0;
+    background: var(--rule);
+  }
+
+  @media (max-width: 760px) {
+    :scope {
+      position: fixed;
+      inset-block: auto 0;
+      inset-inline: 0;
+      /* The bottom sheet fills the width via inset-inline:0 — override the desktop max-content. */
+      width: auto;
+      min-width: 0;
+      padding: var(--space-2) var(--space-2) var(--space-4);
+      border-inline: none;
+      border-bottom: none;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      box-shadow: var(--shadow-sheet-up);
+      z-index: var(--z-sheet);
+      animation: atlas-sheet-up var(--dur-normal) var(--ease-out);
+    }
+    /* Grab handle — a short pill centred above the sheet's content. */
+    [data-sheet-grip] {
+      display: block;
+      width: 2.25rem;
+      height: 4px;
+      margin: 0 auto var(--space-2);
+      border-radius: var(--radius-pill);
+      background: var(--rule-strong);
+    }
+    [data-menu-item] {
+      padding: 0.85rem 0.75rem;
+      font-size: var(--text-base);
+    }
+  }
+}
+
+/**
+ * The dimming scrim — a sibling of `[data-context-menu]` inside the menu overlay host. Scoped to the
+ * host's `[data-overlay="menu"]` (the scrim is not a descendant of the menu card, so it cannot live in
+ * the menu's own `@scope`). Inert on desktop; on phones it paints a full-bleed dimming layer one stack
+ * level below the bottom sheet so taps outside the sheet land on a visibly dimmed page.
+ */
+@scope ([data-overlay="menu"]) {
+  [data-scrim] {
+    display: none;
+  }
+
+  @media (max-width: 760px) {
+    [data-scrim] {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: var(--scrim);
+      z-index: calc(var(--z-sheet) - 1);
+      animation: atlas-fade var(--dur-normal) var(--ease-out);
+      /* The menu host is pinned `pointer-events:none` (SiteLayout.css) so the scrim-less DESKTOP
+         popover lets outside clicks reach the board. On phones the menu is a modal bottom sheet WITH
+         this dimming scrim, so re-arm pointer events here: the scrim must absorb the outside tap (the
+         page stays modal-dimmed) rather than letting it fall through to the board behind. */
+      pointer-events: auto;
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "main": "src/cloudflare/worker.ts",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "dist/client",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true
+  },
+  "name": "atlas",
+  "compatibility_date": "2026-06-17",
+  "kv_namespaces": [
+    {
+      "binding": "BOARDS_KV"
+    },
+    {
+      "binding": "SESSIONS_KV"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ATTACHMENTS",
+      "bucket_name": "atlas-attachments"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "atlas-db",
+      "migrations_dir": "db/migrations"
+    }
+  ],
+  "queues": {
+    "producers": [
+      {
+        "queue": "atlas-activity",
+        "binding": "ACTIVITY_QUEUE"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "atlas-activity",
+        "max_batch_timeout": 1
+      }
+    ]
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "BOARD",
+        "class_name": "BoardChannel"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "BoardChannel"
+      ]
+    }
+  ]
+}

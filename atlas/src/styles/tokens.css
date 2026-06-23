@@ -1,0 +1,152 @@
+/**
+ * Design tokens for Atlas — a two-layer editorial system.
+ *
+ * PRIMITIVES (theme-invariant: type, scale, motion, geometry) feed SEMANTICS (purpose aliases). The
+ * paper/ink/rule/accent/label surfaces are hand-tuned per theme via `light-dark()` — dark is a
+ * designed warm "night edition", not a mechanical inversion (see the design context §2). The active
+ * scheme is driven by `color-scheme`: bare `:root` follows the OS, and `[data-theme]` (set by the
+ * theme-toggle island) forces a choice — `light-dark()` resolves accordingly with no JS in the values.
+ *
+ * Breakpoints are reference-only (custom properties can't be used inside `@media`, so the pixel
+ * values are written directly in each scoped query): 1024px, 760px, 480px.
+ */
+:root {
+  /* ── Scheme: bare root follows OS; the toggle forces one (resolves every light-dark below) ── */
+  color-scheme: light dark;
+
+  /* ── Primitives: the three editorial voices ── */
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Spline Sans Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
+
+  /* ── Primitives: modular type scale (Fraunces display runs large; body stays calm at ~15px) ── */
+  --text-2xs: 0.6875rem; /* 11px — mono meta, eyebrows */
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.8125rem; /* 13px */
+  --text-base: 0.9375rem; /* 15px — body baseline */
+  --text-md: 1.0625rem; /* 17px */
+  --text-lg: 1.375rem; /* 22px */
+  --text-xl: 1.875rem; /* 30px */
+  --text-2xl: 2.5rem; /* 40px — board title */
+  --text-3xl: 3.5rem; /* 56px — issue title / grand display */
+  --text-4xl: 4.75rem; /* 76px — auth headline */
+
+  --leading-tight: 1.05;
+  --leading-snug: 1.2;
+  --leading-normal: 1.5;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-widest: 0.18em; /* mono eyebrows / volume line */
+
+  /* ── Primitives: spacing scale (4px base) ── */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 2.5rem;
+  --space-8: 3rem;
+  --space-10: 4rem;
+  --space-12: 6rem;
+
+  /* ── Primitives: geometry ── */
+  --pad-page: 2.5rem; /* the page gutter (compacts on mobile) */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+  --rule-width: 1px;
+  --width-content: 1800px;
+  --width-prose: 68ch;
+  --width-sheet: 30rem;
+
+  /* ── Primitives: motion (restrained, tasteful — see design context §2 "Motion") ── */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* decelerating ENTER */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 0.14s;
+  --dur-normal: 0.26s;
+  --dur-enter: 0.5s;
+  --dur-theme: 0.45s;
+  --stagger: 42ms; /* per-card delay in the board's fade-and-rise */
+
+  /* ── Primitives: z-index ladder ── */
+  --z-header: 20;
+  --z-drop-indicator: 40;
+  --z-popover: 60;
+  --z-drawer: 70;
+  --z-sheet: 80;
+  --z-modal: 90;
+  --z-toast: 100;
+
+  /* ── Semantics: paper & ink (the warm ground + text ramp; themed) ── */
+  --surface-page: light-dark(#faf7f0, #16140f);
+  --surface-raised: light-dark(#f4f0e6, #1e1b15);
+  --surface-sunken: light-dark(#eee9dc, #272219);
+  --surface-card: light-dark(#fffdf8, #211d16);
+  --text-strong: light-dark(#16130f, #f3ede0);
+  --text-body: light-dark(#423c33, #d6cdbc);
+  --text-muted: light-dark(#6e665a, #aba08c);
+  --text-faint: light-dark(#9a9182, #847a68);
+  --text-ghost: light-dark(#bbb2a2, #5f574a);
+
+  /* ── Semantics: hairline rules (the page grid) ── */
+  --rule: light-dark(#e2dcce, #322c22);
+  --rule-strong: light-dark(#cfc7b5, #463e30);
+  --rule-ink: light-dark(#16130f, #564c3b);
+
+  /* ── Semantics: the one hot accent — vermilion (marks what is live) ── */
+  --accent: light-dark(#e8462a, #ff6b47);
+  --accent-deep: light-dark(#c7351c, #ff855f);
+  --accent-tint: light-dark(rgba(232, 70, 42, 0.1), rgba(255, 107, 71, 0.14));
+  --accent-tint-strong: light-dark(rgba(232, 70, 42, 0.16), rgba(255, 107, 71, 0.26));
+  --on-accent: light-dark(#faf7f0, #1a0e08);
+
+  /* ── Semantics: label dots (refined, recognisable hue in both themes; lifted for AA on dark) ── */
+  --label-bug: light-dark(#c8553d, #e58368);
+  --label-feature: light-dark(#4c5ba6, #8c9ae0);
+  --label-chore: light-dark(#707c84, #a6b0b8);
+  --label-research: light-dark(#7c5d9e, #b795d6);
+  --label-design: light-dark(#c56b8e, #e29bba);
+  --label-docs: light-dark(#3e8c9c, #6fc0cf);
+  --label-amber: light-dark(#c08a2d, #e0b45c);
+  --label-green: light-dark(#5f8a52, #93c083);
+
+  /* ── Semantics: assignee avatars (brightened on dark so light initials read) ── */
+  --avatar-ak: light-dark(#3e5c76, #5e84a6);
+  --avatar-ml: light-dark(#8a5a44, #b07a5c);
+  --avatar-rt: light-dark(#5f7355, #82996f);
+  --avatar-js: light-dark(#6e5774, #9579a0);
+
+  /* ── Semantics: atmospherics (the warm glow + scrims) ── */
+  --bg-glow-1: light-dark(rgba(232, 70, 42, 0.035), rgba(255, 107, 71, 0.05));
+  --bg-glow-2: light-dark(rgba(124, 93, 158, 0.03), rgba(124, 93, 158, 0.06));
+  --col-tint: light-dark(rgba(22, 19, 15, 0.018), rgba(243, 237, 224, 0.022));
+  --inset-soft: light-dark(rgba(22, 19, 15, 0.06), rgba(0, 0, 0, 0.4));
+  --scrim: light-dark(rgba(22, 19, 15, 0.34), rgba(0, 0, 0, 0.6));
+  --focus-ring: var(--accent);
+
+  /* ── Semantics: elevation (subtle — soft in light, faint in dark; never glassy) ──
+     Multi-layer shadows split into per-layer tokens: a comma-list can't sit inside `light-dark()`
+     (it would split on the inner commas), so each single-shadow layer is themed, then composed. */
+  --shadow-card: light-dark(0 1px 0 rgba(22, 19, 15, 0.03), 0 1px 0 rgba(0, 0, 0, 0.2));
+  --shadow-pop-1: light-dark(0 1px 2px rgba(22, 19, 15, 0.06), 0 1px 2px rgba(0, 0, 0, 0.4));
+  --shadow-pop-2: light-dark(0 12px 34px -10px rgba(22, 19, 15, 0.22), 0 16px 40px -12px rgba(0, 0, 0, 0.6));
+  --shadow-pop: var(--shadow-pop-1), var(--shadow-pop-2);
+  --shadow-sheet: light-dark(-18px 0 60px -24px rgba(22, 19, 15, 0.3), -18px 0 70px -24px rgba(0, 0, 0, 0.7));
+  /* A bottom-sheet's lift casts UPWARD (the sheet rises from the page bottom), so its shadow points
+     up rather than sideways like the right-hand drawer's `--shadow-sheet`. */
+  --shadow-sheet-up: light-dark(0 -18px 60px -24px rgba(22, 19, 15, 0.3), 0 -18px 70px -24px rgba(0, 0, 0, 0.7));
+  --shadow-modal: light-dark(0 30px 80px -20px rgba(22, 19, 15, 0.5), 0 30px 90px -20px rgba(0, 0, 0, 0.75));
+}
+
+/* The toggle forces a scheme; bare `:root` (no attribute) keeps `light dark` so the OS preference
+   picks the first-visit default. The island sets `document.documentElement.dataset.theme`. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}

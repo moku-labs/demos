@@ -1,0 +1,102 @@
+/**
+ * SiteLayout — the document frame. Scoped to `[data-app-shell]`. A single centred editorial column
+ * that grows with its content (no viewport lock); the masthead, region mounts, page section, and
+ * footer stack vertically. The region mount points reserve no space until their islands fill them.
+ */
+@scope ([data-app-shell]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    max-width: var(--width-content);
+    margin-inline: auto;
+  }
+
+  [data-main] {
+    flex: 1 0 auto;
+    padding-inline: var(--pad-page);
+    padding-block: var(--space-5);
+  }
+  [data-main] > section {
+    display: block;
+    animation: atlas-fade var(--dur-normal) var(--ease-out) both;
+  }
+
+  [data-overlay][hidden] {
+    display: none;
+  }
+
+  /* An OPEN customize overlay is a modal layer, not an in-flow block: lift the host out of the flex
+     column and pin it across the whole viewport so the panel agent's scrim+card fills the screen
+     (design context §6 C3 — popover on desktop, sheet on mobile). While hidden it stays `display:none`
+     above, so this only takes effect once the island clears `[hidden]`. */
+  [data-overlay="customize"]:not([hidden]) {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-popover);
+  }
+
+  /* An OPEN menu overlay is a popover layer that must give its fixed panel a stable containing block —
+     without this the host stays an in-flow flex child of [data-main], so un-hiding it reflows the
+     column and the panel's `position:fixed` (set inline by positionPopover) lands detached at the
+     top-left (defect Group A: column/card/user menus park in the corner). Mirrors the customize pin,
+     but — unlike customize — the menu has NO scrim and must not block the board behind it: the host is
+     `pointer-events:none` so outside clicks pass through to the board (the island closes on the
+     resulting outside pointerdown), while the panel itself re-enables pointer events below. On phones
+     the panel promotes to a bottom sheet WITH a scrim (ContextMenu.css), which re-arms its own
+     pointer-events; this desktop pass-through only matters for the scrim-less popover. */
+  [data-overlay="menu"]:not([hidden]) {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-popover);
+    pointer-events: none;
+  }
+  [data-overlay="menu"]:not([hidden]) [data-context-menu] {
+    pointer-events: auto;
+  }
+
+  /* The chooser overlay is the rail's generic select popover. It opens FROM the issue panel (a drawer
+     at `--z-drawer`), so unlike the menu it must layer ABOVE that drawer — its panel sets `--z-modal`
+     (Chooser.css). The host mirrors the menu pin: a fixed full-viewport containing block that is
+     `pointer-events:none` so the scrim-less desktop popover lets outside clicks reach the page (the
+     island closes on the resulting outside pointerdown); the panel itself re-enables pointer events.
+     On phones the panel promotes to a bottom sheet WITH a scrim that re-arms its own pointer-events. */
+  [data-overlay="chooser"]:not([hidden]) {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    pointer-events: none;
+  }
+  [data-overlay="chooser"]:not([hidden]) [data-chooser] {
+    pointer-events: auto;
+  }
+
+  /* The milestone picker is a small management dialog (pick/add/rename/delete), so — unlike the
+     scrim-less chooser — it's a centered modal WITH a scrim (like customize). Pin the host across the
+     viewport above the issue drawer so its scrim+card fill the screen and the scrim captures clicks. */
+  [data-overlay="milestone"]:not([hidden]) {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+  }
+
+  @media (max-width: 760px) {
+    [data-main] {
+      padding-inline: 0;
+    }
+  }
+}
+
+/* The page gutter compacts through the phone/tablet band (design context §5). Declared as a token
+   override so every region (masthead, boards bar, board header, board, footer) tightens together. An
+   intermediate 760px step keeps the whole 481–760px band on one gutter before the tightest phone step. */
+@media (max-width: 760px) {
+  :root {
+    --pad-page: 1.5rem;
+  }
+}
+@media (max-width: 480px) {
+  :root {
+    --pad-page: 1.1rem;
+  }
+}
