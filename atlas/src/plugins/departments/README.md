@@ -10,5 +10,3 @@ Standard-tier plugin — the top tier of the hierarchy: the numbered "contents p
 `delete` order is load-bearing: `attachments.purgeForCascade({ kind: "department", id })` **then** the
 D1 delete (CASCADE removes the rows the purge reads). `list` returns `Department[]`; the
 `GET /api/departments` endpoint merges it with `customize.getCustomizationsForDepartments`.
-
-> Skeleton stub — `api.ts` throws `not implemented`; CRUD lands during the build wave.

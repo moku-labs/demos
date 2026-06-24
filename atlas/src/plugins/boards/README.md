@@ -11,5 +11,3 @@ Standard-tier plugin — the middle of the hierarchy: `boards` + `columns`, plus
 list-level (KV + emit, no broadcast); board-scoped ops broadcast to the board's DO channel.
 `delete`/`deleteColumn` call `attachments.purgeForCascade` inline before the D1 delete.
 `getBoardWithColumns` is the board+columns slice the `GET /api/boards/{id}` endpoint merges into `BoardSnapshot`.
-
-> Skeleton stub — `api.ts`/`helpers.ts` throw / are empty; CRUD + KV index land during the build wave.

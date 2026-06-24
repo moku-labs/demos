@@ -14,5 +14,3 @@ Standard-tier plugin — the read-only **Record**, and the **only** event subscr
 `INSERT OR IGNORE` on `eventId` — so the at-least-once queue can redeliver without duplicate rows.
 Hooks never write D1 directly; `recordActivity` is the sole durable writer. `activity` does **not**
 broadcast and does **not** depend on `realtime` (the drawer is load-on-open).
-
-> Skeleton stub — `api.ts`/`handlers.ts` throw `not implemented`; the hook map + idempotent writer land during the build wave.

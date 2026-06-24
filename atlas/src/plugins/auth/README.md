@@ -10,5 +10,3 @@ Standard-tier plugin — a **demo-stub** KV session gate (the sole net-new secur
 The Cloudflare adapter (`src/cloudflare/worker.ts`) calls `isAuthed` as a **prefix guard on the entire
 `/api/*` + `/ws/*` namespace** (except public `/api/auth/*`) before `server.server.handle`. Tokens are
 `crypto.randomUUID()`, KV-stored with a TTL, and expiry-validated every request.
-
-> Skeleton stub — `api.ts` throws `not implemented`; sessions + guard land during the build wave.

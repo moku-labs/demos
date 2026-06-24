@@ -10,5 +10,3 @@ Standard-tier plugin — issue attachments: the R2 blob + its D1 metadata row. *
 Attachment rows **denormalize `board_id` + `department_id`** so `purgeForCascade` is one indexed query
 at any cascade level. `boards`/`issues`/`departments` call `purgeForCascade` **inline before** their own
 deletes (D1 `ON DELETE CASCADE` fires before any hook can read child rows); it is best-effort + silent.
-
-> Skeleton stub — `api.ts`/`helpers.ts` throw / are empty; R2+D1 logic lands during the build wave.
