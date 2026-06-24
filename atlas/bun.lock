@@ -6,7 +6,7 @@
       "name": "atlas",
       "dependencies": {
         "@moku-labs/web": "2.0.0",
-        "@moku-labs/worker": "0.13.1",
+        "@moku-labs/worker": "0.14.0",
         "preact": "10.29.2",
         "preact-render-to-string": "6.7.0",
       },
@@ -278,7 +278,7 @@
 
     "@moku-labs/web": ["@moku-labs/web@2.0.0", "", { "dependencies": { "@moku-labs/common": "0.2.0", "@moku-labs/core": "0.1.4", "@resvg/resvg-js": "2.6.2", "@shikijs/rehype": "3.22.0", "feed": "5.2.0", "gray-matter": "4.0.3", "hast-util-sanitize": "5.0.2", "p-limit": "6.2.0", "reading-time": "1.5.0", "rehype-raw": "7.0.0", "rehype-sanitize": "6.0.0", "rehype-stringify": "10.0.1", "remark-directive": "4.0.0", "remark-frontmatter": "5.0.0", "remark-gfm": "4.0.1", "remark-parse": "11.0.0", "remark-rehype": "11.1.2", "satori": "0.19.1", "shiki": "3.22.0", "unified": "11.0.5", "unist-util-visit": "5.1.0" }, "peerDependencies": { "mermaid-isomorphic": "^3.0.0", "preact": "^10.29.2", "preact-render-to-string": "^6.6.0" }, "optionalPeers": ["mermaid-isomorphic"] }, "sha512-R0FyLmnQCY+pfbJZURkUrffOcv0fnIKa1Nn592VQZvqlc5wwF10fWCQW3uciUs9mgR3jr2Z5BpasTxb9m6m+8Q=="],
 
-    "@moku-labs/worker": ["@moku-labs/worker@0.13.1", "", { "dependencies": { "@moku-labs/common": "0.3.0", "@moku-labs/core": "1.5.0" }, "peerDependencies": { "wrangler": ">=3" }, "optionalPeers": ["wrangler"] }, "sha512-1Cm2kYoE9MdvhHdQQmEcWimo8PaWy4HCp5q0SeCKAvGN8Rw02AJrmRHQyzFw9kQX+IHLsj5W6AJfEU9+0kxhCw=="],
+    "@moku-labs/worker": ["@moku-labs/worker@0.14.0", "", { "dependencies": { "@moku-labs/common": "0.3.0", "@moku-labs/core": "1.5.0" }, "peerDependencies": { "wrangler": ">=3" }, "optionalPeers": ["wrangler"] }, "sha512-dOqNYGPga9xyDslBAcTOf+krmC2mnDvLPYSyyXhKz6O22wn3hUv+Jag1WsesIpsf+ar79SYfuvjJu/tmRgcMig=="],
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.1.5", "", { "dependencies": { "@tybys/wasm-util": "^0.10.2" }, "peerDependencies": { "@emnapi/core": "^1.7.1", "@emnapi/runtime": "^1.7.1" } }, "sha512-AWPoBRJ9tsnVhor4sjO7rkni+7p+2IAEFj6cx06UgP10jkQHqay/36uRV/bFkgrh18D9vb4cr8Q0Pthskgzy+Q=="],
 
