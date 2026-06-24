@@ -1,9 +1,11 @@
 /**
  * @file Cloudflare entry — the thin adapter connecting the Worker runtime to the Moku `server` app.
  *
- * Runs the auth prefix-guard on `/api/*` + `/ws/*` (except public `/api/auth/*`) before delegating to
- * the server router, serves everything else from Static Assets (`env.ASSETS`), and drains the activity
- * queue through `server.queues.consume`. All app logic lives in `../server` and its plugins, never here.
+ * Routes `/health` + `/api/*` + `/ws/*` to the server router (auth is enforced inside the endpoint
+ * table — protected routes are built with `authed` = `endpoint.new(authGuard)` — so there is no
+ * prefix-guard here), gates logged-out document navigations to protected app routes via a server-side
+ * redirect, serves everything else from Static Assets (`env.ASSETS`), and drains the activity queue
+ * through `server.queues.consume`. All app logic lives in `../server` and its plugins, never here.
  */
 import type { WorkerEnv } from "@moku-labs/worker";
 import { server } from "../server";
@@ -38,8 +40,8 @@ function isProtectedDocument(request: Request, pathname: string): boolean {
 
 export default {
   /**
-   * Guards `/api/*` + `/ws/*` (except public `/api/auth/*`), gates logged-out app-route documents to
-   * the sign-in page, then routes to the server; else serves static assets.
+   * Routes `/health` + `/api/*` + `/ws/*` to the server (auth enforced in the endpoint table), gates
+   * logged-out app-route documents to the sign-in page, else serves static assets.
    *
    * @param request - The incoming request.
    * @param env - Per-request Cloudflare bindings.
@@ -52,12 +54,13 @@ export default {
    */
   async fetch(request: Request, env: WorkerEnv, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
-    if (url.pathname === "/health") return server.server.handle(request, env, ctx);
-    if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/ws/")) {
-      const isPublic = url.pathname.startsWith("/api/auth/");
-      if (!isPublic && !(await server.auth.isAuthed(request, env))) {
-        return new Response("unauthorized", { status: 401 });
-      }
+    // The server surface (health probe + API + WebSocket). Auth lives in the endpoint table now:
+    // protected routes are built with `authed` (= endpoint.new(authGuard)), so no prefix-guard here.
+    if (
+      url.pathname === "/health" ||
+      url.pathname.startsWith("/api/") ||
+      url.pathname.startsWith("/ws/")
+    ) {
       return server.server.handle(request, env, ctx);
     }
     if (isProtectedDocument(request, url.pathname) && !(await server.auth.isAuthed(request, env))) {
