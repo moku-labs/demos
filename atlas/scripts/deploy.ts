@@ -16,6 +16,11 @@
  * `deploy --seed` can no longer fall through to a raw `wrangler … --remote` auth error. What to seed
  * (the SQL file + the `boards:index` KV reset) is declared in `pluginConfigs.deploy.seed`
  * (src/server.ts). `deploy` returns a structured report and sets the process exit code itself.
+ *
+ * `--delete` instead DESTROYS all infrastructure provisioned for `--stage` (the worker + KV + R2 +
+ * D1 + Queues + Durable Objects, with all data). It is double-confirmed (a branded preview + y/N,
+ * then typing the stage name) and interactive-only; every other flag is ignored. Use it to tear a
+ * throwaway stage back down, e.g. `bun run deploy --delete --stage dev`.
  */
 import { app as web } from "../src/app";
 import { server } from "../src/server";
@@ -28,4 +33,8 @@ const migration = process.argv.includes("--migration") || seed;
 const stageFlag = process.argv.indexOf("--stage");
 const stage = stageFlag === -1 ? "production" : (process.argv[stageFlag + 1] ?? "production");
 
-await server.cli.deploy({ ci, stage, migration, seed, webBuild: () => web.cli.build() });
+// `--delete` tears the stage's infrastructure back down instead of deploying (double-confirmed,
+// interactive-only); the framework ignores every other flag in this mode.
+const deleteFlag = process.argv.includes("--delete");
+
+await server.cli.deploy({ ci, stage, migration, seed, delete: deleteFlag, webBuild: () => web.cli.build() });
