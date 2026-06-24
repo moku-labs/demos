@@ -5,7 +5,7 @@
     "": {
       "name": "traker",
       "dependencies": {
-        "@moku-labs/web": "2.0.0",
+        "@moku-labs/web": "2.1.1",
         "@moku-labs/worker": "0.10.0",
         "preact": "10.29.2",
         "preact-render-to-string": "6.7.0",
@@ -267,11 +267,11 @@
 
     "@loaderkit/resolve": ["@loaderkit/resolve@1.0.6", "", { "dependencies": { "@braidai/lang": "^1.0.0" } }, "sha512-G8FdIoF5CypfwmD9rl8BXod5HDn8JqB0CCNBXDTaRZ+yRYhARrrSToX1zg1zy9jX3zLqigsELwhT4gNtkdQAUg=="],
 
-    "@moku-labs/common": ["@moku-labs/common@0.2.0", "", { "dependencies": { "@moku-labs/core": "0.1.4" } }, "sha512-3CLKsQ0BwrFzk/dWWEP4ene60kx5tejjQntMdhhsgOjcpjFwUs8HY+UfvHLjQ7GXQnRyutjepqq/E9m9JLCePg=="],
+    "@moku-labs/common": ["@moku-labs/common@0.2.1", "", { "dependencies": { "@moku-labs/core": "1.5.0" } }, "sha512-z7gbsQgutGdN0jaxXZpJjfMKVZuPvMM5NP9jfPcHK3chY/SwlxhoGExDb1xeYQfl4RgqiHI7xh2f+b8oF3dImw=="],
 
-    "@moku-labs/core": ["@moku-labs/core@0.1.4", "", {}, "sha512-RkpbkrC89BTkVWIKJaIzCDQifjcfgP9AFzMCUhStd9iu87n/xoxt/e/qpoz1vUocDqZfT0da5ibwJshGwzIBLg=="],
+    "@moku-labs/core": ["@moku-labs/core@1.5.0", "", {}, "sha512-CPQmvFvLTo/NpQBeoyLFXNcfuNIxtuSuFXkGwCpvuS0KmWwzkd8ObnN1s3xpzQ8J681t2NsrdDr+Fhc6DuFBvQ=="],
 
-    "@moku-labs/web": ["@moku-labs/web@2.0.0", "", { "dependencies": { "@moku-labs/common": "0.2.0", "@moku-labs/core": "0.1.4", "@resvg/resvg-js": "2.6.2", "@shikijs/rehype": "3.22.0", "feed": "5.2.0", "gray-matter": "4.0.3", "hast-util-sanitize": "5.0.2", "p-limit": "6.2.0", "reading-time": "1.5.0", "rehype-raw": "7.0.0", "rehype-sanitize": "6.0.0", "rehype-stringify": "10.0.1", "remark-directive": "4.0.0", "remark-frontmatter": "5.0.0", "remark-gfm": "4.0.1", "remark-parse": "11.0.0", "remark-rehype": "11.1.2", "satori": "0.19.1", "shiki": "3.22.0", "unified": "11.0.5", "unist-util-visit": "5.1.0" }, "peerDependencies": { "mermaid-isomorphic": "^3.0.0", "preact": "^10.29.2", "preact-render-to-string": "^6.6.0" }, "optionalPeers": ["mermaid-isomorphic"] }, "sha512-R0FyLmnQCY+pfbJZURkUrffOcv0fnIKa1Nn592VQZvqlc5wwF10fWCQW3uciUs9mgR3jr2Z5BpasTxb9m6m+8Q=="],
+    "@moku-labs/web": ["@moku-labs/web@2.1.1", "", { "dependencies": { "@moku-labs/common": "0.2.1", "@moku-labs/core": "1.5.0", "@resvg/resvg-js": "2.6.2", "@shikijs/rehype": "3.22.0", "feed": "5.2.0", "gray-matter": "4.0.3", "hast-util-sanitize": "5.0.2", "p-limit": "6.2.0", "reading-time": "1.5.0", "rehype-raw": "7.0.0", "rehype-sanitize": "6.0.0", "rehype-stringify": "10.0.1", "remark-directive": "4.0.0", "remark-frontmatter": "5.0.0", "remark-gfm": "4.0.1", "remark-parse": "11.0.0", "remark-rehype": "11.1.2", "satori": "0.19.1", "shiki": "3.22.0", "unified": "11.0.5", "unist-util-visit": "5.1.0" }, "peerDependencies": { "mermaid-isomorphic": "^3.0.0", "preact": "^10.29.2", "preact-render-to-string": "^6.6.0" }, "optionalPeers": ["mermaid-isomorphic"] }, "sha512-oLjnvqGejpTUdOCu6Q8I5RcYLDehFW9kL0pnOoJf90B9L3UubjKtPSwG2nHaA/C63ZM27jhJq7BQ9O1tNTppjA=="],
 
     "@moku-labs/worker": ["@moku-labs/worker@0.10.0", "", { "dependencies": { "@moku-labs/common": "0.2.1", "@moku-labs/core": "1.5.0" }, "peerDependencies": { "wrangler": ">=3" }, "optionalPeers": ["wrangler"] }, "sha512-KipZBHHGPZ18ZT3MMkEayeC0uFwNQNblusz/pWUI/MXBJmP1dWwsqRz6t82+1SdHFGmXLZuBZDDtFVvJRG8cfw=="],
 
@@ -1280,10 +1280,6 @@
     "@eslint-community/eslint-utils/eslint-visitor-keys": ["eslint-visitor-keys@3.4.3", "", {}, "sha512-wpc+LXeiyiisxPlEkUzU6svyS1frIO3Mgxj1fdy7Pm8Ygzguax2N3Fa/D/ag1WqbOprdI+uY6wMUl8/a2G+iag=="],
 
     "@eslint/eslintrc/globals": ["globals@14.0.0", "", {}, "sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ=="],
-
-    "@moku-labs/worker/@moku-labs/common": ["@moku-labs/common@0.2.1", "", { "dependencies": { "@moku-labs/core": "1.5.0" } }, "sha512-z7gbsQgutGdN0jaxXZpJjfMKVZuPvMM5NP9jfPcHK3chY/SwlxhoGExDb1xeYQfl4RgqiHI7xh2f+b8oF3dImw=="],
-
-    "@moku-labs/worker/@moku-labs/core": ["@moku-labs/core@1.5.0", "", {}, "sha512-CPQmvFvLTo/NpQBeoyLFXNcfuNIxtuSuFXkGwCpvuS0KmWwzkd8ObnN1s3xpzQ8J681t2NsrdDr+Fhc6DuFBvQ=="],
 
     "@poppinss/dumper/@sindresorhus/is": ["@sindresorhus/is@7.2.0", "", {}, "sha512-P1Cz1dWaFfR4IR+U13mqqiGsLFf1KbayybWwdd2vfctdV6hDpUkgCY0nKOLLTMSoRd/jJNjtbqzf13K8DCCXQw=="],
 
