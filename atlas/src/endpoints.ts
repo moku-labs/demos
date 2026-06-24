@@ -4,7 +4,7 @@
  * Each entry is a declarative `endpoint(path).method(handler)` / `authed(path).method(handler)` from
  * `@moku-labs/worker`, grouped by resource (health · auth · departments · boards · columns · issues ·
  * sub-issues · attachments · customize · activity · live). Handlers are deliberately thin: read
- * `ctx.params` / `ctx.request` / `ctx.env`, read the acting `ctx.actor` for mutations (provided by the
+ * `ctx.params` / `ctx.request` / `ctx.env`, read the acting `ctx.user` for mutations (provided by the
  * `authed` guard), delegate to a plugin via `ctx.require`, and return a `Response`. Every D1 / KV / Queues / R2 /
  * Durable-Object side effect — and every `realtime.broadcast` / `ctx.emit` — lives inside those
  * plugins, never here.
@@ -20,7 +20,7 @@
  * `authed` (= `endpoint.new(authGuard)`), whose guard 401s unless a valid session resolves — so the
  * Cloudflare adapter no longer prefix-guards `/api/*` + `/ws/*`. The public `/health` + `/api/auth/*`
  * routes use the bare `endpoint`. The guard resolves the session ONCE and enriches the context with the
- * acting `ctx.actor` (worker guard enrichment), so mutating handlers read it directly for attribution —
+ * acting `ctx.user` (worker guard enrichment), so mutating handlers read it directly for attribution —
  * no re-resolve, no per-handler 401 re-check, no defensive null-check. Each comment states three things:
  *   • expects — path params / request body / headers the handler reads
  *   • does    — the one-line action (the header line after the method + path)
@@ -80,13 +80,13 @@ const RAIL_PATCH_KEYS = [
  * ```
  */
 const authed = endpoint.new(async ctx => {
-  // Resolve the session ONCE: gate if absent (401), else hand the acting Actor to the handler as a
-  // typed `ctx.actor` (worker ≥ 0.15.0 guard enrichment). `resolveActor` gates identically to the old
+  // Resolve the session ONCE: gate if absent (401), else hand the acting user to the handler as a
+  // typed `ctx.user` (worker ≥ 0.15.0 guard enrichment). `resolveActor` gates identically to the old
   // `isAuthed` check (both: token → session), so the behaviour is unchanged — but the handler no longer
-  // re-resolves the actor or null-checks it (the old `actorOf` helper + its defensive throw are gone).
-  const actor = await ctx.require(authPlugin).resolveActor(ctx.request, ctx.env);
-  if (!actor) return unauthorized();
-  return { actor };
+  // re-resolves the user or null-checks it (the old `actorOf` helper + its defensive throw are gone).
+  const user = await ctx.require(authPlugin).resolveActor(ctx.request, ctx.env);
+  if (!user) return unauthorized();
+  return { user };
 });
 
 /**
@@ -156,12 +156,12 @@ export const endpoints: Server.Endpoint[] = [
   // GET /api/auth/session — the current Actor for the request, or 401 when unauthenticated.
   //   expects : Authorization: Bearer <token>  OR  the session cookie
   //   returns : 200 · Actor { id, name }   ·   401 when no valid session
-  //   PUBLIC probe: stays on `endpoint` and resolves its own actor so a logged-out caller gets a
+  //   PUBLIC probe: stays on `endpoint` and resolves its own user so a logged-out caller gets a
   //   graceful 401 (not a guard short-circuit) — this is how the SPA asks "am I signed in?".
   endpoint("/api/auth/session").get(async ctx => {
-    const actor = await ctx.require(authPlugin).resolveActor(ctx.request, ctx.env);
-    if (!actor) return unauthorized();
-    return Response.json(actor);
+    const user = await ctx.require(authPlugin).resolveActor(ctx.request, ctx.env);
+    if (!user) return unauthorized();
+    return Response.json(user);
   }),
 
   // ── Departments ─────────────────────────────────────────────────────────
@@ -179,32 +179,32 @@ export const endpoints: Server.Endpoint[] = [
   }),
   // POST /api/departments — create a department at the next free position.
   //   expects : JSON body NewDepartment { title }
-  //   returns : 201 · Department   ·   401 when no actor
+  //   returns : 201 · Department   ·   401 when no user
   authed("/api/departments").post(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const input = (await ctx.request.json()) as NewDepartment;
-    const dept = await ctx.require(departmentsPlugin).create(ctx.env, input, actor);
+    const dept = await ctx.require(departmentsPlugin).create(ctx.env, input, user);
     return Response.json(dept, { status: 201 });
   }),
   // POST /api/departments/reorder — move a department to a new index (re-packs siblings).
   //   expects : JSON body { id, position }
-  //   returns : 204 · empty   ·   401 when no actor
+  //   returns : 204 · empty   ·   401 when no user
   // NOTE: declared BEFORE /api/departments/{id} so the literal path wins the specificity match.
   authed("/api/departments/reorder").post(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const { id, position } = (await ctx.request.json()) as { id: string; position: number };
-    await ctx.require(departmentsPlugin).reorder(ctx.env, id, position, actor);
+    await ctx.require(departmentsPlugin).reorder(ctx.env, id, position, user);
     return noContent();
   }),
   // PATCH /api/departments/{id} — rename a department.
   //   expects : path {id} · JSON body { title }
-  //   returns : 200 · Department   ·   401 when no actor   ·   404 when the id is unknown
+  //   returns : 200 · Department   ·   401 when no user   ·   404 when the id is unknown
   authed("/api/departments/{id}").patch(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const { title } = (await ctx.request.json()) as { title: string };
     try {
       return Response.json(
-        await ctx.require(departmentsPlugin).rename(ctx.env, ctx.params.id, title, actor)
+        await ctx.require(departmentsPlugin).rename(ctx.env, ctx.params.id, title, user)
       );
     } catch {
       return notFound();
@@ -212,10 +212,10 @@ export const endpoints: Server.Endpoint[] = [
   }),
   // DELETE /api/departments/{id} — delete a department + its cascade subtree (R2 purge first).
   //   expects : path {id}
-  //   returns : 204 · empty   ·   401 when no actor
+  //   returns : 204 · empty   ·   401 when no user
   authed("/api/departments/{id}").delete(async ctx => {
-    const { actor } = ctx;
-    await ctx.require(departmentsPlugin).delete(ctx.env, ctx.params.id, actor);
+    const { user } = ctx;
+    await ctx.require(departmentsPlugin).delete(ctx.env, ctx.params.id, user);
     return noContent();
   }),
   // GET /api/departments/{id}/boards — the department's board summaries (KV-indexed, D1 fallback).
@@ -229,21 +229,21 @@ export const endpoints: Server.Endpoint[] = [
   // ── Boards ──────────────────────────────────────────────────────────────
   // POST /api/boards — create a board (seeds the 4 default columns) + re-warm the KV index.
   //   expects : JSON body NewBoard { departmentId, title, standfirst?, eyebrow? }
-  //   returns : 201 · Board   ·   401 when no actor
+  //   returns : 201 · Board   ·   401 when no user
   authed("/api/boards").post(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const input = (await ctx.request.json()) as NewBoard;
-    const board = await ctx.require(boardsPlugin).create(ctx.env, input, actor);
+    const board = await ctx.require(boardsPlugin).create(ctx.env, input, user);
     return Response.json(board, { status: 201 });
   }),
   // POST /api/boards/reorder — move a board within its department (re-packs siblings).
   //   expects : JSON body { id, position }
-  //   returns : 204 · empty   ·   401 when no actor
+  //   returns : 204 · empty   ·   401 when no user
   // NOTE: declared BEFORE /api/boards/{id} so the literal path wins the specificity match.
   authed("/api/boards/reorder").post(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const { id, position } = (await ctx.request.json()) as { id: string; position: number };
-    await ctx.require(boardsPlugin).reorder(ctx.env, id, position, actor);
+    await ctx.require(boardsPlugin).reorder(ctx.env, id, position, user);
     return noContent();
   }),
   // GET /api/boards/{id} — the full BoardSnapshot (the realtime seed).
@@ -280,35 +280,35 @@ export const endpoints: Server.Endpoint[] = [
     Response.json(await ctx.require(issuesPlugin).listMilestones(ctx.env, ctx.params.id))
   ),
   // POST /api/boards/{id}/milestones/rename — rename a milestone board-wide.
-  //   expects : path {id} · JSON body { from, to }   ·   returns : 204 · empty   ·   401 when no actor
+  //   expects : path {id} · JSON body { from, to }   ·   returns : 204 · empty   ·   401 when no user
   authed("/api/boards/{id}/milestones/rename").post(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const { from, to } = (await ctx.request.json()) as { from: string; to: string };
     if (!from || !to) return badRequest("from and to are required");
-    await ctx.require(issuesPlugin).renameMilestone(ctx.env, ctx.params.id, from, to, actor);
+    await ctx.require(issuesPlugin).renameMilestone(ctx.env, ctx.params.id, from, to, user);
     return new Response(undefined, { status: 204 });
   }),
   // POST /api/boards/{id}/milestones/delete — delete a milestone board-wide (clears it on every issue).
-  //   expects : path {id} · JSON body { name }   ·   returns : 204 · empty   ·   401 when no actor
+  //   expects : path {id} · JSON body { name }   ·   returns : 204 · empty   ·   401 when no user
   authed("/api/boards/{id}/milestones/delete").post(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const { name } = (await ctx.request.json()) as { name: string };
     if (!name) return badRequest("name is required");
-    await ctx.require(issuesPlugin).deleteMilestone(ctx.env, ctx.params.id, name, actor);
+    await ctx.require(issuesPlugin).deleteMilestone(ctx.env, ctx.params.id, name, user);
     return new Response(undefined, { status: 204 });
   }),
   // PATCH /api/boards/{id} — rename a board + edit its subtitle (broadcasts board.renamed).
   //   expects : path {id} · JSON body { title, standfirst? }
-  //   returns : 200 · Board   ·   401 when no actor   ·   404 when the id is unknown
+  //   returns : 200 · Board   ·   401 when no user   ·   404 when the id is unknown
   authed("/api/boards/{id}").patch(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const { title, standfirst } = (await ctx.request.json()) as {
       title: string;
       standfirst?: string;
     };
     try {
       return Response.json(
-        await ctx.require(boardsPlugin).rename(ctx.env, ctx.params.id, title, actor, standfirst)
+        await ctx.require(boardsPlugin).rename(ctx.env, ctx.params.id, title, user, standfirst)
       );
     } catch {
       return notFound();
@@ -316,51 +316,49 @@ export const endpoints: Server.Endpoint[] = [
   }),
   // DELETE /api/boards/{id} — delete a board + its cascade subtree (R2 purge first, then broadcast).
   //   expects : path {id}
-  //   returns : 204 · empty   ·   401 when no actor
+  //   returns : 204 · empty   ·   401 when no user
   authed("/api/boards/{id}").delete(async ctx => {
-    const { actor } = ctx;
-    await ctx.require(boardsPlugin).delete(ctx.env, ctx.params.id, actor);
+    const { user } = ctx;
+    await ctx.require(boardsPlugin).delete(ctx.env, ctx.params.id, user);
     return noContent();
   }),
 
   // ── Columns ─────────────────────────────────────────────────────────────
   // POST /api/boards/{id}/columns — append a column to a board (broadcasts column.created).
   //   expects : path {id} · JSON body NewColumn { title }
-  //   returns : 201 · Column   ·   401 when no actor
+  //   returns : 201 · Column   ·   401 when no user
   authed("/api/boards/{id}/columns").post(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const input = (await ctx.request.json()) as NewColumn;
     const column = await ctx
       .require(boardsPlugin)
-      .createColumn(ctx.env, ctx.params.id, input, actor);
+      .createColumn(ctx.env, ctx.params.id, input, user);
     return Response.json(column, { status: 201 });
   }),
   // POST /api/boards/{id}/columns/reorder — move a column within a board (broadcasts column.reordered).
   //   expects : path {id} · JSON body { columnId, position }
-  //   returns : 204 · empty   ·   401 when no actor
+  //   returns : 204 · empty   ·   401 when no user
   // NOTE: declared BEFORE /api/boards/{id}/columns/{cid} so the literal path wins.
   authed("/api/boards/{id}/columns/reorder").post(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const { columnId, position } = (await ctx.request.json()) as {
       columnId: string;
       position: number;
     };
-    await ctx
-      .require(boardsPlugin)
-      .reorderColumn(ctx.env, ctx.params.id, columnId, position, actor);
+    await ctx.require(boardsPlugin).reorderColumn(ctx.env, ctx.params.id, columnId, position, user);
     return noContent();
   }),
   // PATCH /api/boards/{id}/columns/{cid} — rename a column (broadcasts column.renamed).
   //   expects : path {id, cid} · JSON body { title }
-  //   returns : 200 · Column   ·   401 when no actor   ·   404 when the column is unknown
+  //   returns : 200 · Column   ·   401 when no user   ·   404 when the column is unknown
   authed("/api/boards/{id}/columns/{cid}").patch(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const { title } = (await ctx.request.json()) as { title: string };
     try {
       return Response.json(
         await ctx
           .require(boardsPlugin)
-          .renameColumn(ctx.env, ctx.params.id, ctx.params.cid, title, actor)
+          .renameColumn(ctx.env, ctx.params.id, ctx.params.cid, title, user)
       );
     } catch {
       return notFound();
@@ -368,23 +366,23 @@ export const endpoints: Server.Endpoint[] = [
   }),
   // DELETE /api/boards/{id}/columns/{cid} — delete a column + its cascade subtree (R2 purge first).
   //   expects : path {id, cid}
-  //   returns : 204 · empty   ·   401 when no actor
+  //   returns : 204 · empty   ·   401 when no user
   authed("/api/boards/{id}/columns/{cid}").delete(async ctx => {
-    const { actor } = ctx;
-    await ctx.require(boardsPlugin).deleteColumn(ctx.env, ctx.params.id, ctx.params.cid, actor);
+    const { user } = ctx;
+    await ctx.require(boardsPlugin).deleteColumn(ctx.env, ctx.params.id, ctx.params.cid, user);
     return noContent();
   }),
 
   // ── Issues ──────────────────────────────────────────────────────────────
   // POST /api/boards/{id}/columns/{cid}/issues — create an issue in a column (broadcasts issue.created).
   //   expects : path {id, cid} · JSON body NewIssue { title, description? }
-  //   returns : 201 · Issue   ·   401 when no actor
+  //   returns : 201 · Issue   ·   401 when no user
   authed("/api/boards/{id}/columns/{cid}/issues").post(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const input = (await ctx.request.json()) as NewIssue;
     const issue = await ctx
       .require(issuesPlugin)
-      .create(ctx.env, ctx.params.id, ctx.params.cid, input, actor);
+      .create(ctx.env, ctx.params.id, ctx.params.cid, input, user);
     return Response.json(issue, { status: 201 });
   }),
   // GET /api/issues/{id} — full IssueDetail (issue + sub-issues + labels + assignees + attachments).
@@ -400,11 +398,11 @@ export const endpoints: Server.Endpoint[] = [
   }),
   // PATCH /api/issues/{id} — patch the article body (title/description) AND/OR the rail properties.
   //   expects : path {id} · JSON body IssuePatch (body fields and/or scalar/label/assignee sets)
-  //   returns : 200 · Issue   ·   401 when no actor   ·   404 when the issue is unknown
+  //   returns : 200 · Issue   ·   401 when no user   ·   404 when the issue is unknown
   //   Body fields (title/description) route to `issues.update`; rail fields to `issues.setProperties`
   //   — the two write distinct columns and broadcast distinct patches, so a mixed patch runs both.
   authed("/api/issues/{id}").patch(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
@@ -416,58 +414,52 @@ export const endpoints: Server.Endpoint[] = [
     const hasRail = RAIL_PATCH_KEYS.some(key => patch[key] !== undefined);
 
     let issue = detail.issue;
-    if (hasBody) issue = await issues.update(ctx.env, boardId, ctx.params.id, patch, actor);
-    if (hasRail) issue = await issues.setProperties(ctx.env, boardId, ctx.params.id, patch, actor);
+    if (hasBody) issue = await issues.update(ctx.env, boardId, ctx.params.id, patch, user);
+    if (hasRail) issue = await issues.setProperties(ctx.env, boardId, ctx.params.id, patch, user);
     return Response.json(issue);
   }),
   // DELETE /api/issues/{id} — delete an issue (R2 purge first, then broadcast issue.deleted).
   //   expects : path {id}
-  //   returns : 204 · empty   ·   401 when no actor   ·   404 when the issue is unknown
+  //   returns : 204 · empty   ·   401 when no user   ·   404 when the issue is unknown
   authed("/api/issues/{id}").delete(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
-    await issues.delete(ctx.env, detail.issue.boardId, ctx.params.id, actor);
+    await issues.delete(ctx.env, detail.issue.boardId, ctx.params.id, user);
     return noContent();
   }),
   // POST /api/issues/{id}/move — move an issue to a target column + position + status (broadcasts issue.moved).
   //   expects : path {id} · JSON body IssueMove { toColumnId, position, status }
-  //   returns : 200 · Issue   ·   401 when no actor   ·   404 when the issue is unknown
+  //   returns : 200 · Issue   ·   401 when no user   ·   404 when the issue is unknown
   authed("/api/issues/{id}/move").post(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
     const move = (await ctx.request.json()) as IssueMove;
-    const issue = await issues.move(ctx.env, detail.issue.boardId, ctx.params.id, move, actor);
+    const issue = await issues.move(ctx.env, detail.issue.boardId, ctx.params.id, move, user);
     return Response.json(issue);
   }),
 
   // ── Sub-issues (the issue checklist) ────────────────────────────────────
   // POST /api/issues/{id}/sub-issues — add a checklist sub-issue (broadcasts subIssue.added).
   //   expects : path {id} · JSON body NewSubIssue { title }
-  //   returns : 201 · SubIssue   ·   401 when no actor   ·   404 when the parent issue is unknown
+  //   returns : 201 · SubIssue   ·   401 when no user   ·   404 when the parent issue is unknown
   authed("/api/issues/{id}/sub-issues").post(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
     const input = (await ctx.request.json()) as NewSubIssue;
-    const sub = await issues.addSubIssue(
-      ctx.env,
-      detail.issue.boardId,
-      ctx.params.id,
-      input,
-      actor
-    );
+    const sub = await issues.addSubIssue(ctx.env, detail.issue.boardId, ctx.params.id, input, user);
     return Response.json(sub, { status: 201 });
   }),
   // PATCH /api/issues/{id}/sub-issues/{sid} — toggle a sub-issue's done state (broadcasts subIssue.toggled).
   //   expects : path {id, sid} · JSON body { done }
-  //   returns : 204 · empty   ·   401 when no actor   ·   404 when the parent issue is unknown
+  //   returns : 204 · empty   ·   401 when no user   ·   404 when the parent issue is unknown
   authed("/api/issues/{id}/sub-issues/{sid}").patch(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
@@ -478,36 +470,30 @@ export const endpoints: Server.Endpoint[] = [
       ctx.params.id,
       ctx.params.sid,
       done,
-      actor
+      user
     );
     return noContent();
   }),
   // DELETE /api/issues/{id}/sub-issues/{sid} — remove a sub-issue (broadcasts subIssue.removed).
   //   expects : path {id, sid}
-  //   returns : 204 · empty   ·   401 when no actor   ·   404 when the parent issue is unknown
+  //   returns : 204 · empty   ·   401 when no user   ·   404 when the parent issue is unknown
   authed("/api/issues/{id}/sub-issues/{sid}").delete(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
-    await issues.removeSubIssue(
-      ctx.env,
-      detail.issue.boardId,
-      ctx.params.id,
-      ctx.params.sid,
-      actor
-    );
+    await issues.removeSubIssue(ctx.env, detail.issue.boardId, ctx.params.id, ctx.params.sid, user);
     return noContent();
   }),
 
   // ── Attachments (R2 blob + D1 metadata) ─────────────────────────────────
   // POST /api/issues/{id}/attachments — upload an attachment to an issue (multipart; broadcasts attachment.added).
   //   expects : path {id} · multipart/form-data with a `file` part
-  //   returns : 201 · Attachment   ·   400 when no file part   ·   401 when no actor   ·   404 when the issue is unknown
+  //   returns : 201 · Attachment   ·   400 when no file part   ·   401 when no user   ·   404 when the issue is unknown
   //   The full AttachmentScope is composed here: issueId+columnId+boardId from the issue,
   //   departmentId from its board.
   authed("/api/issues/{id}/attachments").post(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
 
     const detail = await ctx.require(issuesPlugin).getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
@@ -534,7 +520,7 @@ export const endpoints: Server.Endpoint[] = [
         contentType: file.type || DEFAULT_CONTENT_TYPE,
         body: await file.arrayBuffer()
       },
-      actor
+      user
     );
     return Response.json(attachment, { status: 201 });
   }),
@@ -560,22 +546,22 @@ export const endpoints: Server.Endpoint[] = [
   }),
   // DELETE /api/attachments/{id} — delete an attachment (R2 blob + D1 row; broadcasts attachment.removed).
   //   expects : path {id} (attachment id)
-  //   returns : 204 · empty   ·   401 when no actor   (removing an absent attachment is a no-op)
+  //   returns : 204 · empty   ·   401 when no user   (removing an absent attachment is a no-op)
   authed("/api/attachments/{id}").delete(async ctx => {
-    const { actor } = ctx;
-    await ctx.require(attachmentsPlugin).remove(ctx.env, ctx.params.id, actor);
+    const { user } = ctx;
+    await ctx.require(attachmentsPlugin).remove(ctx.env, ctx.params.id, user);
     return noContent();
   }),
 
   // ── Customize (universal colour/icon) ───────────────────────────────────
   // POST /api/customize — upsert a colour/icon customization for an element.
   //   expects : JSON body CustomizationInput { elementType, elementId, boardId, color?, icon? }
-  //   returns : 200 · Customization   ·   401 when no actor
+  //   returns : 200 · Customization   ·   401 when no user
   //   (A null color/icon clears that field — this is also the "remove" path; one upsert serves both.)
   authed("/api/customize").post(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const input = (await ctx.request.json()) as CustomizationInput;
-    const customization = await ctx.require(customizePlugin).set(ctx.env, input, actor);
+    const customization = await ctx.require(customizePlugin).set(ctx.env, input, user);
     return Response.json(customization);
   }),
 
@@ -588,22 +574,22 @@ export const endpoints: Server.Endpoint[] = [
   ),
   // GET /api/users/me — the current user's profile (creates a default row on first read).
   //   expects : the session cookie (resolved to an Actor)
-  //   returns : 200 · User   ·   401 when no actor
+  //   returns : 200 · User   ·   401 when no user
   // NOTE: declared BEFORE any future /api/users/{id} so the literal `/me` wins the specificity match.
   authed("/api/users/me").get(async ctx => {
-    const { actor } = ctx;
-    return Response.json(await ctx.require(usersPlugin).getMe(ctx.env, actor));
+    const { user } = ctx;
+    return Response.json(await ctx.require(usersPlugin).getMe(ctx.env, user));
   }),
   // PUT /api/users/me — upsert the current user's display name + avatar colour token.
   //   expects : JSON body ProfileInput { name, color }
-  //   returns : 200 · User   ·   401 when no actor   ·   400 on a blank name
+  //   returns : 200 · User   ·   401 when no user   ·   400 on a blank name
   authed("/api/users/me").put(async ctx => {
-    const { actor } = ctx;
+    const { user } = ctx;
     const input = (await ctx.request.json()) as ProfileInput;
     const name = input.name.trim();
     if (!name) return badRequest("name required");
     return Response.json(
-      await ctx.require(usersPlugin).updateProfile(ctx.env, actor, { name, color: input.color })
+      await ctx.require(usersPlugin).updateProfile(ctx.env, user, { name, color: input.color })
     );
   }),
 
