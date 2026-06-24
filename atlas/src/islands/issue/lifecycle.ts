@@ -273,9 +273,12 @@ function applyPatch(ctx: IssueContext, patch: BoardPatch): void {
         return { detail: { ...detail, issue: patch.issue } };
       }
 
-      // A move (status change from this or another client) — reflect the new column + status in the rail.
+      // A move (status change from this or another client) — reflect the new column + status in the
+      // rail AND re-point `column` so the breadcrumb and the Status field name the destination column.
       case "issue.moved": {
+        const column = previous.columns.find(col => col.id === patch.toColumnId) ?? previous.column;
         return {
+          column,
           detail: {
             ...detail,
             issue: { ...detail.issue, columnId: patch.toColumnId, status: patch.status }

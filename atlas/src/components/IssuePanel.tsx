@@ -9,7 +9,7 @@
  * control. Pure + SSR — the issue island wires the panel's behaviour.
  */
 import type { ComponentChildren } from "preact";
-import { PRIORITIES, STATUS_TITLES } from "../lib/labels";
+import { PRIORITIES, statusForColumnTitle } from "../lib/labels";
 import { renderMarkdown } from "../lib/markdown";
 import { personById } from "../lib/people";
 import type { Board, Column, Customization, IssueDetail, Person } from "../lib/types";
@@ -264,8 +264,14 @@ export function IssuePanel({
 
           <aside data-rail aria-label="Properties">
             <RailField label="Status">
-              <span data-status-dot data-status={issue.status} aria-hidden="true" />
-              {STATUS_TITLES[issue.status]}
+              {/* The Status field IS the card's column: show the column's name and its status dot (a
+                  custom column with no canonical status falls back to the issue's own status hue). */}
+              <span
+                data-status-dot
+                data-status={statusForColumnTitle(column.title) ?? issue.status}
+                aria-hidden="true"
+              />
+              {column.title}
             </RailField>
 
             <RailField label="Priority">

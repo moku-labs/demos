@@ -3,7 +3,8 @@
  * their content (no cramped internal scrollbars) — the page scrolls, and on narrow screens the row
  * becomes horizontally scrollable / single-column. It derives each column's issues and the per-issue
  * label / assignee / sub-issue / attachment / customization lookups from the {@link BoardSnapshot},
- * threads them into a {@link ColumnView} per column, and ends with an "Add column" affordance. Pure +
+ * threads them into a {@link ColumnView} per column, and follows the row with an "Add column" affordance
+ * on its own line BELOW the board (`[data-board-foot]`) — so the columns reclaim the full width. Pure +
  * SSR — the SHARED markup the `board` island re-renders. This file ALSO owns the `[data-page="board"]`
  * PAGE wrapper layout (the `data-page="board"` element lives in BoardPage.tsx).
  */
@@ -152,7 +153,11 @@ export function BoardView({ snapshot }: BoardViewProps) {
             />
           );
         })}
+      </div>
 
+      {/* "Add column" sits on its own line BELOW the board (not a right-side track) so the columns
+          reclaim the full width — design context §5 "more space for columns". */}
+      <div data-board-foot>
         <button type="button" data-add-column data-action="add-column">
           <Icon name="plus" />
           <span>Add column</span>

@@ -93,10 +93,20 @@ test.describe("A — Screens", () => {
       await expect(inProgress.locator("[data-column-title]")).toBeVisible();
     });
 
-    test("A3: 'Add column' button is visible at end of board", async ({ page }) => {
+    test("A3: 'Add column' button sits on its own line below the board", async ({ page }) => {
       await page.goto("/board/board-platform");
       await page.waitForLoadState("load");
-      await expect(page.locator("[data-add-column]")).toBeVisible();
+      const addColumn = page.locator("[data-board-foot] [data-add-column]");
+      await expect(addColumn).toBeVisible();
+      // It is BELOW the columns row (the board foot), not a right-side track: its top is at/below the
+      // board's bottom edge — so the columns own the full row width.
+      const layout = await page.evaluate(() => {
+        const board = document.querySelector("[data-board]")?.getBoundingClientRect();
+        const add = document.querySelector("[data-add-column]")?.getBoundingClientRect();
+        return board && add ? { boardBottom: board.bottom, addTop: add.top } : undefined;
+      });
+      expect(layout).toBeTruthy();
+      expect(layout?.addTop ?? 0).toBeGreaterThanOrEqual((layout?.boardBottom ?? 0) - 1);
     });
 
     test("A3: Cards render with title, labels, priority, assignees", async ({ page }) => {
@@ -677,11 +687,48 @@ test.describe("Round-2 regressions — issue editor", () => {
     await page.goto(`/board/${boardId}/issue/${issueId}`);
     await page.waitForLoadState("load");
     await page.locator('[data-rail-field]:has([data-rail-label]:text-is("Status"))').click();
-    await page.locator('[data-chooser-option][data-value="in_review"]').click();
+    // The Status chooser lists the board's COLUMNS (values are column ids) — pick by the column name.
+    await page.getByRole("option", { name: "In Review", exact: true }).click();
 
     await page.goto(`/board/${boardId}`);
     await page.waitForLoadState("load");
     const reviewColumn = page.locator('[data-column][aria-label="In Review"]');
     await expect(reviewColumn.locator(`[data-card-id="${issueId}"]`)).toBeVisible();
+  });
+
+  test("#11: Status picker lists ALL columns (incl. custom) and moving to one works", async ({
+    page
+  }) => {
+    // Self-contained throwaway board so this never touches the baseline board.
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Custom-status board",
+      "Custom-status probe"
+    );
+    // A custom column the four seeded statuses do NOT cover.
+    const created = await page.request.post(`/api/boards/${boardId}/columns`, {
+      data: { title: "QA gate" }
+    });
+    expect(created.ok()).toBeTruthy();
+
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
+    await page.waitForLoadState("load");
+    await page.locator('[data-rail-field]:has([data-rail-label]:text-is("Status"))').click();
+
+    // The custom column is offered as a status option (the whole point — not just standard statuses).
+    const qaOption = page.getByRole("option", { name: "QA gate", exact: true });
+    await expect(qaOption).toBeVisible();
+    await qaOption.click();
+
+    // The Status field now NAMES the custom column the card moved into.
+    await expect(
+      page.locator('[data-rail-field]:has([data-rail-label]:text-is("Status")) [data-rail-value]')
+    ).toContainText("QA gate");
+
+    // …and on the board the card sits in the custom column.
+    await page.goto(`/board/${boardId}`);
+    await page.waitForLoadState("load");
+    const qaColumn = page.locator('[data-column][aria-label="QA gate"]');
+    await expect(qaColumn.locator(`[data-card-id="${issueId}"]`)).toBeVisible();
   });
 });

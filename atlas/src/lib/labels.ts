@@ -57,3 +57,21 @@ export const STATUS_TITLES: Record<IssueStatus, string> = {
 
 /** All statuses, in board order. */
 export const STATUS_ORDER: readonly IssueStatus[] = ["backlog", "in_progress", "in_review", "done"];
+
+/**
+ * Map a column title to its canonical issue status — the four seeded titles map back to a status; any
+ * other (custom) column title has no canonical status, so the caller keeps the issue's existing one.
+ * This is the single source of truth the board drop, the column header, and the issue Status picker
+ * share, so a card moved into a custom column behaves identically however it is moved.
+ *
+ * @param title - The column title to map.
+ * @returns The matching status, or `undefined` for a custom column.
+ * @example
+ * ```ts
+ * statusForColumnTitle("In Review"); // "in_review"
+ * statusForColumnTitle("QA gate");   // undefined
+ * ```
+ */
+export function statusForColumnTitle(title: string): IssueStatus | undefined {
+  return STATUS_ORDER.find(status => STATUS_TITLES[status] === title);
+}

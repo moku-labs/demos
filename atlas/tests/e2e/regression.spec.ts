@@ -337,7 +337,8 @@ test.describe("Realtime status → board", () => {
     await page.waitForLoadState("load");
 
     await page.locator('[data-rail-field]:has([data-rail-label]:text-is("Status"))').click();
-    await page.locator('[data-chooser-option][data-value="in_review"]').click();
+    // Status options are the board's columns now — pick by the column name, not a status key.
+    await page.getByRole("option", { name: "In Review", exact: true }).click();
 
     // The card (on the board behind the open panel) must move to In Review live — no reload.
     const reviewColumn = page.locator('[data-column][aria-label="In Review"]');
@@ -358,7 +359,7 @@ test.describe("Realtime status → board", () => {
     await page.waitForLoadState("load");
 
     await page.locator('[data-rail-field]:has([data-rail-label]:text-is("Status"))').click();
-    await page.locator('[data-chooser-option][data-value="done"]').click();
+    await page.getByRole("option", { name: "Done", exact: true }).click();
     // Close via the × (SPA nav back to the board — not a full page reload).
     await page.locator('[data-bar-tools] button[data-action="close"]').click();
 

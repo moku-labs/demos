@@ -17,7 +17,7 @@ import {
   toggleSubIssue
 } from "../../lib/api";
 
-import { LABEL_KEYS, LABELS, PRIORITIES, STATUS_ORDER, STATUS_TITLES } from "../../lib/labels";
+import { LABEL_KEYS, LABELS, PRIORITIES, statusForColumnTitle } from "../../lib/labels";
 import type { ChooserOption } from "../../lib/menu";
 import {
   openChooser,
@@ -29,7 +29,7 @@ import {
 } from "../../lib/menu";
 import { allPeople } from "../../lib/people";
 import { deliverLocal } from "../../lib/realtime";
-import type { IssuePatch, IssueStatus, LabelKey, Priority } from "../../lib/types";
+import type { IssuePatch, LabelKey, Priority } from "../../lib/types";
 import { closeToBoard } from "./lifecycle";
 import { openAttachmentPreview } from "./lightbox";
 import type { IssueContext } from "./types";
@@ -383,8 +383,10 @@ async function applyProperty(ctx: IssueContext, patch: IssuePatch): Promise<void
 }
 
 /**
- * Open the Status chooser under the rail field — a single-select list of the board statuses, each with
- * its status dot, the current one checked. Picking persists via {@link applyStatus}.
+ * Open the Status chooser under the rail field — a single-select list of EVERY column on the board (a
+ * kanban status IS its column), in board order, each with its status dot, the card's current column
+ * checked. Listing all columns (not just the four seeded statuses) lets a card move to a custom column
+ * too. Picking persists via {@link applyColumn}.
  *
  * @param ctx - The issue component context.
  * @param anchor - The rail field the popover anchors under.
@@ -397,56 +399,56 @@ function chooseStatus(ctx: IssueContext, anchor: HTMLElement): void {
   const detail = ctx.state.detail;
   if (!detail) return;
 
-  const options: ChooserOption[] = STATUS_ORDER.map(status => ({
-    value: status,
-    label: STATUS_TITLES[status],
-    ornament: { kind: "status", status },
-    selected: status === detail.issue.status
+  const columns = ctx.state.columns.toSorted((a, b) => a.position - b.position);
+  const options: ChooserOption[] = columns.map(column => ({
+    value: column.id,
+    label: column.title,
+    // A custom column has no canonical status — show the card's own status hue for its dot.
+    ornament: { kind: "status", status: statusForColumnTitle(column.title) ?? detail.issue.status },
+    selected: column.id === detail.issue.columnId
   }));
   openChooser({
     anchor,
     title: "Status",
     options,
-    // eslint-disable-next-line jsdoc/require-jsdoc -- inline onSelect: persist the chosen status
-    onSelect: value => void applyStatus(ctx, value as IssueStatus)
+    // eslint-disable-next-line jsdoc/require-jsdoc -- inline onSelect: move to the chosen column
+    onSelect: value => void applyColumn(ctx, value)
   });
 }
 
 /**
- * Persist a chosen status (no-op when unchanged) and confirm with a toast. Changing status MOVES the
- * card to the column whose title matches that status (a kanban status IS its column), so the board
- * reflects the change — `moveIssue` updates column + status + position and broadcasts `issue.moved`.
- * Falls back to a plain status patch when the board has no column for that status.
+ * Move the open issue to the chosen column (no-op when it is already there) and confirm with a toast.
+ * The card adopts that column's canonical status, or keeps its own when the column is custom — the SAME
+ * rule the board drop uses, so however a card reaches a custom column its status is consistent.
+ * `moveIssue` updates column + status + position and broadcasts `issue.moved`; the move is applied
+ * locally at once (board card + this panel) so it shows without waiting for the WS echo the dev workerd
+ * can drop — the returning broadcast reconciles the same move idempotently.
  *
  * @param ctx - The issue component context.
- * @param status - The chosen status.
- * @returns A promise that resolves once the change persists.
+ * @param columnId - The id of the chosen target column.
+ * @returns A promise that resolves once the move persists.
  * @example
  * ```ts
- * await applyStatus(ctx, "in_progress");
+ * await applyColumn(ctx, "col-in-review");
  * ```
  */
-async function applyStatus(ctx: IssueContext, status: IssueStatus): Promise<void> {
+async function applyColumn(ctx: IssueContext, columnId: string): Promise<void> {
   const detail = ctx.state.detail;
-  if (!detail || status === detail.issue.status) return;
+  if (!detail || columnId === detail.issue.columnId) return;
 
-  const targetColumn = ctx.state.columns.find(column => column.title === STATUS_TITLES[status]);
-  if (targetColumn && targetColumn.id !== detail.issue.columnId) {
-    await moveIssue(detail.issue.id, { toColumnId: targetColumn.id, position: 0, status });
-    // Apply the move locally NOW (board card + this panel's rail) — don't wait for the WS echo, which
-    // the dev workerd can drop; the returning broadcast reconciles the same move idempotently.
-    deliverLocal({
-      type: "issue.moved",
-      issueId: detail.issue.id,
-      toColumnId: targetColumn.id,
-      position: 0,
-      status
-    });
-  } else {
-    await patchIssue(detail.issue.id, { status });
-    deliverLocal({ type: "property.changed", issueId: detail.issue.id, patch: { status } });
-  }
-  showToast(`Status → ${STATUS_TITLES[status]}`);
+  const target = ctx.state.columns.find(column => column.id === columnId);
+  if (!target) return;
+  const status = statusForColumnTitle(target.title) ?? detail.issue.status;
+
+  await moveIssue(detail.issue.id, { toColumnId: target.id, position: 0, status });
+  deliverLocal({
+    type: "issue.moved",
+    issueId: detail.issue.id,
+    toColumnId: target.id,
+    position: 0,
+    status
+  });
+  showToast(`Status → ${target.title}`);
 }
 
 /**
@@ -1024,8 +1026,9 @@ async function deleteOpenIssue(ctx: IssueContext): Promise<void> {
 }
 
 /**
- * Move the open issue to another status/column via a prompt (the touch + accessibility path to drag —
- * the rich drag-reorder lives on the board). Sets the matching status; the board reconciles position.
+ * Move the open issue to another column via a prompt (the touch + accessibility path to drag — the
+ * rich drag-reorder lives on the board). Accepts ANY column title (not just the seeded statuses), then
+ * delegates to {@link applyColumn} so it moves the card and adopts the column's status identically.
  *
  * @param ctx - The issue component context.
  * @returns A promise that resolves once the move persists (or is cancelled).
@@ -1038,21 +1041,20 @@ async function moveOpenIssue(ctx: IssueContext): Promise<void> {
   const detail = ctx.state.detail;
   if (!detail) return;
 
+  const columns = ctx.state.columns.toSorted((a, b) => a.position - b.position);
   const result = await openModal({
     variant: "prompt",
     title: "Move to…",
-    message: `One of: ${STATUS_ORDER.map(status => STATUS_TITLES[status]).join(", ")}`,
-    placeholder: "In Progress",
-    initialValue: STATUS_TITLES[detail.issue.status]
+    message: `One of: ${columns.map(column => column.title).join(", ")}`,
+    placeholder: columns[0]?.title ?? "Column",
+    initialValue: ctx.state.column?.title ?? ""
   });
   if (result.kind !== "submit") return;
 
   const token = result.value.trim().toLowerCase();
-  const status = STATUS_ORDER.find(s => STATUS_TITLES[s].toLowerCase() === token);
-  if (!status || status === detail.issue.status) return;
-
-  await patchIssue(detail.issue.id, { status });
-  showToast(`Moved to ${STATUS_TITLES[status]}`);
+  const target = columns.find(column => column.title.toLowerCase() === token);
+  if (!target) return;
+  await applyColumn(ctx, target.id);
 }
 
 /**

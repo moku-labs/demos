@@ -78,7 +78,7 @@ test.describe("Realtime reconcile dedup — no duplicates after board navigation
     const b = await freshBoard(page, "Dedup col B");
     await bounceBetweenBoards(page, a, b);
 
-    await page.locator("[data-board] [data-add-column]").click();
+    await page.locator("[data-board-foot] [data-add-column]").click();
     const modal = page.locator("[data-modal]");
     await expect(modal).toBeVisible();
     await modal.locator("input, textarea").first().fill("QA gate");
@@ -89,17 +89,17 @@ test.describe("Realtime reconcile dedup — no duplicates after board navigation
     await page.waitForTimeout(800);
     await expect(page.locator('[data-column][aria-label="QA gate"]')).toHaveCount(1);
 
-    // Grid integrity: the inline `--column-count` matches the rendered column count, and the "Add column"
-    // affordance is NOT wrapped onto a second row (the duplicate-column symptom from the screenshots).
+    // Grid integrity: the inline `--column-count` matches the rendered column count, and every column
+    // sits on ONE row (equal tops) — a duplicate column would mismatch the count var and wrap the grid
+    // onto a second row (the symptom from the screenshots).
     const layout = await page.locator("[data-board]").evaluate((el: HTMLElement) => {
-      const cols = el.querySelectorAll("[data-column]").length;
+      const cols = [...el.querySelectorAll<HTMLElement>("[data-column]")];
       const countVar = Number(getComputedStyle(el).getPropertyValue("--column-count").trim());
-      const firstCol = el.querySelector("[data-column]")?.getBoundingClientRect();
-      const addCol = el.querySelector("[data-add-column]")?.getBoundingClientRect();
-      const addWrappedBelow = firstCol && addCol ? addCol.top >= firstCol.bottom : true;
-      return { cols, countVar, addWrappedBelow };
+      const tops = cols.map(col => Math.round(col.getBoundingClientRect().top));
+      const singleRow = tops.every(top => top === tops[0]);
+      return { cols: cols.length, countVar, singleRow };
     });
     expect(layout.countVar).toBe(layout.cols);
-    expect(layout.addWrappedBelow).toBe(false);
+    expect(layout.singleRow).toBe(true);
   });
 });
