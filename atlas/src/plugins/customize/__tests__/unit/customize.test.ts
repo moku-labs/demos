@@ -341,6 +341,58 @@ describe("createCustomizeApi — getCustomizationsForDepartments", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// getCustomizationsForChrome — departments AND boards in one query (nav chrome)
+// ─────────────────────────────────────────────────────────────────────────────
+describe("createCustomizeApi — getCustomizationsForChrome", () => {
+  it("issues ONE query covering department + board element types and maps both", async () => {
+    const { ctx, d1Api } = createMockCtx({
+      d1Api: {
+        query: vi.fn(async () => ({
+          results: [
+            {
+              element_type: "department",
+              element_id: "dept-1",
+              board_id: null,
+              color: "#d00",
+              icon: null
+            },
+            {
+              element_type: "board",
+              element_id: "b1",
+              board_id: "b1",
+              color: "#0d0",
+              icon: "rocket"
+            }
+          ]
+        }))
+      }
+    });
+    const api = createCustomizeApi(ctx);
+
+    const results = await api.getCustomizationsForChrome(
+      {} as Parameters<typeof api.getCustomizationsForChrome>[0]
+    );
+
+    expect(d1Api.query).toHaveBeenCalledOnce();
+    const sql = (d1Api.query.mock.calls[0] as unknown[])[1] as string;
+    expect(sql).toMatch(/element_type\s+IN\s*\(\s*'department'\s*,\s*'board'\s*\)/i);
+    expect(results).toHaveLength(2);
+    expect(results.map(c => c.elementType)).toEqual(["department", "board"]);
+  });
+
+  it("returns an empty array when nothing is customized", async () => {
+    const { ctx } = createMockCtx();
+    const api = createCustomizeApi(ctx);
+
+    const results = await api.getCustomizationsForChrome(
+      {} as Parameters<typeof api.getCustomizationsForChrome>[0]
+    );
+
+    expect(results).toEqual([]);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Type-level assertions
 // ─────────────────────────────────────────────────────────────────────────────
 describe("types: CustomizeEvents payload", () => {

@@ -11,14 +11,14 @@
     height: 1.6rem;
     border-radius: var(--radius-pill);
     background: var(--avatar-fallback, var(--text-faint));
-    color: #fff;
+    color: var(--avatar-ink);
     font-family: var(--font-mono);
     font-size: 0.62rem;
     font-weight: 500;
     letter-spacing: 0.02em;
     line-height: 1;
     user-select: none;
-    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
+    box-shadow: inset 0 0 0 1px var(--avatar-ring);
   }
 
   :scope[data-person="ak"] {

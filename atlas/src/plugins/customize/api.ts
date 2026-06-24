@@ -5,6 +5,7 @@
  * - `set` — upsert via ON CONFLICT + board-scoped broadcast + emit customize:changed
  * - `getCustomizationsForBoard` — ONE indexed query for board/column/issue customizations
  * - `getCustomizationsForDepartments` — SELECT WHERE element_type = 'department'
+ * - `getCustomizationsForChrome` — departments + boards in ONE query (the persistent nav chrome)
  */
 /* eslint-disable unicorn/no-null -- null is the domain contract for absent color/icon/boardId */
 
@@ -27,7 +28,7 @@ import type { Api, CustomizeCtx as CustomizeContext } from "./types";
  * `"customize:changed"` synchronously.
  *
  * @param ctx - The customize plugin context (require resolver + emit, no config).
- * @returns The env-first customize API `{ set, getCustomizationsForBoard, getCustomizationsForDepartments }`.
+ * @returns The env-first customize API `{ set, getCustomizationsForBoard, getCustomizationsForDepartments, getCustomizationsForChrome }`.
  * @example
  * ```ts
  * export const customizePlugin = createPlugin("customize", { api: ctx => createCustomizeApi(ctx) });

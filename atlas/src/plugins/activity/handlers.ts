@@ -101,6 +101,8 @@ const makeEnqueue =
       );
       return;
     }
+
+    // Production path: ride the activity queue exactly as designed (the consumer runs the same INSERT).
     await ctx.require(queuesPlugin).use(ctx.config.activityQueue).send(env, msg);
   };
 

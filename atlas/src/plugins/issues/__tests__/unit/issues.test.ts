@@ -13,6 +13,7 @@ import type {
 import { attachmentsPlugin } from "../../../attachments";
 import { realtimePlugin } from "../../../realtime";
 import { createIssueCrud } from "../../issues-crud";
+import { createMilestoneApi } from "../../milestones";
 import { createPropertyApi } from "../../properties";
 import { createSubIssueApi } from "../../sub-issues";
 import type { IssuesCtx } from "../../types";
@@ -776,5 +777,84 @@ describe("createPropertyApi — setProperties", () => {
         ((c[1] as string).includes("issue_labels") || (c[1] as string).includes("issue_assignees"))
     );
     expect(labelCalls).toHaveLength(0);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// createMilestoneApi — the per-board milestone catalog (rename/delete fan out live)
+// ─────────────────────────────────────────────────────────────────────────────
+describe("createMilestoneApi — listMilestones", () => {
+  it("returns the board's distinct milestone names from one DISTINCT query", async () => {
+    const { ctx, d1Api } = createMockCtx({
+      d1Api: {
+        query: vi.fn(async () => ({
+          results: [{ milestone: "Sprint 11" }, { milestone: "Sprint 12" }]
+        }))
+      }
+    });
+    const api = createMilestoneApi(ctx);
+
+    const names = await api.listMilestones(ENV, BOARD_ID);
+
+    expect(d1Api.query).toHaveBeenCalledOnce();
+    const sql = (d1Api.query.mock.calls[0] as unknown[])[1] as string;
+    expect(sql).toMatch(/SELECT DISTINCT milestone/i);
+    expect(names).toEqual(["Sprint 11", "Sprint 12"]);
+  });
+});
+
+describe("createMilestoneApi — renameMilestone", () => {
+  it("rewrites the milestone across the board, then broadcasts the new name per affected issue", async () => {
+    const { ctx, d1Api, realtimeApi } = createMockCtx({
+      d1Api: { query: vi.fn(async () => ({ results: [{ id: "iss-1" }, { id: "iss-2" }] })) }
+    });
+    const api = createMilestoneApi(ctx);
+
+    await api.renameMilestone(ENV, BOARD_ID, "Sprint 11", "Sprint 12", ACTOR);
+
+    const updateSql = (d1Api.run.mock.calls[0] as unknown[])[1] as string;
+    expect(updateSql).toMatch(/UPDATE issues SET milestone/i);
+    expect(realtimeApi.broadcast).toHaveBeenCalledTimes(2);
+    const firstBroadcast = realtimeApi.broadcast.mock.calls[0] as [
+      unknown,
+      string,
+      { type: string; patch: { milestone: string | null } }
+    ];
+    expect(firstBroadcast[2].type).toBe("property.changed");
+    expect(firstBroadcast[2].patch.milestone).toBe("Sprint 12");
+  });
+});
+
+describe("createMilestoneApi — deleteMilestone", () => {
+  it("broadcasts a cleared milestone for each affected issue BEFORE wiping the column", async () => {
+    const order: string[] = [];
+    const { ctx, d1Api, realtimeApi } = createMockCtx({
+      d1Api: {
+        query: vi.fn(async () => ({ results: [{ id: "iss-1" }] })),
+        run: vi.fn(async () => {
+          order.push("run");
+          return {};
+        })
+      },
+      realtimeApi: {
+        broadcast: vi.fn(async () => {
+          order.push("broadcast");
+        })
+      }
+    });
+    const api = createMilestoneApi(ctx);
+
+    await api.deleteMilestone(ENV, BOARD_ID, "Sprint 11", ACTOR);
+
+    // The clear broadcasts milestone:null, and the notify fires BEFORE the wipe (rows still match name).
+    const firstBroadcast = realtimeApi.broadcast.mock.calls[0] as [
+      unknown,
+      string,
+      { patch: { milestone: string | null } }
+    ];
+    expect(firstBroadcast[2].patch.milestone).toBeNull();
+    expect(order).toEqual(["broadcast", "run"]);
+    const wipeSql = (d1Api.run.mock.calls[0] as unknown[])[1] as string;
+    expect(wipeSql).toMatch(/SET milestone = NULL/i);
   });
 });

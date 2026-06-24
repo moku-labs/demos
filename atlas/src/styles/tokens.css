@@ -119,6 +119,8 @@
   --avatar-ml: light-dark(#8a5a44, #b07a5c);
   --avatar-rt: light-dark(#5f7355, #82996f);
   --avatar-js: light-dark(#6e5774, #9579a0);
+  --avatar-ink: #fff; /* light initials — constant across themes (avatar bg is always saturated) */
+  --avatar-ring: rgb(255 255 255 / 0.12); /* hairline top-light on the avatar */
 
   /* ── Semantics: atmospherics (the warm glow + scrims) ── */
   --bg-glow-1: light-dark(rgba(232, 70, 42, 0.035), rgba(255, 107, 71, 0.05));

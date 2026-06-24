@@ -4,7 +4,7 @@
 import type { WorkerEnv } from "@moku-labs/worker";
 
 import { kvPlugin } from "@moku-labs/worker";
-import { describe, expect, expectTypeOf, it, vi } from "vitest";
+import { beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 import { createAuthApi } from "../../api";
 import type { Api, AuthCtx } from "../../types";
 
@@ -31,16 +31,23 @@ function makeKv() {
   return { ns, store };
 }
 
-const { ns } = makeKv();
-const kvApi = { ...ns, use: vi.fn(() => ns) };
-const ctx = {
-  config: { sessionsKv: "sessions", ttlSeconds: 86_400, cookieName: "atlas_session" },
-  state: {},
-  require: vi.fn((p: unknown) => (p === kvPlugin ? kvApi : undefined))
-} as unknown as AuthCtx;
+// Fresh KV store + api per test — no shared mutable state bleeding across cases (each test starts clean).
+let ns: ReturnType<typeof makeKv>["ns"];
+let kvApi: ReturnType<typeof makeKv>["ns"] & { use: ReturnType<typeof vi.fn> };
+let api: ReturnType<typeof createAuthApi>;
+let env: WorkerEnv;
 
-const api = createAuthApi(ctx);
-const env = {} as WorkerEnv;
+beforeEach(() => {
+  ({ ns } = makeKv());
+  kvApi = { ...ns, use: vi.fn(() => ns) };
+  const ctx = {
+    config: { sessionsKv: "sessions", ttlSeconds: 86_400, cookieName: "atlas_session" },
+    state: {},
+    require: vi.fn((p: unknown) => (p === kvPlugin ? kvApi : undefined))
+  } as unknown as AuthCtx;
+  api = createAuthApi(ctx);
+  env = {} as WorkerEnv;
+});
 
 // UUID regex for token validation
 const UUID_REGEX = /^[\da-f]{8}-[\da-f]{4}-4[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/i;
