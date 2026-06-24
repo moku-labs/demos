@@ -4,8 +4,8 @@
  * Each entry is a declarative `endpoint(path).method(handler)` / `authed(path).method(handler)` from
  * `@moku-labs/worker`, grouped by resource (health · auth · departments · boards · columns · issues ·
  * sub-issues · attachments · customize · activity · live). Handlers are deliberately thin: read
- * `ctx.params` / `ctx.request` / `ctx.env`, resolve the acting `Actor` for mutations via `actorOf`,
- * delegate to a plugin via `ctx.require`, and return a `Response`. Every D1 / KV / Queues / R2 /
+ * `ctx.params` / `ctx.request` / `ctx.env`, read the acting `ctx.actor` for mutations (provided by the
+ * `authed` guard), delegate to a plugin via `ctx.require`, and return a `Response`. Every D1 / KV / Queues / R2 /
  * Durable-Object side effect — and every `realtime.broadcast` / `ctx.emit` — lives inside those
  * plugins, never here.
  *
@@ -17,11 +17,11 @@
  *
  * `src/server.ts` consumes this array as `server: { endpoints }` and `server.server.handle` dispatches
  * it (most-specific path wins). **Auth is enforced HERE, in the table**: protected routes are built with
- * `authed` (= `endpoint.new(authGuard)`), whose guard 401s unless `auth.isAuthed` passes — so the
+ * `authed` (= `endpoint.new(authGuard)`), whose guard 401s unless a valid session resolves — so the
  * Cloudflare adapter no longer prefix-guards `/api/*` + `/ws/*`. The public `/health` + `/api/auth/*`
- * routes use the bare `endpoint`. Mutating handlers then resolve the acting actor for attribution via
- * `actorOf(ctx)`; the guard guarantees a session, so no per-handler 401 re-check is needed. Each
- * comment states three things:
+ * routes use the bare `endpoint`. The guard resolves the session ONCE and enriches the context with the
+ * acting `ctx.actor` (worker guard enrichment), so mutating handlers read it directly for attribution —
+ * no re-resolve, no per-handler 401 re-check, no defensive null-check. Each comment states three things:
  *   • expects — path params / request body / headers the handler reads
  *   • does    — the one-line action (the header line after the method + path)
  *   • returns — status code + JSON/stream shape on success (and notable error statuses)
@@ -33,7 +33,6 @@ import { DEFAULT_CONTENT_TYPE, DEFAULT_FILENAME, isInlineSafe } from "./lib/atta
 import { badRequest, noContent, notFound, unauthorized } from "./lib/http";
 import { clearedSessionCookie, sessionCookie, tokenFromRequest } from "./lib/session";
 import type {
-  Actor,
   BoardSnapshot,
   Credentials,
   CustomizationInput,
@@ -81,27 +80,14 @@ const RAIL_PATCH_KEYS = [
  * ```
  */
 const authed = endpoint.new(async ctx => {
-  if (!(await ctx.require(authPlugin).isAuthed(ctx.request, ctx.env))) return unauthorized();
-});
-
-/**
- * Resolve the acting {@link Actor} for a guarded mutation (attribution). The {@link authed} guard
- * has already proven the session, so this never returns null in practice; it throws if somehow
- * reached on an unguarded route rather than silently attributing the write to no one.
- *
- * @param ctx - The request context of a route built from {@link authed}.
- * @returns The acting `Actor` `{ id, name }`.
- * @example
- * ```ts
- * const actor = await actorOf(ctx);
- * await ctx.require(boardsPlugin).create(ctx.env, input, actor);
- * ```
- */
-const actorOf = async (ctx: Server.RequestContext): Promise<Actor> => {
+  // Resolve the session ONCE: gate if absent (401), else hand the acting Actor to the handler as a
+  // typed `ctx.actor` (worker ≥ 0.15.0 guard enrichment). `resolveActor` gates identically to the old
+  // `isAuthed` check (both: token → session), so the behaviour is unchanged — but the handler no longer
+  // re-resolves the actor or null-checks it (the old `actorOf` helper + its defensive throw are gone).
   const actor = await ctx.require(authPlugin).resolveActor(ctx.request, ctx.env);
-  if (!actor) throw new Error("[atlas] actorOf on an unguarded route — expected an authed session");
-  return actor;
-};
+  if (!actor) return unauthorized();
+  return { actor };
+});
 
 /**
  * The Atlas endpoint table, grouped by resource. Wired into the worker app via `server: { endpoints }`
@@ -195,7 +181,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : JSON body NewDepartment { title }
   //   returns : 201 · Department   ·   401 when no actor
   authed("/api/departments").post(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const input = (await ctx.request.json()) as NewDepartment;
     const dept = await ctx.require(departmentsPlugin).create(ctx.env, input, actor);
     return Response.json(dept, { status: 201 });
@@ -205,7 +191,7 @@ export const endpoints: Server.Endpoint[] = [
   //   returns : 204 · empty   ·   401 when no actor
   // NOTE: declared BEFORE /api/departments/{id} so the literal path wins the specificity match.
   authed("/api/departments/reorder").post(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const { id, position } = (await ctx.request.json()) as { id: string; position: number };
     await ctx.require(departmentsPlugin).reorder(ctx.env, id, position, actor);
     return noContent();
@@ -214,7 +200,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id} · JSON body { title }
   //   returns : 200 · Department   ·   401 when no actor   ·   404 when the id is unknown
   authed("/api/departments/{id}").patch(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const { title } = (await ctx.request.json()) as { title: string };
     try {
       return Response.json(
@@ -228,7 +214,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id}
   //   returns : 204 · empty   ·   401 when no actor
   authed("/api/departments/{id}").delete(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     await ctx.require(departmentsPlugin).delete(ctx.env, ctx.params.id, actor);
     return noContent();
   }),
@@ -245,7 +231,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : JSON body NewBoard { departmentId, title, standfirst?, eyebrow? }
   //   returns : 201 · Board   ·   401 when no actor
   authed("/api/boards").post(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const input = (await ctx.request.json()) as NewBoard;
     const board = await ctx.require(boardsPlugin).create(ctx.env, input, actor);
     return Response.json(board, { status: 201 });
@@ -255,7 +241,7 @@ export const endpoints: Server.Endpoint[] = [
   //   returns : 204 · empty   ·   401 when no actor
   // NOTE: declared BEFORE /api/boards/{id} so the literal path wins the specificity match.
   authed("/api/boards/reorder").post(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const { id, position } = (await ctx.request.json()) as { id: string; position: number };
     await ctx.require(boardsPlugin).reorder(ctx.env, id, position, actor);
     return noContent();
@@ -296,7 +282,7 @@ export const endpoints: Server.Endpoint[] = [
   // POST /api/boards/{id}/milestones/rename — rename a milestone board-wide.
   //   expects : path {id} · JSON body { from, to }   ·   returns : 204 · empty   ·   401 when no actor
   authed("/api/boards/{id}/milestones/rename").post(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const { from, to } = (await ctx.request.json()) as { from: string; to: string };
     if (!from || !to) return badRequest("from and to are required");
     await ctx.require(issuesPlugin).renameMilestone(ctx.env, ctx.params.id, from, to, actor);
@@ -305,7 +291,7 @@ export const endpoints: Server.Endpoint[] = [
   // POST /api/boards/{id}/milestones/delete — delete a milestone board-wide (clears it on every issue).
   //   expects : path {id} · JSON body { name }   ·   returns : 204 · empty   ·   401 when no actor
   authed("/api/boards/{id}/milestones/delete").post(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const { name } = (await ctx.request.json()) as { name: string };
     if (!name) return badRequest("name is required");
     await ctx.require(issuesPlugin).deleteMilestone(ctx.env, ctx.params.id, name, actor);
@@ -315,7 +301,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id} · JSON body { title, standfirst? }
   //   returns : 200 · Board   ·   401 when no actor   ·   404 when the id is unknown
   authed("/api/boards/{id}").patch(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const { title, standfirst } = (await ctx.request.json()) as {
       title: string;
       standfirst?: string;
@@ -332,7 +318,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id}
   //   returns : 204 · empty   ·   401 when no actor
   authed("/api/boards/{id}").delete(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     await ctx.require(boardsPlugin).delete(ctx.env, ctx.params.id, actor);
     return noContent();
   }),
@@ -342,7 +328,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id} · JSON body NewColumn { title }
   //   returns : 201 · Column   ·   401 when no actor
   authed("/api/boards/{id}/columns").post(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const input = (await ctx.request.json()) as NewColumn;
     const column = await ctx
       .require(boardsPlugin)
@@ -354,7 +340,7 @@ export const endpoints: Server.Endpoint[] = [
   //   returns : 204 · empty   ·   401 when no actor
   // NOTE: declared BEFORE /api/boards/{id}/columns/{cid} so the literal path wins.
   authed("/api/boards/{id}/columns/reorder").post(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const { columnId, position } = (await ctx.request.json()) as {
       columnId: string;
       position: number;
@@ -368,7 +354,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id, cid} · JSON body { title }
   //   returns : 200 · Column   ·   401 when no actor   ·   404 when the column is unknown
   authed("/api/boards/{id}/columns/{cid}").patch(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const { title } = (await ctx.request.json()) as { title: string };
     try {
       return Response.json(
@@ -384,7 +370,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id, cid}
   //   returns : 204 · empty   ·   401 when no actor
   authed("/api/boards/{id}/columns/{cid}").delete(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     await ctx.require(boardsPlugin).deleteColumn(ctx.env, ctx.params.id, ctx.params.cid, actor);
     return noContent();
   }),
@@ -394,7 +380,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id, cid} · JSON body NewIssue { title, description? }
   //   returns : 201 · Issue   ·   401 when no actor
   authed("/api/boards/{id}/columns/{cid}/issues").post(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const input = (await ctx.request.json()) as NewIssue;
     const issue = await ctx
       .require(issuesPlugin)
@@ -418,7 +404,7 @@ export const endpoints: Server.Endpoint[] = [
   //   Body fields (title/description) route to `issues.update`; rail fields to `issues.setProperties`
   //   — the two write distinct columns and broadcast distinct patches, so a mixed patch runs both.
   authed("/api/issues/{id}").patch(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
@@ -438,7 +424,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id}
   //   returns : 204 · empty   ·   401 when no actor   ·   404 when the issue is unknown
   authed("/api/issues/{id}").delete(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
@@ -449,7 +435,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id} · JSON body IssueMove { toColumnId, position, status }
   //   returns : 200 · Issue   ·   401 when no actor   ·   404 when the issue is unknown
   authed("/api/issues/{id}/move").post(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
@@ -463,7 +449,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id} · JSON body NewSubIssue { title }
   //   returns : 201 · SubIssue   ·   401 when no actor   ·   404 when the parent issue is unknown
   authed("/api/issues/{id}/sub-issues").post(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
@@ -481,7 +467,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id, sid} · JSON body { done }
   //   returns : 204 · empty   ·   401 when no actor   ·   404 when the parent issue is unknown
   authed("/api/issues/{id}/sub-issues/{sid}").patch(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
@@ -500,7 +486,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id, sid}
   //   returns : 204 · empty   ·   401 when no actor   ·   404 when the parent issue is unknown
   authed("/api/issues/{id}/sub-issues/{sid}").delete(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
@@ -521,7 +507,7 @@ export const endpoints: Server.Endpoint[] = [
   //   The full AttachmentScope is composed here: issueId+columnId+boardId from the issue,
   //   departmentId from its board.
   authed("/api/issues/{id}/attachments").post(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
 
     const detail = await ctx.require(issuesPlugin).getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
@@ -576,7 +562,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id} (attachment id)
   //   returns : 204 · empty   ·   401 when no actor   (removing an absent attachment is a no-op)
   authed("/api/attachments/{id}").delete(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     await ctx.require(attachmentsPlugin).remove(ctx.env, ctx.params.id, actor);
     return noContent();
   }),
@@ -587,7 +573,7 @@ export const endpoints: Server.Endpoint[] = [
   //   returns : 200 · Customization   ·   401 when no actor
   //   (A null color/icon clears that field — this is also the "remove" path; one upsert serves both.)
   authed("/api/customize").post(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const input = (await ctx.request.json()) as CustomizationInput;
     const customization = await ctx.require(customizePlugin).set(ctx.env, input, actor);
     return Response.json(customization);
@@ -605,14 +591,14 @@ export const endpoints: Server.Endpoint[] = [
   //   returns : 200 · User   ·   401 when no actor
   // NOTE: declared BEFORE any future /api/users/{id} so the literal `/me` wins the specificity match.
   authed("/api/users/me").get(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     return Response.json(await ctx.require(usersPlugin).getMe(ctx.env, actor));
   }),
   // PUT /api/users/me — upsert the current user's display name + avatar colour token.
   //   expects : JSON body ProfileInput { name, color }
   //   returns : 200 · User   ·   401 when no actor   ·   400 on a blank name
   authed("/api/users/me").put(async ctx => {
-    const actor = await actorOf(ctx);
+    const { actor } = ctx;
     const input = (await ctx.request.json()) as ProfileInput;
     const name = input.name.trim();
     if (!name) return badRequest("name required");
