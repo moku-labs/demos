@@ -94,6 +94,7 @@ export const server = createApp({
       // `env.ASSETS.fetch` (which still honours the SPA fallback below). The escape-hatch
       // `wrangler.assets` fully replaces the generated assets block (shallow, last-wins).
       wrangler: {
+        observability: { enabled: true, logs: { enabled: true } },
         assets: {
           binding: "ASSETS",
           directory: "dist/client",
