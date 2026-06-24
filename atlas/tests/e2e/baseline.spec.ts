@@ -94,6 +94,22 @@ test.describe("App screens — visual baselines (signed in)", () => {
     await expect(page).toHaveScreenshot("issue-ws-reconnect-desktop.png", { fullPage: false });
   });
 
+  test("A5 Issue page — description editor (edit mode with Save/Cancel)", async ({ page }) => {
+    desktopOnly();
+    await page.goto("/board/board-platform/issue/issue-ws-reconnect");
+    await page.waitForLoadState("load");
+    await expect(page.locator("[data-issue-panel]")).toBeVisible();
+
+    // Open the inline description editor.
+    await page.locator('[data-action="edit-description"]').click();
+    await expect(page.locator("[data-desc-edit]")).toBeVisible();
+    await expect(page.locator('[data-action="save-description"]')).toBeVisible();
+    await prepareScreenshot(page);
+
+    // Capture the viewport (fixed overlay) so the Save/Cancel row is visible below the textarea.
+    await expect(page).toHaveScreenshot("issue-desc-edit-desktop.png", { fullPage: false });
+  });
+
   test("C1 Activity log drawer open", async ({ page }) => {
     desktopOnly();
     await page.goto("/board/board-platform/activity");

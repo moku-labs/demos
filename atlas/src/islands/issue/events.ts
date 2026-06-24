@@ -10,6 +10,7 @@ import {
   onAction,
   onAttachInput,
   onAttachmentClick,
+  onDescKeydown,
   onRailEdit,
   onSubAdd,
   onSubToggle,
@@ -25,6 +26,8 @@ export const issueEvents: Spa.IslandEvents<IssueState> = {
   "dblclick [data-issue-title]": startTitleEdit,
   // The hidden file input (opened by the "Attach file" label) uploads the chosen file on change.
   "change [data-attach-input]": onAttachInput,
+  // Escape inside the description textarea cancels the edit (without closing the panel).
+  "keydown [data-desc-edit]": onDescKeydown,
   // An attachment chip: plain click opens the blob, Alt-click deletes it.
   "click [data-attachment]": onAttachmentClick,
   // A quiet rail field click opens its property editor (status/priority/labels/…/milestone).

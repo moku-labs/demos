@@ -155,4 +155,18 @@
     color: var(--text-muted);
     font-variant-numeric: lining-nums tabular-nums;
   }
+
+  @media (max-width: 760px) {
+    /* Touch devices have no hover — make the card "⋯" menu permanently visible and give it a
+       tap-friendly 44×44px minimum target so the per-card actions (status, priority, delete)
+       are reachable. The small-caps icon is still the same visual size; only the hit area grows. */
+    [data-action="card-menu"] {
+      opacity: 1;
+      min-width: 2.75rem;
+      min-height: 2.75rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
 }

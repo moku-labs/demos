@@ -78,7 +78,10 @@ export function BoardsBar({
         <DropIndicator orientation="vertical" hidden />
       </div>
 
-      {emptyDepartment ? undefined : (
+      {/* The controls need a resolved board to point at: hide them for an empty department AND while the
+          active board id is still unresolved (""), so the Board/List toggle never renders a malformed
+          `/board//list` link that a click could follow before `resolveActive` lands. */}
+      {emptyDepartment || !activeBoardId ? undefined : (
         <div data-boards-controls>
           <nav data-view-switch aria-label="Board or list view">
             <a

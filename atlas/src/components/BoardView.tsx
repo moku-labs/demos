@@ -139,7 +139,14 @@ export function BoardView({ snapshot }: BoardViewProps) {
         </ol>
       </nav>
 
-      <div data-board style={{ "--column-count": columns.length }}>
+      {/* `data-empty` marks the EMPTY_SNAPSHOT paint seed (0 columns, mid-load) so the CSS can collapse
+          this row's vertical padding — otherwise the empty padded box opens a transient gap between the
+          masthead and the columns on a fresh board load (the new-board / tab-switch path). */}
+      <div
+        data-board
+        {...(columns.length === 0 ? { "data-empty": true } : {})}
+        style={{ "--column-count": columns.length }}
+      >
         <DropIndicator hidden />
         {columns.map((column, index) => {
           const custom = columnCustomization(snapshot, column.id);

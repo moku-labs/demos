@@ -5,6 +5,7 @@
  * data create their own throwaway board + issue (never on the canonical `board-platform`, which the
  * visual baselines screenshot — see _fixtures.ts), so the seed and the baselines stay pristine.
  */
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import { FIXED_TIME, signIn } from "./_auth";
 import { freshBoard, freshBoardWithIssue } from "./_fixtures";
@@ -491,6 +492,323 @@ test.describe("Milestone picker UI", () => {
   });
 });
 
+test.describe("Board layout gap — freshly-created-board / empty-department (#layout-gap)", () => {
+  // Regression: during the async snapshot load the board island paints the EMPTY_SNAPSHOT seed —
+  // a `[data-board]` with 0 columns but its full vertical rhythm (padding: 2rem top + 3rem bottom).
+  // That empty padded box opened a visible ~80px void between the masthead and where the columns
+  // land — most noticeable on a slow load and on the empty-department → new-board / tab-switch paths
+  // ("a gap appears sometimes…"). Fix: BoardView marks the 0-column seed with `[data-empty]` and the
+  // scope collapses its vertical padding (`padding-block: 0`), so the empty box has no height; the
+  // rhythm returns the instant the real columns paint. BoardView stays mounted throughout (no
+  // empty-render of the persistent island — that tore down the list view), so board⇄list still swaps.
+
+  test("the 0-column load seed collapses its vertical padding (no empty gap box)", async ({
+    page
+  }) => {
+    // A loaded board carries the full vertical rhythm; toggling the load-seed marker must collapse it.
+    await page.goto("/board/board-platform");
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-column]", { timeout: 10_000 });
+
+    const pads = await page.locator("[data-board]").evaluate(board => {
+      const read = () => {
+        const s = getComputedStyle(board);
+        return { top: s.paddingTop, bottom: s.paddingBottom };
+      };
+      const populated = read(); // 4 columns → the --space-6 / --space-8 rhythm
+      board.dataset.empty = "true"; // the EMPTY_SNAPSHOT seed marker
+      const emptySeed = read(); // collapsed → no padded gap box
+      delete board.dataset.empty;
+      return { populated, emptySeed };
+    });
+
+    expect(pads.populated.top).toBe("32px"); // var(--space-6)
+    expect(pads.populated.bottom).toBe("48px"); // var(--space-8)
+    expect(pads.emptySeed.top).toBe("0px"); // collapsed while loading
+    expect(pads.emptySeed.bottom).toBe("0px");
+  });
+
+  test("a held snapshot shows no empty gap box, then the rhythm returns (real load window)", async ({
+    page
+  }) => {
+    const boardId = await freshBoard(page, "Slow load gap board");
+
+    // Hold the board-snapshot GET so the EMPTY_SNAPSHOT seed stays on screen — the exact window where
+    // the bug used to show the 80px empty padded [data-board]. (page.route intercepts the browser's
+    // own fetch; the fixture's APIRequestContext POST above is not affected.)
+    // Definite-assignment: the Promise executor runs synchronously, so `release` is set before any use.
+    let release!: () => void;
+    const held = new Promise<void>(resolve => {
+      release = resolve;
+    });
+    await page.route(`**/api/boards/${boardId}`, async route => {
+      if (route.request().method() === "GET") await held;
+      await route.continue();
+    });
+
+    try {
+      await page.goto(`/board/${boardId}`);
+
+      // The board paints the seed immediately (before the held GET resolves): [data-board][data-empty].
+      const seed = page.locator("[data-board][data-empty]");
+      await expect(seed).toBeAttached({ timeout: 5000 });
+
+      // The seed must not open a gap: padding collapsed → effectively zero height.
+      const box = await seed.evaluate(el => {
+        const s = getComputedStyle(el);
+        return {
+          top: s.paddingTop,
+          bottom: s.paddingBottom,
+          height: el.getBoundingClientRect().height
+        };
+      });
+      expect(box.top).toBe("0px");
+      expect(box.bottom).toBe("0px");
+      expect(box.height).toBeLessThan(20);
+    } finally {
+      release(); // let the snapshot through so the board can finish loading
+    }
+
+    // Once the real columns paint, the normal vertical rhythm is back.
+    await page.waitForSelector("[data-column]", { timeout: 10_000 });
+    await expect(page.locator("[data-board]")).not.toHaveAttribute("data-empty");
+    const restored = await page
+      .locator("[data-board]")
+      .evaluate(el => getComputedStyle(el).paddingTop);
+    expect(restored).toBe("32px");
+    await page.unroute(`**/api/boards/${boardId}`);
+  });
+
+  test("freshly-created board has only the design rhythm between masthead and columns", async ({
+    page
+  }) => {
+    const boardId = await freshBoard(page, "Gap probe board");
+    await page.goto(`/board/${boardId}`);
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-column]", { timeout: 10_000 });
+
+    // Header bottom → board top is the --space-6 (32px) rhythm only; never an oversized void.
+    const gap = await page.evaluate(() => {
+      const header = document.querySelector("[data-board-header]");
+      const board = document.querySelector("[data-board]");
+      if (!header || !board) return -1;
+      return board.getBoundingClientRect().top - header.getBoundingClientRect().bottom;
+    });
+    expect(gap).toBeGreaterThan(-5); // columns sit below the header (not overlapping)
+    expect(gap).toBeLessThan(48); // no oversized blank band (the old bug showed ~80px)
+  });
+
+  test("no residual empty-department EmptyState min-height after dept-to-board navigation", async ({
+    page
+  }) => {
+    // Navigate to a board so the board island renders a real snapshot.
+    await page.goto("/board/board-platform");
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-column]", { timeout: 10_000 });
+
+    // The EmptyState (variant=empty-department) must NOT be visible — if it is, the island is
+    // stuck in the empty-department state (the layout-gap root cause).
+    const emptyState = page.locator('[data-empty-state][data-variant="empty-department"]');
+    await expect(emptyState).toBeHidden();
+
+    // [data-board] must be visible with actual columns (not 0-column EMPTY_SNAPSHOT).
+    const columns = page.locator("[data-column]");
+    await expect(columns.first()).toBeVisible();
+  });
+});
+
+test.describe("Board ⇄ List view toggle (#view-toggle)", () => {
+  // Regression: the boards-bar painted the Board/List toggle with an EMPTY board id during the window
+  // before `resolveActive()` landed — `urls.toUrl("list", { id: "" })` = `/board//list`. A click in that
+  // window (e.g. right after load, or under server load when resolveActive is slow) navigated to that
+  // malformed URL, which the board route's `/board/{id}/…` matcher can't parse — so the board island read
+  // view="board" and stayed stuck in kanban (flaky under the suite's 2 workers). Fix: the boards-bar seeds
+  // activeBoardId + view from the route in `initState` (well-formed href on the FIRST paint) and hides the
+  // controls until a board id resolves. The board island also stays mounted across the flip (no
+  // empty-render teardown of the persistent island), so the list view always commits.
+
+  test("the toggle links carry the board id from first paint (never /board//list)", async ({
+    page
+  }) => {
+    await page.goto("/board/board-platform");
+    await page.waitForLoadState("load");
+    const list = page.getByRole("link", { name: "List", exact: true });
+    const board = page.getByRole("link", { name: "Board", exact: true });
+    await expect(list).toBeVisible();
+    // The hrefs must include the board id — never the empty-id `/board//list` the board route can't parse.
+    await expect(list).toHaveAttribute("href", "/board/board-platform/list");
+    await expect(board).toHaveAttribute("href", "/board/board-platform");
+  });
+
+  test("clicking List immediately after load switches to the editorial list view", async ({
+    page
+  }) => {
+    await page.goto("/board/board-platform");
+    await page.waitForLoadState("load");
+    // Click WITHOUT first waiting for [data-board] — the exact race that used to leave it stuck on kanban.
+    await page.getByRole("link", { name: "List", exact: true }).click();
+    await page.waitForURL(/\/board\/board-platform\/list$/);
+    await expect(page.locator("[data-listview]")).toBeVisible();
+    await expect(page.locator("[data-board]")).toHaveCount(0);
+  });
+
+  test("toggling back to Board from the list view restores the kanban columns", async ({
+    page
+  }) => {
+    await page.goto("/board/board-platform/list");
+    await page.waitForLoadState("load");
+    await expect(page.locator("[data-listview]")).toBeVisible();
+    await page.getByRole("link", { name: "Board", exact: true }).click();
+    await page.waitForURL(/\/board\/board-platform$/);
+    await expect(page.locator("[data-column]").first()).toBeVisible();
+  });
+});
+
+test.describe("Description editor Save / Cancel affordance (#desc-save)", () => {
+  // Regression tests for the explicit Save/Cancel button row added below the description textarea.
+  // Prior: save was implicit only (clicking Preview segment or blur); no visible affordance.
+
+  test("Save button commits description edit and shows the updated preview", async ({ page }) => {
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Desc save board",
+      "Save button test issue"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-issue-panel]");
+
+    // Switch to edit mode.
+    await page.locator('[data-action="edit-description"]').click();
+    const textarea = page.locator("[data-desc-edit]");
+    await expect(textarea).toBeVisible();
+    await textarea.fill("Updated description via Save button.");
+
+    // The Save button must be present and labelled.
+    const saveBtn = page.locator('[data-action="save-description"]');
+    const cancelBtn = page.locator('[data-action="cancel-description"]');
+    await expect(saveBtn).toBeVisible();
+    await expect(cancelBtn).toBeVisible();
+
+    // Click Save.
+    await saveBtn.click();
+
+    // Editor must close and preview must show the new text.
+    await expect(textarea).toBeHidden();
+    await expect(page.locator("[data-issue-body]")).toBeVisible();
+    await expect(page.locator("[data-issue-body]")).toContainText("Updated description via Save");
+  });
+
+  test("Cancel button discards description edit without persisting", async ({ page }) => {
+    // First save a known description so we can confirm it is NOT replaced on cancel.
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Desc cancel board",
+      "Cancel button test issue"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-issue-panel]");
+
+    // Seed a real description via Save so we have something to compare against.
+    await page.locator('[data-action="edit-description"]').click();
+    await page.locator("[data-desc-edit]").fill("Seeded description — should stay after cancel.");
+    await page.locator('[data-action="save-description"]').click();
+    await page.waitForSelector('[data-action="preview-description"][data-active]');
+
+    // Now open edit again and type something DIFFERENT, then Cancel.
+    await page.locator('[data-action="edit-description"]').click();
+    const textarea = page.locator("[data-desc-edit]");
+    await expect(textarea).toBeVisible();
+    await textarea.fill("This should NOT be saved (cancel test).");
+
+    // Click Cancel.
+    await page.locator('[data-action="cancel-description"]').click();
+
+    // Editor must close; body text must still contain the seeded description (not the typed one).
+    await expect(textarea).toBeHidden();
+    await expect(page.locator("[data-issue-body]")).toContainText("Seeded description");
+    await expect(page.locator("[data-issue-body]")).not.toContainText("should NOT be saved");
+  });
+
+  test("description Save button commit persists after reload", async ({ page }) => {
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Desc persist board",
+      "Persist save issue"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-issue-panel]");
+
+    await page.locator('[data-action="edit-description"]').click();
+    await page.locator("[data-desc-edit]").fill("Durable description — via Save.");
+    await page.locator('[data-action="save-description"]').click();
+    await page.waitForSelector("[data-issue-body]");
+
+    // Reload and verify the description is persisted.
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
+    await page.waitForLoadState("load");
+    await expect(page.locator("[data-issue-body]")).toContainText(
+      "Durable description — via Save."
+    );
+  });
+});
+
+test.describe("Title editor Save / Cancel affordance (#title-save)", () => {
+  test("Save button commits inline title edit", async ({ page }) => {
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Title save btn board",
+      "Original title — save"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-issue-panel]");
+
+    // Double-click to start inline title edit.
+    await page.locator("[data-issue-title]").dblclick();
+    const input = page.locator("[data-title-edit]");
+    await expect(input).toBeVisible();
+    await input.fill("Updated title — via Save button");
+
+    // Save button must be present.
+    await expect(page.locator('[data-action="save-title"]')).toBeVisible();
+    await expect(page.locator('[data-action="cancel-title"]')).toBeVisible();
+
+    // Click Save.
+    await page.locator('[data-action="save-title"]').click();
+
+    // Input closes; title updates.
+    await expect(input).toBeHidden();
+    await expect(page.locator("[data-issue-title]")).toHaveText("Updated title — via Save button");
+  });
+
+  test("Cancel button discards inline title edit", async ({ page }) => {
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Title cancel btn board",
+      "Original title — cancel"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-issue-panel]");
+
+    // Double-click to start inline title edit.
+    await page.locator("[data-issue-title]").dblclick();
+    const input = page.locator("[data-title-edit]");
+    await expect(input).toBeVisible();
+    await input.fill("THIS SHOULD BE DISCARDED");
+
+    // Click Cancel.
+    await page.locator('[data-action="cancel-title"]').click();
+
+    // Input closes; original title is preserved.
+    await expect(input).toBeHidden();
+    await expect(page.locator("[data-issue-title]")).toHaveText("Original title — cancel");
+  });
+});
+
 test.describe("Filter on mobile", () => {
   test.use({ viewport: { width: 390, height: 812 } });
 
@@ -511,5 +829,138 @@ test.describe("Filter on mobile", () => {
     }
     // The dimming scrim covers the viewport so an outside tap dismisses.
     await expect(page.locator("[data-filter-panel] [data-scrim]")).toBeVisible();
+  });
+});
+
+test.describe("Description editor — Escape key (#escape-desc)", () => {
+  // Regression: pressing Escape inside the [data-desc-edit] textarea was bubbling through the
+  // panel's global Escape-to-close handler, closing the entire issue panel. Fix: a delegated
+  // "keydown [data-desc-edit]" handler intercepts Escape, cancels the edit (no persist), and
+  // calls stopPropagation so the panel's document-level handler never sees it.
+
+  test("Escape in description textarea cancels edit without closing the panel", async ({
+    page
+  }) => {
+    await page.goto("/board/board-platform/issue/issue-ws-reconnect");
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-issue-panel]");
+
+    const previewBody = page.locator("[data-issue-body]");
+    const originalText = await previewBody.textContent();
+
+    // Open edit mode
+    await page.locator('[data-action="edit-description"]').click();
+    const textarea = page.locator("[data-desc-edit]");
+    await expect(textarea).toBeVisible();
+    await textarea.fill("ESCAPE_CANCEL_MARKER — should not persist");
+
+    // Press Escape — must close the EDITOR, not the whole panel
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(300);
+
+    // Panel is STILL open (Escape is owned by the textarea, not the panel's global Escape handler)
+    await expect(page.locator("[data-issue-panel]")).toBeVisible();
+    // Editor is closed
+    await expect(textarea).toBeHidden();
+    // Preview text is unchanged (no persist on Escape)
+    await expect(previewBody).not.toContainText("ESCAPE_CANCEL_MARKER");
+    expect(await previewBody.textContent()).toBe(originalText);
+  });
+});
+
+test.describe("Empty description body visibility (#empty-desc-body)", () => {
+  // Regression: [data-issue-body] rendered an empty div (zero height) for issues with no
+  // description, making it invisible to Playwright's visibility check and to assistive tech.
+  // Fix: added `min-height: 1em` to [data-issue-body] in IssuePanel.css so the area is always
+  // at least one line-height tall, even when renderMarkdown("") returns an empty block list.
+
+  test("body area is visible (min-height) on an issue with no description", async ({ page }) => {
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Empty-body board",
+      "Empty-body issue"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-issue-panel]");
+
+    // [data-issue-body] must be visible even with an empty description (no zero-height collapse)
+    const body = page.locator("[data-issue-body]");
+    await expect(body).toBeVisible();
+  });
+
+  test("body area remains visible after Cancel on an empty-description issue", async ({ page }) => {
+    const { boardId, issueId } = await freshBoardWithIssue(
+      page,
+      "Empty-cancel board",
+      "Empty-cancel issue"
+    );
+    await page.goto(`/board/${boardId}/issue/${issueId}`);
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-issue-panel]");
+
+    // Type in Edit mode, then Cancel — body must remain visible
+    await page.locator('[data-action="edit-description"]').click();
+    await page.locator("[data-desc-edit]").fill("Should be discarded on cancel");
+    await page.locator('[data-action="cancel-description"]').click();
+    await page.waitForTimeout(300);
+
+    const body = page.locator("[data-issue-body]");
+    await expect(body).toBeVisible();
+    await expect(body).not.toContainText("Should be discarded on cancel");
+  });
+});
+
+test.describe("Issue panel accessibility — WCAG 2.1 AA (#panel-a11y)", () => {
+  // Regression: multiple WCAG 2.1 AA violations were found in the issue panel:
+  // 1. Save button: white text on --accent (#e8462a) = 3.93:1, fails 4.5:1 threshold at 11px.
+  //    Fix: use --accent-deep (#c7351c) as Save button background (≈7.2:1 with white).
+  // 2. Active toggle segment: --accent-deep (#c7351c) text on --accent-tint (#f8e5dc) = 4.35:1.
+  //    Fix: use --text-strong for the active segment text (≈13:1 on the tint background).
+  // 3. <aside data-rail> is a complementary landmark nested inside the page's <main> landmark
+  //    (axe landmark-complementary-is-top-level). Fix: a non-landmark labelled group —
+  //    <div data-rail role="group" aria-label="Properties">.
+
+  test("issue panel in description edit mode passes axe WCAG 2.1 AA", async ({ page }) => {
+    await page.goto("/board/board-platform/issue/issue-ws-reconnect");
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-issue-panel]");
+
+    await page.locator('[data-action="edit-description"]').click();
+    await expect(page.locator("[data-desc-edit]")).toBeVisible();
+
+    const results = await new AxeBuilder({ page }).include("[data-issue-panel]").analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test("issue panel in title edit mode passes axe WCAG 2.1 AA", async ({ page }) => {
+    await page.goto("/board/board-platform/issue/issue-ws-reconnect");
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-issue-panel]");
+
+    await page.locator("[data-issue-title]").dblclick();
+    await expect(page.locator("[data-title-edit]")).toBeVisible();
+
+    const results = await new AxeBuilder({ page }).include("[data-issue-panel]").analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test("properties rail is a non-landmark labelled group (not a complementary landmark)", async ({
+    page
+  }) => {
+    await page.goto("/board/board-platform/issue/issue-ws-reconnect");
+    await page.waitForLoadState("load");
+    await page.waitForSelector("[data-issue-panel]");
+
+    // The rail must NOT be an <aside> (a complementary landmark nests illegally inside <main>):
+    // it is a <div role="group" aria-label="Properties"> — a labelled grouping, not a landmark.
+    const rail = page.locator("[data-rail]");
+    await expect(rail).toBeVisible();
+    const info = await rail.evaluate(el => ({
+      tag: el.tagName.toLowerCase(),
+      role: el.getAttribute("role")
+    }));
+    expect(info.tag).toBe("div");
+    expect(info.role).toBe("group");
   });
 });

@@ -77,7 +77,14 @@
   }
   [data-bar-tools] button {
     display: inline-flex;
-    padding: 0.4rem;
+    /* Touch target: min 44×44px (WCAG 2.5.5 / Apple HIG). Icon is ~21px; 0.7rem ≈ 11.2px each
+       side → 21 + 22.4 = 43.4px. Use min-width/height as the reliable floor instead of
+       relying on the exact icon dimensions. */
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
     border-radius: var(--radius-md);
     color: var(--text-muted);
     transition:
@@ -172,6 +179,11 @@
   /* ── Markdown body + editorial drop-cap on the first block ── */
   [data-issue-body] {
     max-width: var(--width-prose);
+    /* A minimum height so an empty description still occupies visible space — a zero-height empty
+       div is invisible to assistive tech and Playwright's visibility check, and it deprives the user
+       of a click target to start editing (the body area clicks into Edit mode on the persistent island).
+       1em ≈ one line-height at the current font-size; just enough to show the placeholder affordance. */
+    min-height: 1em;
     font-size: var(--text-md);
     line-height: var(--leading-normal);
     color: var(--text-body);
@@ -275,9 +287,13 @@
   [data-desc-toggle] button:hover {
     color: var(--text-strong);
   }
+  /* Active segment: --accent-tint background with --text-strong ink meets WCAG 2.1 AA at small font
+     sizes (--accent-deep/#c7351c on #f8e5dc = 4.35:1, which fails the 4.5:1 threshold at 11px normal
+     weight; --text-strong on the same tint background ≈ 13:1 — clear pass). The tint still signals
+     "active" visually; the darker ink makes it readable for all users. */
   [data-desc-toggle] button[data-active] {
     background: var(--accent-tint);
-    color: var(--accent-deep);
+    color: var(--text-strong);
   }
 
   /* ── Inline markdown writer: the Edit segment swaps the rendered body for this textarea (§7).
@@ -307,6 +323,87 @@
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 var(--rule-width) var(--accent-tint);
+  }
+
+  /* ── Title edit wrapper: stacks the input + action row ── */
+  [data-title-edit-wrap] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  /* ── Save / Cancel row anchored below the title input ── */
+  [data-title-actions] {
+    display: flex;
+    gap: var(--space-2);
+    justify-content: flex-end;
+  }
+
+  /* ── Save / Cancel row anchored below the description textarea ── */
+  [data-desc-actions] {
+    display: flex;
+    gap: var(--space-2);
+    justify-content: flex-end;
+    max-width: var(--width-prose);
+  }
+
+  /* Primary Save button — use --accent-deep (#c7351c) to meet WCAG 2.1 AA contrast for white text at
+     small font sizes (--accent (#e8462a) on #fff = 3.93:1, which fails; --accent-deep on #fff ≈ 7.2:1
+     — clear pass). The deeper vermilion is still on-brand and reads as the primary action. */
+  [data-desc-actions] button[data-action="save-description"],
+  [data-title-actions] button[data-action="save-title"] {
+    padding: 0.35rem 1rem;
+    border-radius: var(--radius-pill);
+    background: var(--accent-deep);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
+  }
+  [data-desc-actions] button[data-action="save-description"]:hover,
+  [data-title-actions] button[data-action="save-title"]:hover {
+    background: color-mix(in srgb, var(--accent-deep) 85%, black);
+    box-shadow: 0 1px 4px color-mix(in srgb, var(--accent-deep) 35%, transparent);
+  }
+  [data-desc-actions] button[data-action="save-description"]:focus-visible,
+  [data-title-actions] button[data-action="save-title"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Secondary Cancel button — quiet ghost, same mono register */
+  [data-desc-actions] button[data-action="cancel-description"],
+  [data-title-actions] button[data-action="cancel-title"] {
+    padding: 0.35rem 1rem;
+    border-radius: var(--radius-pill);
+    border: var(--rule-width) solid var(--rule-strong);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  [data-desc-actions] button[data-action="cancel-description"]:hover,
+  [data-title-actions] button[data-action="cancel-title"]:hover {
+    border-color: var(--text-muted);
+    color: var(--text-strong);
+    background: var(--surface-sunken);
+  }
+  [data-desc-actions] button[data-action="cancel-description"]:focus-visible,
+  [data-title-actions] button[data-action="cancel-title"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   /* ── Section heads (Attachments, Sub-issues) ── */
@@ -672,6 +769,20 @@
     }
     [data-panel-bar] {
       padding: var(--space-4) var(--pad-page);
+    }
+    /* On phones the software keyboard pushes up the visual viewport, causing the Save/Cancel
+       row (which flows below a min-height:12rem textarea) to scroll off the bottom of the
+       visible area. Sticky positioning within the scrollable [data-panel-body] keeps the
+       action row just above the keyboard edge at all times, matching the mobile form pattern
+       where primary actions stay reachable without scrolling. The background prevents the
+       textarea text from bleeding through as the user scrolls up. */
+    [data-desc-actions] {
+      position: sticky;
+      bottom: 0;
+      padding-bottom: var(--space-3);
+      padding-top: var(--space-2);
+      background: var(--surface-page);
+      max-width: none;
     }
     /* Crumbs wrap instead of every one clipping to an ellipsis — only the long ISSUE-ID truncates. */
     [data-breadcrumb] {

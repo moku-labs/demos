@@ -21,6 +21,15 @@
     padding: var(--space-6) 0 var(--space-8);
   }
 
+  /* While the snapshot is still loading, the board paints the EMPTY_SNAPSHOT seed (0 columns). Without
+     this, that empty row still shows its 2rem+3rem vertical padding as a content-less box — a transient
+     gap between the masthead and the columns that lingers on a slow load and is most visible on the
+     empty-department → new-board and tab-switch paths ("a gap appears sometimes…"). Collapse the
+     vertical padding while there are no columns; it returns the instant the real snapshot paints. */
+  :scope[data-empty] {
+    padding-block: 0;
+  }
+
   /* Wide viewport: drive an explicit column count so stage tracks flex-fill to the full width instead
      of left-packing at min-content and leaving a dead right band. No trailing `auto` track — the
      "Add column" affordance now rides the LAST column (under its "Add card"), so the columns own the
@@ -82,6 +91,13 @@
   }
 
   @media (max-width: 480px) {
+    /* The board paints the EMPTY_SNAPSHOT seed (0 columns) mid-load; a pager with no columns is an
+       empty sticky bar, so keep it hidden until the real columns arrive (matches the board's collapsed
+       empty state above — no phantom chrome during the load flash). */
+    :scope[data-column-count="0"] {
+      display: none;
+    }
+
     :scope {
       display: flex;
       flex-direction: column;

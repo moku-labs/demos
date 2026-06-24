@@ -189,6 +189,69 @@ async function saveDescription(ctx: IssueContext): Promise<void> {
   showToast("Description updated");
 }
 
+/**
+ * Discard the in-progress description edit without persisting — the explicit Cancel button path.
+ * Sets `editingDescription: false` without reading the textarea value, leaving the stored description
+ * unchanged. The preview is rendered with the existing description on the next frame.
+ *
+ * @param ctx - The issue component context.
+ * @example
+ * ```ts
+ * cancelDescription(ctx); // Cancel button click — discard and return to preview
+ * ```
+ */
+function cancelDescription(ctx: IssueContext): void {
+  ctx.set({ editingDescription: false });
+}
+
+/**
+ * Handle keydown inside the description textarea. Intercepts Escape to cancel the edit (returning to
+ * the preview without persisting) and stops the event's propagation so it does NOT bubble up to the
+ * panel's global Escape-to-close handler — pressing Escape inside the editor must close the editor,
+ * not the whole panel. All other keys (including Enter, which adds a newline as expected in a
+ * textarea) are left untouched.
+ *
+ * @param ctx - The issue component context.
+ * @param event - The delegated keydown event from `[data-desc-edit]`.
+ * @example
+ * ```ts
+ * events: { "keydown [data-desc-edit]": onDescKeydown };
+ * ```
+ */
+export function onDescKeydown(ctx: IssueContext, event: Event): void {
+  if (!(event instanceof KeyboardEvent) || event.key !== "Escape") return;
+  // Prevent the panel's global `document` Escape-to-close from firing — the editor owns Escape.
+  event.stopPropagation();
+  cancelDescription(ctx);
+}
+
+/**
+ * Programmatically commit or cancel the inline title editor — the explicit Save/Cancel button path.
+ * The title editor's `commit` closure is already attached to the input's keydown listener; we dispatch
+ * a synthetic key event so the same one-shot guard (the `done` flag inside the closure) dedupes the
+ * blur that fires when focus leaves the input to the clicked button.
+ *
+ * @param ctx - The issue component context.
+ * @param save - `true` to commit (Save button), `false` to cancel (Cancel button).
+ * @example
+ * ```ts
+ * commitTitleInput(ctx, true);  // Save button
+ * commitTitleInput(ctx, false); // Cancel button
+ * ```
+ */
+function commitTitleInput(ctx: IssueContext, save: boolean): void {
+  const input = ctx.el.querySelector<HTMLInputElement>("[data-title-edit]");
+  if (!input) return;
+
+  // Dispatch a synthetic keydown for Enter (save) or Escape (cancel) — the existing commit closure
+  // that startTitleEdit() attached to the input handles the actual state transition.
+  const key = save ? "Enter" : "Escape";
+  input.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true }));
+
+  // If the closure set `done = true` and removed its blur listener, blur now is harmless.
+  // On the cancel path the closure also stopPropagation'd, so the panel's Escape handler is safe.
+}
+
 // ─── article: attachments ────────────────────────────────────────────────────
 
 /**
@@ -932,9 +995,28 @@ export function onAction(ctx: IssueContext, event: Event, element: Element): voi
       editDescription(ctx);
       return;
     }
-    case "preview-description": {
-      // The Preview segment — commit the inline writer back to the rendered body (no-op when resting).
+    case "preview-description":
+    case "save-description": {
+      // Both commit the inline writer back to the rendered body via the same path: the Preview segment
+      // of the toggle and the explicit Save button below the textarea (a no-op when nothing changed).
       void saveDescription(ctx);
+      return;
+    }
+    case "cancel-description": {
+      // Explicit Cancel button — discard changes and return to the preview without persisting.
+      cancelDescription(ctx);
+      return;
+    }
+    case "save-title": {
+      // Explicit Save button below the title input — fire a synthetic Enter to the existing commit
+      // closure; the blur guards dedupe any blur that fires first (focus leaves input to button).
+      commitTitleInput(ctx, true);
+      return;
+    }
+    case "cancel-title": {
+      // Explicit Cancel button — fire a synthetic Escape to the existing commit closure so the
+      // keydown handler cancels cleanly (stopPropagation also prevents the panel's Escape-to-close).
+      commitTitleInput(ctx, false);
       return;
     }
     default: {

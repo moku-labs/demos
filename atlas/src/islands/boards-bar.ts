@@ -56,20 +56,26 @@ type BoardsBarContext = Spa.IslandContext<BoardsBarState>;
 const DRAG_BOARD_KEY = "application/atlas-board";
 
 /**
- * Build the initial (empty) boards-bar state — replaced on the first {@link sync}.
+ * Build the initial boards-bar state. The active board id + view are read straight from the route (like
+ * the board island's {@link file://./board/state.ts}) so the Board/List toggle links are well-formed on
+ * the very FIRST paint — before the async {@link sync}/`resolveActive` fills in the pills. Without this
+ * seed the toggle href would be `urls.toUrl("list", { id: "" })` = `/board//list` (empty board id) during
+ * the resolve window, and a click in that window navigates to a malformed URL the board route can't parse
+ * — leaving the board stuck in kanban view (the flaky view-toggle under load).
  *
- * @returns The empty initial state.
+ * @param ctx - The boards-bar island context (its `params.id` is the active board on a board route).
+ * @returns The initial state seeded from the route.
  * @example
  * ```ts
  * createIsland("boards-bar", { state: initState });
  * ```
  */
-function initState(): BoardsBarState {
+function initState(ctx: BoardsBarContext): BoardsBarState {
   return {
     boards: [],
-    activeBoardId: "",
+    activeBoardId: ctx.params.id ?? "",
     activeDepartmentId: "",
-    view: "board",
+    view: ctx.meta.view === "list" ? "list" : "board",
     customizations: [],
     emptyDepartment: false
   };

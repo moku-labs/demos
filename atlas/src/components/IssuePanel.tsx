@@ -154,12 +154,24 @@ export function IssuePanel({
         <div data-panel-body>
           <div data-article>
             {editingTitle ? (
-              <input
-                type="text"
-                data-title-edit
-                aria-label="Edit issue title"
-                defaultValue={issue.title}
-              />
+              <div data-title-edit-wrap>
+                <input
+                  type="text"
+                  data-title-edit
+                  aria-label="Edit issue title"
+                  defaultValue={issue.title}
+                />
+                {/* Save / Cancel affordance for the inline title edit — mirrors the description
+                    editor so both edit surfaces feel visually consistent. */}
+                <div data-title-actions>
+                  <button type="button" data-action="save-title" aria-label="Save title">
+                    Save
+                  </button>
+                  <button type="button" data-action="cancel-title" aria-label="Cancel title edit">
+                    Cancel
+                  </button>
+                </div>
+              </div>
             ) : (
               <h1 data-issue-title title="Double-click to edit">
                 {issue.title}
@@ -203,12 +215,34 @@ export function IssuePanel({
             </div>
 
             {editingDescription ? (
-              <textarea
-                data-desc-edit
-                aria-label="Edit description"
-                placeholder="Write in Markdown…"
-                defaultValue={issue.description}
-              />
+              <>
+                <textarea
+                  data-desc-edit
+                  aria-label="Edit description"
+                  placeholder="Write in Markdown…"
+                  defaultValue={issue.description}
+                />
+                {/* Save / Cancel affordance — primary action anchored below the textarea so the user
+                    knows their changes won't be lost and knows exactly how to commit them (design §7).
+                    Save wires to saveDescription (same commit path as the Preview segment); Cancel
+                    discards without persisting and returns to the preview. */}
+                <div data-desc-actions>
+                  <button
+                    type="button"
+                    data-action="save-description"
+                    aria-label="Save description"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    data-action="cancel-description"
+                    aria-label="Cancel description edit"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
             ) : (
               <div data-issue-body>{renderMarkdown(issue.description)}</div>
             )}
@@ -262,7 +296,11 @@ export function IssuePanel({
             </section>
           </div>
 
-          <aside data-rail aria-label="Properties">
+          {/* A labelled grouping of read-only property fields. NOT an <aside>: its complementary
+              landmark nests illegally inside the page's <main> (axe landmark-complementary-is-top-level).
+              role="group" + aria-label is the correct non-landmark labelled container. */}
+          {/* biome-ignore lint/a11y/useSemanticElements: a labelled group, not a form <fieldset> */}
+          <div data-rail role="group" aria-label="Properties">
             <RailField label="Status">
               {/* The Status field IS the card's column: show the column's name and its status dot (a
                   custom column with no canonical status falls back to the issue's own status hue). */}
@@ -373,7 +411,7 @@ export function IssuePanel({
                 <span>Customize</span>
               </button>
             </div>
-          </aside>
+          </div>
         </div>
       </article>
     </div>
