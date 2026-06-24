@@ -70,7 +70,7 @@ export class BoardChannel extends defineDurableObject("BoardChannel") {
 
     const url = new URL(request.url);
     if (request.method === "POST" && url.pathname.endsWith("/broadcast")) {
-      const patch = (await request.json()) as BoardPatch;
+      const patch = await request.json<BoardPatch>();
       this.broadcast(patch);
       return new Response("ok");
     }

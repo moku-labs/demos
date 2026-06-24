@@ -56,7 +56,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!response.ok) {
     throw new Error(`Tracker API ${init?.method ?? "GET"} ${path} failed (${response.status})`);
   }
-  return (await response.json()) as T;
+  return await response.json<T>();
 }
 
 /**

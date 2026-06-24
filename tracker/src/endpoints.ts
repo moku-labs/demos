@@ -53,7 +53,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : JSON body NewBoard { title }
   //   returns : 201 · Board
   endpoint("/api/boards").post(async ctx => {
-    const input = (await ctx.request.json()) as NewBoard;
+    const input = await ctx.request.json<NewBoard>();
     return Response.json(await ctx.require(trackerPlugin).createBoard(ctx.env, input), {
       status: 201
     });
@@ -78,7 +78,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id} · JSON body NewColumn { title }
   //   returns : 201 · Column   (broadcasts column.created to live clients)
   endpoint("/api/boards/{id}/columns").post(async ctx => {
-    const input = (await ctx.request.json()) as NewColumn;
+    const input = await ctx.request.json<NewColumn>();
     const column = await ctx.require(trackerPlugin).createColumn(ctx.env, ctx.params.id, input);
     return Response.json(column, { status: 201 });
   }),
@@ -88,7 +88,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id} · JSON body NewCard & { columnId } → { columnId, title, description? }
   //   returns : 201 · Card   (enqueues card.created activity, broadcasts to live clients)
   endpoint("/api/boards/{id}/cards").post(async ctx => {
-    const { columnId, ...input } = (await ctx.request.json()) as NewCard & { columnId: string };
+    const { columnId, ...input } = await ctx.request.json<NewCard & { columnId: string }>();
     const card = await ctx
       .require(trackerPlugin)
       .createCard(ctx.env, ctx.params.id, columnId, input);
@@ -98,7 +98,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id, cid} · JSON body CardPatch { title?, description? }
   //   returns : 200 · Card   (an empty patch is a no-op — no activity/broadcast)
   endpoint("/api/boards/{id}/cards/{cid}").patch(async ctx => {
-    const patch = (await ctx.request.json()) as CardPatch;
+    const patch = await ctx.request.json<CardPatch>();
     const card = await ctx
       .require(trackerPlugin)
       .updateCard(ctx.env, ctx.params.id, ctx.params.cid, patch);
@@ -115,7 +115,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id, cid} · JSON body CardMove { toColumnId, position }
   //   returns : 200 · Card   (enqueues card.moved activity, broadcasts)
   endpoint("/api/boards/{id}/cards/{cid}/move").post(async ctx => {
-    const move = (await ctx.request.json()) as CardMove;
+    const move = await ctx.request.json<CardMove>();
     const card = await ctx
       .require(trackerPlugin)
       .moveCard(ctx.env, ctx.params.id, ctx.params.cid, move);

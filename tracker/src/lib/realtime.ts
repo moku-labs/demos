@@ -2,21 +2,20 @@
  * @file Realtime WebSocket connection manager — the shared module islands import to receive Board
  * Durable Object patches (component-patterns.md "coordinate via shared module exports", not events).
  *
- * Holds a single module-scoped socket and a fan-out set of handlers: the `board` island connects and
- * reconciles its DOM from each patch, while the `activity-panel` island subscribes to the same socket
- * for `activity` frames. One board is connected at a time — navigating to another board reconnects.
+ * Thin adapter over `@moku-labs/web`'s {@link createChannel} primitive: the channel owns the live
+ * socket + exponential-backoff auto-reconnect (a network blip / DO hibernation no longer drops the
+ * board silently), keeping the Tracker-shaped surface the islands already use — a board-agnostic
+ * {@link onPatch} fan-out independent of {@link connect}, so the `board` island owns the socket
+ * lifecycle while `activity-panel` just subscribes to the same stream.
  */
+import { createChannel } from "@moku-labs/web/browser";
 import type { BoardPatch } from "./types";
 
-/** Keepalive frame the Board DO answers with `"pong"`. */
+/** Keepalive frame the Board DO answers with `"pong"` (the reply fails JSON.parse → dropped). */
 const PING = "ping";
-
-/** The live socket, or undefined when disconnected. */
-let socket: WebSocket | undefined;
-/** The board id the live socket is subscribed to, or undefined when disconnected. */
-let connectedBoardId: string | undefined;
-/** Patch handlers fanned out on every incoming frame. */
-const handlers = new Set<(patch: BoardPatch) => void>();
+/** Reconnect backoff first/ceiling delays (ms). */
+const RECONNECT_BASE_MS = 500;
+const RECONNECT_MAX_MS = 8000;
 
 /**
  * Build the `ws(s)://` URL for a board's live channel on the same origin as the page.
@@ -34,32 +33,20 @@ function socketUrl(boardId: string): string {
   return `${scheme}//${host}/ws/board/${boardId}`;
 }
 
-/**
- * Parse an incoming frame and fan it out to every registered handler. Malformed frames and the
- * `"pong"` keepalive reply are ignored.
- *
- * @param event - The socket message event (its `data` is a JSON-encoded {@link BoardPatch}).
- * @example
- * ```ts
- * socket.addEventListener("message", dispatch);
- * ```
- */
-function dispatch(event: MessageEvent): void {
-  if (typeof event.data !== "string" || event.data === "pong") return;
-  let patch: BoardPatch;
-  try {
-    patch = JSON.parse(event.data) as BoardPatch;
-  } catch {
-    return;
-  }
-  for (const handler of handlers) {
-    handler(patch);
-  }
-}
+/** The shared board channel: one live socket bound to the active board, with auto-reconnect. */
+const channel = createChannel<BoardPatch>({
+  url: socketUrl,
+  reconnect: { baseMs: RECONNECT_BASE_MS, maxMs: RECONNECT_MAX_MS }
+});
+
+/** Patch handlers fanned out on every incoming frame (independent of which board is connected). */
+const handlers = new Set<(patch: BoardPatch) => void>();
+/** Unsubscribe handle for the active board's single channel subscription (the fan-out). */
+let unsubscribe: (() => void) | undefined;
 
 /**
  * Open (or reuse) the live socket for a board. A live socket for the same board is left in place;
- * switching boards tears the old socket down first.
+ * switching boards tears the old subscription down first. An unexpected drop auto-reconnects.
  *
  * @param boardId - The board to subscribe to.
  * @example
@@ -68,14 +55,11 @@ function dispatch(event: MessageEvent): void {
  * ```
  */
 export function connect(boardId: string): void {
-  const alive =
-    socket?.readyState === WebSocket.CONNECTING || socket?.readyState === WebSocket.OPEN;
-  if (connectedBoardId === boardId && alive) return;
-
-  disconnect();
-  connectedBoardId = boardId;
-  socket = new WebSocket(socketUrl(boardId));
-  socket.addEventListener("message", dispatch);
+  if (channel.current() === boardId && unsubscribe) return;
+  unsubscribe?.();
+  unsubscribe = channel.subscribe(boardId, patch => {
+    for (const handler of handlers) handler(patch);
+  });
 }
 
 /**
@@ -105,14 +89,12 @@ export function onPatch(handler: (patch: BoardPatch) => void): () => void {
  * ```
  */
 export function ping(): void {
-  if (socket?.readyState === WebSocket.OPEN) {
-    socket.send(PING);
-  }
+  channel.send(PING);
 }
 
 /**
- * Close the live socket and clear the connected-board marker. Registered handlers are kept so a
- * later {@link connect} resumes delivering to them.
+ * Close the live socket, cancel any pending reconnect, and clear the connected-board marker.
+ * Registered handlers are kept so a later {@link connect} resumes delivering to them.
  *
  * @example
  * ```ts
@@ -120,10 +102,7 @@ export function ping(): void {
  * ```
  */
 export function disconnect(): void {
-  if (socket) {
-    socket.removeEventListener("message", dispatch);
-    socket.close();
-    socket = undefined;
-  }
-  connectedBoardId = undefined;
+  unsubscribe?.();
+  unsubscribe = undefined;
+  channel.disconnect();
 }
