@@ -112,7 +112,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : JSON body Credentials { email, password }
   //   returns : 201 · Session { userId, name, email, token, expiresAt }   ·   400 on bad shape
   endpoint("/api/auth/signin").post(async ctx => {
-    const credentials = (await ctx.request.json()) as Credentials;
+    const credentials = await ctx.request.json<Credentials>();
     try {
       const session = await ctx.require(authPlugin).signIn(ctx.env, credentials);
       return Response.json(session, {
@@ -127,7 +127,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : JSON body Credentials { email, password, name? }
   //   returns : 201 · Session   ·   400 on bad shape
   endpoint("/api/auth/signup").post(async ctx => {
-    const credentials = (await ctx.request.json()) as Credentials;
+    const credentials = await ctx.request.json<Credentials>();
     try {
       const session = await ctx.require(authPlugin).signUp(ctx.env, credentials);
       return Response.json(session, {
@@ -182,7 +182,7 @@ export const endpoints: Server.Endpoint[] = [
   //   returns : 201 · Department   ·   401 when no user
   authed("/api/departments").post(async ctx => {
     const { user } = ctx;
-    const input = (await ctx.request.json()) as NewDepartment;
+    const input = await ctx.request.json<NewDepartment>();
     const dept = await ctx.require(departmentsPlugin).create(ctx.env, input, user);
     return Response.json(dept, { status: 201 });
   }),
@@ -192,7 +192,7 @@ export const endpoints: Server.Endpoint[] = [
   // NOTE: declared BEFORE /api/departments/{id} so the literal path wins the specificity match.
   authed("/api/departments/reorder").post(async ctx => {
     const { user } = ctx;
-    const { id, position } = (await ctx.request.json()) as { id: string; position: number };
+    const { id, position } = await ctx.request.json<{ id: string; position: number }>();
     await ctx.require(departmentsPlugin).reorder(ctx.env, id, position, user);
     return noContent();
   }),
@@ -201,7 +201,7 @@ export const endpoints: Server.Endpoint[] = [
   //   returns : 200 · Department   ·   401 when no user   ·   404 when the id is unknown
   authed("/api/departments/{id}").patch(async ctx => {
     const { user } = ctx;
-    const { title } = (await ctx.request.json()) as { title: string };
+    const { title } = await ctx.request.json<{ title: string }>();
     try {
       return Response.json(
         await ctx.require(departmentsPlugin).rename(ctx.env, ctx.params.id, title, user)
@@ -232,7 +232,7 @@ export const endpoints: Server.Endpoint[] = [
   //   returns : 201 · Board   ·   401 when no user
   authed("/api/boards").post(async ctx => {
     const { user } = ctx;
-    const input = (await ctx.request.json()) as NewBoard;
+    const input = await ctx.request.json<NewBoard>();
     const board = await ctx.require(boardsPlugin).create(ctx.env, input, user);
     return Response.json(board, { status: 201 });
   }),
@@ -242,7 +242,7 @@ export const endpoints: Server.Endpoint[] = [
   // NOTE: declared BEFORE /api/boards/{id} so the literal path wins the specificity match.
   authed("/api/boards/reorder").post(async ctx => {
     const { user } = ctx;
-    const { id, position } = (await ctx.request.json()) as { id: string; position: number };
+    const { id, position } = await ctx.request.json<{ id: string; position: number }>();
     await ctx.require(boardsPlugin).reorder(ctx.env, id, position, user);
     return noContent();
   }),
@@ -283,7 +283,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id} · JSON body { from, to }   ·   returns : 204 · empty   ·   401 when no user
   authed("/api/boards/{id}/milestones/rename").post(async ctx => {
     const { user } = ctx;
-    const { from, to } = (await ctx.request.json()) as { from: string; to: string };
+    const { from, to } = await ctx.request.json<{ from: string; to: string }>();
     if (!from || !to) return badRequest("from and to are required");
     await ctx.require(issuesPlugin).renameMilestone(ctx.env, ctx.params.id, from, to, user);
     return new Response(undefined, { status: 204 });
@@ -292,7 +292,7 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : path {id} · JSON body { name }   ·   returns : 204 · empty   ·   401 when no user
   authed("/api/boards/{id}/milestones/delete").post(async ctx => {
     const { user } = ctx;
-    const { name } = (await ctx.request.json()) as { name: string };
+    const { name } = await ctx.request.json<{ name: string }>();
     if (!name) return badRequest("name is required");
     await ctx.require(issuesPlugin).deleteMilestone(ctx.env, ctx.params.id, name, user);
     return new Response(undefined, { status: 204 });
@@ -302,10 +302,10 @@ export const endpoints: Server.Endpoint[] = [
   //   returns : 200 · Board   ·   401 when no user   ·   404 when the id is unknown
   authed("/api/boards/{id}").patch(async ctx => {
     const { user } = ctx;
-    const { title, standfirst } = (await ctx.request.json()) as {
+    const { title, standfirst } = await ctx.request.json<{
       title: string;
       standfirst?: string;
-    };
+    }>();
     try {
       return Response.json(
         await ctx.require(boardsPlugin).rename(ctx.env, ctx.params.id, title, user, standfirst)
@@ -329,7 +329,7 @@ export const endpoints: Server.Endpoint[] = [
   //   returns : 201 · Column   ·   401 when no user
   authed("/api/boards/{id}/columns").post(async ctx => {
     const { user } = ctx;
-    const input = (await ctx.request.json()) as NewColumn;
+    const input = await ctx.request.json<NewColumn>();
     const column = await ctx
       .require(boardsPlugin)
       .createColumn(ctx.env, ctx.params.id, input, user);
@@ -341,10 +341,10 @@ export const endpoints: Server.Endpoint[] = [
   // NOTE: declared BEFORE /api/boards/{id}/columns/{cid} so the literal path wins.
   authed("/api/boards/{id}/columns/reorder").post(async ctx => {
     const { user } = ctx;
-    const { columnId, position } = (await ctx.request.json()) as {
+    const { columnId, position } = await ctx.request.json<{
       columnId: string;
       position: number;
-    };
+    }>();
     await ctx.require(boardsPlugin).reorderColumn(ctx.env, ctx.params.id, columnId, position, user);
     return noContent();
   }),
@@ -353,7 +353,7 @@ export const endpoints: Server.Endpoint[] = [
   //   returns : 200 · Column   ·   401 when no user   ·   404 when the column is unknown
   authed("/api/boards/{id}/columns/{cid}").patch(async ctx => {
     const { user } = ctx;
-    const { title } = (await ctx.request.json()) as { title: string };
+    const { title } = await ctx.request.json<{ title: string }>();
     try {
       return Response.json(
         await ctx
@@ -379,7 +379,7 @@ export const endpoints: Server.Endpoint[] = [
   //   returns : 201 · Issue   ·   401 when no user
   authed("/api/boards/{id}/columns/{cid}/issues").post(async ctx => {
     const { user } = ctx;
-    const input = (await ctx.request.json()) as NewIssue;
+    const input = await ctx.request.json<NewIssue>();
     const issue = await ctx
       .require(issuesPlugin)
       .create(ctx.env, ctx.params.id, ctx.params.cid, input, user);
@@ -406,7 +406,7 @@ export const endpoints: Server.Endpoint[] = [
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
-    const patch = (await ctx.request.json()) as IssuePatch;
+    const patch = await ctx.request.json<IssuePatch>();
     const boardId = detail.issue.boardId;
 
     // Body fields (title/description) persist via `update`; everything else via `setProperties`.
@@ -437,7 +437,7 @@ export const endpoints: Server.Endpoint[] = [
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
-    const move = (await ctx.request.json()) as IssueMove;
+    const move = await ctx.request.json<IssueMove>();
     const issue = await issues.move(ctx.env, detail.issue.boardId, ctx.params.id, move, user);
     return Response.json(issue);
   }),
@@ -451,7 +451,7 @@ export const endpoints: Server.Endpoint[] = [
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
-    const input = (await ctx.request.json()) as NewSubIssue;
+    const input = await ctx.request.json<NewSubIssue>();
     const sub = await issues.addSubIssue(ctx.env, detail.issue.boardId, ctx.params.id, input, user);
     return Response.json(sub, { status: 201 });
   }),
@@ -463,7 +463,7 @@ export const endpoints: Server.Endpoint[] = [
     const issues = ctx.require(issuesPlugin);
     const detail = await issues.getDetail(ctx.env, ctx.params.id);
     if (!detail) return notFound();
-    const { done } = (await ctx.request.json()) as { done: boolean };
+    const { done } = await ctx.request.json<{ done: boolean }>();
     await issues.toggleSubIssue(
       ctx.env,
       detail.issue.boardId,
@@ -560,7 +560,7 @@ export const endpoints: Server.Endpoint[] = [
   //   (A null color/icon clears that field — this is also the "remove" path; one upsert serves both.)
   authed("/api/customize").post(async ctx => {
     const { user } = ctx;
-    const input = (await ctx.request.json()) as CustomizationInput;
+    const input = await ctx.request.json<CustomizationInput>();
     const customization = await ctx.require(customizePlugin).set(ctx.env, input, user);
     return Response.json(customization);
   }),
@@ -585,7 +585,7 @@ export const endpoints: Server.Endpoint[] = [
   //   returns : 200 · User   ·   401 when no user   ·   400 on a blank name
   authed("/api/users/me").put(async ctx => {
     const { user } = ctx;
-    const input = (await ctx.request.json()) as ProfileInput;
+    const input = await ctx.request.json<ProfileInput>();
     const name = input.name.trim();
     if (!name) return badRequest("name required");
     return Response.json(

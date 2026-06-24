@@ -79,7 +79,7 @@ export class BoardChannel extends defineDurableObject("BoardChannel") {
       // idle-evict into the Apple-Silicon workerd segfault → a fast 503 on the user's persisted mutation.
       // No-op in production (see armKeepAlive / isLocalDev).
       this.armKeepAlive();
-      const patch = (await request.json()) as BoardPatch;
+      const patch = await request.json<BoardPatch>();
       this.broadcast(patch);
       return new Response("ok");
     }

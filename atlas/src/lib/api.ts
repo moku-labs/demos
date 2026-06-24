@@ -88,7 +88,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     redirectedOnUnauthorized(response.status);
     throw new Error(`Atlas API ${init?.method ?? "GET"} ${path} failed (${response.status})`);
   }
-  return (await response.json()) as T;
+  return await response.json<T>();
 }
 
 /**
@@ -184,7 +184,7 @@ export async function getSession(): Promise<SessionActor | undefined> {
   try {
     const response = await fetch("/api/auth/session", { credentials: "same-origin" });
     if (!response.ok) return undefined;
-    return (await response.json()) as SessionActor;
+    return await response.json<SessionActor>();
   } catch {
     return undefined;
   }
