@@ -3,9 +3,10 @@
  * their content (no cramped internal scrollbars) — the page scrolls, and on narrow screens the row
  * becomes horizontally scrollable / single-column. It derives each column's issues and the per-issue
  * label / assignee / sub-issue / attachment / customization lookups from the {@link BoardSnapshot},
- * threads them into a {@link ColumnView} per column, and follows the row with an "Add column" affordance
- * on its own line BELOW the board (`[data-board-foot]`) — so the columns reclaim the full width. Pure +
- * SSR — the SHARED markup the `board` island re-renders. This file ALSO owns the `[data-page="board"]`
+ * threads them into a {@link ColumnView} per column. The LAST column (`isLast`) carries the "Add column"
+ * affordance directly under its "Add card", at the same column width — so the control always trails the
+ * rightmost column without taking a track of its own. Pure + SSR — the SHARED markup the `board` island
+ * re-renders. This file ALSO owns the `[data-page="board"]`
  * PAGE wrapper layout (the `data-page="board"` element lives in BoardPage.tsx).
  */
 import { Fragment } from "preact";
@@ -13,7 +14,6 @@ import { personById } from "../lib/people";
 import type { BoardSnapshot, Customization, Issue, LabelKey, Person } from "../lib/types";
 import { ColumnView } from "./ColumnView";
 import { DropIndicator } from "./DropIndicator";
-import { Icon } from "./Icon";
 
 /** The per-issue presentation maps {@link ColumnView} consumes, derived once from the snapshot. */
 interface DerivedLookups {
@@ -141,27 +141,19 @@ export function BoardView({ snapshot }: BoardViewProps) {
 
       <div data-board style={{ "--column-count": columns.length }}>
         <DropIndicator hidden />
-        {columns.map(column => {
+        {columns.map((column, index) => {
           const custom = columnCustomization(snapshot, column.id);
           return (
             <ColumnView
               key={column.id}
               column={column}
               issues={grouped[column.id] ?? []}
+              isLast={index === columns.length - 1}
               {...lookups}
               {...(custom ? { customization: custom } : {})}
             />
           );
         })}
-      </div>
-
-      {/* "Add column" sits on its own line BELOW the board (not a right-side track) so the columns
-          reclaim the full width — design context §5 "more space for columns". */}
-      <div data-board-foot>
-        <button type="button" data-add-column data-action="add-column">
-          <Icon name="plus" />
-          <span>Add column</span>
-        </button>
       </div>
     </Fragment>
   );

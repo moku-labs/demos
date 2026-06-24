@@ -17,14 +17,13 @@
     align-items: start;
     gap: var(--space-6);
     /* No inline padding: `[data-main]` already applies the single `--pad-page` page gutter, so the
-       board inherits it. Top rhythm stays here; the bottom rhythm + the gap to the "Add column"
-       affordance below it are owned by `[data-board-foot]`. */
-    padding: var(--space-6) 0 0;
+       board inherits it. The vertical rhythm stays here. */
+    padding: var(--space-6) 0 var(--space-8);
   }
 
   /* Wide viewport: drive an explicit column count so stage tracks flex-fill to the full width instead
      of left-packing at min-content and leaving a dead right band. No trailing `auto` track — the
-     "Add column" affordance now lives below the board (`[data-board-foot]`), so the columns own the
+     "Add column" affordance now rides the LAST column (under its "Add card"), so the columns own the
      whole row. `--column-count` is set inline in BoardView.tsx. */
   @media (min-width: 1025px) {
     :scope {
@@ -68,47 +67,6 @@
       padding-inline: var(--pad-page);
       box-sizing: border-box;
     }
-  }
-}
-
-/**
- * `[data-board-foot]` — the "Add column" affordance on its own line below the columns row. It is a
- * sibling of `[data-board]` (not a grid track inside it), so the columns own the full row width. The
- * dashed muted pill mirrors the column's "Add card" foot so the two read as the same vocabulary; it
- * hugs its content at the row's start. On phones/tablets `[data-main]` zeroes its inline gutter, so the
- * foot restores `--pad-page` itself (matching how `[data-board]` restores it for the scroll container).
- */
-@scope ([data-board-foot]) {
-  :scope {
-    display: flex;
-    padding-block: var(--space-3) var(--space-8);
-  }
-
-  @media (max-width: 1024px) {
-    :scope {
-      padding-inline: var(--pad-page);
-    }
-  }
-
-  [data-add-column] {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: var(--space-3) var(--space-4);
-    border: var(--rule-width) dashed var(--rule-strong);
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
-    color: var(--text-muted);
-    white-space: nowrap;
-    transition:
-      border-color var(--dur-fast) var(--ease-out),
-      color var(--dur-fast) var(--ease-out),
-      background var(--dur-fast) var(--ease-out);
-  }
-  [data-add-column]:hover {
-    border-color: var(--accent);
-    color: var(--accent-deep);
-    background: var(--accent-tint);
   }
 }
 

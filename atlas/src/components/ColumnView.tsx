@@ -1,7 +1,8 @@
 /**
  * @file ColumnView — a board column (design context §3/§4/§5). A header (title + count in a Fraunces
  * numeral + the universal "⋯" menu trigger + a drag handle) over a stack of {@link CardView}s, an
- * "Add card" affordance at the foot, and an {@link EmptyState} when empty. The column is capped at 20
+ * "Add card" affordance at the foot, and — on the LAST column only (`isLast`) — the board's "Add column"
+ * affordance directly beneath it at the same width. An {@link EmptyState} shows when empty. The column is capped at 20
  * cards; beyond that a quiet "N more not shown" line appears (design context §5, §6 F4). The
  * In Progress column carries the accent treatment — a vermilion top-rule + eyebrow marking what is
  * live (design context §2). Pure + SSR — the SHARED markup the `board` island re-renders per column.
@@ -43,6 +44,12 @@ export interface ColumnViewProps extends ColumnIssueLookups {
   issues: Issue[];
   /** Optional color/icon customization for the column itself. */
   customization?: Customization;
+  /**
+   * Whether this is the LAST (rightmost) column. The last column carries the board's "Add column"
+   * affordance directly under its "Add card", at the same column width — so the control always trails
+   * the rightmost column without claiming a track of its own.
+   */
+  isLast?: boolean;
 }
 
 /**
@@ -71,7 +78,8 @@ export function ColumnView({
   subIssuesByIssue,
   attachmentsByIssue,
   customizationByIssue,
-  customization
+  customization,
+  isLast
 }: ColumnViewProps) {
   const status = statusForColumn(column);
   const shown = issues.slice(0, CARD_CAP);
@@ -135,6 +143,16 @@ export function ColumnView({
         <Icon name="plus" />
         <span>Add card</span>
       </button>
+
+      {/* The board's "Add column" affordance rides the LAST column only — directly under its "Add card",
+          same column width — so it always trails the rightmost column (design context §5). The delegated
+          `click [data-add-column]` handler is board-level; the button merely lives in this column. */}
+      {isLast && (
+        <button type="button" data-add-column data-action="add-column">
+          <Icon name="plus" />
+          <span>Add column</span>
+        </button>
+      )}
     </section>
   );
 }

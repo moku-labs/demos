@@ -93,20 +93,33 @@ test.describe("A — Screens", () => {
       await expect(inProgress.locator("[data-column-title]")).toBeVisible();
     });
 
-    test("A3: 'Add column' button sits on its own line below the board", async ({ page }) => {
+    test("A3: 'Add column' rides the LAST column, under its 'Add card', same width", async ({
+      page
+    }) => {
       await page.goto("/board/board-platform");
       await page.waitForLoadState("load");
-      const addColumn = page.locator("[data-board-foot] [data-add-column]");
-      await expect(addColumn).toBeVisible();
-      // It is BELOW the columns row (the board foot), not a right-side track: its top is at/below the
-      // board's bottom edge — so the columns own the full row width.
-      const layout = await page.evaluate(() => {
-        const board = document.querySelector("[data-board]")?.getBoundingClientRect();
-        const add = document.querySelector("[data-add-column]")?.getBoundingClientRect();
-        return board && add ? { boardBottom: board.bottom, addTop: add.top } : undefined;
+
+      // Exactly one "Add column", and it lives inside the LAST column (not the first, not a board track).
+      await expect(page.locator("[data-add-column]")).toHaveCount(1);
+      const lastColumn = page.locator("[data-column]").last();
+      await expect(lastColumn.locator("[data-add-column]")).toBeVisible();
+      await expect(page.locator("[data-column]").first().locator("[data-add-column]")).toHaveCount(
+        0
+      );
+
+      // It sits directly UNDER that column's "Add card" and matches its width.
+      const geom = await lastColumn.evaluate(col => {
+        const card = col.querySelector("[data-add-card]")?.getBoundingClientRect();
+        const add = col.querySelector("[data-add-column]")?.getBoundingClientRect();
+        return card && add
+          ? {
+              addBelowCard: add.top >= card.bottom - 1,
+              sameWidth: Math.abs(add.width - card.width) <= 1
+            }
+          : undefined;
       });
-      expect(layout).toBeTruthy();
-      expect(layout?.addTop ?? 0).toBeGreaterThanOrEqual((layout?.boardBottom ?? 0) - 1);
+      expect(geom?.addBelowCard).toBe(true);
+      expect(geom?.sameWidth).toBe(true);
     });
 
     test("A3: Cards render with title, labels, priority, assignees", async ({ page }) => {

@@ -293,6 +293,42 @@ test.describe("Mobile overlays — visual baselines (iPhone 14)", () => {
   });
 });
 
+test.describe("Mobile screens — visual baselines (iPhone 14)", () => {
+  // Comprehensive mobile coverage: full-PAGE captures of the core SCREENS (board · list · home) in their
+  // iPhone-14 form — the gap the overlay-only mobile block above left open. board-platform is read-only
+  // across the whole suite (every mutator uses a throwaway board — see _fixtures.ts), so these fullPage
+  // captures are deterministic even though the mobile project runs after the chromium project's mutators.
+  test.beforeEach(async ({ page }) => {
+    mobileOnly();
+    await page.clock.setFixedTime(FIXED_TIME);
+    await signIn(page);
+  });
+
+  test("A3 Board view — mobile (single-column + pager)", async ({ page }) => {
+    await page.goto("/board/board-platform");
+    await page.waitForLoadState("load");
+    await expect(page.locator("[data-column]").first()).toBeVisible();
+    await prepareScreenshot(page);
+    await expect(page).toHaveScreenshot("board-platform-mobile.png", { fullPage: true });
+  });
+
+  test("A4 List view — mobile", async ({ page }) => {
+    await page.goto("/board/board-platform/list");
+    await page.waitForLoadState("load");
+    await expect(page.locator("[data-listview]")).toBeVisible();
+    await prepareScreenshot(page);
+    await expect(page).toHaveScreenshot("list-platform-mobile.png", { fullPage: true });
+  });
+
+  test("Home / (default board) — mobile", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("load");
+    await expect(page.locator("[data-column]").first()).toBeVisible();
+    await prepareScreenshot(page);
+    await expect(page).toHaveScreenshot("home-mobile.png", { fullPage: true });
+  });
+});
+
 test.describe("Dark theme — visual baseline", () => {
   test.use({ colorScheme: "dark" });
 

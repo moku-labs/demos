@@ -73,6 +73,12 @@ export class BoardChannel extends defineDurableObject("BoardChannel") {
 
     const url = new URL(request.url);
     if (request.method === "POST" && url.pathname.endsWith("/broadcast")) {
+      // Keep a broadcast-instantiated DO resident in local dev too. A mutation on a board with NO live
+      // viewer (e.g. creating a column right after creating the board) instantiates this DO COLD via the
+      // broadcast — a path that never ran `accept()`, so without this it has no keepalive alarm and can
+      // idle-evict into the Apple-Silicon workerd segfault → a fast 503 on the user's persisted mutation.
+      // No-op in production (see armKeepAlive / isLocalDev).
+      this.armKeepAlive();
       const patch = (await request.json()) as BoardPatch;
       this.broadcast(patch);
       return new Response("ok");
@@ -117,7 +123,7 @@ export class BoardChannel extends defineDurableObject("BoardChannel") {
   /**
    * DEV-ONLY: start the keepalive alarm so the local runtime never idle-evicts this DO. No-op in prod.
    * `setAlarm` is idempotent (it just (re)sets the single pending alarm), so calling it on every
-   * upgrade is safe.
+   * upgrade AND every broadcast is safe.
    *
    * @example
    * ```ts

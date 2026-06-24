@@ -98,7 +98,11 @@
     text-align: center;
   }
 
-  [data-add-card] {
+  /* Both add affordances share one dashed-pill vocabulary and stretch to the full column width (the
+     column is a flex column with default `align-items: stretch`). "Add column" rides the LAST column
+     directly beneath "Add card" — same width — so the control always trails the rightmost column. */
+  [data-add-card],
+  [data-add-column] {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -113,9 +117,15 @@
       color var(--dur-fast) var(--ease-out),
       background var(--dur-fast) var(--ease-out);
   }
-  [data-add-card]:hover {
+  [data-add-card]:hover,
+  [data-add-column]:hover {
     border-color: var(--accent);
     color: var(--accent-deep);
     background: var(--accent-tint);
+  }
+  /* "Add column" sits a touch quieter than the card-level "Add card" above it — a faint resting label so
+     the two stacked dashed affordances read as a hierarchy, not a repeat. */
+  [data-add-column] {
+    color: var(--text-faint);
   }
 }

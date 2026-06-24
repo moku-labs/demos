@@ -78,7 +78,7 @@ test.describe("Realtime reconcile dedup — no duplicates after board navigation
     const b = await freshBoard(page, "Dedup col B");
     await bounceBetweenBoards(page, a, b);
 
-    await page.locator("[data-board-foot] [data-add-column]").click();
+    await page.locator("[data-add-column]").click();
     const modal = page.locator("[data-modal]");
     await expect(modal).toBeVisible();
     await modal.locator("input, textarea").first().fill("QA gate");
@@ -101,5 +101,32 @@ test.describe("Realtime reconcile dedup — no duplicates after board navigation
     });
     expect(layout.countVar).toBe(layout.cols);
     expect(layout.singleRow).toBe(true);
+  });
+
+  test("creating a column on a board with NO live viewer (cold DO) succeeds + shows ONE after reload", async ({
+    page
+  }) => {
+    // The cold-DO broadcast path: a column created on a freshly-made board that has never had a WebSocket
+    // viewer instantiates its Board DO COLD via the broadcast — the path that used to idle-evict into the
+    // local-workerd segfault and 503 the persisted mutation. The DO now arms its dev keepalive on broadcast
+    // too, so the create returns 201 and the board shows exactly one column, with no duplicate on reload.
+    const board = await freshBoard(page, "Cold DO board");
+
+    // Create the column via the API WITHOUT visiting the board first (no viewer ⇒ cold-DO broadcast).
+    const res = await page.request.post(`/api/boards/${board}/columns`, {
+      data: { title: "Cold column" }
+    });
+    expect(res.status(), "column create must not 503 on the cold-DO broadcast path").toBe(201);
+
+    // First view: exactly one "Cold column".
+    await page.goto(`/board/${board}`);
+    await page.waitForSelector("[data-board] [data-column]");
+    await expect(page.locator('[data-column][aria-label="Cold column"]')).toHaveCount(1);
+
+    // …and it survives a reload as exactly one (the duplicate-after-reload guard).
+    await page.reload();
+    await page.waitForSelector("[data-board] [data-column]");
+    await page.waitForTimeout(500);
+    await expect(page.locator('[data-column][aria-label="Cold column"]')).toHaveCount(1);
   });
 });
