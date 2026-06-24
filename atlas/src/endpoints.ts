@@ -26,7 +26,9 @@
 
 import type { Server } from "@moku-labs/worker";
 import { durableObjectsPlugin, endpoint } from "@moku-labs/worker";
-import { isInlineSafe } from "./lib/attachments";
+import { DEFAULT_CONTENT_TYPE, DEFAULT_FILENAME, isInlineSafe } from "./lib/attachments";
+import { badRequest, noContent, notFound, unauthorized } from "./lib/http";
+import { clearedSessionCookie, sessionCookie, tokenFromRequest } from "./lib/session";
 import type {
   BoardSnapshot,
   Credentials,
@@ -51,11 +53,6 @@ import { departmentsPlugin } from "./plugins/departments";
 import { issuesPlugin } from "./plugins/issues";
 import { usersPlugin } from "./plugins/users";
 
-/** Fallback attachment filename when a multipart upload omits the file's name. */
-const DEFAULT_FILENAME = "upload.bin";
-/** Fallback attachment content type when a multipart upload omits a type. */
-const DEFAULT_CONTENT_TYPE = "application/octet-stream";
-
 /** The rail-property keys of an {@link IssuePatch} — everything except the article body (title/description). */
 const RAIL_PATCH_KEYS = [
   "status",
@@ -67,89 +64,6 @@ const RAIL_PATCH_KEYS = [
   "labels",
   "assignees"
 ] as const satisfies readonly (keyof IssuePatch)[];
-
-/**
- * Build a `401 Unauthorized` text response — returned when a mutation has no resolvable actor.
- *
- * @returns A 401 `Response` with a plain-text body.
- * @example
- * ```ts
- * if (!actor) return unauthorized();
- * ```
- */
-const unauthorized = (): Response => new Response("unauthorized", { status: 401 });
-
-/**
- * Build a `404 Not Found` text response — returned when a resource lookup misses.
- *
- * @returns A 404 `Response` with a plain-text body.
- * @example
- * ```ts
- * if (!board) return notFound();
- * ```
- */
-const notFound = (): Response => new Response("not found", { status: 404 });
-
-/**
- * Build a `400 Bad Request` text response — returned when required input is missing/malformed.
- *
- * @param message - The plain-text body explaining what was wrong (defaults to `"bad request"`).
- * @returns A 400 `Response` with the given body.
- * @example
- * ```ts
- * if (!(file instanceof File)) return badRequest("missing file part");
- * ```
- */
-const badRequest = (message = "bad request"): Response => new Response(message, { status: 400 });
-
-/**
- * Build a `204 No Content` response — returned by deletes/reorders/toggles with no body.
- *
- * Uses an `undefined` body (never `null`) so the empty-success path stays house-style clean.
- *
- * @returns A 204 `Response` with an empty body.
- * @example
- * ```ts
- * await ctx.require(boardsPlugin).delete(ctx.env, ctx.params.id, actor);
- * return noContent();
- * ```
- */
-const noContent = (): Response => new Response(undefined, { status: 204 });
-
-/** The session cookie name (mirrors `auth` config `cookieName`) — read by the worker's auth guard. */
-const SESSION_COOKIE = "atlas_session";
-
-/**
- * Build the `Set-Cookie` value that stores a freshly minted session token as an HttpOnly, same-site
- * cookie — the worker's auth guard (`auth.isAuthed`) reads it on every later `/api/*` + `/ws/*`
- * request, so signing in is what makes the rest of the app reachable. `Secure` is intentionally
- * omitted so the cookie also works over `http://localhost` under `wrangler dev`.
- *
- * @param token - The minted session token (the KV session key).
- * @param expiresAt - The session expiry (epoch ms) — drives the cookie `Max-Age`.
- * @returns The `Set-Cookie` header value.
- * @example
- * ```ts
- * headers: { "set-cookie": sessionCookie(session.token, session.expiresAt) }
- * ```
- */
-function sessionCookie(token: string, expiresAt: number): string {
-  const maxAge = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
-  return `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`;
-}
-
-/**
- * Build the `Set-Cookie` value that clears the session cookie (sign-out) — same attributes, zero age.
- *
- * @returns The cookie-clearing `Set-Cookie` header value.
- * @example
- * ```ts
- * headers: { "set-cookie": clearedSessionCookie() }
- * ```
- */
-function clearedSessionCookie(): string {
-  return `${SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`;
-}
 
 /**
  * The Atlas endpoint table, grouped by resource. Wired into the worker app via `server: { endpoints }`
@@ -716,37 +630,3 @@ export const endpoints: Server.Endpoint[] = [
     ctx.require(durableObjectsPlugin).get(ctx.env, "board", ctx.params.id).fetch(ctx.request)
   )
 ];
-
-/**
- * Extract the session token from a request: prefer `Authorization: Bearer <token>`, then fall back
- * to the `atlas_session` cookie. Used by the sign-out handler to address the KV key to delete — the
- * auth `Api` exposes only token-based `signOut`, so the endpoint resolves the token itself.
- *
- * @param request - The incoming HTTP request.
- * @returns The raw token string, or `undefined` when no token is present.
- * @example
- * ```ts
- * const token = tokenFromRequest(ctx.request);
- * if (token) await auth.signOut(env, token);
- * ```
- */
-function tokenFromRequest(request: Request): string | undefined {
-  const authHeader = request.headers.get("Authorization");
-  if (authHeader?.startsWith("Bearer ")) {
-    const token = authHeader.slice("Bearer ".length).trim();
-    return token.length > 0 ? token : undefined;
-  }
-
-  const cookieHeader = request.headers.get("Cookie");
-  if (cookieHeader) {
-    for (const part of cookieHeader.split(";")) {
-      const [name, ...rest] = part.trim().split("=");
-      if (name?.trim() === SESSION_COOKIE) {
-        const value = rest.join("=").trim();
-        return value.length > 0 ? value : undefined;
-      }
-    }
-  }
-
-  return undefined;
-}

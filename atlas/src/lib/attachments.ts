@@ -9,6 +9,12 @@
  * `@moku-labs/worker` server graph and the `@moku-labs/web` client graph.
  */
 
+/** Fallback attachment filename when a multipart upload omits the file's name. */
+export const DEFAULT_FILENAME = "upload.bin";
+
+/** Fallback attachment content type when a multipart upload omits a type. */
+export const DEFAULT_CONTENT_TYPE = "application/octet-stream";
+
 /**
  * Raster image content types safe to render inline, mapped to the filename extensions that may
  * legitimately carry them. Deliberately excludes `image/svg+xml` — SVG can carry script, so
