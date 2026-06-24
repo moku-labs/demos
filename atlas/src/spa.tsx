@@ -7,8 +7,6 @@
 import { createApp } from "@moku-labs/web/browser";
 import { SITE } from "./config";
 import { islands } from "./islands";
-import { registerHardNavigate } from "./lib/hard-nav";
-import { registerNavigator } from "./lib/nav";
 import { routes } from "./routes";
 
 const app = createApp({
@@ -29,16 +27,7 @@ const app = createApp({
 
 await app.start();
 
-// Module-level navigation (the chrome/nav helpers in lib/nav.ts, called outside an island ctx) routes
-// through app.spa.navigate — the same swap pipeline as a link click, no synthesised anchor. Islands
-// with a ctx use `ctx.navigate(...)` directly.
-registerNavigator((path, options) => app.spa.navigate(path, options));
-
-// The SPA swaps only `main > section`, so it cannot turn the app chrome into the auth split (or
-// back). Crossing that boundary (sign-in / sign-out / a 401) needs a TRUE full-page load — but the
-// Navigation-API interceptor catches even `location.assign`. Stopping the app first removes that
-// interceptor (spa kernel `dispose`), so the subsequent assign is a real document load. See hard-nav.ts.
-registerHardNavigate(async url => {
-  await app.stop();
-  globalThis.location.assign(url);
-});
+// Module-level `navigate(...)` (the chrome/nav helpers) and `hardNavigate(...)` (the auth↔app boundary
+// crossing — a real full-page load that steps the SPA interceptor aside) are provided directly by
+// `@moku-labs/web/browser`: they bind to this booted app automatically, so no registration is needed.
+// Islands with a ctx use `ctx.navigate(...)`.

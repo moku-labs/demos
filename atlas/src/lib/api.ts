@@ -9,7 +9,7 @@
  * patch, not the return value, is what drives the live board. Each call throws on a non-2xx response
  * (sign-out and the session probe degrade gracefully instead) so callers can surface failures.
  */
-import { hardNavigate } from "./hard-nav";
+import { hardNavigate } from "@moku-labs/web/browser";
 import type {
   Activity,
   Attachment,

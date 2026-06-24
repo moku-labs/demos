@@ -10,9 +10,8 @@
  */
 
 import type { Spa } from "@moku-labs/web/browser";
-import { createIsland } from "@moku-labs/web/browser";
+import { createIsland, hardNavigate } from "@moku-labs/web/browser";
 import { signIn, signUp } from "../lib/api";
-import { hardNavigate } from "../lib/hard-nav";
 import { urls } from "../routes";
 
 /** The stateless auth context (its `el` is the auth form; per-instance state is unused). */

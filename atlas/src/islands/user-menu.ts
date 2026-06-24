@@ -7,11 +7,10 @@
  */
 
 import type { Spa } from "@moku-labs/web/browser";
-import { createIsland } from "@moku-labs/web/browser";
+import { createIsland, hardNavigate } from "@moku-labs/web/browser";
 import { Fragment, h } from "preact";
 import { Avatar } from "../components/Avatar";
 import { getSession, signOut } from "../lib/api";
-import { hardNavigate } from "../lib/hard-nav";
 import { openMenu, openModal, showToast } from "../lib/menu";
 import type { Person } from "../lib/types";
 import { currentUser, loadUsers, saveProfile, userToPerson } from "../lib/users";

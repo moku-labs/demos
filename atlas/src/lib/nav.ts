@@ -31,59 +31,11 @@ export interface NavContext {
 /** Matches `/board/{id}` and its `/list` · `/issue/{issueId}` · `/activity` sub-routes. */
 const BOARD_PATH = /^\/board\/([^/]+)(?:\/(list|issue|activity)(?:\/([^/]+))?)?\/?$/;
 
-/** Per-navigation options forwarded to the SPA navigator (e.g. `{ scroll: "preserve" }`). */
-export interface NavigateOptions {
-  /** Keep the current scroll for this navigation instead of resetting to the top. */
-  scroll?: "top" | "preserve";
-}
-
-/** The registered SPA navigator (`app.spa.navigate`), or undefined pre-boot. */
-let spaNavigate: ((path: string, options?: NavigateOptions) => void) | undefined;
-
-/**
- * Register the SPA navigator — called once by `spa.tsx` right after `app.start()` with
- * `app.spa.navigate`. Until then, {@link navigate} falls back to a real anchor click (only
- * reachable before the app has booted, where the swap interceptor isn't attached yet).
- *
- * @param fn - The bound `app.spa.navigate`.
- * @example
- * ```ts
- * registerNavigator((path, options) => app.spa.navigate(path, options));
- * ```
- */
-export function registerNavigator(fn: (path: string, options?: NavigateOptions) => void): void {
-  spaNavigate = fn;
-}
-
-/**
- * Navigate the SPA to an internal path from a MODULE-level caller (no island `ctx` in scope). Inside an
- * island prefer `ctx.navigate(...)` directly. Delegates to the registered `app.spa.navigate` (same swap
- * pipeline as a link click); pre-boot it falls back to a synthesised anchor click. Build `path` from
- * {@link file://../routes.tsx} `urls`, never a literal.
- *
- * @param path - The internal path to navigate to (e.g. `urls.toUrl("board", { id })`).
- * @param options - Optional per-navigation overrides (e.g. `{ scroll: "preserve" }`).
- * @example
- * ```ts
- * navigate(urls.toUrl("issue", { id: boardId, issueId }));
- * navigate(urls.toUrl("board", { id }), { scroll: "preserve" }); // close overlay: keep position
- * ```
- */
-export function navigate(path: string, options?: NavigateOptions): void {
-  if (spaNavigate) {
-    spaNavigate(path, options);
-    return;
-  }
-  // Pre-boot fallback: synthesise a real anchor click (the one path the click interceptor honours).
-  const anchor = document.createElement("a");
-  anchor.href = path;
-  // appendChild (not append): @cloudflare/workers-types merges Element.append into a conflicting
-  // overload set in this project, so the DOM helper is used explicitly.
-  // eslint-disable-next-line unicorn/prefer-dom-node-append -- see note above
-  document.body.appendChild(anchor);
-  anchor.click();
-  anchor.remove();
-}
+// Module-level programmatic navigation comes straight from the framework (web ≥ 2.2.0): it binds to
+// the booted app on `app.start()` and no swap-interceptor shim / registration is needed. Re-exported
+// here so the chrome/nav helpers keep a single `navigate` import from the app's nav module. Inside an
+// island, prefer `ctx.navigate(...)`. Build paths from {@link file://../routes.tsx} `urls`, never a literal.
+export { navigate } from "@moku-labs/web/browser";
 
 /** Cached departments index (departments + customizations), or undefined until first load. */
 let indexCache: { departments: Department[]; customizations: Customization[] } | undefined;
