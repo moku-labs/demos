@@ -112,9 +112,9 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : JSON body Credentials { email, password }
   //   returns : 201 · Session { userId, name, email, token, expiresAt }   ·   400 on bad shape
   endpoint("/api/auth/signin").post(async ctx => {
-    const creds = (await ctx.request.json()) as Credentials;
+    const credentials = (await ctx.request.json()) as Credentials;
     try {
-      const session = await ctx.require(authPlugin).signIn(ctx.env, creds);
+      const session = await ctx.require(authPlugin).signIn(ctx.env, credentials);
       return Response.json(session, {
         status: 201,
         headers: { "set-cookie": sessionCookie(session.token, session.expiresAt) }
@@ -127,9 +127,9 @@ export const endpoints: Server.Endpoint[] = [
   //   expects : JSON body Credentials { email, password, name? }
   //   returns : 201 · Session   ·   400 on bad shape
   endpoint("/api/auth/signup").post(async ctx => {
-    const creds = (await ctx.request.json()) as Credentials;
+    const credentials = (await ctx.request.json()) as Credentials;
     try {
-      const session = await ctx.require(authPlugin).signUp(ctx.env, creds);
+      const session = await ctx.require(authPlugin).signUp(ctx.env, credentials);
       return Response.json(session, {
         status: 201,
         headers: { "set-cookie": sessionCookie(session.token, session.expiresAt) }

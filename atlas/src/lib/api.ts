@@ -132,29 +132,29 @@ function jsonInit<T extends object>(method: string, body: T): RequestInit {
  * Sign in (demo auth — any valid-looking credentials work). The worker mints a session and sets the
  * HttpOnly cookie via `Set-Cookie`, so later same-origin calls are authenticated automatically.
  *
- * @param creds - The credentials `{ email, password }`.
+ * @param credentials - The credentials `{ email, password }`.
  * @returns The resolved session.
  * @example
  * ```ts
  * await signIn({ email: "anya@atlas.dev", password: "secret" });
  * ```
  */
-export async function signIn(creds: Credentials): Promise<Session> {
-  return request<Session>("/api/auth/signin", jsonInit("POST", creds));
+export async function signIn(credentials: Credentials): Promise<Session> {
+  return request<Session>("/api/auth/signin", jsonInit("POST", credentials));
 }
 
 /**
  * Open an account (demo auth) — like {@link signIn}, also recording the display name.
  *
- * @param creds - The credentials `{ email, password, name? }`.
+ * @param credentials - The credentials `{ email, password, name? }`.
  * @returns The resolved session.
  * @example
  * ```ts
  * await signUp({ email: "ada@atlas.dev", password: "secret", name: "Ada Lovelace" });
  * ```
  */
-export async function signUp(creds: Credentials): Promise<Session> {
-  return request<Session>("/api/auth/signup", jsonInit("POST", creds));
+export async function signUp(credentials: Credentials): Promise<Session> {
+  return request<Session>("/api/auth/signup", jsonInit("POST", credentials));
 }
 
 /**

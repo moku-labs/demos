@@ -26,9 +26,9 @@ export type Session = {
 /** Public auth API surface (env-first; demo-stub KV sessions). */
 export type Api = {
   /** Demo sign-in: validate the email/password SHAPE only, mint a token, store a session. */
-  signIn(env: WorkerEnv, creds: Credentials): Promise<Session>;
+  signIn(env: WorkerEnv, credentials: Credentials): Promise<Session>;
   /** Demo sign-up: like signIn, also records the supplied display name. */
-  signUp(env: WorkerEnv, creds: Credentials): Promise<Session>;
+  signUp(env: WorkerEnv, credentials: Credentials): Promise<Session>;
   /** Resolve a token to its session, or null when absent/expired (defensively deletes expired keys). */
   resolveSession(env: WorkerEnv, token: string): Promise<Session | null>;
   /** Read the token from the request (cookie or Bearer header) and report whether it resolves. */

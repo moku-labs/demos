@@ -234,7 +234,7 @@ export function createAuthApi(ctx: AuthCtx): Api {
      * Demo sign-in: validate the email/password SHAPE only, mint a token, store a session.
      *
      * @param env - Per-request Cloudflare bindings.
-     * @param creds - `{ email, password, name? }` — name is ignored on sign-in.
+     * @param credentials - `{ email, password, name? }` — name is ignored on sign-in.
      * @returns The minted Session including the opaque token.
      * @throws {Error} When the email shape or password is invalid.
      * @example
@@ -242,22 +242,22 @@ export function createAuthApi(ctx: AuthCtx): Api {
      * const session = await app.auth.signIn(env, { email: "a@b.com", password: "pw" });
      * ```
      */
-    async signIn(env, creds) {
-      if (!isValidEmail(creds.email)) {
+    async signIn(env, credentials) {
+      if (!isValidEmail(credentials.email)) {
         throw new Error("[atlas-auth] Invalid email format.\n  Provide a valid email address.");
       }
-      if (!isValidPassword(creds.password)) {
+      if (!isValidPassword(credentials.password)) {
         throw new Error("[atlas-auth] Invalid password.\n  Password must be non-empty.");
       }
-      const name = creds.name?.trim() || emailLocalPart(creds.email);
-      return mintSession(env, creds.email, name);
+      const name = credentials.name?.trim() || emailLocalPart(credentials.email);
+      return mintSession(env, credentials.email, name);
     },
 
     /**
      * Demo sign-up: like signIn, but records the supplied display name.
      *
      * @param env - Per-request Cloudflare bindings.
-     * @param creds - `{ email, password, name? }` — name is stored as the display name.
+     * @param credentials - `{ email, password, name? }` — name is stored as the display name.
      * @returns The minted Session including the opaque token.
      * @throws {Error} When the email shape or password is invalid.
      * @example
@@ -265,15 +265,15 @@ export function createAuthApi(ctx: AuthCtx): Api {
      * const session = await app.auth.signUp(env, { email: "a@b.com", password: "pw", name: "Alice" });
      * ```
      */
-    async signUp(env, creds) {
-      if (!isValidEmail(creds.email)) {
+    async signUp(env, credentials) {
+      if (!isValidEmail(credentials.email)) {
         throw new Error("[atlas-auth] Invalid email format.\n  Provide a valid email address.");
       }
-      if (!isValidPassword(creds.password)) {
+      if (!isValidPassword(credentials.password)) {
         throw new Error("[atlas-auth] Invalid password.\n  Password must be non-empty.");
       }
-      const name = creds.name?.trim() || emailLocalPart(creds.email);
-      return mintSession(env, creds.email, name);
+      const name = credentials.name?.trim() || emailLocalPart(credentials.email);
+      return mintSession(env, credentials.email, name);
     },
 
     /**
