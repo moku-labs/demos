@@ -2,45 +2,22 @@
  * @file Realtime WebSocket manager — the shared module islands import to receive Board Durable Object
  * patches (the moku-web "coordinate via shared module exports" channel, not framework events).
  *
- * Holds a single module-scoped socket and a fan-out set of handlers: the `board` island connects and
- * reconciles its DOM from each {@link BoardPatch}, while the `activity-panel` island subscribes to the
- * same socket to know the Record changed. One board is connected at a time — navigating to another
- * board reconnects.
- *
- * **Pre-seed patch buffer.** A patch can arrive on the socket before the island's `getBoard` snapshot
- * resolves; applying it to an empty board would be lost. So frames received before {@link seed} are
- * queued and flushed (in arrival order) the moment the island seeds — after which frames pass straight
- * through. This closes the connect→load race without dropping a single live change.
- *
- * **Auto-reconnect.** A live socket can drop on a network blip, a worker redeploy, or a Durable Object
- * hibernation cycle. Rather than silently going dead, an unexpected close schedules a reconnect with
- * exponential backoff (capped) as long as a board is still {@link desiredBoardId desired}; an explicit
- * {@link disconnect} cancels it. Handlers stay registered across the gap, so delivery resumes the moment
- * the socket re-opens.
+ * Thin adapter over `@moku-labs/web`'s {@link createChannel} primitive: the channel owns the live
+ * socket, exponential-backoff auto-reconnect, the pre-seed buffer (frames that arrive before the
+ * island's snapshot loads are queued and flushed on {@link seed}), and the optimistic local echo. This
+ * module keeps the Atlas-shaped surface the islands already use — a board-agnostic {@link onPatch}
+ * fan-out set that is independent of {@link connect}/{@link seed}, so the persistent `board` island owns
+ * the socket lifecycle while the `issue`/`activity-panel` islands just subscribe to the same stream.
  */
+import { createChannel } from "@moku-labs/web/browser";
 import type { BoardPatch } from "./types";
 
-/** Keepalive frame the Board DO answers with `"pong"`. */
+/** Keepalive frame the Board DO answers with `"pong"` (the `"pong"` reply fails JSON.parse → dropped). */
 const PING = "ping";
 /** Reconnect backoff: first retry delay (ms). Doubles each attempt up to {@link RECONNECT_MAX_MS}. */
 const RECONNECT_BASE_MS = 500;
 /** Reconnect backoff ceiling (ms) — caps the exponential growth so retries never stall out. */
 const RECONNECT_MAX_MS = 8000;
-
-/** The live socket, or undefined when disconnected. */
-let socket: WebSocket | undefined;
-/** The board we WANT to stay subscribed to (drives auto-reconnect); undefined ⇒ intentionally off. */
-let desiredBoardId: string | undefined;
-/** Whether the consuming island has seeded — gates live delivery vs. buffering. */
-let seeded = false;
-/** Frames received before {@link seed}, replayed in arrival order on seed. */
-let buffer: BoardPatch[] = [];
-/** Patch handlers fanned out on every delivered frame. */
-const handlers = new Set<(patch: BoardPatch) => void>();
-/** Consecutive closes since the last clean open — drives the backoff delay. */
-let reconnectAttempts = 0;
-/** Pending reconnect timer handle, or undefined when none is scheduled. */
-let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
 
 /**
  * Build the `ws(s)://` URL for a board's live channel on the same origin as the page.
@@ -59,97 +36,25 @@ function socketUrl(boardId: string): string {
 }
 
 /**
- * Deliver a patch — fan it out to every handler once seeded, otherwise queue it in the pre-seed buffer.
- *
- * @param patch - The patch to deliver or buffer.
- * @example
- * ```ts
- * deliver({ type: "issue.deleted", issueId });
- * ```
+ * The shared board channel: one live socket bound to the active board, with reconnect + a pre-seed
+ * buffer. A single subscriber (the fan-out below) is wired per {@link connect}; the per-island handlers
+ * live in {@link handlers} so they survive board switches.
  */
-function deliver(patch: BoardPatch): void {
-  if (!seeded) {
-    buffer.push(patch);
-    return;
-  }
-  for (const handler of handlers) {
-    handler(patch);
-  }
-}
+const channel = createChannel<BoardPatch>({
+  url: socketUrl,
+  reconnect: { baseMs: RECONNECT_BASE_MS, maxMs: RECONNECT_MAX_MS },
+  bufferUntilSeed: true
+});
 
-/**
- * Parse an incoming frame and route it through {@link deliver}. Malformed frames and the `"pong"`
- * keepalive reply are ignored.
- *
- * @param event - The socket message event (its `data` is a JSON-encoded {@link BoardPatch}).
- * @example
- * ```ts
- * socket.addEventListener("message", dispatch);
- * ```
- */
-function dispatch(event: MessageEvent): void {
-  if (typeof event.data !== "string" || event.data === "pong") return;
-  let patch: BoardPatch;
-  try {
-    patch = JSON.parse(event.data) as BoardPatch;
-  } catch {
-    return;
-  }
-  deliver(patch);
-}
-
-/**
- * Open the live socket for {@link desiredBoardId}, wiring delivery + auto-reconnect. Shared by the
- * first {@link connect} and every backoff retry — so a retry resumes delivery to the still-registered
- * handlers WITHOUT re-arming the pre-seed buffer (the consuming island has long since seeded).
- *
- * @example
- * ```ts
- * openSocket();
- * ```
- */
-function openSocket(): void {
-  const boardId = desiredBoardId;
-  if (boardId === undefined) return;
-
-  const ws = new WebSocket(socketUrl(boardId));
-  socket = ws;
-  ws.addEventListener("message", dispatch);
-  ws.addEventListener("open", () => {
-    reconnectAttempts = 0;
-  });
-  ws.addEventListener("close", () => {
-    // Only this socket's close matters — a stale close after we moved on (disconnect / board switch)
-    // must not trigger a reconnect to the wrong board.
-    if (socket !== ws || desiredBoardId === undefined) return;
-    socket = undefined;
-    scheduleReconnect();
-  });
-}
-
-/**
- * Schedule a reconnect to {@link desiredBoardId} with exponential backoff (capped), unless one is
- * already pending or reconnection has been switched off.
- *
- * @example
- * ```ts
- * scheduleReconnect();
- * ```
- */
-function scheduleReconnect(): void {
-  if (reconnectTimer !== undefined || desiredBoardId === undefined) return;
-  const delay = Math.min(RECONNECT_BASE_MS * 2 ** reconnectAttempts, RECONNECT_MAX_MS);
-  reconnectAttempts += 1;
-  reconnectTimer = setTimeout(() => {
-    reconnectTimer = undefined;
-    if (desiredBoardId !== undefined) openSocket();
-  }, delay);
-}
+/** Patch handlers fanned out on every delivered frame (independent of which board is connected). */
+const handlers = new Set<(patch: BoardPatch) => void>();
+/** Unsubscribe handle for the active board's single channel subscription (the fan-out). */
+let unsubscribe: (() => void) | undefined;
 
 /**
  * Open (or reuse) the live socket for a board. A live socket for the same board is left in place;
- * switching boards tears the old socket down first and re-arms the pre-seed buffer. An unexpected
- * drop auto-reconnects until {@link disconnect} is called.
+ * switching boards tears the old subscription down first. An unexpected drop auto-reconnects until
+ * {@link disconnect}.
  *
  * @param boardId - The board to subscribe to.
  * @example
@@ -158,16 +63,12 @@ function scheduleReconnect(): void {
  * ```
  */
 export function connect(boardId: string): void {
-  const alive =
-    socket?.readyState === WebSocket.CONNECTING || socket?.readyState === WebSocket.OPEN;
-  if (desiredBoardId === boardId && alive) return;
-
-  disconnect();
-  desiredBoardId = boardId;
-  seeded = false;
-  buffer = [];
-  reconnectAttempts = 0;
-  openSocket();
+  // Already bound to this board (the channel keeps `current()` across a transient reconnect) — leave it.
+  if (channel.current() === boardId && unsubscribe) return;
+  unsubscribe?.();
+  unsubscribe = channel.subscribe(boardId, patch => {
+    for (const handler of handlers) handler(patch);
+  });
 }
 
 /**
@@ -191,10 +92,8 @@ export function onPatch(handler: (patch: BoardPatch) => void): () => void {
 
 /**
  * Deliver a patch to the registered handlers IMMEDIATELY — the optimistic local-update path. The
- * acting client applies its own mutation without waiting for the (dev-flaky) WebSocket echo, so the
- * board + open panel update in real time even if the broadcast never arrives. The server's returning
- * broadcast reconciles the same patch idempotently (reconcilers place/dedupe by id), so a double
- * delivery is harmless.
+ * server's returning broadcast reconciles the same patch idempotently (reconcilers place/dedupe by id),
+ * so a double delivery is harmless.
  *
  * @param patch - The patch to apply locally right now.
  * @example
@@ -204,14 +103,13 @@ export function onPatch(handler: (patch: BoardPatch) => void): () => void {
  * ```
  */
 export function deliverLocal(patch: BoardPatch): void {
-  for (const handler of handlers) {
-    handler(patch);
-  }
+  const boardId = channel.current();
+  if (boardId) channel.deliverLocal(boardId, patch);
 }
 
 /**
- * Mark the consuming island seeded and flush the pre-seed buffer to the registered handlers, in
- * arrival order. Idempotent — a second call is a no-op once seeded.
+ * Mark the consuming island seeded and flush the pre-seed buffer to the registered handlers, in arrival
+ * order. Idempotent — a second call is a no-op once seeded.
  *
  * @example
  * ```ts
@@ -222,15 +120,8 @@ export function deliverLocal(patch: BoardPatch): void {
  * ```
  */
 export function seed(): void {
-  if (seeded) return;
-  seeded = true;
-  const queued = buffer;
-  buffer = [];
-  for (const patch of queued) {
-    for (const handler of handlers) {
-      handler(patch);
-    }
-  }
+  const boardId = channel.current();
+  if (boardId) channel.seed(boardId);
 }
 
 /**
@@ -242,16 +133,12 @@ export function seed(): void {
  * ```
  */
 export function ping(): void {
-  if (socket?.readyState === WebSocket.OPEN) {
-    socket.send(PING);
-  }
+  channel.send(PING);
 }
 
 /**
- * Close the live socket, cancel any pending reconnect, clear the desired-board marker, and re-arm the
- * pre-seed buffer. Registered handlers are kept so a later {@link connect} resumes delivering to them.
- * Clearing {@link desiredBoardId} BEFORE closing is what tells the socket's `close` handler the drop was
- * intentional (no reconnect).
+ * Close the live socket, cancel any pending reconnect, and re-arm the pre-seed buffer. Registered
+ * handlers are kept so a later {@link connect} resumes delivering to them.
  *
  * @example
  * ```ts
@@ -259,16 +146,7 @@ export function ping(): void {
  * ```
  */
 export function disconnect(): void {
-  desiredBoardId = undefined;
-  if (reconnectTimer !== undefined) {
-    clearTimeout(reconnectTimer);
-    reconnectTimer = undefined;
-  }
-  if (socket) {
-    socket.removeEventListener("message", dispatch);
-    socket.close();
-    socket = undefined;
-  }
-  seeded = false;
-  buffer = [];
+  unsubscribe?.();
+  unsubscribe = undefined;
+  channel.disconnect();
 }

@@ -8,7 +8,6 @@
  * releasing both via `ctx.cleanup`.
  */
 import { getBoard, getIssue } from "../../lib/api";
-import { lockBoardScroll, unlockBoardScroll } from "../../lib/board-scroll";
 import { navigate } from "../../lib/nav";
 import { onPatch } from "../../lib/realtime";
 import type {
@@ -32,10 +31,9 @@ import { ESCAPE_KEY, ISSUE_FOCUS, type IssueContext } from "./types";
  * full-screen mobile panel can't scroll.
  *
  * The board lives in the persistent chrome (never unmounted by opening an issue) and stays visible
- * behind the semi-transparent scrim, so it must not move at all across the open/close. Opening pins
- * `<body>` at its current scroll ({@link lockBoardScroll}) so the framework's scroll-to-0 is invisible;
- * closing releases the pin and restores the exact scroll in one turn ({@link unlockBoardScroll}) — no
- * lurch to the top on open, no snap-back when the view transition settles on close.
+ * behind the semi-transparent scrim, so it must not move across the open/close. That is now the
+ * framework's job: the issue/attachment routes declare `.scroll("preserve")` and the close gesture
+ * passes `{ scroll: "preserve" }`, so the SPA simply never scrolls the board — no body-pin hack needed.
  *
  * @param host - The issue island host element.
  * @param open - True to reveal the panel, false to hide it.
@@ -47,11 +45,6 @@ import { ESCAPE_KEY, ISSUE_FOCUS, type IssueContext } from "./types";
 function setHostOpen(host: Element, open: boolean): void {
   host.toggleAttribute("hidden", !open);
   document.documentElement.toggleAttribute("data-overlay-issue", open);
-
-  // Keep the board perfectly still for the whole open/close. A card click already pinned it before
-  // navigating; a deep-link open pins it here (both idempotent). Closing unpins + restores in one turn.
-  if (open) lockBoardScroll();
-  else unlockBoardScroll();
 }
 
 /**
@@ -144,16 +137,20 @@ function closePanel(ctx: IssueContext): void {
   closeLightbox();
   setHostOpen(ctx.el, false);
 
-  // Clear only the routing identity (issueId/boardId) + edit flags — NOT the loaded detail. The issue
-  // overlay is a PERSISTENT island (its host lives outside the `main > section` swap region since the
-  // persistent-board refactor), so it is never nav-unmounted; its render runs on every `ctx.set`. A
-  // render-on-change island that returns an empty result tears down its Preact subtree, and the next
-  // non-empty render does NOT re-commit into the reused host — so cycling detail→""→detail left the
-  // panel blank ("only the first issue ever opens"). Keeping the last detail in state means render
-  // always returns the panel (invisible, because the host is `hidden`), and the next open diffs the new
-  // issue in place. issueId="" also makes the realtime reconcile ignore patches while closed, and the
-  // sync() identity check re-load the issue on re-open.
-  ctx.set({ boardId: "", issueId: "", editingDescription: false, editingTitle: false });
+  // Clear the panel to a clean closed state. The render returns `null` while closed, which the SPA
+  // commits as a proper Preact unmount (web ≥ 2.1.0) — so the host stays re-mountable and the next
+  // open diffs the new issue in cleanly. (Pre-2.1.0 this had to keep the stale detail and toggle
+  // `hidden`, because returning empty corrupted the retained vdom — "only the first issue ever opens".)
+  // issueId="" also makes the realtime reconcile ignore patches while closed.
+  ctx.set({
+    boardId: "",
+    issueId: "",
+    detail: undefined,
+    board: undefined,
+    column: undefined,
+    editingDescription: false,
+    editingTitle: false
+  });
 }
 
 /**
@@ -197,8 +194,9 @@ export async function sync(ctx: IssueContext): Promise<void> {
 
 /**
  * Navigate back to the open issue's board (the × / scrim / Escape gesture). The board is persistent, so
- * this nav does NOT reload it — `onNavEnd` just hides the panel and the board stays live; its scroll is
- * restored by {@link setHostOpen}. Closing is simply "go to the board."
+ * this nav does NOT reload it — `onNavEnd` just hides the panel and the board stays live. `scroll:
+ * "preserve"` keeps the board exactly where it was (closing must not jump to the top). Closing is simply
+ * "go to the board."
  *
  * @param ctx - The issue component context.
  * @example
@@ -209,7 +207,7 @@ export async function sync(ctx: IssueContext): Promise<void> {
 export function closeToBoard(ctx: IssueContext): void {
   const boardId = ctx.state.boardId || ctx.params.id;
   if (!boardId) return;
-  navigate(urls.toUrl("board", { id: boardId }));
+  navigate(urls.toUrl("board", { id: boardId }), { scroll: "preserve" });
 }
 
 // ─── realtime reconcile ──────────────────────────────────────────────────────

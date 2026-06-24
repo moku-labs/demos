@@ -7,7 +7,8 @@
  *   1. Board horizontal scroll (columns) — the kanban track must scroll left/right.
  *   2. Board vertical scroll (within a column) — a card-rich column must scroll vertically.
  *   3. Navigation away and back MUST NOT kill/reset the horizontal scroll.
- *   4. Opening an issue and closing it MUST restore the board scroll (via board-scroll.ts).
+ *   4. Opening an issue and closing it MUST keep the board scroll (via the issue/attachment routes'
+ *      `.scroll("preserve")` directive + the `{ scroll: "preserve" }` close gesture — moku-web ≥ 2.1.1).
  *   5. Boards bar overflow scrolls (pills track).
  *   6. Departments tab row scrolls on narrow viewports.
  */
@@ -120,9 +121,10 @@ test.describe("Board scroll — vertical (window scroll behind open issue)", () 
     page
   }) => {
     // A short viewport so the platform board overflows vertically and the window can scroll. Opening
-    // must be a REAL card click: `onCardOpen` calls `rememberBoardScroll()` to capture scrollY before
-    // the nav, and `setHostOpen(false)` restores it on close. A direct `page.goto` would bypass the
-    // remember step — so this asserts the genuine open→close round-trip the user performs.
+    // must be a REAL card click: the issue route declares `.scroll("preserve")` so the SPA does not
+    // scroll on open, and the close gesture passes `{ scroll: "preserve" }` so it does not scroll back
+    // to the top. A direct `page.goto` would not exercise the close gesture — so this asserts the
+    // genuine open→close round-trip the user performs.
     await page.setViewportSize({ width: 1280, height: 600 });
     await page.goto("/board/board-platform");
     await page.waitForLoadState("load");
@@ -184,7 +186,8 @@ test.describe("Board scroll — vertical (window scroll behind open issue)", () 
     // The board is persistent and sits behind the issue overlay's SEMI-TRANSPARENT scrim, so it must not
     // visibly move when an issue opens. Before the fix the SPA nav scrolled the window to 0 — the board
     // lurched to its top (seen through the scrim) — and the close restore ran a beat late (a snap-back).
-    // The position:fixed body-pin keeps the board pinned at its exact scroll across the whole open/close.
+    // The route's `.scroll("preserve")` + the preserve-on-close gesture keep the board at its exact
+    // scroll across the whole open/close — the SPA simply never scrolls the window on these navs.
     await page.setViewportSize({ width: 1280, height: 600 });
     await page.goto("/board/board-platform");
     await page.waitForLoadState("load");
@@ -202,7 +205,7 @@ test.describe("Board scroll — vertical (window scroll behind open issue)", () 
         .evaluate((el: HTMLElement) => Math.round(el.getBoundingClientRect().top));
     const topBefore = await boardColumnTop();
 
-    // Open via a REAL card click (onCardOpen pins the scroll BEFORE the navigation).
+    // Open via a REAL card click (the issue route's `.scroll("preserve")` keeps the board still).
     await page.locator("[data-card-id]").first().locator("[data-card-title]").click();
     await page.waitForURL(/\/issue\//);
     await expect(page.locator("[data-issue-panel]")).toBeVisible({ timeout: 6000 });

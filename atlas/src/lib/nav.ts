@@ -31,19 +31,50 @@ export interface NavContext {
 /** Matches `/board/{id}` and its `/list` · `/issue/{issueId}` · `/activity` sub-routes. */
 const BOARD_PATH = /^\/board\/([^/]+)(?:\/(list|issue|activity)(?:\/([^/]+))?)?\/?$/;
 
+/** Per-navigation options forwarded to the SPA navigator (e.g. `{ scroll: "preserve" }`). */
+export interface NavigateOptions {
+  /** Keep the current scroll for this navigation instead of resetting to the top. */
+  scroll?: "top" | "preserve";
+}
+
+/** The registered SPA navigator (`app.spa.navigate`), or undefined pre-boot. */
+let spaNavigate: ((path: string, options?: NavigateOptions) => void) | undefined;
+
 /**
- * Navigate the SPA to an internal path. The `spa` plugin intercepts internal anchor clicks (History +
- * Navigation API), but a bare `history.pushState` does not trigger a swap — so programmatic navigation
- * synthesises a real anchor click, the one path both interceptors honour. Build `path` from
+ * Register the SPA navigator — called once by `spa.tsx` right after `app.start()` with
+ * `app.spa.navigate`. Until then, {@link navigate} falls back to a real anchor click (only
+ * reachable before the app has booted, where the swap interceptor isn't attached yet).
+ *
+ * @param fn - The bound `app.spa.navigate`.
+ * @example
+ * ```ts
+ * registerNavigator((path, options) => app.spa.navigate(path, options));
+ * ```
+ */
+export function registerNavigator(fn: (path: string, options?: NavigateOptions) => void): void {
+  spaNavigate = fn;
+}
+
+/**
+ * Navigate the SPA to an internal path from a MODULE-level caller (no island `ctx` in scope). Inside an
+ * island prefer `ctx.navigate(...)` directly. Delegates to the registered `app.spa.navigate` (same swap
+ * pipeline as a link click); pre-boot it falls back to a synthesised anchor click. Build `path` from
  * {@link file://../routes.tsx} `urls`, never a literal.
  *
  * @param path - The internal path to navigate to (e.g. `urls.toUrl("board", { id })`).
+ * @param options - Optional per-navigation overrides (e.g. `{ scroll: "preserve" }`).
  * @example
  * ```ts
  * navigate(urls.toUrl("issue", { id: boardId, issueId }));
+ * navigate(urls.toUrl("board", { id }), { scroll: "preserve" }); // close overlay: keep position
  * ```
  */
-export function navigate(path: string): void {
+export function navigate(path: string, options?: NavigateOptions): void {
+  if (spaNavigate) {
+    spaNavigate(path, options);
+    return;
+  }
+  // Pre-boot fallback: synthesise a real anchor click (the one path the click interceptor honours).
   const anchor = document.createElement("a");
   anchor.href = path;
   // appendChild (not append): @cloudflare/workers-types merges Element.append into a conflicting

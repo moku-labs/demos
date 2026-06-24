@@ -63,10 +63,15 @@ export const routes = defineRoutes({
   issue: route("/board/{id}/issue/{issueId}")
     .layout(SiteLayout)
     .meta({ focus: "issue" })
+    // The issue overlay layers over the persistent board: opening it must NOT move the board behind the
+    // scrim. `.scroll("preserve")` keeps the page where it is (the framework's per-route scroll directive,
+    // replacing the old position:fixed body freeze). The close gesture passes the same intent per-call.
+    .scroll("preserve")
     .render(() => <BoardPage />),
   attachment: route("/board/{id}/issue/{issueId}/attachment/{attachmentId}")
     .layout(SiteLayout)
     .meta({ focus: "issue" })
+    .scroll("preserve")
     .render(() => <BoardPage />),
   activity: route("/board/{id}/activity")
     .layout(SiteLayout)

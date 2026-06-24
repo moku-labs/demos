@@ -18,7 +18,6 @@ import {
   reorderColumn
 } from "../../lib/api";
 
-import { lockBoardScroll } from "../../lib/board-scroll";
 import { openCustomize, openMenu, openModal, showToast } from "../../lib/menu";
 import { navigate } from "../../lib/nav";
 import type { Column, Issue } from "../../lib/types";
@@ -88,11 +87,9 @@ export function onCardOpen(ctx: BoardContext, event: Event, card: Element): void
   if (event.target instanceof Element && event.target.closest("button, a, input")) return;
   const issue = issueForCard(ctx, card);
   if (!issue) return;
-  // Pin the board at its current scroll BEFORE navigating. The board is persistent and sits behind the
-  // issue overlay's semi-transparent scrim, so without this it would visibly lurch to the top as the SPA
-  // swap scrolls the window to 0. Locking first makes that scroll a no-op; the panel close releases it
-  // and restores the exact position (see board-scroll + issue/lifecycle setHostOpen).
-  lockBoardScroll();
+  // The board is persistent and sits behind the issue overlay's semi-transparent scrim, so it must not
+  // move as the panel opens. The issue route declares `.scroll("preserve")`, so the SPA simply doesn't
+  // scroll the window on this nav — no body-pin needed (see routes.tsx + issue/lifecycle setHostOpen).
   navigate(urls.toUrl("issue", { id: ctx.state.boardId, issueId: issue.id }));
 }
 
