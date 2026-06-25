@@ -7,12 +7,7 @@
 import { createApp } from "@moku-labs/web/browser";
 import { SITE } from "./config";
 import { islands } from "./islands";
-import { installViewTransitionGuard } from "./lib/view-transitions";
 import { routes } from "./routes";
-
-// Arm the guard before anything can navigate: it swallows the benign `AbortError: Transition was
-// skipped` the View Transitions API raises when a crossfade is superseded by the next navigation.
-installViewTransitionGuard();
 
 const app = createApp({
   config: { mode: "spa" },

@@ -1,21 +1,19 @@
 /**
- * @file Regression — the View Transitions crossfade must never leak an "Uncaught (in promise)
- * AbortError: Transition was skipped" when one navigation supersedes another mid-crossfade.
+ * @file Regression (integration) — interrupted View Transitions must never leak an "Uncaught (in
+ * promise) AbortError: Transition was skipped" during rapid / overlapping navigation.
  *
- * Root cause (framework, moku-web `runSwap`): the swap observes only `transition.finished` (which
- * RESOLVES on a skip) and never `transition.ready` (which REJECTS with AbortError when a second
- * transition preempts the first before it paints). The app installs `installViewTransitionGuard`
- * (src/lib/view-transitions.ts) to swallow that one benign rejection.
- *
- * This spec runs with motion ENABLED — the rest of the suite forces `reducedMotion: "reduce"`, which
- * disables `startViewTransition` entirely, so the bug is structurally invisible to every other spec
- * (which is exactly why it shipped). The first test deterministically reproduces the framework's leak;
- * the second mashes real overlapping navigations.
+ * The fix lives in the FRAMEWORK: `@moku-labs/web`'s `runSwap` attaches a `.catch` to the transition's
+ * `ready` promise — which rejects when a crossfade is superseded before it paints, while `finished`
+ * still resolves and the swap still applies. The deterministic unit regression lives in moku-web
+ * (`src/plugins/spa/__tests__/unit/router.test.ts`); THIS spec verifies the integration end-to-end in
+ * a real browser with motion ENABLED. The rest of the suite forces `reducedMotion: "reduce"`, which
+ * disables `startViewTransition` entirely — so this whole class of bug is invisible to every other spec
+ * (which is why it shipped originally). The app holds NO view-transition workaround of its own.
  */
 import { expect, test } from "@playwright/test";
 import { FIXED_TIME, signIn } from "./_auth";
 
-test.describe("View transitions — no uncaught AbortError on interrupted nav", () => {
+test.describe("View transitions — interrupted navigation never leaks an AbortError", () => {
   // Re-enable motion for this spec only (overrides the project-level reducedMotion: "reduce").
   test.use({ contextOptions: { reducedMotion: "no-preference" } });
 
@@ -24,18 +22,22 @@ test.describe("View transitions — no uncaught AbortError on interrupted nav", 
     await signIn(page);
   });
 
-  test("a superseded crossfade never leaks 'Transition was skipped'", async ({ page }) => {
-    const consoleErrors: string[] = [];
+  test("rapid overlapping navigation produces no uncaught 'Transition was skipped'", async ({
+    page
+  }) => {
+    const leaks: string[] = [];
     page.on("console", msg => {
-      if (msg.type() === "error") consoleErrors.push(msg.text());
+      if (msg.type() === "error" && /transition/i.test(msg.text())) leaks.push(msg.text());
     });
-    page.on("pageerror", err => consoleErrors.push(err.message));
+    page.on("pageerror", err => {
+      if (/transition/i.test(err.message)) leaks.push(err.message);
+    });
 
     await page.goto("/board/board-platform");
     await page.waitForLoadState("load");
 
-    // Preconditions — if either fails, the framework would skip startViewTransition and the bug could
-    // not occur, making a "pass" meaningless. Assert them so the test can never be a false green.
+    // Preconditions — without these the framework skips startViewTransition and the bug cannot occur,
+    // making a "pass" meaningless. Assert them so the test can never be a false green.
     expect(await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches)).toBe(
       false
     );
@@ -43,57 +45,26 @@ test.describe("View transitions — no uncaught AbortError on interrupted nav", 
       true
     );
 
-    // Reproduce the framework's `runSwap` leak byte-for-byte: two transitions in the SAME task, each
-    // observing only `.finished`. The first is skipped before `ready`, so its `ready` rejects with
-    // AbortError. The app's guard must mark that rejection handled (defaultPrevented).
-    const rejections = await page.evaluate(async () => {
-      const seen: { message: string; defaultPrevented: boolean }[] = [];
-      const onRejection = (event: PromiseRejectionEvent) =>
-        seen.push({
-          message: String(event.reason?.message ?? event.reason),
-          defaultPrevented: event.defaultPrevented
-        });
-      globalThis.addEventListener("unhandledrejection", onRejection);
-      const runSwapLikeFramework = () => {
-        const transition = document.startViewTransition(() => {});
-        Promise.resolve(transition?.finished)
-          .then(() => {})
-          .catch(() => {});
-      };
-      runSwapLikeFramework();
-      runSwapLikeFramework();
-      await new Promise(resolve => setTimeout(resolve, 400));
-      globalThis.removeEventListener("unhandledrejection", onRejection);
-      return seen;
+    // Record any in-page unhandled rejection that mentions a transition (the exact symptom guarded).
+    await page.evaluate(() => {
+      const w = globalThis as unknown as { __vtLeaks: string[] };
+      w.__vtLeaks = [];
+      globalThis.addEventListener("unhandledrejection", event => {
+        const reason = (event as PromiseRejectionEvent).reason;
+        const message = String(reason?.message ?? reason);
+        if (/transition/i.test(message)) w.__vtLeaks.push(message);
+      });
     });
 
-    const skips = rejections.filter(r => /transition/i.test(r.message));
-    expect(skips.length).toBeGreaterThan(0); // the skip DID happen (bug is live without the guard)
-    expect(skips.every(r => r.defaultPrevented)).toBe(true); // and the guard swallowed every one
-    expect(consoleErrors.filter(t => /transition was skipped/i.test(t))).toHaveLength(0);
-  });
-
-  test("rapid overlapping board/list/activity navigation stays clean", async ({ page }) => {
-    const skipErrors: string[] = [];
-    page.on("console", msg => {
-      if (msg.type() === "error" && /transition/i.test(msg.text())) skipErrors.push(msg.text());
-    });
-    page.on("pageerror", err => {
-      if (/transition/i.test(err.message)) skipErrors.push(err.message);
-    });
-
-    await page.goto("/board/board-platform");
-    await page.waitForLoadState("load");
-
-    // Mash navigations faster than the ~260ms crossfade so transitions overlap, as a fast human would.
-    // Driven from the test side (single-purpose evaluate per hop) so the in-page code stays trivial.
+    // Mash navigations far faster than the ~260ms crossfade so transitions overlap and some are
+    // superseded before they paint — the path that rejects `ready`.
     const routes = [
       "/board/board-platform/list",
       "/board/board-platform",
       "/board/board-platform/activity",
       "/board/board-platform"
     ];
-    for (let round = 0; round < 3; round++) {
+    for (let round = 0; round < 4; round++) {
       for (const route of routes) {
         await page.evaluate(href => {
           const anchor = document.createElement("a");
@@ -105,11 +76,15 @@ test.describe("View transitions — no uncaught AbortError on interrupted nav", 
           anchor.click();
           anchor.remove();
         }, route);
-        await page.waitForTimeout(30);
+        await page.waitForTimeout(15);
       }
     }
     await page.waitForTimeout(700);
 
-    expect(skipErrors).toHaveLength(0);
+    const pageLeaks = await page.evaluate(
+      () => (globalThis as unknown as { __vtLeaks: string[] }).__vtLeaks
+    );
+    expect(leaks).toHaveLength(0);
+    expect(pageLeaks).toHaveLength(0);
   });
 });
