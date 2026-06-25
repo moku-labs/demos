@@ -41,7 +41,6 @@
   },
   "scripts": {
     "build": "bun run scripts/build.ts",
-    "build:worker": "wrangler deploy --dry-run --outdir dist/worker",
     "dev": "bun scripts/dev.ts",
     "deploy": "bun scripts/deploy.ts",
     "typecheck": "tsc --noEmit",
