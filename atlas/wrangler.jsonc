@@ -13,10 +13,12 @@
   "compatibility_date": "2026-06-17",
   "kv_namespaces": [
     {
-      "binding": "BOARDS_KV"
+      "binding": "BOARDS_KV",
+      "id": "dd006a0d641d4d88b98e6e9cb45a5cf8"
     },
     {
-      "binding": "SESSIONS_KV"
+      "binding": "SESSIONS_KV",
+      "id": "098b35026e6d4837abf4fb382bf4775f"
     }
   ],
   "r2_buckets": [
@@ -29,6 +31,7 @@
     {
       "binding": "DB",
       "database_name": "atlas-db",
+      "database_id": "8c24d131-eba2-43cd-b87f-960b56e7df66",
       "migrations_dir": "db/migrations"
     }
   ],
@@ -61,5 +64,11 @@
         "BoardChannel"
       ]
     }
-  ]
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true
+    }
+  }
 }
