@@ -23,6 +23,15 @@ import { type BoardContext, EMPTY_SNAPSHOT, KEEPALIVE_MS } from "./types";
 const snapshotCache = new Map<string, BoardSnapshot>();
 
 /**
+ * Monotonic load token. Each {@link loadBoard} call claims the next value; after its `await getBoard`
+ * resolves it only paints if it is STILL the latest load. Without this, two overlapping loads (a rapid
+ * board switch, or the home-route resolve racing a direct nav) let a slow earlier fetch resolve last and
+ * overwrite the newer board's state — the board then paints data that doesn't match the URL (the random,
+ * route-mismatched "wrong board / wrong buttons" render). The newest load always wins.
+ */
+let loadGeneration = 0;
+
+/**
  * The cached snapshot for a board id, if one was loaded earlier this session — lets {@link initState}
  * paint the real board on the very first render after a re-mount (opening an issue re-mounts the board),
  * eliminating the empty-board flash behind the issue panel.
@@ -136,6 +145,9 @@ export async function sync(ctx: BoardContext): Promise<void> {
  * ```
  */
 async function loadBoard(ctx: BoardContext, boardId: string): Promise<void> {
+  // Claim this load's token up front — checked again after the fetch to drop a superseded stale result.
+  const generation = ++loadGeneration;
+
   // Connect BEFORE awaiting so live frames buffer into the pre-seed queue during the load.
   connect(boardId);
 
@@ -149,7 +161,14 @@ async function loadBoard(ctx: BoardContext, boardId: string): Promise<void> {
   ctx.set({ boardId, snapshot: cached ?? EMPTY_SNAPSHOT });
 
   const snapshot = await getBoard(boardId);
+  // Cache unconditionally — it is correct data for `boardId` whether or not this load still leads.
   snapshotCache.set(boardId, snapshot);
+
+  // A newer load was started while this fetch was in flight (rapid board switch / home-resolve racing a
+  // direct nav). That later load owns the board that matches the current route, so discard this stale
+  // result instead of painting the wrong board over it — and leave its seed()/live-set to the winner.
+  if (generation !== loadGeneration) return;
+
   ctx.set({ boardId, snapshot, loaded: true });
 
   // The realtime handler is registered ONCE in startBoard (this island is persistent — it never
