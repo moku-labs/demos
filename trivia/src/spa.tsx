@@ -1,12 +1,13 @@
 /**
- * @file Web client browser entry — boots the SPA over the route table + island registry, then boots the
- * room role by URL (`/` → stage, `/controller/:code` → controller). The stylesheet (`styles/main.css`)
- * is collected by the build plugin and injected as a `<link>` — it is NOT imported here.
+ * @file Web client browser entry — boots the SPA over the route table + island registry. The role is
+ * selected by the matched route, not by parsing the URL here: `/` mounts the `stage` island (which boots
+ * the host in its `onMount`), `/controller/{code}` mounts the `controller` island (which reads
+ * `ctx.params.code` and joins in its `onMount`). The stylesheet (`styles/main.css`) is collected by the
+ * build plugin and injected as a `<link>` — it is NOT imported here.
  */
 import { createApp } from "@moku-labs/web/browser";
 import { SITE } from "./config";
 import { islands } from "./islands";
-import { startController, startStage } from "./lib/room";
 import { routes } from "./routes";
 
 const app = createApp({
@@ -19,13 +20,3 @@ const app = createApp({
 });
 
 await app.start();
-
-/** The deep-link prefix that selects the phone-controller role. */
-const CONTROLLER_PREFIX = "/controller/";
-const path = globalThis.location.pathname;
-
-if (path.startsWith(CONTROLLER_PREFIX)) {
-  await startController(path.slice(CONTROLLER_PREFIX.length));
-} else {
-  await startStage();
-}

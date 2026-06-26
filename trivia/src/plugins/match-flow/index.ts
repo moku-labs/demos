@@ -6,14 +6,31 @@
  * @see README.md
  */
 import { createPlugin, intentPlugin, stagePlugin, syncPlugin } from "@moku-labs/room";
+import { TRIVIA } from "../../config";
 import { languagePlugin } from "../language";
 import { questionBankPlugin } from "../question-bank";
 import { scoringPlugin } from "../scoring";
 import { buildReadSlice } from "./adapters";
 import { initMatchFlow, startClock, stopClock } from "./clock";
-import { DEFAULT_CONFIG } from "./config";
 import { createMatchFlowHandlers } from "./handlers";
 import { createMatchFlowState } from "./state";
+import type { Config } from "./types";
+
+/**
+ * Default match-flow config (inline per spec/15 §5 — no separate config.ts). Round count + host-owned
+ * timers mirror `TRIVIA` (the single source of truth in src/config.ts); `tickMs` is the clock
+ * granularity. The `: Config` annotation widens the `TRIVIA` const values (e.g. `rounds: 12`) to the
+ * plugin's declared field types (`rounds: number`, …) so consumers can override them.
+ */
+const defaultConfig: Config = {
+  rounds: TRIVIA.rounds,
+  answerMs: TRIVIA.timers.answerMs,
+  stealMs: TRIVIA.timers.stealMs,
+  roundIntroMs: TRIVIA.timers.roundIntroMs,
+  revealMs: TRIVIA.timers.revealMs,
+  scoreboardMs: TRIVIA.timers.scoreboardMs,
+  tickMs: 250
+};
 
 /**
  * Match-flow plugin — Complex tier. Lobby, 12-round loop, difficulty ramp, steal machine,
@@ -34,7 +51,7 @@ export const matchFlowPlugin = createPlugin("matchFlow", {
     scoringPlugin,
     languagePlugin
   ],
-  config: DEFAULT_CONFIG,
+  config: defaultConfig,
   createState: createMatchFlowState,
   /**
    * Register the five synced slices + five intents (deps resolved inline from ctx — D1 rule).

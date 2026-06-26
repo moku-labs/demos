@@ -13,13 +13,25 @@
  * @see README.md
  */
 import { createPlugin, intentPlugin, stagePlugin, syncPlugin } from "@moku-labs/room";
-import { DEFAULT_CONFIG } from "./config";
 import { createLanguageApi, initLanguagePlugin } from "./handlers";
 import { stopLanguage } from "./lifecycle";
 import { createLanguageState } from "./state";
+import type { Config } from "./types";
 
 /** Module-scoped open-gate: `true` while the vote window is live. */
 let _voteOpen = false;
+
+/**
+ * Default language config (inline per spec/15 §5 — no separate config.ts). The `: Config` annotation
+ * widens the literals to the plugin's declared field types (`languages: Lang[]`, `defaultLang: Lang`)
+ * so consumers can override them. `languages`: EN + RU always available; `voteWindowMs`: 5 s confirm
+ * window; `defaultLang`: EN wins on a tie or zero votes.
+ */
+const defaultConfig: Config = {
+  languages: ["en", "ru"],
+  voteWindowMs: 5000,
+  defaultLang: "en"
+};
 
 /**
  * Language-vote plugin — Standard tier.
@@ -39,7 +51,7 @@ let _voteOpen = false;
  */
 export const languagePlugin = createPlugin("language", {
   depends: [stagePlugin, syncPlugin, intentPlugin],
-  config: DEFAULT_CONFIG,
+  config: defaultConfig,
   createState: createLanguageState,
   /**
    * Register the `languageVote` slice + the `language-vote` intent on init.
