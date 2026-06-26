@@ -1,0 +1,170 @@
+[
+  {
+    "id": "f2924cbd04cc",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "How many strings does a standard violin have?",
+    "options": [
+      "Twelve",
+      "Four",
+      "Five",
+      "Six"
+    ],
+    "answerCheck": "rulu:1"
+  },
+  {
+    "id": "79a01900b8c4",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In music, what does \"BPM\" measure?",
+    "options": [
+      "Bars per measure",
+      "Bass pitch modulation",
+      "Best phrasing margin",
+      "Beats per minute"
+    ],
+    "answerCheck": "7fs4go3:2"
+  },
+  {
+    "id": "9aebfe7de646",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which band recorded the 1975 epic \"Bohemian Rhapsody\"?",
+    "options": [
+      "Queen",
+      "The Rolling Stones",
+      "The Who",
+      "Led Zeppelin"
+    ],
+    "answerCheck": "6uvyl3:2"
+  },
+  {
+    "id": "510ea3b3d6f6",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A standard full-size piano has how many keys?",
+    "options": [
+      "76",
+      "88",
+      "100",
+      "66"
+    ],
+    "answerCheck": "lbnshc:3"
+  },
+  {
+    "id": "905a67f6d1b2",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which instrument is played without the performer ever touching it, by moving hands near two antennas?",
+    "options": [
+      "Harmonica",
+      "Accordion",
+      "Mandolin",
+      "Theremin"
+    ],
+    "answerCheck": "3bqio:0"
+  },
+  {
+    "id": "a9fcb8fdaae3",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "How many lines make up a standard musical staff?",
+    "options": [
+      "Four",
+      "Seven",
+      "Five",
+      "Eight"
+    ],
+    "answerCheck": "s7dl:2"
+  },
+  {
+    "id": "df3eba243796",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Going up a full octave, from one C to the next C, spans how many white keys (counting both ends)?",
+    "options": [
+      "Seven",
+      "Twelve",
+      "Eight",
+      "Five"
+    ],
+    "answerCheck": "tigqos:0"
+  },
+  {
+    "id": "a1127dfd35e3",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Despite losing most of his hearing, which composer wrote his famous Ninth Symphony?",
+    "options": [
+      "Mozart",
+      "Beethoven",
+      "Chopin",
+      "Bach"
+    ],
+    "answerCheck": "kqb:0"
+  },
+  {
+    "id": "0f957ae5a738",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which instrument, now central to jazz, was invented by Belgian craftsman Adolphe Sax in the 1840s?",
+    "options": [
+      "Clarinet",
+      "Trombone",
+      "Trumpet",
+      "Saxophone"
+    ],
+    "answerCheck": "g55:2"
+  },
+  {
+    "id": "59bccb8213bb",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Two notes an octave apart: the higher note vibrates at what multiple of the lower note's frequency?",
+    "options": [
+      "Ten times",
+      "Twice",
+      "One and a half times",
+      "Three times"
+    ],
+    "answerCheck": "dqzkt:2"
+  },
+  {
+    "id": "e41d98fd2d99",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Vivaldi's set of four violin concertos known as \"The Four Seasons\" is an early example of what?",
+    "options": [
+      "Program music",
+      "Atonal music",
+      "Twelve-tone music",
+      "A cappella music"
+    ],
+    "answerCheck": "dqhh:0"
+  },
+  {
+    "id": "b0590a85efa9",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "On a standard 88-key piano, how many of the keys are black?",
+    "options": [
+      "29",
+      "36",
+      "44",
+      "52"
+    ],
+    "answerCheck": "iaeb:1"
+  }
+]

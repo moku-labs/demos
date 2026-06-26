@@ -1,0 +1,170 @@
+[
+  {
+    "id": "d5d0045bb819",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which planet is famously known as the Red Planet?",
+    "options": [
+      "Jupiter",
+      "Venus",
+      "Mercury",
+      "Mars"
+    ],
+    "answerCheck": "rfsisy:1"
+  },
+  {
+    "id": "f1d64e451dc5",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the largest planet in our Solar System?",
+    "options": [
+      "Saturn",
+      "Neptune",
+      "Earth",
+      "Jupiter"
+    ],
+    "answerCheck": "ulhj7x:1"
+  },
+  {
+    "id": "8e9f37506d46",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Our Sun is actually what kind of object?",
+    "options": [
+      "A planet",
+      "A giant moon",
+      "A comet",
+      "A star"
+    ],
+    "answerCheck": "fi622j1:2"
+  },
+  {
+    "id": "2c753c38866c",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which is the smallest planet in our Solar System?",
+    "options": [
+      "Mars",
+      "Mercury",
+      "Venus",
+      "Pluto"
+    ],
+    "answerCheck": "vftq:1"
+  },
+  {
+    "id": "7f91a0d91083",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Roughly how long does sunlight take to travel from the Sun to Earth?",
+    "options": [
+      "About 8 hours",
+      "About 8 minutes",
+      "Instantly",
+      "About 8 seconds"
+    ],
+    "answerCheck": "rmrbwr:3"
+  },
+  {
+    "id": "94b9b8b683fe",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which planet spins almost completely on its side, with poles facing the Sun?",
+    "options": [
+      "Uranus",
+      "Saturn",
+      "Mars",
+      "Neptune"
+    ],
+    "answerCheck": "23xes:1"
+  },
+  {
+    "id": "a55f627c370a",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Jupiter's Great Red Spot is actually a giant, centuries-old what?",
+    "options": [
+      "Ocean",
+      "Crater",
+      "Storm",
+      "Volcano"
+    ],
+    "answerCheck": "tqv8q:3"
+  },
+  {
+    "id": "f12dcc65be20",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Mercury is the smallest planet — it's even smaller than which two moons?",
+    "options": [
+      "Europa and Io",
+      "Our Moon and Charon",
+      "Phobos and Deimos",
+      "Ganymede and Titan"
+    ],
+    "answerCheck": "5spkf:0"
+  },
+  {
+    "id": "26e31fe71556",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "On which planet is a single day (one rotation) longer than its entire year?",
+    "options": [
+      "Neptune",
+      "Mars",
+      "Mercury",
+      "Venus"
+    ],
+    "answerCheck": "3bfh1r:1"
+  },
+  {
+    "id": "23aaf8acdb70",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Olympus Mons, the tallest volcano in the Solar System, rises roughly 2.5x Everest on which world?",
+    "options": [
+      "Mercury",
+      "Mars",
+      "The Moon",
+      "Venus"
+    ],
+    "answerCheck": "pdhnkbw:0"
+  },
+  {
+    "id": "dc831dfaa450",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Crushing pressure deep inside Neptune and Uranus is thought to make it literally rain what?",
+    "options": [
+      "Glass",
+      "Molten iron",
+      "Diamonds",
+      "Liquid gold"
+    ],
+    "answerCheck": "ua8d877:1"
+  },
+  {
+    "id": "79b2a41d1181",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which planet was first found by math — predicted from Uranus's wobble before anyone saw it?",
+    "options": [
+      "Saturn",
+      "Neptune",
+      "Pluto",
+      "Mercury"
+    ],
+    "answerCheck": "cln:0"
+  }
+]

@@ -40,11 +40,21 @@ wrangler.jsonc
 # Finder (macOS) folder config
 .DS_Store
 
-# Claude Code
-.claude
+# Claude Code — local config is ignored, but the project SHIPS the /trivia-gen skill + command
+# (a build deliverable; the skill extends the committed spec/TRIVIA_SKILL.md). Negate only those.
+.claude/*
+!.claude/skills
+.claude/skills/*
+!.claude/skills/trivia-gen
+!.claude/commands
+.claude/commands/*
+!.claude/commands/trivia-gen.md
 
 # Playwright MCP browser-session artifacts (console logs / page snapshots)
 .playwright-mcp
 
 # Planning artifacts
 .planning
+
+# /trivia-gen scratch (raw + reviewed shards before the deterministic encode into public/bank)
+scratchpad

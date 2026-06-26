@@ -1,0 +1,170 @@
+[
+  {
+    "id": "b0407a425c8b",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Star Wars, what is the name of Han Solo's ship?",
+    "options": [
+      "USS Enterprise",
+      "Millennium Falcon",
+      "Nostromo",
+      "Serenity"
+    ],
+    "answerCheck": "u8g70f:3"
+  },
+  {
+    "id": "be406fd27c25",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Finding Nemo, what kind of fish are Nemo and his father Marlin?",
+    "options": [
+      "Pufferfish",
+      "Blue tang",
+      "Clownfish",
+      "Goldfish"
+    ],
+    "answerCheck": "flt3:2"
+  },
+  {
+    "id": "7b9c6e78ceea",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In The Wizard of Oz, what color are Dorothy's magic slippers?",
+    "options": [
+      "Gold",
+      "Silver",
+      "Emerald green",
+      "Ruby red"
+    ],
+    "answerCheck": "q3kfbu:1"
+  },
+  {
+    "id": "070e2505515d",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which animated sitcom set in Springfield is the longest-running American scripted primetime series ever?",
+    "options": [
+      "The Simpsons",
+      "Family Guy",
+      "South Park",
+      "King of the Hill"
+    ],
+    "answerCheck": "puhfv1y:3"
+  },
+  {
+    "id": "141d407f21ad",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The original \"Wilhelm scream\" recording is labelled as a man being bitten by which animal?",
+    "options": [
+      "A shark",
+      "A lion",
+      "An alligator",
+      "A bear"
+    ],
+    "answerCheck": "scrivky:1"
+  },
+  {
+    "id": "36816d910dc9",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Pixar's hopping desk-lamp mascot comes from a 1986 short. What is the lamp's name?",
+    "options": [
+      "Luxo Jr.",
+      "Pixie",
+      "Lumière",
+      "Sparky"
+    ],
+    "answerCheck": "27bciuj:3"
+  },
+  {
+    "id": "4422f5c073a5",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Who says the line \"Here's Johnny!\" while smashing through a door in The Shining?",
+    "options": [
+      "Jack Nicholson",
+      "Robert De Niro",
+      "Al Pacino",
+      "Anthony Hopkins"
+    ],
+    "answerCheck": "5l2scjo:3"
+  },
+  {
+    "id": "3d9cc393770d",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Jurassic Park, which dinosaur spits venom before attacking Dennis Nedry?",
+    "options": [
+      "Velociraptor",
+      "Tyrannosaurus rex",
+      "Dilophosaurus",
+      "Triceratops"
+    ],
+    "answerCheck": "t7o5:2"
+  },
+  {
+    "id": "9c6fa91e45d0",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Citizen Kane, \"Rosebud\" — the dying man's last word — turns out to be the name of his childhood what?",
+    "options": [
+      "Dog",
+      "Sled",
+      "Boat",
+      "Horse"
+    ],
+    "answerCheck": "tsmnb:2"
+  },
+  {
+    "id": "0e3d3b33540f",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "For the black-and-white shower scene in Psycho (1960), what stood in for blood swirling down the drain?",
+    "options": [
+      "Tomato juice",
+      "Chocolate syrup",
+      "Beetroot juice",
+      "Red paint"
+    ],
+    "answerCheck": "anar:1"
+  },
+  {
+    "id": "5a77313468c3",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Anthony Hopkins won Best Actor for The Silence of the Lambs while holding which Oscar record?",
+    "options": [
+      "Oldest winner ever",
+      "Shortest screen time for the role",
+      "Most lines of dialogue",
+      "First non-American winner"
+    ],
+    "answerCheck": "3um:0"
+  },
+  {
+    "id": "23c4b0623a4c",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In The Godfather, what unwelcome object does Jack Woltz find in his bed?",
+    "options": [
+      "A live snake",
+      "A severed horse's head",
+      "A loaded pistol",
+      "A black rose"
+    ],
+    "answerCheck": "1r1n0:2"
+  }
+]

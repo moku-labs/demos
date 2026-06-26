@@ -1,0 +1,170 @@
+[
+  {
+    "id": "f79131bd56fc",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which natural food basically never spoils, with edible jars found in ancient Egyptian tombs?",
+    "options": [
+      "Butter",
+      "Milk",
+      "Bread",
+      "Honey"
+    ],
+    "answerCheck": "smm:2"
+  },
+  {
+    "id": "a20871b733a1",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What makes chili peppers taste 'hot' to your mouth?",
+    "options": [
+      "Capsaicin",
+      "Citric acid",
+      "Caffeine",
+      "Menthol"
+    ],
+    "answerCheck": "5k5:3"
+  },
+  {
+    "id": "b2431c79ec54",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Botanically, which of these counts as a berry, while a strawberry does not?",
+    "options": [
+      "Rhubarb",
+      "Banana",
+      "Raspberry",
+      "Cherry"
+    ],
+    "answerCheck": "xv0n7fx:0"
+  },
+  {
+    "id": "60eabfc08c04",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Despite their name, peanuts aren't true nuts. They belong to which plant family?",
+    "options": [
+      "Grasses (like wheat)",
+      "Tree nuts (like almonds)",
+      "Berries",
+      "Legumes (like beans)"
+    ],
+    "answerCheck": "regd:3"
+  },
+  {
+    "id": "75c346553182",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Most cheap 'wasabi' served outside Japan is actually dyed-green mashed what?",
+    "options": [
+      "Green pea paste",
+      "Spinach",
+      "Avocado",
+      "Horseradish"
+    ],
+    "answerCheck": "1uo:2"
+  },
+  {
+    "id": "a74aaf285bf3",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In 1830s America, ketchup was briefly sold as what?",
+    "options": [
+      "A glue",
+      "A patent medicine",
+      "A paint",
+      "A perfume"
+    ],
+    "answerCheck": "svn1g:2"
+  },
+  {
+    "id": "076362eed24a",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Traditional Worcestershire sauce gets its savory depth from which fermented ingredient?",
+    "options": [
+      "Seaweed",
+      "Anchovies",
+      "Mushrooms",
+      "Olives"
+    ],
+    "answerCheck": "53gnb:2"
+  },
+  {
+    "id": "dc96f5d5abd1",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The world's priciest spice by weight, hand-harvested from crocus flowers, is what?",
+    "options": [
+      "Cardamom",
+      "Cinnamon",
+      "Vanilla",
+      "Saffron"
+    ],
+    "answerCheck": "iwod50:1"
+  },
+  {
+    "id": "a478ac36b793",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Cashews are never sold in their shells because the shell holds the same irritating oil as which plant?",
+    "options": [
+      "Poison ivy",
+      "Bamboo",
+      "Stinging nettle",
+      "Aloe vera"
+    ],
+    "answerCheck": "rm2ca:1"
+  },
+  {
+    "id": "5c3433c4233f",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The 'fifth taste,' umami, was first identified in 1908 from a broth made with which ingredient?",
+    "options": [
+      "Soy sauce",
+      "Aged beef",
+      "Kombu seaweed",
+      "Fish sauce"
+    ],
+    "answerCheck": "kz0:1"
+  },
+  {
+    "id": "6bbcd74271b0",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Before the familiar orange variety, cultivated carrots were most commonly which color?",
+    "options": [
+      "Blue",
+      "Black",
+      "Purple",
+      "Pink"
+    ],
+    "answerCheck": "kfgcsw:0"
+  },
+  {
+    "id": "06a7a454239f",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "By the strict legal definition, true Champagne must come from which country?",
+    "options": [
+      "Spain",
+      "Italy",
+      "Belgium",
+      "France"
+    ],
+    "answerCheck": "lvj:2"
+  }
+]

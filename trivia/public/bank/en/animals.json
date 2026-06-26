@@ -1,0 +1,170 @@
+[
+  {
+    "id": "612d22aa026c",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "How many hearts does an octopus have?",
+    "options": [
+      "One",
+      "Eight",
+      "Two",
+      "Three"
+    ],
+    "answerCheck": "qxb:2"
+  },
+  {
+    "id": "4563dd231695",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Octopus blood is blue because it carries oxygen with a protein built around which metal?",
+    "options": [
+      "Copper",
+      "Iron",
+      "Zinc",
+      "Silver"
+    ],
+    "answerCheck": "4tou4n:2"
+  },
+  {
+    "id": "b40b47b43d82",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Lose an arm and a healthy starfish will usually do what?",
+    "options": [
+      "Stay lopsided forever",
+      "Swap one with a mate",
+      "Grow a brand-new one",
+      "Die within days"
+    ],
+    "answerCheck": "cnwdpk0:1"
+  },
+  {
+    "id": "04952c691cd1",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Flamingos are born grey. What turns their feathers pink?",
+    "options": [
+      "Cold water",
+      "Their age",
+      "The pink algae and shrimp they eat",
+      "Sunlight"
+    ],
+    "answerCheck": "6o8:1"
+  },
+  {
+    "id": "f27b31bc3680",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "How does a sea cucumber fend off a hungry predator?",
+    "options": [
+      "Inflates like a spiky ball",
+      "Shoots out its own guts",
+      "Sprays glowing ink",
+      "Bites with a hidden beak"
+    ],
+    "answerCheck": "prqm2:2"
+  },
+  {
+    "id": "bf0714deb4d5",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The axolotl amazes scientists because it can fully regrow what throughout its life?",
+    "options": [
+      "Extra eyes",
+      "Its shell",
+      "Lost limbs",
+      "Its wings"
+    ],
+    "answerCheck": "uipal:3"
+  },
+  {
+    "id": "ba6f280c2a82",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "When a wood frog freezes solid for winter, its liver floods its body with which natural antifreeze?",
+    "options": [
+      "Alcohol",
+      "Glucose",
+      "Ammonia",
+      "Salt"
+    ],
+    "answerCheck": "i0dmjq:3"
+  },
+  {
+    "id": "2ff7fcf2f472",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which of these cats keeps its claws permanently out, unable to fully sheathe them?",
+    "options": [
+      "Jaguar",
+      "Cheetah",
+      "Leopard",
+      "Lynx"
+    ],
+    "answerCheck": "kvd27:2"
+  },
+  {
+    "id": "c3c62a8a45da",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The 'immortal jellyfish' cheats death by reversing its life cycle back into which earlier stage?",
+    "options": [
+      "A single cell",
+      "A larva",
+      "An egg",
+      "A polyp"
+    ],
+    "answerCheck": "m8n:2"
+  },
+  {
+    "id": "4e5b389c28fa",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A threatened hagfish unleashes slime that does what to a predator's gills?",
+    "options": [
+      "Freezes them stiff",
+      "Dyes them black",
+      "Clogs them by expanding in seawater",
+      "Stings like acid"
+    ],
+    "answerCheck": "iekz37v:1"
+  },
+  {
+    "id": "c10ef3c1be64",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A mantis shrimp punches so fast it boils the water into glowing, collapsing bubbles. This is called what?",
+    "options": [
+      "Electrolysis",
+      "Cavitation",
+      "Osmosis",
+      "Refraction"
+    ],
+    "answerCheck": "akzp:1"
+  },
+  {
+    "id": "83074ace6ef2",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "To endure years without water, a tardigrade dries out and enters which suspended-life state?",
+    "options": [
+      "Cryptobiosis",
+      "Diapause",
+      "Estivation",
+      "Hibernation"
+    ],
+    "answerCheck": "zng:3"
+  }
+]

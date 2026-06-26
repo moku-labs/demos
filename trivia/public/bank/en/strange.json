@@ -1,0 +1,170 @@
+[
+  {
+    "id": "0722e68c4fba",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "An octopus has an unusual number of hearts. How many?",
+    "options": [
+      "One",
+      "Two",
+      "Eight",
+      "Three"
+    ],
+    "answerCheck": "3olhfk:1"
+  },
+  {
+    "id": "b25d741ee75b",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Sealed jars of which food were found still edible in ancient Egyptian tombs?",
+    "options": [
+      "Bread",
+      "Milk",
+      "Olive oil",
+      "Honey"
+    ],
+    "answerCheck": "ufu:2"
+  },
+  {
+    "id": "402fb014969a",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "On hot summer days the Eiffel Tower actually gets slightly:",
+    "options": [
+      "Bluer",
+      "Taller",
+      "Lighter",
+      "Shorter"
+    ],
+    "answerCheck": "g91x:1"
+  },
+  {
+    "id": "99f4f0ce85c2",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What's the largest animal that has ever lived on Earth?",
+    "options": [
+      "African elephant",
+      "Blue whale",
+      "Argentinosaurus",
+      "Giant squid"
+    ],
+    "answerCheck": "9t4ytmq:0"
+  },
+  {
+    "id": "4430fa95b969",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The shortest war in recorded history, the Anglo-Zanzibar War of 1896, lasted about:",
+    "options": [
+      "1 day",
+      "1 week",
+      "38 minutes",
+      "3 hours"
+    ],
+    "answerCheck": "3rek3:3"
+  },
+  {
+    "id": "8b76479d4ba1",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Octopus blood is blue because it carries oxygen using a protein based on which metal?",
+    "options": [
+      "Zinc",
+      "Iron",
+      "Cobalt",
+      "Copper"
+    ],
+    "answerCheck": "p76:2"
+  },
+  {
+    "id": "374399857221",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Strasbourg in 1518, dozens of people were struck by a mysterious compulsion to do what for days?",
+    "options": [
+      "Weep",
+      "Laugh",
+      "Dance",
+      "Sleepwalk"
+    ],
+    "answerCheck": "rrm2npv:1"
+  },
+  {
+    "id": "fc20aa7818e5",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Reports of fish or frogs 'raining' from the sky are usually blamed on which weather event?",
+    "options": [
+      "Waterspouts",
+      "Heat waves",
+      "Solar flares",
+      "Hailstorms"
+    ],
+    "answerCheck": "pnk3ns:2"
+  },
+  {
+    "id": "ed582cef23d0",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Australia's 1932 'Great Emu War', the military used machine guns against emus. Who effectively won?",
+    "options": [
+      "It was a draw",
+      "The army",
+      "The emus",
+      "The farmers"
+    ],
+    "answerCheck": "7qp:1"
+  },
+  {
+    "id": "0fc2eefb69f7",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Robert Wadlow, the tallest person in recorded history with solid evidence, reached a height of about:",
+    "options": [
+      "8 ft 0 in",
+      "8 ft 11 in",
+      "9 ft 8 in",
+      "7 ft 6 in"
+    ],
+    "answerCheck": "zvvcmjc:0"
+  },
+  {
+    "id": "2bdef725a71e",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which began teaching centuries before the Aztec capital Tenochtitlan was even founded?",
+    "options": [
+      "MIT",
+      "Oxford University",
+      "Harvard University",
+      "The Sorbonne"
+    ],
+    "answerCheck": "9uagc:2"
+  },
+  {
+    "id": "cc9f54d57c41",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Cleopatra lived closer in time to which event than to the building of the Great Pyramid?",
+    "options": [
+      "The Moon landing",
+      "The Trojan War",
+      "The founding of Rome",
+      "The first Olympics"
+    ],
+    "answerCheck": "qw9i95:2"
+  }
+]
