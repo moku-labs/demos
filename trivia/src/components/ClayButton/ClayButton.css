@@ -1,0 +1,106 @@
+/**
+ * ClayButton — co-located CSS. The base clay button: rounded-pill, inset white top highlight, a
+ * colour-matched drop shadow, springy hover lift, and a pressed inset on active. Each tone sets two
+ * locals (--fill / --ink / --glow) consumed by the shared :scope rule. @scope-encapsulated, data-*.
+ */
+@scope ([data-component="clay-button"]) {
+  :scope {
+    --fill: var(--clay-lemon);
+    --ink: #2a1a08;
+    --glow: rgba(255, 224, 102, 0.4);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 14px 28px;
+    border-radius: var(--radius-pill);
+    background: var(--fill);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(15px, 1.5vw, 18px);
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow:
+      0 8px 20px var(--glow),
+      0 4px 10px rgba(0, 0, 0, 0.28),
+      inset 0 2px 0 rgba(255, 255, 255, 0.55);
+    transition:
+      transform var(--dur-hover) var(--spring),
+      box-shadow var(--dur-hover) ease,
+      filter var(--dur-hover) ease;
+  }
+
+  :scope:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow:
+      0 12px 28px var(--glow),
+      0 6px 14px rgba(0, 0, 0, 0.32),
+      inset 0 2px 0 rgba(255, 255, 255, 0.6);
+    filter: brightness(1.04);
+  }
+
+  :scope:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+    box-shadow: var(--shadow-pressed);
+  }
+
+  :scope:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+    box-shadow:
+      0 4px 10px rgba(0, 0, 0, 0.24),
+      inset 0 2px 0 rgba(255, 255, 255, 0.4);
+  }
+
+  /* ── Tones ──────────────────────────────────────────────────────────────── */
+  :scope[data-tone="lemon"] {
+    --fill: var(--clay-lemon);
+    --ink: #2a1a08;
+    --glow: rgba(255, 224, 102, 0.42);
+  }
+
+  :scope[data-tone="amber"] {
+    --fill: var(--clay-peach);
+    --ink: #2a1604;
+    --glow: rgba(255, 179, 71, 0.42);
+  }
+
+  :scope[data-tone="coral"] {
+    --fill: var(--clay-coral);
+    --ink: #fff8f0;
+    --glow: rgba(255, 107, 107, 0.45);
+  }
+
+  :scope[data-tone="sky"] {
+    --fill: var(--clay-sky);
+    --ink: #0a1c33;
+    --glow: rgba(116, 185, 255, 0.45);
+  }
+
+  :scope[data-tone="violet"] {
+    --fill: var(--clay-lilac);
+    --ink: #fff8f0;
+    --glow: rgba(199, 125, 255, 0.45);
+  }
+
+  /* Ghost — translucent surface + border, no colour-matched glow. */
+  :scope[data-tone="ghost"] {
+    --fill: var(--surface);
+    --ink: var(--ink);
+    --glow: transparent;
+    border: 1px solid var(--border);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+
+  :scope[data-tone="ghost"]:hover:not(:disabled) {
+    background: var(--surface-2);
+    border-color: rgba(255, 255, 255, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  :scope[data-tone="ghost"]:active:not(:disabled) {
+    box-shadow: var(--shadow-pressed);
+  }
+}

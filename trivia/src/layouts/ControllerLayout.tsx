@@ -20,5 +20,10 @@ export function ControllerLayout(
   _ctx: Router.LayoutContext<Router.RouteState>,
   children: ComponentChildren
 ): VNode {
-  return <div data-layout="controller">{children}</div>;
+  return (
+    <div data-layout="controller">
+      <div data-region="notch" />
+      {children}
+    </div>
+  );
 }

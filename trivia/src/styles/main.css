@@ -1,13 +1,411 @@
 /**
- * main.css — the single stylesheet the build plugin bundles + injects as a content-hashed <link>.
- * Declares the cascade-layer order up front; the real tokens (Fredoka + Quicksand, the clay palette,
- * spring easing, shadow tiers), base, component, and utility rules are built from spec/ during app-build.
+ * main.css — the single stylesheet the build plugin bundles + content-hashes + injects as a <link>.
+ * Cascade-layer order is declared first; component rules are pulled in via `@import … layer(components)`
+ * (each co-located component CSS is layer-agnostic — the import assigns its layer). Tokens, reset, base
+ * surfaces, and the shared keyframes are inline below. Re-implemented from spec/design-context.md
+ * (Claymorphic Toy 3D) on moku-web conventions: data-* selectors only, @layer, design tokens, @scope
+ * in component files. prefers-reduced-motion collapses the springy motion.
  */
-@layer reset, base, tokens, components, utilities;
+@layer reset, tokens, base, animations, components, utilities;
+
+/* @imports MUST precede other rules — the component sheets are pulled in via the aggregator. */
+@import "./components.css" layer(components);
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--ink);
+    background: var(--bezel);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  input {
+    font: inherit;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--clay-lemon);
+    outline-offset: 2px;
+  }
+}
 
 @layer tokens {
   :root {
-    /* Design tokens (clay palette, type scale, spring easing, shadow tiers) — filled from spec/. */
-    color-scheme: light;
+    color-scheme: dark;
+
+    /* Type */
+    --font-display: "Fredoka", system-ui, "Segoe UI", sans-serif;
+    --font-body: "Quicksand", system-ui, "Segoe UI", sans-serif;
+    --fs-prompt: clamp(30px, 3.6vw, 46px);
+    --fs-round: clamp(72px, 12vw, 100px);
+
+    /* Stage palette (deep indigo/violet space) */
+    --tv-bg-0: #1a0e3d;
+    --tv-bg-1: #0d0820;
+    --bezel: #1a0e05;
+    --ink: #fff8f0;
+    --ink-dim: rgba(255, 248, 240, 0.62);
+    --ink-faint: rgba(255, 248, 240, 0.32);
+    --surface: rgba(255, 255, 255, 0.07);
+    --surface-2: rgba(255, 255, 255, 0.12);
+    --border: rgba(255, 255, 255, 0.16);
+
+    /* Clay accent palette */
+    --clay-coral: #ff6b6b;
+    --clay-mint: #4ecdc4;
+    --clay-sky: #74b9ff;
+    --clay-lemon: #ffe066;
+    --clay-lilac: #c77dff;
+    --clay-peach: #ffb347;
+    --clay-green: #7bc67e;
+    --clay-cream: #fff3e0;
+
+    /* Player signature colours (also passed inline per-player via --player) */
+    --player-amber: #f59e0b;
+    --player-violet: #8b5cf6;
+    --player-teal: #14b8a6;
+    --player-coral: #ef4444;
+    --player-lime: #84cc16;
+
+    /* Answer slot colours (fixed per slot, never reassigned) */
+    --slot-a: #e84040;
+    --slot-b: #2d7dd2;
+    --slot-c: #f5c518;
+    --slot-d: #2ecc71;
+
+    /* Radii */
+    --radius-sm: 12px;
+    --radius-md: 18px;
+    --radius-lg: 24px;
+    --radius-xl: 40px;
+    --radius-pill: 999px;
+
+    /* Clay shadow tiers — dark drop below + white inset top highlight */
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    --shadow-md: 0 7px 18px rgba(0, 0, 0, 0.32), inset 0 2px 0 rgba(255, 255, 255, 0.2);
+    --shadow-lg: 0 14px 32px rgba(0, 0, 0, 0.36), inset 0 2px 0 rgba(255, 255, 255, 0.22);
+    --shadow-xl: 0 22px 54px rgba(0, 0, 0, 0.42), inset 0 3px 0 rgba(255, 255, 255, 0.24);
+    --shadow-pressed: inset 0 5px 14px rgba(0, 0, 0, 0.42);
+
+    /* Motion — the signature spring */
+    --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --dur-hover: 160ms;
+    --dur-entry: 520ms;
+    --dur-reveal: 440ms;
+
+    /* Spacing */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-8: 48px;
+  }
+}
+
+@layer base {
+  /* ── TV / stage surface (route "/") — fills the viewport ───────────────────── */
+  [data-layout="stage"] {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    color: var(--ink);
+    background:
+      radial-gradient(120% 90% at 50% 8%, rgba(199, 125, 255, 0.18), transparent 60%),
+      linear-gradient(160deg, var(--tv-bg-0), var(--tv-bg-1));
+    overflow: hidden;
+  }
+
+  /* Per-phase warm-highlight shift (the active player's mood bleeds into the gradient). */
+  [data-stage][data-phase="categoryPick"],
+  [data-stage][data-phase="question"],
+  [data-stage][data-phase="reveal"] {
+    background:
+      radial-gradient(120% 90% at 50% 6%, rgba(245, 158, 11, 0.22), transparent 58%),
+      linear-gradient(160deg, #2a1840, var(--tv-bg-1));
+  }
+
+  [data-stage][data-phase="final"] {
+    background:
+      radial-gradient(130% 100% at 50% 4%, rgba(199, 125, 255, 0.3), transparent 60%),
+      linear-gradient(160deg, #2c1056, #140726);
+  }
+
+  /* B1 — TV top bar (logo · context badge · mute), present on every stage screen. */
+  [data-region="top-bar"] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: clamp(10px, 1.6vh, 18px) clamp(16px, 3vw, 40px);
+    background: rgba(13, 8, 32, 0.45);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    flex: 0 0 auto;
+    z-index: 5;
+  }
+
+  [data-region="top-bar"] [data-logo] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(18px, 2vw, 24px);
+    letter-spacing: -0.01em;
+  }
+
+  [data-region="top-bar"] [data-logo] b {
+    color: var(--clay-lemon);
+  }
+
+  [data-region="top-bar"] [data-badge] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(13px, 1.4vw, 17px);
+    padding: 6px 16px;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  /* The stage content body fills the rest, never scrolls. */
+  [data-region="stage-body"] {
+    position: relative;
+    flex: 1 1 auto;
+    display: flex;
+    min-height: 0;
+    padding: clamp(16px, 3vh, 36px) clamp(20px, 4vw, 56px);
+  }
+
+  /* ── Phone / controller surface (route "/controller/:code") ────────────────── */
+  [data-layout="controller"] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    color: var(--ink);
+    background: linear-gradient(165deg, #2a1257, #160a33);
+    overflow: hidden;
+  }
+
+  /* Per-phase phone background shift. */
+  [data-controller][data-phase="waiting"] {
+    background: linear-gradient(165deg, #0f2e1c, #0a2114);
+  }
+  [data-controller][data-phase="categoryPick"] {
+    background: linear-gradient(165deg, #3a2708, #241704);
+  }
+  [data-controller][data-phase="question"] {
+    background: linear-gradient(165deg, #101a36, #0a1022);
+  }
+  [data-controller][data-flash="correct"] {
+    background: linear-gradient(165deg, #0d2b0d, #1a4a1a);
+  }
+  [data-controller][data-flash="wrong"] {
+    background: linear-gradient(165deg, #2b0d0d, #4a1a1a);
+  }
+  [data-controller][data-phase="final"] {
+    background: linear-gradient(165deg, #3a2708, #241704);
+  }
+
+  /* B2 — phone notch (decorative front-camera cutout). */
+  [data-region="notch"] {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 24px;
+    background: #050208;
+    border-radius: 0 0 16px 16px;
+    z-index: 10;
+  }
+
+  [data-region="phone-body"] {
+    position: relative;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: clamp(34px, 6vh, 48px) clamp(14px, 5vw, 22px) clamp(16px, 4vh, 24px);
+  }
+}
+
+@layer animations {
+  @keyframes qr-breathe {
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: var(--shadow-lg);
+    }
+    50% {
+      transform: scale(1.025);
+      box-shadow: 0 14px 36px rgba(255, 224, 102, 0.32), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  @keyframes pop-in {
+    from {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes pop-spring {
+    0% {
+      transform: scale(0.7);
+      opacity: 0;
+    }
+    70% {
+      transform: scale(1.06);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes drop-in {
+    from {
+      transform: translateY(-26px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-in-left {
+    from {
+      transform: translateX(-40px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes rise-up {
+    from {
+      transform: translateY(60px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-7px);
+    }
+  }
+
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
+  }
+
+  @keyframes blink {
+    0%,
+    100% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 0.85;
+    }
+  }
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-8px);
+    }
+    75% {
+      transform: translateX(8px);
+    }
+  }
+
+  @keyframes drift {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(14px, -18px);
+    }
+  }
+
+  @keyframes confetti-fall {
+    from {
+      transform: translateY(-12vh) rotate(0deg);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(112vh) rotate(540deg);
+      opacity: 0.9;
+    }
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+@layer utilities {
+  [hidden] {
+    display: none !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.12s !important;
+    }
   }
 }

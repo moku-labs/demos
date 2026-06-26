@@ -1,0 +1,240 @@
+@scope ([data-component="join-wizard"]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    gap: var(--space-5);
+    min-height: 0;
+  }
+
+  /* ── F11 — step progress dots ── */
+  [data-dots] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    flex: 0 0 auto;
+  }
+
+  [data-dot] {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--ink-faint);
+    transition:
+      width var(--dur-hover) var(--spring),
+      background var(--dur-hover) ease;
+  }
+
+  [data-dot][data-active="true"] {
+    width: 20px;
+    height: 8px;
+    background: var(--clay-lemon);
+    box-shadow: 0 0 10px 1px rgba(255, 224, 102, 0.6);
+  }
+
+  /* ── Step body — grows to fill ── */
+  [data-stage] {
+    flex: 1 1 auto;
+    display: flex;
+    min-height: 0;
+  }
+
+  [data-step] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-5);
+    width: 100%;
+  }
+
+  [data-heading] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--ink);
+    text-align: center;
+  }
+
+  /* ── Step 1 — name input ── */
+  [data-name-input] {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid var(--border);
+    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.4);
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+    text-align: center;
+  }
+
+  [data-name-input]::placeholder {
+    color: var(--ink-faint);
+  }
+
+  /* ── Step 2 — avatar grid ── */
+  [data-avatar-grid] {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-2);
+    width: 100%;
+  }
+
+  [data-avatar-cell] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    font-size: 30px;
+    line-height: 1;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    border: 2px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    transition:
+      transform var(--dur-hover) var(--spring),
+      border-color var(--dur-hover) ease,
+      box-shadow var(--dur-hover) ease;
+  }
+
+  [data-avatar-cell]:active {
+    transform: scale(0.92);
+  }
+
+  [data-avatar-cell][data-selected="true"] {
+    border-color: var(--clay-lemon);
+    box-shadow:
+      0 0 16px 1px rgba(255, 224, 102, 0.55),
+      var(--shadow-md);
+  }
+
+  /* ── Step 3 — colour swatches ── */
+  [data-color-row] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    width: 100%;
+  }
+
+  [data-swatch] {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-pill);
+    background: var(--swatch);
+    border: 2px solid rgba(255, 255, 255, 0.28);
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35);
+    transition:
+      transform var(--dur-hover) var(--spring),
+      box-shadow var(--dur-hover) ease;
+  }
+
+  [data-swatch]:active {
+    transform: scale(0.9);
+  }
+
+  [data-swatch][data-selected="true"] {
+    transform: scale(1.12);
+    border-color: #fff;
+    box-shadow:
+      0 0 16px 2px var(--swatch),
+      inset 0 2px 0 rgba(255, 255, 255, 0.4);
+  }
+
+  [data-swatch][data-taken="true"] {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ── Nav row ── */
+  [data-nav] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex: 0 0 auto;
+  }
+
+  [data-back] {
+    padding: var(--space-2) var(--space-3);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink-dim);
+    background: none;
+    transition: color var(--dur-hover) ease;
+  }
+
+  [data-back]:active {
+    color: var(--ink);
+  }
+
+  [data-next] {
+    margin-left: auto;
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16px;
+    color: #3a2c00;
+    background: linear-gradient(165deg, color-mix(in srgb, var(--clay-lemon) 92%, white), var(--clay-lemon));
+    box-shadow:
+      0 8px 18px rgba(255, 224, 102, 0.42),
+      inset 0 2px 0 rgba(255, 255, 255, 0.5);
+    transition:
+      transform var(--dur-hover) var(--spring),
+      box-shadow var(--dur-hover) ease,
+      opacity var(--dur-hover) ease;
+  }
+
+  [data-next]:active {
+    transform: scale(0.96);
+    box-shadow: var(--shadow-pressed);
+  }
+
+  [data-next]:disabled {
+    opacity: 0.4;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  /* ── "You're in!" confirmation card ── */
+  [data-confirm] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    flex: 1 1 auto;
+    text-align: center;
+    animation: pop-spring var(--dur-entry) var(--spring);
+  }
+
+  [data-confirm-avatar] {
+    font-size: 52px;
+    line-height: 1;
+    filter: drop-shadow(0 5px 12px rgba(0, 0, 0, 0.4));
+    animation: bob 2.6s ease-in-out infinite;
+  }
+
+  [data-confirm-title] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 26px;
+    color: var(--joined);
+    text-shadow: 0 0 14px color-mix(in srgb, var(--joined) 55%, transparent);
+  }
+
+  [data-confirm-room] {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--ink-dim);
+  }
+}

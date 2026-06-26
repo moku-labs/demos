@@ -1,0 +1,74 @@
+@scope ([data-component="player-tile"]) {
+  :scope {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-3);
+    min-height: 132px;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    transform-origin: center bottom;
+    animation: pop-spring var(--dur-entry) var(--spring) backwards;
+    animation-delay: var(--delay, 0s);
+  }
+
+  [data-avatar] {
+    font-size: 60px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35));
+  }
+
+  [data-name] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--ink);
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  [data-dot] {
+    width: 14px;
+    height: 14px;
+    border-radius: var(--radius-pill);
+    background: var(--sig);
+    box-shadow: 0 0 12px 1px var(--sig);
+  }
+
+  [data-cue] {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-3);
+    font-size: 15px;
+    color: var(--clay-lemon);
+    text-shadow: 0 0 8px rgba(255, 224, 102, 0.6);
+  }
+
+  /* ── Empty "Waiting…" slot (F6) ── */
+  :scope[data-empty="true"] {
+    border-style: dashed;
+    border-color: var(--ink-faint);
+    background: transparent;
+    box-shadow: none;
+    opacity: 0.4;
+    animation: none;
+  }
+
+  [data-mark] {
+    font-size: 48px;
+    line-height: 1;
+  }
+
+  [data-waiting] {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink-dim);
+    animation: blink 1.5s ease-in-out infinite;
+  }
+}

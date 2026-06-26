@@ -1,0 +1,34 @@
+/**
+ * Confetti — a full-bleed, non-interactive layer of falling clay-coloured pieces over the podium (F9).
+ * Each `[data-piece]` runs the shared `confetti-fall` keyframe with per-piece `--size` /
+ * `--fall-duration` / `--fall-delay` / `--piece-color` set inline (deterministic from index). Squares
+ * vs circles via `[data-shape]`. Scoped to `[data-component="confetti"]`; data-* selectors only.
+ */
+@scope ([data-component="confetti"]) {
+  :scope {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  span[data-piece] {
+    position: absolute;
+    top: -12vh;
+    width: var(--size, 9px);
+    height: var(--size, 9px);
+    background: var(--piece-color, var(--clay-lemon));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    animation: confetti-fall var(--fall-duration, 3s) linear var(--fall-delay, 0s) infinite;
+    will-change: transform;
+  }
+
+  span[data-piece][data-shape="circle"] {
+    border-radius: var(--radius-pill);
+  }
+
+  span[data-piece][data-shape="square"] {
+    border-radius: 2px;
+  }
+}

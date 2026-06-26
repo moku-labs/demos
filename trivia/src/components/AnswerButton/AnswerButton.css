@@ -1,0 +1,90 @@
+@scope ([data-component="answer-button"]) {
+  :scope {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    width: 100%;
+    min-height: 100px;
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    color: #fff;
+    /* Inner gradient highlight over the fixed slot fill — simulates the clay surface catching light. */
+    background:
+      radial-gradient(120% 90% at 50% 12%, rgba(255, 255, 255, 0.42), transparent 56%),
+      linear-gradient(165deg, color-mix(in srgb, var(--slot) 88%, white), var(--slot));
+    box-shadow:
+      0 10px 22px color-mix(in srgb, var(--slot) 45%, transparent),
+      inset 0 2px 0 rgba(255, 255, 255, 0.4),
+      inset 0 -4px 10px rgba(0, 0, 0, 0.22);
+    transform-origin: center;
+    transition:
+      transform var(--dur-hover) var(--spring),
+      opacity var(--dur-reveal) ease,
+      box-shadow var(--dur-hover) ease,
+      filter var(--dur-reveal) ease;
+  }
+
+  :scope:active {
+    transform: scale(0.95);
+    box-shadow: var(--shadow-pressed);
+  }
+
+  [data-shape] {
+    font-size: 46px;
+    line-height: 1;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  [data-letter] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.28);
+  }
+
+  /* ── Lock overlay (F12) — hidden until this button is the locked pick ── */
+  [data-lock] {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    border-radius: inherit;
+    background: rgba(0, 0, 0, 0.55);
+  }
+
+  [data-lock-icon] {
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  [data-lock-text] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink-dim);
+  }
+
+  /* ── Locked (this pick): pressed squish + lock overlay ── */
+  :scope[data-state="locked"] {
+    transform: scale(0.95);
+    box-shadow: var(--shadow-pressed);
+  }
+
+  :scope[data-state="locked"] [data-lock] {
+    display: flex;
+  }
+
+  /* ── Dim (the other buttons fade after lock-in) ── */
+  :scope[data-state="dim"] {
+    opacity: 0.35;
+    filter: saturate(0.7);
+    pointer-events: none;
+  }
+}

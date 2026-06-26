@@ -1,0 +1,111 @@
+/**
+ * ScoreboardTile — a full-width standings row (A7): muted rank · avatar · player-coloured name · a
+ * proportional player-coloured bar (`--fill` width, `--player` fill) · score. The just-climbed tile
+ * (`[data-moved-up]`) gains a violet→mint glow border and shows a mint "▲ overtook … ♪" badge (F4).
+ * Springy slide-in on mount. Scoped to `[data-component="scoreboard-tile"]`; data-* selectors only.
+ */
+@scope ([data-component="scoreboard-tile"]) {
+  :scope {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    width: 100%;
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    animation: slide-in-left var(--dur-entry) var(--spring) both;
+  }
+
+  span[data-rank] {
+    flex: 0 0 auto;
+    min-width: 36px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 1;
+    text-align: center;
+    color: var(--ink-faint);
+  }
+
+  span[data-avatar] {
+    flex: 0 0 auto;
+    font-size: 34px;
+    line-height: 1;
+  }
+
+  div[data-main] {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  span[data-name] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 1;
+    color: var(--player, var(--ink));
+    text-shadow: 0 1px 8px color-mix(in srgb, var(--player, transparent) 30%, transparent);
+  }
+
+  /* Proportional bar — track + player-coloured fill (width driven by --fill). */
+  div[data-bar] {
+    height: 12px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+
+  span[data-bar-fill] {
+    display: block;
+    height: 100%;
+    width: var(--fill, 0%);
+    border-radius: var(--radius-pill);
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--player, var(--clay-lemon)) 70%, #000 0%),
+      var(--player, var(--clay-lemon))
+    );
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: width var(--dur-reveal) var(--spring);
+  }
+
+  span[data-badge] {
+    flex: 0 0 auto;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    color: var(--clay-mint);
+    background: color-mix(in srgb, var(--clay-mint) 16%, transparent);
+    border: 1px solid color-mix(in srgb, var(--clay-mint) 42%, transparent);
+    white-space: nowrap;
+    animation: pop-in var(--dur-entry) var(--spring) both;
+  }
+
+  span[data-score] {
+    flex: 0 0 auto;
+    min-width: 86px;
+    text-align: right;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  /* Just-climbed: violet→mint glow border (F4). */
+  :scope[data-moved-up] {
+    border-color: color-mix(in srgb, var(--player-violet) 60%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--player-violet) 50%, transparent),
+      0 0 26px color-mix(in srgb, var(--clay-mint) 38%, transparent),
+      var(--shadow-md);
+  }
+}

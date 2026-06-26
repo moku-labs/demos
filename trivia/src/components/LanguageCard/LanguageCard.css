@@ -1,0 +1,78 @@
+/**
+ * LanguageCard — co-located CSS. A 180px translucent-dark clay card (rounded-xl) holding a flag, a
+ * Fredoka name, an optional dim Cyrillic sub-label, and a voter-emoji row. The leading card lifts to
+ * 1.05× with a lemon border + glow. @scope-encapsulated, data-* selectors only.
+ */
+@scope ([data-component="language-card"]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    width: 180px;
+    padding: var(--space-5) var(--space-4);
+    border-radius: var(--radius-xl);
+    background: rgba(13, 8, 32, 0.55);
+    border: 2px solid var(--border);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    transition:
+      transform var(--dur-hover) var(--spring),
+      border-color var(--dur-hover) ease,
+      box-shadow var(--dur-hover) ease;
+  }
+
+  :scope[data-leading] {
+    border-color: var(--clay-lemon);
+    transform: scale(1.05);
+    box-shadow:
+      0 14px 34px rgba(0, 0, 0, 0.4),
+      0 0 26px rgba(255, 224, 102, 0.45),
+      inset 0 2px 0 rgba(255, 255, 255, 0.22);
+  }
+
+  [data-flag-wrap] {
+    line-height: 0;
+  }
+
+  [data-flag-wrap] > * {
+    width: 68px;
+    height: 43px;
+    border-radius: 8px;
+  }
+
+  [data-label] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.1;
+  }
+
+  [data-sublabel] {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--ink-dim);
+    margin-top: calc(-1 * var(--space-1));
+  }
+
+  [data-voters] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-1);
+    min-height: 26px;
+    font-size: 20px;
+  }
+
+  [data-voter] {
+    line-height: 1;
+    animation: pop-in var(--dur-entry) var(--spring) both;
+  }
+
+  [data-voters-empty] {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+}

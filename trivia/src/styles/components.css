@@ -1,0 +1,39 @@
+/**
+ * components.css — the aggregator that pulls in every per-component sheet (moku-web
+ * css-architecture: main.css `@import`s this under `layer(components)`, so each co-located sheet is
+ * layer-agnostic — its `@scope` rules land in the components layer via this import). Add a component =
+ * create `Foo/Foo.tsx` + `Foo/Foo.css`, then add one `@import "../components/Foo/Foo.css";` line here.
+ */
+@import "../components/AnswerButton/AnswerButton.css";
+@import "../components/AnswerTile/AnswerTile.css";
+@import "../components/CategoryButton/CategoryButton.css";
+@import "../components/CategoryCard/CategoryCard.css";
+@import "../components/CategoryExhaustedToast/CategoryExhaustedToast.css";
+@import "../components/ClayButton/ClayButton.css";
+@import "../components/Confetti/Confetti.css";
+@import "../components/DifficultyPips/DifficultyPips.css";
+@import "../components/DisconnectBanner/DisconnectBanner.css";
+@import "../components/DismissButton/DismissButton.css";
+@import "../components/EndCountdownChip/EndCountdownChip.css";
+@import "../components/Flag/Flag.css";
+@import "../components/JoinWizard/JoinWizard.css";
+@import "../components/LanguageCard/LanguageCard.css";
+@import "../components/LeaveModal/LeaveModal.css";
+@import "../components/MidJoinModal/MidJoinModal.css";
+@import "../components/MuteButton/MuteButton.css";
+@import "../components/PauseOverlay/PauseOverlay.css";
+@import "../components/PlayerTile/PlayerTile.css";
+@import "../components/PodiumBlock/PodiumBlock.css";
+@import "../components/QrBlock/QrBlock.css";
+@import "../components/ReconnectStrip/ReconnectStrip.css";
+@import "../components/RevealFlash/RevealFlash.css";
+@import "../components/RoomCodeBadge/RoomCodeBadge.css";
+@import "../components/RoundIntro/RoundIntro.css";
+@import "../components/ScoreChip/ScoreChip.css";
+@import "../components/ScoreboardTile/ScoreboardTile.css";
+@import "../components/TimerRing/TimerRing.css";
+@import "../components/TurnChip/TurnChip.css";
+
+/* Island screen layouts (how the components arrange per phase). */
+@import "../islands/stage/stage.css";
+@import "../islands/controller/controller.css";

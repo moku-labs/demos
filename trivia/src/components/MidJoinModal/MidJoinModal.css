@@ -1,0 +1,83 @@
+@scope ([data-component="mid-join-modal"]) {
+  :scope {
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-5);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  /* Full-bleed dismiss surface behind the card (a real button → keyboard-operable). */
+  [data-backdrop] {
+    position: absolute;
+    inset: 0;
+    background: none;
+    cursor: default;
+  }
+
+  [data-card] {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    max-width: 280px;
+    padding: var(--space-6) var(--space-5);
+    border-radius: var(--radius-xl);
+    background: #2a1a08;
+    box-shadow:
+      var(--shadow-xl),
+      inset 0 2px 0 rgba(255, 255, 255, 0.18);
+    text-align: center;
+    animation: pop-spring var(--dur-entry) var(--spring);
+  }
+
+  [data-icon] {
+    font-size: 36px;
+    line-height: 1;
+  }
+
+  [data-title] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--ink);
+  }
+
+  [data-body] {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.35;
+    color: var(--ink-dim);
+  }
+
+  [data-btn="sky"] {
+    width: 100%;
+    margin-top: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+    color: #0d2036;
+    background: linear-gradient(165deg, color-mix(in srgb, var(--clay-sky) 90%, white), var(--clay-sky));
+    box-shadow:
+      0 8px 18px rgba(116, 185, 255, 0.42),
+      inset 0 2px 0 rgba(255, 255, 255, 0.45);
+    transition:
+      transform var(--dur-hover) var(--spring),
+      box-shadow var(--dur-hover) ease;
+  }
+
+  [data-btn="sky"]:active {
+    transform: scale(0.96);
+    box-shadow: var(--shadow-pressed);
+  }
+}

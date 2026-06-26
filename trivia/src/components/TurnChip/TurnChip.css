@@ -1,0 +1,54 @@
+@scope ([data-component="turn-chip"]) {
+  :scope {
+    /* the active tint — overridden per tone below */
+    --tint: var(--player);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--tint) 22%, transparent);
+    border: 2px solid var(--tint);
+    box-shadow: var(--shadow-sm);
+    transition:
+      background var(--dur-reveal) ease,
+      border-color var(--dur-reveal) ease;
+  }
+
+  [data-avatar] {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  [data-name] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--ink);
+  }
+
+  [data-label] {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink-dim);
+    white-space: nowrap;
+  }
+
+  /* ── reveal tones override the player tint ── */
+  :scope[data-tone="correct"] {
+    --tint: var(--clay-green);
+  }
+
+  :scope[data-tone="correct"] [data-label] {
+    color: var(--clay-green);
+  }
+
+  :scope[data-tone="wrong"] {
+    --tint: var(--clay-coral);
+  }
+
+  :scope[data-tone="wrong"] [data-label] {
+    color: var(--clay-coral);
+  }
+}

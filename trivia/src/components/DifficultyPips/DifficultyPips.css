@@ -1,0 +1,26 @@
+/**
+ * DifficultyPips — a row of three small circles signalling difficulty (§4). Filled pips
+ * (`[data-filled="true"]`) glow lemon-yellow; empty pips sit faint. Scoped to
+ * `[data-component="difficulty-pips"]`; data-* selectors only.
+ */
+@scope ([data-component="difficulty-pips"]) {
+  :scope {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    vertical-align: middle;
+  }
+
+  span[data-pip] {
+    width: 9px;
+    height: 9px;
+    border-radius: var(--radius-pill);
+    background: var(--ink-faint);
+    transition: background-color var(--dur-hover) var(--spring);
+  }
+
+  span[data-pip][data-filled="true"] {
+    background: var(--clay-lemon);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--clay-lemon) 80%, transparent);
+  }
+}

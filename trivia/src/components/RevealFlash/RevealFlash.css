@@ -1,0 +1,55 @@
+@scope ([data-component="reveal-flash"]) {
+  :scope {
+    position: absolute;
+    inset: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-6) var(--space-5);
+    text-align: center;
+  }
+
+  /* ── Correct: bright green wash, spring pop-in ── */
+  :scope[data-correct="true"] {
+    background: radial-gradient(120% 80% at 50% 40%, #1a4a1a, #0d2b0d);
+    animation: pop-spring var(--dur-entry) var(--spring);
+  }
+
+  /* ── Wrong: bright red wash, shake ── */
+  :scope[data-correct="false"] {
+    background: radial-gradient(120% 80% at 50% 40%, #4a1a1a, #2b0d0d);
+    animation: shake 0.4s var(--spring);
+  }
+
+  [data-glyph] {
+    font-size: 56px;
+    line-height: 1;
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.4));
+  }
+
+  [data-title] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 26px;
+    color: #fff;
+    line-height: 1;
+  }
+
+  [data-points] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 22px;
+    color: var(--clay-green);
+    text-shadow: 0 0 12px rgba(123, 198, 126, 0.6);
+  }
+
+  [data-haptic] {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+}

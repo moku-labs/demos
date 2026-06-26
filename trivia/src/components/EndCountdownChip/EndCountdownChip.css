@@ -1,0 +1,45 @@
+/**
+ * EndCountdownChip — a translucent, blurred pill anchored bottom-centre of the TV stage (D4), counting
+ * down the return to the lobby on the podium. The seconds number is inked lemon. Drops in from below
+ * with the signature spring. Scoped to `[data-component="end-countdown-chip"]`; data-* selectors only.
+ */
+@scope ([data-component="end-countdown-chip"]) {
+  :scope {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 25;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-pill);
+    background: rgba(13, 8, 32, 0.62);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(10px);
+    white-space: nowrap;
+    animation: drop-in var(--dur-entry) var(--spring) both;
+  }
+
+  span[data-glyph] {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  span[data-label] {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--ink-dim);
+  }
+
+  span[data-seconds] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--clay-lemon);
+    text-shadow: 0 0 12px color-mix(in srgb, var(--clay-lemon) 60%, transparent);
+  }
+}

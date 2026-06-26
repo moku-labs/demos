@@ -1,0 +1,87 @@
+/**
+ * PodiumBlock — one final-screen podium slot (A8): player info (avatar · player-coloured name · muted
+ * score) above a rounded-top metallic stepped block. Height + metal gradient + medal are keyed off
+ * `[data-place]` (gold 90px / silver 70px / bronze 55px); the block rises in (`rise-up`) on a
+ * place-staggered `--rise-delay`. Scoped to `[data-component="podium-block"]`; data-* selectors only.
+ */
+@scope ([data-component="podium-block"]) {
+  :scope {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    width: 116px;
+  }
+
+  div[data-info] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  span[data-avatar] {
+    font-size: 44px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35));
+  }
+
+  span[data-name] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.1;
+    color: var(--player, var(--ink));
+    text-shadow: 0 1px 10px color-mix(in srgb, var(--player, transparent) 36%, transparent);
+  }
+
+  span[data-score] {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink-dim);
+  }
+
+  /* The stepped block — rounded top, metallic gradient, centred medal; rises in on entry. */
+  div[data-block] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    box-shadow:
+      inset 0 3px 0 rgba(255, 255, 255, 0.45),
+      inset 0 -10px 18px rgba(0, 0, 0, 0.28),
+      0 12px 26px rgba(0, 0, 0, 0.4);
+    animation: rise-up var(--dur-entry) var(--spring) both;
+    animation-delay: var(--rise-delay, 0ms);
+  }
+
+  span[data-medal] {
+    font-size: 32px;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+
+  /* — Gold (1): tallest, warm metal + amber glow — */
+  :scope[data-place="1"] div[data-block] {
+    height: 90px;
+    background: linear-gradient(180deg, #ffe9a3 0%, #f5c518 45%, #c8920a 100%);
+  }
+  :scope[data-place="1"] {
+    box-shadow: none;
+  }
+
+  /* — Silver (2): mid, cool metal — */
+  :scope[data-place="2"] div[data-block] {
+    height: 70px;
+    background: linear-gradient(180deg, #f4f6f9 0%, #c7cdd6 48%, #8b929c 100%);
+  }
+
+  /* — Bronze (3): shortest, copper metal — */
+  :scope[data-place="3"] div[data-block] {
+    height: 55px;
+    background: linear-gradient(180deg, #f2c39a 0%, #cd7f4a 48%, #8a4f28 100%);
+  }
+}

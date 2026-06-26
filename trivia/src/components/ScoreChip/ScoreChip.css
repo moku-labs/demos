@@ -1,0 +1,43 @@
+/**
+ * ScoreChip — a small translucent clay pill (name · running total · coloured delta) in the TV reveal
+ * score roll-up row (F2). The delta is inked in the player's signature colour (`--player`, passed
+ * inline). Springy pop-in on mount. Scoped to `[data-component="score-chip"]`; data-* selectors only.
+ */
+@scope ([data-component="score-chip"]) {
+  :scope {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(6px);
+    white-space: nowrap;
+    animation: pop-in var(--dur-entry) var(--spring) both;
+  }
+
+  span[data-name] {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--ink-dim);
+  }
+
+  span[data-total] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  span[data-delta] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--player, var(--clay-lemon));
+    text-shadow: 0 0 12px color-mix(in srgb, var(--player, var(--clay-lemon)) 55%, transparent);
+  }
+}

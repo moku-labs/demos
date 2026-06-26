@@ -76,7 +76,10 @@ export default [
             res: true,
             opts: true,
             attr: true
-          }
+          },
+          // `Props` is standard Preact/React component-contract terminology, not a confusing
+          // abbreviation — keep `FooProps` rather than `FooProperties` across the component layer.
+          replacements: { props: false }
         }
       ]
     }

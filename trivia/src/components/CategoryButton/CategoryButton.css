@@ -1,0 +1,53 @@
+@scope ([data-component="category-button"]) {
+  :scope {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    text-align: left;
+    transition:
+      transform var(--dur-hover) var(--spring),
+      background var(--dur-hover) ease,
+      border-color var(--dur-hover) ease,
+      box-shadow var(--dur-hover) ease,
+      opacity var(--dur-reveal) ease;
+  }
+
+  :scope:active {
+    transform: scale(0.97);
+    box-shadow: var(--shadow-pressed);
+  }
+
+  [data-emoji] {
+    font-size: 30px;
+    line-height: 1;
+    flex: 0 0 auto;
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
+  }
+
+  [data-name] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+
+  /* ── Selected (the active player's chosen category) — amber highlight glow ── */
+  :scope[data-selected="true"] {
+    background: rgba(245, 158, 11, 0.22);
+    border-color: var(--player-amber);
+    box-shadow:
+      0 0 18px 1px rgba(245, 158, 11, 0.45),
+      var(--shadow-md);
+  }
+
+  :scope[data-selected="true"] [data-name] {
+    color: var(--clay-lemon);
+  }
+}

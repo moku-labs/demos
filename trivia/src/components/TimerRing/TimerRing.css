@@ -1,0 +1,66 @@
+@scope ([data-component="timer-ring"]) {
+  :scope {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    /* default stroke; the data-zone variants drive the drain colour */
+    --stroke: var(--clay-mint);
+  }
+
+  svg {
+    display: block;
+    /* start the arc at 12 o'clock and deplete clockwise */
+    transform: rotate(-90deg);
+  }
+
+  [data-track] {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 8;
+  }
+
+  [data-arc] {
+    fill: none;
+    stroke: var(--stroke);
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition:
+      stroke-dashoffset var(--dur-hover) linear,
+      stroke 360ms ease;
+  }
+
+  [data-num] {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--ink);
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  }
+
+  /* ── drain colour bands ── */
+  :scope[data-zone="high"] {
+    --stroke: var(--clay-mint);
+  }
+
+  :scope[data-zone="mid"] {
+    --stroke: var(--clay-lemon);
+  }
+
+  :scope[data-zone="warn"] {
+    --stroke: var(--clay-peach);
+  }
+
+  /* ── low time (≤3s): coral + gentle pulse ── */
+  :scope[data-zone="low"] {
+    --stroke: var(--clay-coral);
+  }
+
+  :scope[data-zone="low"] svg {
+    animation: pulse-soft 1s ease-in-out infinite;
+  }
+}

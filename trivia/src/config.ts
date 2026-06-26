@@ -37,6 +37,16 @@ export const TRIVIA = {
     { letter: "B", shape: "◆", hex: "#2D7DD2" },
     { letter: "C", shape: "●", hex: "#F5C518" },
     { letter: "D", shape: "■", hex: "#2ECC71" }
+  ],
+  /** Avatar choices in the join wizard (A9 step 2). */
+  avatars: ["🦊", "🦄", "🐙", "🐯", "🐸", "🦁", "🐬", "🦋"],
+  /** Signature colour choices in the join wizard (A9 step 3) — first-come; taken ones grey out. */
+  playerColors: [
+    { name: "amber", hex: "#F59E0B" },
+    { name: "violet", hex: "#8B5CF6" },
+    { name: "teal", hex: "#14B8A6" },
+    { name: "coral", hex: "#EF4444" },
+    { name: "lime", hex: "#84CC16" }
   ]
 } as const;
 

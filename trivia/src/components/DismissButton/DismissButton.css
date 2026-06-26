@@ -1,0 +1,33 @@
+/**
+ * DismissButton — co-located CSS. A small translucent ghost pill that brightens on hover; sits on
+ * dark blurred banner/toast cards. @scope-encapsulated, data-* only.
+ */
+@scope ([data-component="dismiss-button"]) {
+  :scope {
+    padding: 5px 14px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border);
+    color: var(--ink-dim);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1;
+    transition:
+      background var(--dur-hover) ease,
+      border-color var(--dur-hover) ease,
+      color var(--dur-hover) ease,
+      transform var(--dur-hover) var(--spring);
+  }
+
+  :scope:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: var(--ink);
+    transform: translateY(-1px);
+  }
+
+  :scope:active {
+    transform: translateY(0) scale(0.96);
+  }
+}

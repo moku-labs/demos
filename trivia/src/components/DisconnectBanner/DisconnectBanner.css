@@ -1,0 +1,74 @@
+/**
+ * DisconnectBanner — co-located CSS. A top-anchored, click-through overlay layer holding a dark
+ * blurred clay pill whose border + name take the dropped player's colour (passed inline as
+ * --player). Drops in from above. @scope-encapsulated, data-* only.
+ */
+@scope ([data-component="disconnect-banner"]) {
+  :scope {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 12px;
+    z-index: 20;
+    pointer-events: none;
+  }
+
+  [data-card] {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    max-width: 540px;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    background: rgba(13, 8, 32, 0.72);
+    border: 2px solid var(--player, var(--border));
+    box-shadow:
+      0 14px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(12px);
+    animation: drop-in var(--dur-entry) var(--spring) both;
+  }
+
+  [data-avatar] {
+    font-size: 30px;
+    line-height: 1;
+  }
+
+  [data-text] {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  [data-line] {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  [data-name] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--player, var(--ink));
+  }
+
+  [data-status] {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--ink-dim);
+  }
+
+  [data-countdown] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--clay-lemon);
+    letter-spacing: 0.02em;
+  }
+}

@@ -1,0 +1,43 @@
+/**
+ * MuteButton — co-located CSS. A small translucent pill that brightens on hover; the muted state
+ * tints it faintly coral so the off-state reads at a glance. @scope-encapsulated, data-* only.
+ */
+@scope ([data-component="mute-button"]) {
+  :scope {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(13px, 1.3vw, 15px);
+    line-height: 1;
+    transition:
+      background var(--dur-hover) ease,
+      border-color var(--dur-hover) ease,
+      transform var(--dur-hover) var(--spring);
+  }
+
+  :scope:hover {
+    background: var(--surface-2);
+    border-color: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+  }
+
+  :scope:active {
+    transform: translateY(0) scale(0.97);
+  }
+
+  :scope[data-muted] {
+    border-color: rgba(255, 107, 107, 0.5);
+    color: var(--clay-coral);
+  }
+
+  [data-icon] {
+    font-size: 1.1em;
+  }
+}

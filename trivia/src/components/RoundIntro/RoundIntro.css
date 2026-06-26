@@ -1,0 +1,90 @@
+/**
+ * RoundIntro — a full-stage takeover (z-index:30) over a blurred amber radial wash (C1). Centred
+ * stack: spaced "ROUND" eyebrow, a big lemon spring-popped round number (`--fs-round`, amber glow),
+ * an "of N" sub-line, and a player chip (tinted by `--player`) slid in ~150ms after. Scoped to
+ * `[data-component="round-intro"]`; data-* selectors only.
+ */
+@scope ([data-component="round-intro"]) {
+  :scope {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    padding: var(--space-6);
+    background:
+      radial-gradient(60% 55% at 50% 42%, rgba(245, 158, 11, 0.34), transparent 70%),
+      rgba(13, 8, 32, 0.58);
+    backdrop-filter: blur(14px);
+    animation: pop-in var(--dur-hover) ease both;
+  }
+
+  div[data-stack] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    text-align: center;
+  }
+
+  span[data-eyebrow] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(16px, 1.8vw, 22px);
+    letter-spacing: 0.42em;
+    text-indent: 0.42em;
+    color: var(--ink-dim);
+  }
+
+  span[data-number] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-round);
+    line-height: 0.95;
+    color: var(--clay-lemon);
+    text-shadow:
+      0 0 28px rgba(245, 158, 11, 0.55),
+      0 0 60px rgba(255, 224, 102, 0.4);
+    animation: pop-spring var(--dur-entry) var(--spring) both;
+  }
+
+  span[data-total] {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: clamp(16px, 1.8vw, 22px);
+    color: var(--ink-dim);
+  }
+
+  /* Active-player chip — slid in 150ms after the number pops. */
+  div[data-chip] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--player, var(--clay-lemon)) 16%, transparent);
+    border: 1px solid color-mix(in srgb, var(--player, var(--clay-lemon)) 50%, transparent);
+    box-shadow: var(--shadow-sm);
+    animation: drop-in var(--dur-reveal) var(--spring) 150ms both;
+  }
+
+  span[data-avatar] {
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  span[data-chip-name] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 19px;
+    color: var(--ink);
+  }
+
+  span[data-chip-hint] {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--ink-dim);
+  }
+}

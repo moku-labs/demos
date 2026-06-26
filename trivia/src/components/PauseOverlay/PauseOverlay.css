@@ -1,0 +1,74 @@
+/**
+ * PauseOverlay — a full-stage takeover (z-index:30) over a near-opaque, blurred dark backdrop (C2).
+ * Centred: a sky-glowing ⏸, "Paused" in the display voice, a host-resume message, and three
+ * `pulse-soft` activity dots (staggered). Scoped to `[data-component="pause-overlay"]`; data-*
+ * selectors only.
+ */
+@scope ([data-component="pause-overlay"]) {
+  :scope {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    padding: var(--space-6);
+    background: rgba(8, 5, 20, 0.86);
+    backdrop-filter: blur(16px);
+    animation: pop-in var(--dur-hover) ease both;
+  }
+
+  div[data-stack] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    max-width: 520px;
+    text-align: center;
+  }
+
+  span[data-glyph] {
+    font-size: 64px;
+    line-height: 1;
+    color: var(--clay-sky);
+    text-shadow: 0 0 32px color-mix(in srgb, var(--clay-sky) 60%, transparent);
+    animation: pop-spring var(--dur-entry) var(--spring) both;
+  }
+
+  span[data-title] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  p[data-message] {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 17px;
+    line-height: 1.45;
+    color: var(--ink-dim);
+  }
+
+  div[data-dots] {
+    display: inline-flex;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
+  span[data-dot] {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-pill);
+    background: var(--clay-sky);
+    animation: pulse-soft 1.2s ease-in-out infinite;
+  }
+
+  span[data-dot]:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  span[data-dot]:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+}
