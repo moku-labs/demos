@@ -18,6 +18,14 @@ const PING = "ping";
 const RECONNECT_BASE_MS = 500;
 /** Reconnect backoff ceiling (ms) — caps the exponential growth so retries never stall out. */
 const RECONNECT_MAX_MS = 8000;
+/**
+ * Max consecutive abnormal closes (code 1006, never opened) before we stop reconnecting. Code 1006
+ * is the browser's "the server rejected the HTTP upgrade" signal — typically a 401 Unauthorized or
+ * a connectivity failure before the WS handshake. After this many consecutive 1006 closes without
+ * ever receiving a WS frame (i.e. the socket never opened), we treat the channel as unreachable and
+ * stop the reconnect loop. A successful open (any frame received) resets the counter.
+ */
+const MAX_ABNORMAL_CLOSES = 4;
 
 /**
  * Build the `ws(s)://` URL for a board's live channel on the same origin as the page.
@@ -36,6 +44,13 @@ function socketUrl(boardId: string): string {
 }
 
 /**
+ * Consecutive abnormal-close counter (code 1006 = failed HTTP upgrade, i.e. 401 / not-found).
+ * Incremented on each 1006 close; reset on a successful connection (open + first message frame).
+ * When it reaches {@link MAX_ABNORMAL_CLOSES} the reconnect loop is halted.
+ */
+let abnormalCloses = 0;
+
+/**
  * The shared board channel: one live socket bound to the active board, with reconnect + a pre-seed
  * buffer. A single subscriber (the fan-out below) is wired per {@link connect}; the per-island handlers
  * live in {@link handlers} so they survive board switches.
@@ -43,7 +58,32 @@ function socketUrl(boardId: string): string {
 const channel = createChannel<BoardPatch>({
   url: socketUrl,
   reconnect: { baseMs: RECONNECT_BASE_MS, maxMs: RECONNECT_MAX_MS },
-  bufferUntilSeed: true
+  bufferUntilSeed: true,
+  /**
+   * Stop reconnecting after `MAX_ABNORMAL_CLOSES` consecutive abnormal closes (code 1006 = the server
+   * rejected the HTTP upgrade — typically a 401 Unauthorized for an invalid/expired session or a
+   * board id that does not exist). A successful frame resets the counter, so a transient network
+   * dropout (which also closes with 1006) still retries up to the limit before giving up. The
+   * counter is reset when {@link connect} switches to a new board id (a new subscription resets it).
+   *
+   * @param event - The `CloseEvent` from the closed socket.
+   * @returns `true` to reconnect; `false` to stop permanently.
+   * @example
+   * ```ts
+   * shouldReconnect(event) { return event.code !== 4401; }
+   * ```
+   */
+  shouldReconnect(event: CloseEvent): boolean {
+    // code 1006 = abnormal closure (failed HTTP upgrade or network drop before open).
+    if (event.code === 1006) {
+      abnormalCloses += 1;
+      if (abnormalCloses >= MAX_ABNORMAL_CLOSES) return false;
+    } else {
+      // Any non-1006 close (normal 1000, or a server-sent code) means the socket opened — reset.
+      abnormalCloses = 0;
+    }
+    return true;
+  }
 });
 
 /** Patch handlers fanned out on every delivered frame (independent of which board is connected). */
@@ -66,7 +106,12 @@ export function connect(boardId: string): void {
   // Already bound to this board (the channel keeps `current()` across a transient reconnect) — leave it.
   if (channel.current() === boardId && unsubscribe) return;
   unsubscribe?.();
+  // Switching boards resets the abnormal-close counter — a new board starts fresh.
+  abnormalCloses = 0;
   unsubscribe = channel.subscribe(boardId, patch => {
+    // A successfully-delivered patch means the socket opened — reset the abnormal-close counter so
+    // a later transient network drop (1006 close after real messages) still retries normally.
+    abnormalCloses = 0;
     for (const handler of handlers) handler(patch);
   });
 }
