@@ -1,35 +1,21 @@
 /**
- * @file language plugin — lifecycle skeleton. Holds the module-closure vote-timer handle (NOT
- * `ctx.state` — `onStop` receives only `ctx.global`), `initLanguage` (onInit), and `stopLanguage` (onStop).
- */
-
-/** The pending vote-window timer handle (module closure — the API arms it, `stopLanguage` clears it). */
-let voteTimer: ReturnType<typeof setTimeout> | undefined;
-
-/**
- * Register the `languageVote` slice + the `language-vote` intent (deps resolve in onInit). Arms no timer.
+ * @file language plugin — `onStop` lifecycle hook.
  *
- * @throws {Error} Always — skeleton stub, implemented in the build wave.
- * @example
- * ```ts
- * createPlugin("language", { onInit: initLanguage });
- * ```
+ * `onStop` receives `TeardownContext` (`ctx.global` only — no `ctx.state`, no `ctx.require`).
+ * Its only job is to clear the pending vote `setTimeout` via the `vote-timer.ts` module closure,
+ * preventing a leaked timer from firing on a torn-down host.
  */
-export function initLanguage(): void {
-  throw new Error("not implemented");
-}
+import { clearVoteTimer } from "./vote-timer";
 
 /**
- * Clear the pending vote-window timer on host teardown (the single managed resource).
+ * `onStop` handler: clear the pending vote-window `setTimeout` via the module closure.
+ * Receives `TeardownContext` (`ctx.global` only) — never touches `ctx.state`.
  *
  * @example
  * ```ts
  * createPlugin("language", { onStop: stopLanguage });
  * ```
  */
-export function stopLanguage(): void {
-  if (voteTimer !== undefined) {
-    clearTimeout(voteTimer);
-    voteTimer = undefined;
-  }
-}
+export const stopLanguage = (): void => {
+  clearVoteTimer();
+};

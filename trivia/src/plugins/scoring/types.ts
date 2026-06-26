@@ -20,7 +20,8 @@ export type PlayerStats = {
   steals: number;
   curStreak: number;
   bestStreak: number;
-  perCategory: Record<CategoryId, number>;
+  /** Sparse map: only categories the player answered correctly are present. */
+  perCategory: Partial<Record<CategoryId, number>>;
 };
 
 /** Host-internal state — per-peer stats keyed by peer id. */
@@ -28,9 +29,9 @@ export type State = Map<PeerId, PlayerStats>;
 
 /** End-of-match stat line for the podium (A8). */
 export type EndStats = {
-  mostSteals: { peerId: PeerId; count: number } | null;
-  highestStreak: { peerId: PeerId; streak: number } | null;
-  topCategory: Record<PeerId, CategoryId | null>;
+  mostSteals: { peerId: PeerId; count: number } | undefined;
+  highestStreak: { peerId: PeerId; streak: number } | undefined;
+  topCategory: Record<PeerId, CategoryId | undefined>;
 };
 
 /** Public API consumed by match-flow via `ctx.require(scoringPlugin)`. */
