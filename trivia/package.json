@@ -11,6 +11,7 @@
   "dependencies": {
     "@moku-labs/room": "0.2.0",
     "@moku-labs/web": "2.2.2",
+    "@moku-labs/worker": "0.15.0",
     "preact": "10.29.3",
     "preact-render-to-string": "6.7.0"
   },
@@ -39,6 +40,7 @@
   "scripts": {
     "build": "bun run scripts/build.ts",
     "dev": "bun scripts/dev.ts",
+    "deploy": "bun scripts/deploy.ts",
     "typecheck": "tsc --noEmit",
     "lint": "biome check . && eslint .",
     "lint:fix": "biome check --write . && eslint --fix .",

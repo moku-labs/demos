@@ -19,7 +19,9 @@ brainstorm output). **Planner/builder: reference `spec/` — do not re-search fo
 > is **one `@moku-labs/web` SPA whose role is chosen by the URL** (`/` = TV/stage, `/controller/:code` =
 > phone) + per-role room `createApp`s (`src/lib/room/`) + **one** `@moku-labs/room/server` Hub-DO worker
 > (`src/server.ts` + `src/cloudflare/worker.ts`) that serves the SPA via `ASSETS` and brokers
-> `serverSignaling`. `@moku-labs/worker` is **not** a dependency — room's `./server` core is the worker.
+> `serverSignaling`. **`@moku-labs/worker@0.15.0` is also a dependency — but only for its build/deploy CLI**
+> (`server.cli.{dev,deploy}` **generate `wrangler.jsonc`**; room's `./server` core ships no config
+> generator). room's `./server` `hub.handle` remains the **runtime** worker; the worker app handles no requests.
 
 ## Package Manager
 
@@ -28,8 +30,10 @@ Use `bun` exclusively — never npm, yarn, or pnpm.
 ## Scripts
 
 - `bun run build` — `scripts/build.ts`: bundle the web SPA → `dist/client` via the web app's `cli.build()`
-- `bun run dev` — `scripts/dev.ts`: cold-build the client, regenerate `wrangler.jsonc`, run the worker
-  over the built client (worker wiring is finalised in the build's worker stage)
+- `bun run dev` — `scripts/dev.ts`: `server.cli.dev` generates `wrangler.jsonc`, cold-builds the client,
+  runs `wrangler dev` over it (Hub DO + RATE_LIMIT KV + ASSETS), and incrementally rebuilds on change
+- `bun run deploy` — `scripts/deploy.ts`: `server.cli.deploy` builds + generates config + provisions
+  KV/DO + `wrangler deploy` (guided; `--ci` auto-confirms, `--delete` tears a stage down)
 - `bun run typecheck` — `tsc --noEmit`
 - `bun run lint` — Biome check + ESLint
 - `bun run lint:fix` — Auto-fix lint issues
@@ -77,11 +81,15 @@ This is a **Layer-3 consumer app** — it composes existing Moku frameworks via 
    - The **web↔room seam** is the `src/lib/room/` module singleton (idiom I5, like
      `tracker/lib/realtime.ts`): islands import its `startStage`/`startController`/`snapshot`/
      `subscribe`/`intent`/`onLifecycle`/`qr` surface; it owns the room apps (created only in the browser).
-3. **Server — `@moku-labs/room/server`.** `src/server.ts` = `createApp()` (wires the `hub` DO by
-   default); `src/cloudflare/worker.ts` delegates `fetch` to `app.hub.handle` + re-exports the `Hub`
-   Durable Object. One worker serves the SPA via `ASSETS` and brokers `serverSignaling`. (Room 0.2.0
-   ships the server runtime without types → `src/server.ts`/`worker.ts` lean on a small ambient module
-   in `declarations.d.ts` — drop it once room publishes `./server` types.)
+3. **Server — `@moku-labs/room/server` (runtime) + `@moku-labs/worker` (build/deploy CLI).** `src/server.ts`
+   composes **two** side-by-side apps: `room = createApp()` from `@moku-labs/room/server` (the **runtime** —
+   `room.hub.handle` routes the signaling WS → the per-room `Hub` DO and everything else → `ASSETS`), and
+   `server = createApp({…})` from `@moku-labs/worker` (build tooling **only** — `storage/kv/d1/queues/
+   durableObjects/deploy/cli`; its `durableObjects`+`kv`+`deploy.assets` declarations make `server.cli.{dev,
+   deploy}` **generate `wrangler.jsonc`**, since room/server ships no generator). `src/cloudflare/worker.ts`
+   delegates `fetch` to `room.hub.handle` + re-exports the `Hub` DO. (Room 0.2.0 ships the server runtime
+   without types → `src/server.ts`/`worker.ts` lean on a small ambient module in `declarations.d.ts` — drop
+   it once room publishes `./server` types.)
 
 The four custom Layer-3 room game plugins (`question-bank`, `scoring`, `language`, `match-flow`) live
 in `src/plugins/{name}/` using **room's** re-exported `createPlugin` — never `@moku-labs/core`.
@@ -91,10 +99,12 @@ for app shape (multiple `createApp` instances, side-by-side frameworks, folder s
 
 ## Dependency stack
 
-`@moku-labs/room@0.2.0` + `@moku-labs/web@2.2.2` + `preact@10.29.3` + `preact-render-to-string@6.7.0`;
-all three frameworks pin one aligned `@moku-labs/core@1.5.0`. **`@moku-labs/worker` is not a
-dependency** — room's `./server` core is the worker. `qrcode`/`trystero` are **bundled inside room** (not
-direct deps). Dev tooling tracks the latest used by `demos/atlas` (biome/eslint/vitest/tsdown/wrangler).
+`@moku-labs/room@0.2.0` + `@moku-labs/web@2.2.2` + `@moku-labs/worker@0.15.0` + `preact@10.29.3` +
+`preact-render-to-string@6.7.0`; all four frameworks pin one aligned `@moku-labs/core@1.5.0`.
+**`@moku-labs/worker@0.15.0` IS a dependency** — composed in `src/server.ts` purely for its build/deploy CLI
+(`server.cli.{dev,deploy}` generate `wrangler.jsonc`); room's `./server` `hub.handle` is still the runtime
+worker. `qrcode`/`trystero` are **bundled inside room** (not direct deps). Dev tooling tracks the latest
+used by `demos/atlas` (biome/eslint/vitest/tsdown/wrangler).
 The "latest of everything" directive holds — bump room first, then the rest, keeping `core` aligned.
 
 ## Game brief (the spec to build toward)

@@ -1,17 +1,30 @@
 /**
- * @file `bun run dev` — local dev driver.
+ * @file `bun run dev` — Moku-orchestrated local dev (worker cli).
  *
- * Cold-build the web client (`dist/client`), then run the Cloudflare worker over it with `wrangler dev`
- * (the worker serves the built client through ASSETS and brokers signaling through the Hub DO).
+ * `server.cli.dev` GENERATES `wrangler.jsonc` from `src/server.ts`'s worker app (Hub DO + RATE_LIMIT KV +
+ * ASSETS), cold-builds the web client via `webBuild`, starts `wrangler dev` once over the built client, then
+ * incrementally rebuilds only the changed client paths via `onChange` (`web.cli.update`). The worker serves
+ * the SPA + `/bank/**` shards through ASSETS and brokers WebRTC signaling through the per-room `Hub` DO. The
+ * Hub uses workers-native SQLite (auto-migrated by wrangler from the generated `migrations` block) — no D1,
+ * so no `wrangler d1 migrations apply` step.
  *
- * TODO(worker stage): regenerate `wrangler.jsonc` from `src/server.ts` before spawning wrangler, and
- * incrementally rebuild the client on change. Tracked in the build's worker-wiring step.
+ * `--port <n>` sets the dev port (default 8787, wrangler's default); `--stage <name>` sets the stage for the
+ * generated wrangler resource name (default "production").
  */
 import { app as web } from "../src/app";
+import { server } from "../src/server";
 
-await web.cli.build();
+// Dev port + stage come straight from the CLI args — explicit, no hidden framework resolution.
+const portFlag = process.argv.indexOf("--port");
+const portValue = portFlag === -1 ? undefined : process.argv[portFlag + 1];
+const port = portValue ? Number(portValue) : 8787;
 
-const wrangler = Bun.spawn(["bunx", "wrangler", "dev"], {
-  stdio: ["inherit", "inherit", "inherit"]
+const stageFlag = process.argv.indexOf("--stage");
+const stage = stageFlag === -1 ? "production" : (process.argv[stageFlag + 1] ?? "production");
+
+await server.cli.dev({
+  port,
+  stage,
+  webBuild: () => web.cli.build(),
+  onChange: changes => web.cli.update(changes)
 });
-await wrangler.exited;
