@@ -108,7 +108,7 @@ export const initLanguagePlugin = (
 
     // Narrow the shape-validated payload (room validates before this handler runs)
     if (typeof payload !== "object" || payload === null || !("lang" in payload)) return;
-    const raw = (payload as Record<string, unknown>)["lang"];
+    const raw = (payload as Record<string, unknown>).lang;
     if (raw !== "en" && raw !== "ru") return;
     const lang: Lang = raw;
 
@@ -121,7 +121,7 @@ export const initLanguagePlugin = (
     );
 
     stage.mutate("languageVote", d =>
-      (d["open"] as boolean | undefined)
+      (d.open as boolean | undefined)
         ? { ...d, options: options as unknown as VoteOption[], leading }
         : d
     );

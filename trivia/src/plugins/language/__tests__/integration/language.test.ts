@@ -54,13 +54,13 @@ describe("language plugin integration", () => {
     // Wait for the slice update to propagate — open:true and options updated
     await vi.waitFor(
       () => {
-        expect(controller.controller.read("languageVote")?.["open"]).toBe(true);
+        expect(controller.controller.read("languageVote")?.open).toBe(true);
       },
       { timeout: 4000 }
     );
 
     const cells = controller.controller.read("languageVote");
-    expect(cells?.["open"]).toBe(true);
+    expect(cells?.open).toBe(true);
 
     // Clean up: cancel the vote
     host.language.cancelVote();

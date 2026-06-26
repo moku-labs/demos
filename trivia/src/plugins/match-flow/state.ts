@@ -1,18 +1,23 @@
 /**
- * @file match-flow plugin — host-internal state factory skeleton (steal bookkeeping + lock guard).
+ * @file match-flow plugin — host-internal state factory (steal bookkeeping + lock guard).
+ * The clock handle is NOT here — it lives in a `clock.ts` module closure because `onStop`
+ * receives only `TeardownContext` (`ctx.global` only — spec/08-CONTEXT §2, spec/11-INVARIANTS §1.11).
  */
 import type { State } from "./types";
 
 /**
- * Build the initial match state (no peers tried, unlocked). The clock handle is NOT here — it lives in
- * a `clock.ts` module closure (onStop has no `ctx.state`).
+ * Build the initial match-flow host state: no peers tried, unlocked.
  *
- * @throws {Error} Always — skeleton stub, implemented in the build wave.
+ * The `tried` Set tracks peers already shown the current question (for the steal machine).
+ * The `locked` flag prevents double-processing a single answer-lock intent.
+ * Both are reset at the start of every new question via `clock.ts`/`machine.ts`.
+ *
+ * @returns A fresh `State` with an empty `tried` Set and `locked: false`.
  * @example
  * ```ts
  * createPlugin("matchFlow", { createState: createMatchFlowState });
  * ```
  */
 export function createMatchFlowState(): State {
-  throw new Error("not implemented");
+  return { tried: new Set(), locked: false };
 }

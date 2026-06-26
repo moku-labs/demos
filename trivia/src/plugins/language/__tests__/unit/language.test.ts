@@ -438,7 +438,7 @@ describe("createLanguageApi", () => {
       const lastCall = stage.mutate.mock.calls.at(-1);
       const recipe = lastCall?.[1] as (d: Record<string, unknown>) => Record<string, unknown>;
       const slice = recipe({});
-      const deadline = slice["deadlineTs"] as number;
+      const deadline = slice.deadlineTs as number;
       expect(deadline).toBeGreaterThanOrEqual(now + CONFIG.voteWindowMs - 50);
       expect(deadline).toBeLessThanOrEqual(now + CONFIG.voteWindowMs + 50);
     });
@@ -504,8 +504,8 @@ describe("createLanguageApi", () => {
         // eslint-disable-next-line unicorn/no-null -- slice-cell fixture shape (null, not undefined)
         confirmed: null
       });
-      expect(slice["open"]).toBe(false);
-      expect(slice["confirmed"]).toBe("en");
+      expect(slice.open).toBe(false);
+      expect(slice.confirmed).toBe("en");
     });
   });
 
@@ -540,7 +540,7 @@ describe("createLanguageApi", () => {
         // eslint-disable-next-line unicorn/no-null -- slice-cell fixture shape (null, not undefined)
         confirmed: null
       });
-      expect(slice["open"]).toBe(false);
+      expect(slice.open).toBe(false);
     });
 
     it("is a no-op when the vote is not open", () => {

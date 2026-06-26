@@ -80,6 +80,21 @@ export const languagePlugin = createPlugin("language", {
         _voteOpen = v;
       }
     ),
-  // @no-resource-check — onStop clears the pending vote-window setTimeout (spec/03 §Lifecycle)
-  onStop: stopLanguage
+  /**
+   * Teardown: close the vote gate (reset the module-closure `_voteOpen`) and clear the pending
+   * vote-window timer, so a stopped host cannot leak its open gate into the next host instance.
+   *
+   * @example
+   * ```ts
+   * // Called automatically by the Moku kernel during the onStop phase.
+   * ```
+   */
+  // @no-resource-check — onStop closes the vote gate + clears the pending vote-window setTimeout
+  // (spec/03 §Lifecycle). Resetting `_voteOpen` on teardown is required because it is a module-closure
+  // singleton: without it a stopped host leaves the gate open, so the NEXT host's openVote() early-returns
+  // (surfaces as a leak across sequential app instances, e.g. in tests).
+  onStop: () => {
+    _voteOpen = false;
+    stopLanguage();
+  }
 });
