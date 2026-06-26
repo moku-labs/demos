@@ -1,0 +1,13 @@
+/**
+ * main.css — the single stylesheet the build plugin bundles + injects as a content-hashed <link>.
+ * Declares the cascade-layer order up front; the real tokens (Fredoka + Quicksand, the clay palette,
+ * spring easing, shadow tiers), base, component, and utility rules are built from spec/ during app-build.
+ */
+@layer reset, base, tokens, components, utilities;
+
+@layer tokens {
+  :root {
+    /* Design tokens (clay palette, type scale, spring easing, shadow tiers) — filled from spec/. */
+    color-scheme: light;
+  }
+}
