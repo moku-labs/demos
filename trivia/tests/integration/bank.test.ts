@@ -10,8 +10,8 @@
 import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { type CategoryId, type Lang, type Tier, TRIVIA } from "../../src/config";
-import { decode } from "../../src/lib/decode";
 import { fetchAndIndexBank, gradeAnswer, selectNext } from "../../src/plugins/question-bank/api";
+import { decode } from "../../src/plugins/question-bank/decode";
 import { createQuestionBankState } from "../../src/plugins/question-bank/state";
 import type { Config } from "../../src/plugins/question-bank/types";
 

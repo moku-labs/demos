@@ -9,7 +9,7 @@
  * 2. deterministically shuffles the four option slots (seeded by `id`, so the correct answer is not
  *    always at `correctIndex` yet regeneration is byte-stable), and
  * 3. salts the resulting correct slot into `answerCheck` (decoded only at grade time by
- *    `src/lib/decode.ts` — anti-spoiler obfuscation, never security).
+ *    `src/plugins/question-bank/decode.ts` — anti-spoiler obfuscation, never security).
  *
  * No I/O lives here — `scripts/gen-bank.ts` wraps these pure functions with filesystem reads/writes and
  * console output, and `tests/unit/bank-encode.test.ts` round-trips every transform against `decode()`.
@@ -206,7 +206,7 @@ export function deriveSalt(id: string): string {
 
 /**
  * Encode a correct slot into the salted `answerCheck` field: `${salt}:${(correctSlot + salt.length) % 4}`.
- * Exact inverse of `src/lib/decode.ts` — the round-trip is asserted in the encoder's unit tests.
+ * Exact inverse of `src/plugins/question-bank/decode.ts` — the round-trip is asserted in the encoder's unit tests.
  *
  * @param salt - A colon-free salt (see `deriveSalt`).
  * @param correctSlot - The post-shuffle index (0–3) of the correct answer.

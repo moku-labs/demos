@@ -9,8 +9,8 @@
  */
 import type { JsonValue } from "@moku-labs/room";
 import { TRIVIA } from "../../config";
-import { decode } from "../../lib/decode";
 import type { PublicQuestion } from "../../lib/types";
+import { decode } from "./decode";
 import type { CategoryAvail, Config, LoadedQuestion, State } from "./types";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -156,7 +156,7 @@ export function selectNext(
  * Grade a locked answer at reveal. The ONLY point where `correctSlot` is computed.
  *
  * Looks up the full `LoadedQuestion` in `state.active` (stashed by `selectNext`), decodes
- * `answerCheck` via `src/lib/decode.ts`, and compares to `pickedSlot`. An `undefined` slot
+ * `answerCheck` via `src/plugins/question-bank/decode.ts`, and compares to `pickedSlot`. An `undefined` slot
  * (timeout) is always incorrect.
  *
  * @param state - The host-internal plugin state (reads active map).

@@ -2,7 +2,7 @@
  * @file Unit tests for the deterministic bank encoder (`scripts/lib/bank-encode.ts`).
  *
  * The load-bearing guarantee: the committed ENCODER (`/trivia-gen` write stage) and the committed runtime
- * DECODER (`src/lib/decode.ts`) are exact inverses — if they drift, the game grades every answer wrong.
+ * DECODER (`src/plugins/question-bank/decode.ts`) are exact inverses — if they drift, the game grades every answer wrong.
  * These tests round-trip every transform, assert id stability/uniqueness, deterministic shuffling, salt
  * variation (the anti-spoiler property), and that malformed raw input is rejected loudly.
  */
@@ -17,7 +17,7 @@ import {
   shuffleOptions,
   validateRaw
 } from "../../scripts/lib/bank-encode";
-import { decode } from "../../src/lib/decode";
+import { decode } from "../../src/plugins/question-bank/decode";
 
 const baseRaw: RawQuestion = {
   tier: "easy",

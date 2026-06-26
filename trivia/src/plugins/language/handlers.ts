@@ -4,6 +4,7 @@
  * Contains:
  * - `initLanguagePlugin` — registers the `languageVote` sync slice and the `language-vote` intent
  *   (schema + handler). Called from `onInit` in `index.ts` with deps extracted from `ctx`.
+ * - `stopLanguage` — `onStop` teardown (clears the pending vote timer).
  * - `createLanguageApi` — builds the `Api` object (`openVote`/`cancelVote`/`result`).
  *   Called from the `api:` factory in `index.ts` with deps extracted from `ctx`.
  *
@@ -220,4 +221,18 @@ export const createLanguageApi = (
       return confirmedLang;
     }
   };
+};
+
+/**
+ * `onStop` teardown handler: clear the pending vote-window `setTimeout` via the `vote-timer.ts` module
+ * closure, so a torn-down host cannot leak a timer into the next instance. Receives `TeardownContext`
+ * (`ctx.global` only) — it never touches `ctx.state`.
+ *
+ * @example
+ * ```ts
+ * createPlugin("language", { onStop: stopLanguage });
+ * ```
+ */
+export const stopLanguage = (): void => {
+  clearVoteTimer();
 };

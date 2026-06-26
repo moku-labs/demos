@@ -5,7 +5,7 @@
  * - `state.ts`       — `createLanguageState`
  * - `api.ts`         — pure functions: `tallyVotes`, `buildOptions`, `recordVote`
  * - `vote-timer.ts`  — module-closure timer: `armVoteTimer`, `clearVoteTimer`, `stashConfirm`, `takeConfirm`
- * - `lifecycle.ts`   — `stopLanguage` (onStop hook)
+ * - `handlers.ts`    — `stopLanguage` (onStop hook)
  * - `handlers.ts`    — `initLanguagePlugin`, `createLanguageApi` (with mock deps)
  * - `types.ts`       — structural type checks via `expectTypeOf`
  */
@@ -15,8 +15,7 @@ import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "v
 
 import { buildOptions, recordVote, tallyVotes } from "../../api";
 import type { IntentDeps, SyncDeps } from "../../handlers";
-import { createLanguageApi, initLanguagePlugin } from "../../handlers";
-import { stopLanguage } from "../../lifecycle";
+import { createLanguageApi, initLanguagePlugin, stopLanguage } from "../../handlers";
 import { createLanguageState } from "../../state";
 import type { Api, Config, State, VoteOption } from "../../types";
 import { armVoteTimer, clearVoteTimer, stashConfirm, takeConfirm } from "../../vote-timer";

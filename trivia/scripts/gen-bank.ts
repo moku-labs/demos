@@ -12,7 +12,7 @@
  * Usage: `bun scripts/gen-bank.ts --source scratchpad/raw --out public/bank --min 4`
  */
 import { type CategoryId, type Lang, TRIVIA, type Tier } from "../src/config";
-import { decode } from "../src/lib/decode";
+import { decode } from "../src/plugins/question-bank/decode";
 import { type EncodedQuestion, encodeQuestion, type RawQuestion } from "./lib/bank-encode";
 
 /** The ordered tiers used for the per-shard count table + floor check. */

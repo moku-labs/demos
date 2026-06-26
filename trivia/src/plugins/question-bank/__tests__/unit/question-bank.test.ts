@@ -6,7 +6,6 @@
  */
 import type { JsonValue } from "@moku-labs/room";
 import { describe, expect, it } from "vitest";
-import { decode } from "../../../../lib/decode";
 import {
   computeAvailability,
   fetchAndIndexBank,
@@ -16,6 +15,7 @@ import {
   parseSeenHistory,
   selectNext
 } from "../../api";
+import { decode } from "../../decode";
 import { createQuestionBankState } from "../../state";
 import type { CategoryAvail, Config, LoadedQuestion, State } from "../../types";
 
@@ -115,7 +115,7 @@ describe("createQuestionBankState", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Section: decode (src/lib/decode.ts)
+// Section: decode (src/plugins/question-bank/decode.ts)
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe("decode", () => {

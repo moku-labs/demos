@@ -13,8 +13,7 @@
  * @see README.md
  */
 import { createPlugin, intentPlugin, stagePlugin, syncPlugin } from "@moku-labs/room";
-import { createLanguageApi, initLanguagePlugin } from "./handlers";
-import { stopLanguage } from "./lifecycle";
+import { createLanguageApi, initLanguagePlugin, stopLanguage } from "./handlers";
 import { createLanguageState } from "./state";
 import type { Config } from "./types";
 
