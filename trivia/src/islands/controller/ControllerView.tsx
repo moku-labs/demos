@@ -6,14 +6,14 @@
  * modals. DOM glue only — the phone only reads slices + sends intents; the host is authoritative.
  */
 import type { JSX } from "preact";
-import { AnswerButton } from "../../components/AnswerButton/AnswerButton";
-import { CategoryButton } from "../../components/CategoryButton/CategoryButton";
-import { ClayButton } from "../../components/ClayButton/ClayButton";
-import { DifficultyPips } from "../../components/DifficultyPips/DifficultyPips";
-import { JoinWizard } from "../../components/JoinWizard/JoinWizard";
-import { LeaveModal } from "../../components/LeaveModal/LeaveModal";
-import { MidJoinModal } from "../../components/MidJoinModal/MidJoinModal";
-import { RevealFlash } from "../../components/RevealFlash/RevealFlash";
+import { AnswerButton } from "../../components/AnswerButton";
+import { CategoryButton } from "../../components/CategoryButton";
+import { ClayButton } from "../../components/ClayButton";
+import { DifficultyPips } from "../../components/DifficultyPips";
+import { JoinWizard } from "../../components/JoinWizard";
+import { LeaveModal } from "../../components/LeaveModal";
+import { MidJoinModal } from "../../components/MidJoinModal";
+import { RevealFlash } from "../../components/RevealFlash";
 import type { JoinProfile } from "../../components/types";
 import { TRIVIA } from "../../config";
 import { ramp } from "../../lib/difficulty";

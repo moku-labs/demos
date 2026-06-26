@@ -8,7 +8,9 @@
  */
 @layer reset, tokens, base, animations, components, utilities;
 
-/* @imports MUST precede other rules — the component sheets are pulled in via the aggregator. */
+/* @imports MUST precede other rules. Self-hosted fonts first (registers @font-face), then the
+   component sheets via the aggregator. */
+@import "./fonts.css";
 @import "./components.css" layer(components);
 
 @layer reset {

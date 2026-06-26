@@ -1,0 +1,8 @@
+/* ============================================================
+   Self-hosted font aggregator — @imported first from main.css so the @font-face
+   rules are registered before any layered rule references the families. Vendored
+   from @fontsource (no runtime CDN). Add a family = vendor its woff2 into
+   public/fonts/<family>/, author src/styles/<family>.css, @import it here.
+   ============================================================ */
+@import "./fredoka.css";
+@import "./quicksand.css";
