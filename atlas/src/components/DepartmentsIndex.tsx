@@ -8,7 +8,6 @@
 
 import type { Customization, Department } from "../lib/types";
 import { DepartmentTab } from "./DepartmentTab";
-import { DropIndicator } from "./DropIndicator";
 import { Icon } from "./Icon";
 
 /** Props for {@link DepartmentsIndex}. */
@@ -56,8 +55,8 @@ export function DepartmentsIndex({ departments, activeId, customizations }: Depa
           <Icon name="plus" />
           <span>Add department</span>
         </button>
-        {/* Drag-reorder insertion bar — hidden until the departments island moves it under the pointer. */}
-        <DropIndicator orientation="vertical" hidden />
+        {/* The drag-reorder insertion bar is a body-level overlay owned by lib/drag-indicator.ts (never
+            a Preact child — reparenting one out of this persistent island crashed Preact's reconcile). */}
       </div>
     </nav>
   );

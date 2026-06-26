@@ -3,8 +3,15 @@
  * selectors by events.ts. Grouped by feature — opening an issue, the universal element menu + inline
  * rename (cards & columns), the add affordances, and drag-to-reorder (cards within/between columns;
  * columns within the row). Every mutation round-trips through `lib/api`; the returning realtime patch
- * reconciles the UI (see reconcile.ts) and a gentle toast confirms it. The drop indicator is moved
- * into the gap under the pointer mid-drag (the SSR `DropIndicator` component lives in the board markup).
+ * reconciles the UI (see reconcile.ts) and a gentle toast confirms it.
+ *
+ * CARD DROP INDICATOR: the indicator element is created imperatively and appended to `document.body` —
+ * it is NEVER part of the Preact-rendered vdom (removing the old SSR `<DropIndicator hidden />` in
+ * BoardView). Reparenting a Preact-owned node into a Preact-managed container (a column body) during
+ * drag caused the classic "insertBefore: not a child of this node" NotFoundError when Preact reconciled
+ * after the drag — the vdom's retained reference was left in the wrong parent after drop/dragend. The
+ * overlay lives entirely outside the board island host and is positioned with `position: fixed` +
+ * coordinates derived from `getBoundingClientRect`, so Preact never sees it.
  */
 
 import {
@@ -472,7 +479,7 @@ export async function onColumnDrop(
 ): Promise<void> {
   if (!(event instanceof DragEvent)) return;
   event.preventDefault();
-  hideDropIndicator(ctx);
+  hideDropIndicator();
 
   // A column-to-row drop is handled by onBoardDrop; here we only place a dragged card.
   const issueId = event.dataTransfer?.getData(DRAG_ISSUE_KEY);
@@ -516,7 +523,7 @@ export async function onColumnDrop(
  */
 export async function onBoardDrop(ctx: BoardContext, event: Event, row: Element): Promise<void> {
   if (!(event instanceof DragEvent)) return;
-  hideDropIndicator(ctx);
+  hideDropIndicator();
 
   const draggedTitle = event.dataTransfer?.getData(DRAG_COLUMN_KEY);
   const column = draggedTitle
@@ -544,67 +551,144 @@ export async function onBoardDrop(ctx: BoardContext, event: Event, row: Element)
 /**
  * Hide the drop indicator when a drag leaves the board entirely (a drag that ends without a drop).
  *
- * @param ctx - The board island context.
+ * @param _ctx - The board island context (unused).
  * @param _event - The dragend/dragleave event (unused).
  * @example
  * ```ts
  * events: { "dragend [data-board]": onDragEnd };
  * ```
  */
-export function onDragEnd(ctx: BoardContext, _event: Event): void {
-  hideDropIndicator(ctx);
+export function onDragEnd(_ctx: BoardContext, _event: Event): void {
+  hideDropIndicator();
 }
 
-// ─── drop indicator placement ──────────────────────────────────────────────────
+// ─── drop indicator overlay (imperative — lives OUTSIDE the Preact vdom) ──────
+//
+// The indicator is appended to `document.body` once and stays there for the session; Preact never
+// owns it, so reparenting it during drag can never corrupt Preact's retained node references. It is
+// positioned with `position:fixed` + `top`/`left`/`width` derived from the target card gap's
+// `getBoundingClientRect` — visible above the board via z-index, but outside the diffed host subtree.
+
+/** Lazily-created card drop indicator overlay (NOT in the Preact vdom). */
+let cardIndicator: HTMLElement | undefined;
 
 /**
- * Move the SSR drop indicator into the gap under the pointer — inside the hovered column for a card
- * drag, or between columns for a column drag — and reveal it. A no-op when there is no indicator in the
- * board markup yet.
+ * Return the shared card drop indicator, creating it the first time and appending it to
+ * `document.body` so it is never part of any Preact-managed subtree.
  *
- * @param ctx - The board island context.
+ * @returns The `[data-drop-indicator]` overlay element.
+ * @example
+ * ```ts
+ * const indicator = getCardIndicator();
+ * ```
+ */
+function getCardIndicator(): HTMLElement {
+  if (!cardIndicator) {
+    const element = document.createElement("div");
+    // Use dataset for data-* attributes; setAttribute only for ARIA/role (no dataset equivalent).
+    element.dataset.dropIndicator = "";
+    element.dataset.orientation = "horizontal";
+    element.setAttribute("role", "presentation");
+    element.setAttribute("aria-hidden", "true");
+    element.setAttribute("hidden", "");
+    // Inner children mirror DropIndicator.tsx (tick + line).
+    const tick = document.createElement("span");
+    tick.dataset.dropTick = "";
+    const line = document.createElement("span");
+    line.dataset.dropLine = "";
+    // eslint-disable-next-line unicorn/prefer-dom-node-append -- workers-types overload conflict
+    element.appendChild(tick);
+    // eslint-disable-next-line unicorn/prefer-dom-node-append -- workers-types overload conflict
+    element.appendChild(line);
+    // Overlay styles: fixed, full-width of the column, pointer-events:none. The CSS @scope rule
+    // in DropIndicator.css still applies (it scopes to [data-drop-indicator]).
+    element.style.position = "fixed";
+    element.style.pointerEvents = "none";
+    // eslint-disable-next-line unicorn/prefer-dom-node-append -- workers-types overload conflict
+    document.body.appendChild(element);
+    cardIndicator = element;
+  }
+  return cardIndicator;
+}
+
+/**
+ * Compute the fixed-position `top` coordinate for the indicator at the gap before `beforeCard`
+ * in `cards` within `body`, or after the last card when `beforeCard` is undefined.
+ *
+ * @param body - The column body element.
+ * @param cards - The ordered card elements in that body.
+ * @param beforeCard - The card the indicator should precede, or undefined (insert at end).
+ * @returns The viewport `top` (px) to assign to the fixed overlay.
+ * @example
+ * ```ts
+ * const top = gapTop(body, cards, beforeCard);
+ * ```
+ */
+function gapTop(
+  body: HTMLElement,
+  cards: HTMLElement[],
+  beforeCard: HTMLElement | undefined
+): number {
+  if (beforeCard) {
+    const beforeRect = beforeCard.getBoundingClientRect();
+    const index = cards.indexOf(beforeCard);
+    const previous = index > 0 ? cards[index - 1] : undefined;
+    const previousBottom = previous
+      ? previous.getBoundingClientRect().bottom
+      : body.getBoundingClientRect().top;
+    return (previousBottom + beforeRect.top) / 2;
+  }
+  // After the last card (or at body top when the column is empty).
+  const last = cards.at(-1);
+  return last ? last.getBoundingClientRect().bottom : body.getBoundingClientRect().top;
+}
+
+/**
+ * Position and reveal the card drop indicator at the gap under the pointer inside a column body.
+ * Uses `position:fixed` coordinates so the element can live in `document.body` — outside the
+ * Preact-managed host — while appearing visually inside the column.
+ *
+ * @param _ctx - The board island context (unused; kept so the call-site signature matches the event map).
  * @param event - The current dragover event.
  * @example
  * ```ts
  * positionDropIndicator(ctx, event);
  * ```
  */
-function positionDropIndicator(ctx: BoardContext, event: DragEvent): void {
-  const indicator = ctx.el.querySelector<HTMLElement>("[data-drop-indicator]");
-  if (!indicator) return;
+function positionDropIndicator(_ctx: BoardContext, event: DragEvent): void {
+  if (!(event.target instanceof Element)) return;
 
-  // Card drag: insert the line before the card under the pointer in the hovered column body.
-  if (event.target instanceof Element) {
-    const body = event.target.closest<HTMLElement>("[data-column-body]");
-    if (body) {
-      const cards = [...body.querySelectorAll<HTMLElement>("[data-card-id]")];
-      const before = cards.find(card => {
-        const rect = card.getBoundingClientRect();
-        return event.clientY < rect.top + rect.height / 2;
-      });
-      // appendChild/insertBefore (not append/before): @cloudflare/workers-types merges Element.append
-      // into a conflicting overload set in this project, so the explicit DOM method is used.
-      // eslint-disable-next-line unicorn/prefer-modern-dom-apis -- see note above
-      if (before) body.insertBefore(indicator, before);
-      // eslint-disable-next-line unicorn/prefer-dom-node-append -- see note above
-      else body.appendChild(indicator);
-      indicator.toggleAttribute("hidden", false);
-      return;
-    }
+  const body = event.target.closest<HTMLElement>("[data-column-body]");
+  if (!body) {
+    hideDropIndicator();
+    return;
   }
-  indicator.toggleAttribute("hidden", true);
+
+  const cards = [...body.querySelectorAll<HTMLElement>("[data-card-id]")];
+  const beforeCard = cards.find(card => {
+    const rect = card.getBoundingClientRect();
+    return event.clientY < rect.top + rect.height / 2;
+  });
+
+  const bodyRect = body.getBoundingClientRect();
+  const indicator = getCardIndicator();
+  const top = gapTop(body, cards, beforeCard);
+
+  // Apply fixed coordinates — width matches the column body, height:0 lets the children bleed.
+  indicator.style.top = `${top}px`;
+  indicator.style.left = `${bodyRect.left}px`;
+  indicator.style.width = `${bodyRect.width}px`;
+  indicator.toggleAttribute("hidden", false);
 }
 
 /**
- * Hide the drop indicator after a drop / drag end.
+ * Hide the card drop indicator overlay after a drop / drag end.
  *
- * @param ctx - The board island context.
  * @example
  * ```ts
- * hideDropIndicator(ctx);
+ * hideDropIndicator();
  * ```
  */
-function hideDropIndicator(ctx: BoardContext): void {
-  const indicator = ctx.el.querySelector<HTMLElement>("[data-drop-indicator]");
-  indicator?.toggleAttribute("hidden", true);
+function hideDropIndicator(): void {
+  cardIndicator?.toggleAttribute("hidden", true);
 }

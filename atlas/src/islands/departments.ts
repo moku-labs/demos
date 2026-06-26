@@ -469,24 +469,23 @@ function onTrackDragOver(ctx: DepartmentsContext, event: Event): void {
   event.preventDefault();
 
   const track = ctx.el.querySelector<HTMLElement>("[data-departments-track]");
-  const indicator = track?.querySelector<HTMLElement>("[data-drop-indicator]");
-  if (!track || !indicator) return;
+  if (!track) return;
   const tabs = [...track.querySelectorAll<HTMLElement>("[data-dept-tab]")];
-  positionInsertionIndicator(track, indicator, tabs, event.clientX);
+  positionInsertionIndicator(track, tabs, event.clientX);
 }
 
 /**
  * Hide the insertion bar when a department drag ends (dropped or cancelled).
  *
- * @param ctx - The departments island context.
+ * @param _ctx - The departments island context (unused).
  * @param _event - The dragend event (unused).
  * @example
  * ```ts
  * events: { "dragend [data-departments-track]": onTrackDragEnd };
  * ```
  */
-function onTrackDragEnd(ctx: DepartmentsContext, _event: Event): void {
-  hideInsertionIndicator(ctx.el.querySelector<HTMLElement>("[data-drop-indicator]"));
+function onTrackDragEnd(_ctx: DepartmentsContext, _event: Event): void {
+  hideInsertionIndicator();
 }
 
 /**
@@ -504,7 +503,7 @@ function onTrackDragEnd(ctx: DepartmentsContext, _event: Event): void {
 async function onTabDrop(ctx: DepartmentsContext, event: Event): Promise<void> {
   if (!(event instanceof DragEvent)) return;
   event.preventDefault();
-  hideInsertionIndicator(ctx.el.querySelector<HTMLElement>("[data-drop-indicator]"));
+  hideInsertionIndicator();
 
   const draggedId = event.dataTransfer?.getData(DRAG_DEPT_KEY);
   const department = draggedId

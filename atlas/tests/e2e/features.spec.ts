@@ -137,16 +137,19 @@ test.describe("A — Screens", () => {
       await expect(card.locator("[data-card-stat][data-stat='sub']")).toBeVisible(); // sub-issues
     });
 
-    test("F2 (Bug Fix 1): Drop indicator is in the DOM and starts hidden", async ({ page }) => {
+    test("F2 (Bug Fix 1): the drop indicator is a body overlay, never a Preact island child", async ({
+      page
+    }) => {
       await page.goto("/board/board-platform");
       await page.waitForLoadState("load");
-      // DropIndicator must exist in the board element
-      // Scope to the board's card indicator — the department + board-pill tracks now carry their own
-      // vertical drop indicators too (#2), so an unscoped selector matches three elements.
-      const indicator = page.locator("[data-board] [data-drop-indicator]");
-      await expect(indicator).toBeAttached();
-      // Must start hidden (hidden attribute set)
-      await expect(indicator).toBeHidden();
+      // The drop indicator is a single body-level overlay created lazily on first drag
+      // (lib/drag-indicator.ts + board/handlers.ts `getCardIndicator`), positioned by viewport
+      // coordinates. It must NEVER be a child of a Preact-managed island subtree: reparenting a
+      // Preact-owned node out of a PERSISTENT island is what threw "NotFoundError: Failed to execute
+      // 'insertBefore' … not a child of this node" and shoved the board layout to the bottom. So at
+      // rest no island carries one, and the board/tracks render none of their own.
+      await expect(page.locator("[data-island] [data-drop-indicator]")).toHaveCount(0);
+      await expect(page.locator("[data-board] [data-drop-indicator]")).toHaveCount(0);
     });
 
     test("D1 (Bug Fix 3): Card ⋯ menu button is present on each card", async ({ page }) => {
@@ -488,11 +491,16 @@ test.describe("F — Inline and transient elements", () => {
     await page.waitForLoadState("load");
   });
 
-  test("F2: Drop indicator is in the DOM (board markup) and hidden initially", async ({ page }) => {
-    // Scope to the board's card indicator — departments + board pills now have their own (#2).
-    const indicator = page.locator("[data-board] [data-drop-indicator]");
-    await expect(indicator).toBeAttached();
-    await expect(indicator).toBeHidden();
+  test("F2: the drop indicator is a body overlay, never a Preact island child", async ({
+    page
+  }) => {
+    // The drop indicator is a single body-level overlay created lazily on first drag
+    // (lib/drag-indicator.ts + board/handlers.ts `getCardIndicator`), positioned by viewport
+    // coordinates — NEVER a child of a Preact-managed island. Reparenting a Preact-owned node out of
+    // a PERSISTENT island is what threw "insertBefore … not a child" and broke the board layout, so at
+    // rest no island carries one.
+    await expect(page.locator("[data-island] [data-drop-indicator]")).toHaveCount(0);
+    await expect(page.locator("[data-board] [data-drop-indicator]")).toHaveCount(0);
   });
 
   test("F3: Empty column shows an editorial empty state", async ({ page }) => {

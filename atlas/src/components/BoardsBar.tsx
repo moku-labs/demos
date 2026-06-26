@@ -11,7 +11,6 @@
 import type { Board, Customization } from "../lib/types";
 import { urls } from "../routes";
 import { BoardPill } from "./BoardPill";
-import { DropIndicator } from "./DropIndicator";
 import { Icon } from "./Icon";
 
 /** Props for {@link BoardsBar}. */
@@ -74,8 +73,8 @@ export function BoardsBar({
           <Icon name="plus" />
           <span>Add board</span>
         </button>
-        {/* Drag-reorder insertion bar — hidden until the boards-bar island moves it under the pointer. */}
-        <DropIndicator orientation="vertical" hidden />
+        {/* The drag-reorder insertion bar is a body-level overlay owned by lib/drag-indicator.ts (never
+            a Preact child — reparenting one out of this persistent island crashed Preact's reconcile). */}
       </div>
 
       {/* The controls need a resolved board to point at: hide them for an empty department AND while the

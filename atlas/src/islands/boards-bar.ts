@@ -474,24 +474,23 @@ function onTrackDragOver(ctx: BoardsBarContext, event: Event): void {
   event.preventDefault();
 
   const track = ctx.el.querySelector<HTMLElement>("[data-boards-track]");
-  const indicator = track?.querySelector<HTMLElement>("[data-drop-indicator]");
-  if (!track || !indicator) return;
+  if (!track) return;
   const pills = [...track.querySelectorAll<HTMLElement>("[data-board-pill]")];
-  positionInsertionIndicator(track, indicator, pills, event.clientX);
+  positionInsertionIndicator(track, pills, event.clientX);
 }
 
 /**
  * Hide the insertion bar when a board drag ends (dropped or cancelled).
  *
- * @param ctx - The boards-bar island context.
+ * @param _ctx - The boards-bar island context (unused).
  * @param _event - The dragend event (unused).
  * @example
  * ```ts
  * events: { "dragend [data-boards-track]": onTrackDragEnd };
  * ```
  */
-function onTrackDragEnd(ctx: BoardsBarContext, _event: Event): void {
-  hideInsertionIndicator(ctx.el.querySelector<HTMLElement>("[data-drop-indicator]"));
+function onTrackDragEnd(_ctx: BoardsBarContext, _event: Event): void {
+  hideInsertionIndicator();
 }
 
 /**
@@ -509,7 +508,7 @@ function onTrackDragEnd(ctx: BoardsBarContext, _event: Event): void {
 async function onPillDrop(ctx: BoardsBarContext, event: Event): Promise<void> {
   if (!(event instanceof DragEvent)) return;
   event.preventDefault();
-  hideInsertionIndicator(ctx.el.querySelector<HTMLElement>("[data-drop-indicator]"));
+  hideInsertionIndicator();
 
   const draggedId = event.dataTransfer?.getData(DRAG_BOARD_KEY);
   const current = draggedId ? ctx.state.boards.findIndex(item => item.id === draggedId) : -1;

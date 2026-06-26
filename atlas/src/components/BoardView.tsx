@@ -6,14 +6,15 @@
  * threads them into a {@link ColumnView} per column. The LAST column (`isLast`) carries the "Add column"
  * affordance directly under its "Add card", at the same column width — so the control always trails the
  * rightmost column without taking a track of its own. Pure + SSR — the SHARED markup the `board` island
- * re-renders. This file ALSO owns the `[data-page="board"]`
+ * re-renders. The card drop indicator is owned entirely by the board island's
+ * handlers (imperatively appended to `document.body`, never part of the Preact vdom — so it cannot
+ * be reparented out from under Preact's diff). This file ALSO owns the `[data-page="board"]`
  * PAGE wrapper layout (the `data-page="board"` element lives in BoardPage.tsx).
  */
 import { Fragment } from "preact";
 import { personById } from "../lib/people";
 import type { BoardSnapshot, Customization, Issue, LabelKey, Person } from "../lib/types";
 import { ColumnView } from "./ColumnView";
-import { DropIndicator } from "./DropIndicator";
 
 /** The per-issue presentation maps {@link ColumnView} consumes, derived once from the snapshot. */
 interface DerivedLookups {
@@ -147,7 +148,6 @@ export function BoardView({ snapshot }: BoardViewProps) {
         {...(columns.length === 0 ? { "data-empty": true } : {})}
         style={{ "--column-count": columns.length }}
       >
-        <DropIndicator hidden />
         {columns.map((column, index) => {
           const custom = columnCustomization(snapshot, column.id);
           return (
