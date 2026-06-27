@@ -11,8 +11,9 @@ import { languagePlugin } from "../language";
 import { questionBankPlugin } from "../question-bank";
 import { scoringPlugin } from "../scoring";
 import { buildReadSlice } from "./adapters";
-import { initMatchFlow, startClock, stopClock } from "./clock";
+import { startClock, stopClock } from "./clock";
 import { createMatchFlowHandlers } from "./handlers";
+import { initMatchFlow } from "./init";
 import { createMatchFlowState } from "./state";
 import type { Config } from "./types";
 
