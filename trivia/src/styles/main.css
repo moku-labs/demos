@@ -204,6 +204,8 @@
     border-radius: var(--radius-pill);
     background: var(--surface);
     border: 1px solid var(--border);
+    /* Centre the badge now that the mute control is its own top-right island. */
+    margin-inline: auto;
   }
 
   /* The stage content body fills the rest, never scrolls. */
@@ -213,6 +215,31 @@
     display: flex;
     min-height: 0;
     padding: clamp(16px, 3vh, 36px) clamp(20px, 4vw, 56px);
+  }
+
+  /* Stage overlay/control islands — sibling hosts that layer over the stage. Each is a fixed full-screen
+     positioning context for its absolute-inset overlay; the click-through layers stay pointer-transparent
+     so the stage behind them stays interactive (the pause takeover is meant to block). The mute is a
+     fixed top-right control. The overlay hosts start `hidden` and unhide on the matching bridge signal. */
+  [data-island="reconnect-strip"],
+  [data-island="disconnect-banner"] {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+  }
+
+  [data-island="pause-overlay"] {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+  }
+
+  [data-island="mute"] {
+    position: fixed;
+    top: clamp(10px, 1.6vh, 18px);
+    right: clamp(16px, 3vw, 40px);
+    z-index: 6;
   }
 
   /* ── Phone / controller surface (route "/controller/:code") ────────────────── */

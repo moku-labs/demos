@@ -1,15 +1,11 @@
 /**
- * @file stage island — the render layer: the persistent TV frame (top bar B1 · the per-phase screen ·
- * the transient overlays). A pure function of the island state that switches on `match.phase` to the
- * per-phase screen components, and renders the full-stage roundIntro takeover. DOM glue only — all game
- * logic is host-side in the room plugins; this only reads + displays.
+ * @file stage island — the render layer: the persistent TV frame (top bar B1 · the per-phase screen). A
+ * pure function of the island state that switches on `match.phase` to the per-phase screen components, and
+ * renders the full-stage roundIntro takeover. The transient overlays (reconnect/disconnect/pause) and the
+ * mute control are their own sibling islands now. DOM glue only — all game logic is host-side.
  */
 import type { Spa } from "@moku-labs/web/browser";
 import type { JSX } from "preact";
-import { DisconnectBanner } from "../../components/DisconnectBanner";
-import { MuteButton } from "../../components/MuteButton";
-import { PauseOverlay } from "../../components/PauseOverlay";
-import { ReconnectStrip } from "../../components/ReconnectStrip";
 import { RoundIntro } from "../../components/RoundIntro";
 import { StageCategory } from "../../components/StageCategory";
 import { StageLanguage } from "../../components/StageLanguage";
@@ -20,7 +16,7 @@ import { StageScoreboard } from "../../components/StageScoreboard";
 import { TRIVIA } from "../../config";
 import type { TriviaState } from "../../lib/types";
 import { findPlayer } from "../../lib/view";
-import type { StageContext, StageState } from "./types";
+import type { StageState } from "./types";
 
 /** The context badge text for the top bar, per phase. */
 function badgeFor(s: TriviaState): string {
@@ -32,15 +28,14 @@ function badgeFor(s: TriviaState): string {
   return `Round ${round} / ${TRIVIA.rounds}`;
 }
 
-/** B1 — the persistent top bar (logo · context badge · mute). */
-function TopBar({ s, muted, onMute }: { s: TriviaState; muted: boolean; onMute: () => void }) {
+/** B1 — the persistent top bar (logo · context badge). The mute control is its own island. */
+function TopBar({ s }: { s: TriviaState }) {
   return (
     <header data-region="top-bar">
       <span data-logo>
         trivia<b>.</b>
       </span>
       <span data-badge>{badgeFor(s)}</span>
-      <MuteButton muted={muted} onToggle={onMute} />
     </header>
   );
 }
@@ -63,17 +58,15 @@ function screenFor(state: StageState): JSX.Element {
  * Render the whole TV/stage surface for the current snapshot.
  *
  * @param state - The current stage state.
- * @param ctx - The island context (for the mute + dismiss callbacks).
  * @returns The stage view.
  * @example
  * ```ts
  * createIsland("stage", { render });
  * ```
  */
-export function render(state: Readonly<StageState>, ctx: StageContext): Spa.RenderResult {
+export function render(state: Readonly<StageState>): Spa.RenderResult {
   const { s } = state;
   const phase = s.match.phase;
-  const dropped = state.dismissedDisconnect ? undefined : s.players.find(p => !p.connected);
 
   // The round-intro overlay is a full-stage takeover (covers the top bar).
   if (phase === "roundIntro") {
@@ -93,19 +86,8 @@ export function render(state: Readonly<StageState>, ctx: StageContext): Spa.Rend
 
   return (
     <div data-stage data-phase={phase}>
-      <TopBar s={s} muted={state.muted} onMute={() => ctx.set({ muted: !state.muted })} />
+      <TopBar s={s} />
       <div data-region="stage-body">{screenFor(state)}</div>
-      {state.reconnecting && <ReconnectStrip />}
-      {dropped && (
-        <DisconnectBanner
-          avatar={dropped.avatar}
-          name={dropped.name}
-          color={dropped.color}
-          secondsLeft={TRIVIA.timers.stealMs / 1000}
-          onDismiss={() => ctx.set({ dismissedDisconnect: true })}
-        />
-      )}
-      {s.match.paused && <PauseOverlay name={findPlayer(s.players, s.match.hostPeer)?.name} />}
     </div>
   );
 }

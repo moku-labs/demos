@@ -17,13 +17,10 @@ import type { StageState } from "./types";
 export function initState(): StageState {
   return {
     s: snapshot(),
-    muted: false,
     // eslint-disable-next-line unicorn/no-null -- the bridge's QR vocabulary is null until fetched
     qr: null,
     code: "",
     now: Date.now(),
-    reconnecting: false,
-    dismissedDisconnect: false,
     // eslint-disable-next-line unicorn/no-null -- end stats are null until the match reaches final
     endStats: null
   };

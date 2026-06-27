@@ -7,22 +7,19 @@ import type { Spa } from "@moku-labs/web/browser";
 import type { TriviaState } from "../../lib/types";
 import type { EndStats } from "../../plugins/scoring/types";
 
-/** The stage island's per-instance state (synced snapshot + UI-only bits). */
+/**
+ * The stage island's per-instance state (synced snapshot + UI-only bits). The transient overlays (mute,
+ * reconnect/disconnect/pause) are their own islands now, so their state no longer lives here.
+ */
 export type StageState = {
   /** The merged synced snapshot. */
   s: TriviaState;
-  /** Mute toggle (wired; audio is out of scope for v1). */
-  muted: boolean;
   /** The lobby QR matrix (fetched once after the room opens). */
   qr: QrMatrix | null;
   /** The room code (from the descriptor). */
   code: string;
   /** Ticking clock (ms) so deadline-driven UI re-renders. */
   now: number;
-  /** Whether a transient reconnect strip is showing. */
-  reconnecting: boolean;
-  /** Whether the disconnect banner was dismissed this drop. */
-  dismissedDisconnect: boolean;
   /** End-of-match stats for the podium (host-read; `null` until final). */
   endStats: EndStats | null;
 };
