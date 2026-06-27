@@ -268,8 +268,8 @@
     padding: clamp(34px, 6vh, 48px) clamp(14px, 5vw, 22px) clamp(16px, 4vh, 24px);
   }
 
-  /* Per-phase phone background shift. */
-  [data-controller][data-phase="waiting"] {
+  /* Per-phase phone background shift. (Joined lobby = the A10 waiting room → dark green.) */
+  [data-controller][data-phase="lobby"] {
     background: linear-gradient(165deg, #0f2e1c, #0a2114);
   }
   [data-controller][data-phase="categoryPick"] {

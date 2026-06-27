@@ -86,7 +86,7 @@ function joinedScreen(
       <PhoneWaitingCard
         emoji={self.avatar}
         title={self.name}
-        subtitle={`Room ready · ${self.isHost ? "you're the host" : "Player"}`}
+        subtitle={`Room ${state.code} · Player ${s.players.findIndex(p => p.peerId === self.peerId) + 1}`}
         color={self.color}
       >
         {self.isHost ? (

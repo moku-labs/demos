@@ -100,7 +100,7 @@ function revealCopy(
     };
   }
   return {
-    chip: "Time's up — no answer",
+    chip: "⏱ Time's up — no answer",
     tone: "wrong",
     line: `✅ The answer was ${reveal.answerText}`
   };
@@ -111,6 +111,7 @@ function StealStrip({ s, now }: { s: TriviaState; now: number }) {
   const active = findPlayer(s.players, s.match.activePeer);
   const stealer = findPlayer(s.players, s.steal.stealPeer);
   const secs = secondsLeft(s.steal.deadlineTs, now);
+  const stealPct = Math.max(0, Math.min(100, (secs / (TRIVIA.timers.stealMs / 1000)) * 100));
   return (
     <div data-steal-strip>
       <span data-steal-text>
@@ -119,6 +120,9 @@ function StealStrip({ s, now }: { s: TriviaState; now: number }) {
       </span>
       <span data-steal-chip style={{ "--player": stealer?.color ?? "#14b8a6" }}>
         {stealer?.avatar ?? "•"} {stealer?.name ?? "next"} · {secs}s
+      </span>
+      <span data-steal-timer-bar aria-hidden="true">
+        <span data-steal-timer-fill style={{ width: `${stealPct}%` }} />
       </span>
     </div>
   );

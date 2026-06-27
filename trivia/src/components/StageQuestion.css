@@ -104,4 +104,21 @@
     border: 1px solid var(--player, var(--player-teal));
     white-space: nowrap;
   }
+
+  /* F1 — thin depleting steal-timer bar (teal fill). */
+  [data-steal-timer-bar] {
+    flex: 1;
+    min-width: 60px;
+    height: 5px;
+    border-radius: var(--radius-pill);
+    background: rgba(20, 184, 166, 0.18);
+    overflow: hidden;
+  }
+
+  [data-steal-timer-fill] {
+    display: block;
+    height: 100%;
+    border-radius: var(--radius-pill);
+    background: var(--player-teal);
+  }
 }
