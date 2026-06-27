@@ -35,7 +35,9 @@ export const app = createApp({
   pluginConfigs: {
     site: { name: SITE.name, url: SITE.url, author: SITE.author, description: SITE.description },
     router: { routes },
-    spa: { islands },
+    // swapSelector: both routes use a [data-layout] wrapper as the SPA swap region (stage + controller
+    // layouts differ entirely; the default "main > section" doesn't match either layout's structure).
+    spa: { islands, swapSelector: "[data-layout]" },
     // The question bank is a `collection` of build-authored JSON shards emitted to dist/client/bank/**
     // (served as static ASSETS); the room question-bank plugin fetches them via the same `/` baseUrl.
     collection: { baseUrl: "/" },

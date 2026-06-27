@@ -15,7 +15,7 @@ const app = createApp({
   pluginConfigs: {
     site: { name: SITE.name, url: SITE.url, author: SITE.author, description: SITE.description },
     router: { routes },
-    spa: { islands }
+    spa: { islands, swapSelector: "[data-layout]" }
   }
 });
 
