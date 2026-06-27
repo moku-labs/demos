@@ -33,8 +33,9 @@
     box-shadow: 0 0 10px 1px rgba(255, 224, 102, 0.6);
   }
 
-  /* ── Step body — grows to fill ── */
-  [data-stage] {
+  /* ── Step body — grows to fill (named data-step-body, NOT data-stage, to avoid colliding with the
+     global TV [data-stage] rule in main.css which would leak flex-direction:column and break centring) ── */
+  [data-step-body] {
     flex: 1 1 auto;
     display: flex;
     min-height: 0;

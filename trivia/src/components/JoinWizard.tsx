@@ -104,7 +104,7 @@ export function JoinWizard({
         ))}
       </div>
 
-      <div data-stage>
+      <div data-step-body>
         {step === 1 && (
           <div data-step="name">
             <h2 data-heading>Enter your name</h2>
