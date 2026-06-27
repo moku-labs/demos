@@ -30,8 +30,20 @@ export type Config = {
   tickMs: number;
 };
 
-/** Host-internal state — peers already tried on the current question + the per-question lock guard. */
-export type State = { tried: Set<PeerId>; locked: boolean };
+/**
+ * Host-internal state — peers already tried on the current question + the per-question lock guard +
+ * the stable-identity map. `tokens` binds each phone's app-level `playerToken` (localStorage-persisted)
+ * to its CURRENT WebRTC peerId, so a reloaded phone (which the framework gives a brand-new peerId) is
+ * reconciled to its existing roster slot/score/turn, and a brand-new token is rejected mid-match.
+ * `hostToken` is the playerToken of the current host — host identity is token-derived (not peerId) so
+ * a host that reloads reclaims the role even if a heartbeat `peer-left` promoted someone first.
+ */
+export type State = {
+  tried: Set<PeerId>;
+  locked: boolean;
+  tokens: Map<string, PeerId>;
+  hostToken: string;
+};
 
 /** `match` slice — phase routing, the active player, language, host, pause, and the phase deadline. */
 export type MatchSlice = {

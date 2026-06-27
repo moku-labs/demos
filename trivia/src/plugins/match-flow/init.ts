@@ -12,11 +12,11 @@ import type { PeerId, StageApi } from "@moku-labs/room";
 import { TRIVIA } from "../../config";
 import { ramp } from "../../lib/difficulty";
 import type { Lang } from "../../lib/types";
-import { buildAward, buildMutate } from "./adapters";
+import { buildAward, buildMutate, type ReadSlice } from "./adapters";
 import { cachedMatch, cachedPlayers, cachedQuestion, cachedSteal, makeIdleSteal } from "./cache";
 import type { IntentDeps, LanguageDeps, QuestionBankDeps, ScoringDeps, SyncDeps } from "./handlers";
 import { resolveAnswer } from "./machine";
-import type { Config, Phase, PlayersSlice, State } from "./types";
+import type { Config, MatchSlice, Phase, PlayersSlice, State } from "./types";
 
 // ─── Slice registration ─────────────────────────────────────────────────────────
 
@@ -112,6 +112,81 @@ function beginRoundOne(
   };
 }
 
+/**
+ * Migrate every peerId-keyed reference from a reconnecting phone's STALE peerId to its fresh one, so
+ * the player keeps their score, turn, steal grant, host role, and per-question tried-state across a
+ * reload (the room framework mints a new peerId each join — see the `join-profile` reconnect path).
+ * Each slice mutate is a guarded no-op when that slice doesn't reference the old peerId.
+ *
+ * @param stage - The stage facade (mutate).
+ * @param scoring - The scoring API (re-keys the leaderboard + host-internal stats).
+ * @param state - The match-flow host state (the `tried` set is re-keyed in place).
+ * @param oldPeerId - The stale peerId to migrate from.
+ * @param newPeerId - The reconnected phone's fresh peerId to migrate to.
+ * @example
+ * ```ts
+ * remapReconnectedPeer(stage, scoring, state, priorPeerId, peerId);
+ * ```
+ */
+function remapReconnectedPeer(
+  stage: Pick<StageApi, "mutate">,
+  scoring: ScoringDeps,
+  state: State,
+  oldPeerId: PeerId,
+  newPeerId: PeerId
+): void {
+  scoring.rebindPeer(oldPeerId, newPeerId);
+
+  if (state.tried.delete(oldPeerId)) state.tried.add(newPeerId);
+
+  stage.mutate("match", draft =>
+    draft.activePeer === oldPeerId ? { ...draft, activePeer: newPeerId } : draft
+  );
+  stage.mutate("match", draft =>
+    draft.hostPeer === oldPeerId ? { ...draft, hostPeer: newPeerId } : draft
+  );
+  stage.mutate("question", draft =>
+    draft.answeringPeer === oldPeerId ? { ...draft, answeringPeer: newPeerId } : draft
+  );
+  stage.mutate("steal", draft =>
+    draft.stealPeer === oldPeerId ? { ...draft, stealPeer: newPeerId } : draft
+  );
+  // reveal.scorerPeer holds the answerer's id during the ~revealMs hold — re-key it too, else a
+  // reconnect mid-reveal orphans the TV scorer chip (it can't find the seat by the stale id).
+  stage.mutate("reveal", draft =>
+    draft.scorerPeer === oldPeerId ? { ...draft, scorerPeer: newPeerId } : draft
+  );
+}
+
+/**
+ * Re-assert host authority from the token-derived host (`state.hostToken`): exactly the seat whose
+ * playerToken is the host token is `isHost`, and `match.hostPeer` points at its current peerId. Host
+ * identity is token-keyed (not peerId) so a host that reloads reclaims the role and a heartbeat
+ * `peer-left` promotion stays consistent — fixing both the host-reconnect race and the lobby double-host
+ * edge. Both mutates short-circuit when already consistent. No-op until a host token is known.
+ *
+ * @param stage - The stage facade (mutate).
+ * @param state - The match-flow host state (reads `hostToken` + the `tokens` map).
+ * @example
+ * ```ts
+ * normalizeHost(stage, state); // after every accepted join-profile
+ * ```
+ */
+function normalizeHost(stage: Pick<StageApi, "mutate">, state: State): void {
+  if (state.hostToken === "") return;
+  const hostPeerId = state.tokens.get(state.hostToken);
+  if (hostPeerId === undefined) return;
+
+  stage.mutate("match", draft =>
+    draft.hostPeer === hostPeerId ? draft : { ...draft, hostPeer: hostPeerId }
+  );
+  stage.mutate("players", draft => {
+    const entries = (draft.entries as PlayersSlice["entries"] | undefined) ?? [];
+    if (entries.every(entry => entry.isHost === (entry.peerId === hostPeerId))) return draft;
+    return { entries: entries.map(entry => ({ ...entry, isHost: entry.peerId === hostPeerId })) };
+  });
+}
+
 // ─── initMatchFlow — onInit ───────────────────────────────────────────────────
 
 /**
@@ -125,7 +200,9 @@ function beginRoundOne(
  * @param scoring - The `scoringPlugin` API.
  * @param language - The `languagePlugin` API.
  * @param config - The resolved plugin config.
- * @param state - The host-internal plugin state (tried + locked).
+ * @param state - The host-internal plugin state (tried + locked + tokens + hostToken).
+ * @param readSlice - Live slice reader (`sync.read`) — the join-lock reads the AUTHORITATIVE phase here,
+ *   not the host-clock cache, which lags a tick behind the synchronous `start-game` transition.
  * @example
  * ```ts
  * onInit: ctx => initMatchFlow(ctx.require(syncPlugin), ctx.require(intentPlugin), ...)
@@ -139,50 +216,94 @@ export function initMatchFlow(
   scoring: ScoringDeps,
   language: LanguageDeps,
   config: Config,
-  state: State
+  state: State,
+  readSlice: ReadSlice
 ): void {
   registerSlices(sync);
 
-  // ── join-profile: any controller can join + claim a profile ────────────────
+  // ── join-profile: claim a seat (lobby) OR reconnect a reloaded phone to its existing seat ──────
+  // `playerToken` is the phone's localStorage-persisted stable identity (the room framework mints a
+  // fresh peerId on every (re)join). It powers BOTH the mid-match join lock and seamless reconnect.
   intent.register("join-profile", {
-    fields: { name: { type: "string" }, color: { type: "string" }, avatar: { type: "string" } },
+    fields: {
+      name: { type: "string" },
+      color: { type: "string" },
+      avatar: { type: "string" },
+      playerToken: { type: "string" }
+    },
     additionalFields: false
   });
   intent.onIntent("join-profile", (payload, meta) => {
     if (typeof payload !== "object" || payload === null) return;
     const raw = payload as Record<string, unknown>;
-    const { name, color, avatar } = raw;
-    if (typeof name !== "string" || typeof color !== "string" || typeof avatar !== "string") return;
+    const { name, color, avatar, playerToken } = raw;
+    if (
+      typeof name !== "string" ||
+      typeof color !== "string" ||
+      typeof avatar !== "string" ||
+      typeof playerToken !== "string" ||
+      playerToken === ""
+    ) {
+      return;
+    }
 
     const { peerId } = meta;
 
-    // `shouldSetHost` is decided inside the recipe (which sees the authoritative `players` draft);
-    // mutate runs synchronously, so we can read it back here to set `match.hostPeer` without nesting.
+    // Reconcile this phone's stable token → its current framework peerId. A reloaded phone arrives with
+    // a brand-new peerId; `tokens` remembers the seat it held before so we re-bind it in place.
+    const priorPeerId = state.tokens.get(playerToken);
+    const isReconnect = priorPeerId !== undefined && priorPeerId !== peerId;
+
+    // Mid-match join LOCK: a never-seen token cannot enter once play has left the lobby. Returning
+    // players (known token) are always let back in. The phase is read LIVE from sync — NOT the host
+    // clock's slice cache, which lags one tick behind the synchronous start-game transition and would
+    // briefly leak a brand-new joiner in (the match slice is always registered, so this is never undefined).
+    const phase = (readSlice("match") as MatchSlice | undefined)?.phase ?? "lobby";
+    if (priorPeerId === undefined && phase !== "lobby") return;
+
+    state.tokens.set(playerToken, peerId);
+
+    // The seat to update is keyed by the prior peerId on reconnect, else this peerId (first join or a
+    // same-session re-submit). A found seat is re-bound to the new peerId in place (preserving slot +
+    // rotation order); no seat → a genuinely new lobby player is appended.
+    const slotKey = isReconnect && priorPeerId !== undefined ? priorPeerId : peerId;
     let shouldSetHost = false;
 
     stage.mutate("players", draft => {
       const entries = (draft.entries as PlayersSlice["entries"] | undefined) ?? [];
-      const existing = entries.find(entry => entry.peerId === peerId);
-      const isFirst = entries.filter(entry => entry.connected).length === 0 && !existing;
+      const found = entries.find(entry => entry.peerId === slotKey);
 
-      if (isFirst) shouldSetHost = true;
-
-      if (existing) {
+      if (found) {
         return {
           entries: entries.map(entry =>
-            entry.peerId === peerId ? { ...entry, name, color, avatar, connected: true } : entry
+            entry.peerId === slotKey
+              ? { ...entry, peerId, name, color, avatar, connected: true }
+              : entry
           )
         };
       }
+
+      const isFirst = entries.filter(entry => entry.connected).length === 0;
+      if (isFirst) shouldSetHost = true;
       return {
         entries: [...entries, { peerId, name, color, avatar, connected: true, isHost: isFirst }]
       };
     });
 
-    // First joiner becomes host — set match.hostPeer AFTER the players mutate (no nesting).
+    // First joiner becomes host — recorded by TOKEN so a host reload reclaims the role (host identity
+    // is token-derived, not peerId; normalizeHost below publishes match.hostPeer + the isHost flags).
     if (shouldSetHost) {
-      stage.mutate("match", draft => ({ ...draft, hostPeer: peerId }));
+      state.hostToken = playerToken;
     }
+
+    // Reconnect: migrate every peerId-keyed reference from the stale id to the new one so the player
+    // keeps their score, turn, steal grant, and tried-state across the reload.
+    if (isReconnect && priorPeerId !== undefined) {
+      remapReconnectedPeer(stage, scoring, state, priorPeerId, peerId);
+    }
+
+    // Re-assert host authority from the token (covers first-join, reconnect-reclaim, and consistency).
+    normalizeHost(stage, state);
   });
 
   // ── start-game: the host phone opens the language vote, then begins round 1 ──

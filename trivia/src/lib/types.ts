@@ -160,7 +160,12 @@ export type IntentName =
 export type IntentPayload = {
   "seen-history": { ids: string };
   "language-vote": { lang: Lang };
-  "join-profile": { name: string; color: string; avatar: string };
+  /**
+   * `playerToken` is a phone-persisted stable identity (localStorage, per room). The room framework
+   * mints a fresh WebRTC peerId on every (re)join, so the host reconciles a reloaded phone to its
+   * existing roster slot/score/turn by this token — and rejects brand-new tokens once a match is underway.
+   */
+  "join-profile": { name: string; color: string; avatar: string; playerToken: string };
   "start-game": Record<string, never>;
   "category-pick": { category: CategoryId };
   "answer-lock": { slot: number };

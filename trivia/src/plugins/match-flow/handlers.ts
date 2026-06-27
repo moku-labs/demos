@@ -96,6 +96,8 @@ export type ScoringDeps = {
   ): void;
   /** Reset all scores (play-again). */
   reset(): void;
+  /** Re-key a player's score + stats from a stale peerId to their reconnected peerId (phone reload). */
+  rebindPeer(oldPeerId: PeerId, newPeerId: PeerId): void;
 };
 
 /**

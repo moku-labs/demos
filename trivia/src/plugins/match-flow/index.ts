@@ -73,7 +73,8 @@ export const matchFlowPlugin = createPlugin("matchFlow", {
       ctx.require(scoringPlugin),
       ctx.require(languagePlugin),
       ctx.config,
-      ctx.state
+      ctx.state,
+      buildReadSlice(ctx.require(syncPlugin))
     );
   },
   /**

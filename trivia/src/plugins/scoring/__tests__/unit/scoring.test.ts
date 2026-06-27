@@ -1,6 +1,12 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 import type { CategoryId, PeerId, ScoreEntry, Tier } from "../../../../lib/types";
-import { computeAward, computeEndStats, computeLeaderboard, resetBoard } from "../../api";
+import {
+  computeAward,
+  computeEndStats,
+  computeLeaderboard,
+  rebindScore,
+  resetBoard
+} from "../../api";
 import { createScoringState } from "../../state";
 import type { Config, EndStats, PlayerStats, State } from "../../types";
 
@@ -593,5 +599,56 @@ describe("types", () => {
   it("computeLeaderboard returns readonly ScoreEntry[]", () => {
     const entries = new Map<PeerId, ScoreEntry>();
     expectTypeOf(computeLeaderboard(entries)).toEqualTypeOf<readonly ScoreEntry[]>();
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// rebindScore — phone reconnect re-keys score + stats old→new peerId
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("rebindScore", () => {
+  it("migrates an existing score row + stats from the old peerId to the new one", () => {
+    const { state, entries, award } = makeBoard();
+    award(PEER_A, { correct: true, steal: false, tier: "medium", category: "animals" }); // +200
+    award(PEER_A, { correct: true, steal: false, tier: "easy", category: "animals" }); // +100
+
+    const rows = rebindScore(state, entries, PEER_A, PEER_B);
+
+    // Old key is gone; new key carries the same total + the re-keyed peerId.
+    expect(entries.has(PEER_A)).toBe(false);
+    expect(entries.get(PEER_B)?.total).toBe(300);
+    expect(entries.get(PEER_B)?.peerId).toBe(PEER_B);
+    expect(state.has(PEER_A)).toBe(false);
+    expect(state.get(PEER_B)).toBeDefined();
+    // The re-published board reflects the new key.
+    expect(rows?.some(r => r.peerId === PEER_B && r.total === 300)).toBe(true);
+    expect(rows?.some(r => r.peerId === PEER_A)).toBe(false);
+  });
+
+  it("is a no-op (undefined rows) when the player never scored", () => {
+    const { state, entries } = makeBoard();
+    const rows = rebindScore(state, entries, PEER_A, PEER_B);
+    expect(rows).toBeUndefined();
+    expect(entries.size).toBe(0);
+  });
+
+  it("is a no-op when old and new peerId are equal", () => {
+    const { state, entries, award } = makeBoard();
+    award(PEER_A, { correct: true, steal: false, tier: "hard", category: "space" });
+    const rows = rebindScore(state, entries, PEER_A, PEER_A);
+    expect(rows).toBeUndefined();
+    expect(entries.get(PEER_A)?.total).toBe(300);
+  });
+
+  it("does not disturb other players' scores", () => {
+    const { state, entries, award } = makeBoard();
+    award(PEER_A, { correct: true, steal: false, tier: "easy", category: "animals" }); // A +100
+    award(PEER_C, { correct: true, steal: false, tier: "hard", category: "space" }); // C +300
+
+    rebindScore(state, entries, PEER_A, PEER_B);
+
+    expect(entries.get(PEER_C)?.total).toBe(300);
+    expect(entries.get(PEER_B)?.total).toBe(100);
+    expect(entries.has(PEER_A)).toBe(false);
   });
 });

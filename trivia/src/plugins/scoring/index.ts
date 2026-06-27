@@ -15,7 +15,7 @@
  */
 import { createPlugin, stagePlugin, syncPlugin } from "@moku-labs/room";
 import type { CategoryId, PeerId, ScoreEntry } from "../../lib/types";
-import { computeAward, computeEndStats, computeLeaderboard, resetBoard } from "./api";
+import { computeAward, computeEndStats, computeLeaderboard, rebindScore, resetBoard } from "./api";
 import { createScoringState } from "./state";
 import type { Config } from "./types";
 
@@ -114,6 +114,25 @@ export const scoringPlugin = createPlugin("scoring", {
       reset: () => {
         const zeroed = resetBoard(ctx.state, entries);
         ctx.require(stagePlugin).mutate("scores", () => ({ entries: zeroed }));
+      },
+
+      /**
+       * Re-key a player's score + host-internal stats from a stale peerId to their reconnected one.
+       *
+       * Called by match-flow's `join-profile` reconnect path: the room framework mints a fresh peerId
+       * on every (re)join, so without this a reloaded phone's score would orphan. Re-publishes the
+       * `scores` slice when a board row actually moved (no-op for a player who never scored).
+       *
+       * @param oldPeerId - The stale peerId to migrate the score/stats from.
+       * @param newPeerId - The reconnected phone's fresh peerId to migrate to.
+       * @example
+       * ```ts
+       * app.scoring.rebindPeer(stalePeerId, newPeerId);
+       * ```
+       */
+      rebindPeer: (oldPeerId: PeerId, newPeerId: PeerId) => {
+        const rows = rebindScore(ctx.state, entries, oldPeerId, newPeerId);
+        if (rows) ctx.require(stagePlugin).mutate("scores", () => ({ entries: rows }));
       },
 
       /**

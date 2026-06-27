@@ -44,7 +44,12 @@ describe("trivia app composition", () => {
     });
 
     // The phone claims a profile; the host adds it to the roster + crowns the first joiner host.
-    phone.controller.intent("join-profile", { name: "Alex", color: "#F59E0B", avatar: "🦊" });
+    phone.controller.intent("join-profile", {
+      name: "Alex",
+      color: "#F59E0B",
+      avatar: "🦊",
+      playerToken: "token-alex"
+    });
 
     await vi.waitFor(
       () => {
@@ -78,7 +83,12 @@ describe("trivia app composition", () => {
       timeout: 4000
     });
 
-    phone.controller.intent("join-profile", { name: "Alex", color: "#F59E0B", avatar: "🦊" });
+    phone.controller.intent("join-profile", {
+      name: "Alex",
+      color: "#F59E0B",
+      avatar: "🦊",
+      playerToken: "token-alex"
+    });
     await vi.waitFor(
       () => {
         const entries = phone.controller.read("players")?.entries as PlayerProfile[] | undefined;

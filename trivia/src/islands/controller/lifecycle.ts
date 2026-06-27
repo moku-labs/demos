@@ -5,6 +5,7 @@
  * authoritative.
  */
 import { intent, startController, subscribe } from "../../lib/room";
+import { loadIdentity } from "./profile";
 import type { ControllerContext } from "./types";
 
 /** localStorage key for this device's cross-match no-repeat question history. */
@@ -61,6 +62,12 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
   const code = ctx.params.code ?? "";
   ctx.set({ code });
 
+  // Optimistic reconnect: if this phone already has a saved identity for THIS room, show the joined
+  // state immediately (skip the wizard / mid-join modal) while the connection re-establishes. The
+  // actual re-claim intent fires once the room is connected (below).
+  const saved = loadIdentity(code);
+  if (saved) ctx.set({ joinedProfile: saved.profile });
+
   // Fix data-layout — the server always serves the stage layout for all routes (SPA mode, no SSR).
   // On direct load to /controller/:code the outer [data-layout] element has data-layout="stage"
   // instead of "controller", which prevents all [data-layout="controller"] CSS from applying.
@@ -83,7 +90,14 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
   try {
     await startController(code);
     intent("seen-history", { ids: loadSeen() });
+    // Re-claim our seat with the stable token so the host re-binds our slot/score/turn instead of
+    // seating us as a new player (and so the mid-match join lock lets us — a returning player — back in).
+    if (saved) intent("join-profile", { ...saved.profile, playerToken: saved.token });
   } catch {
-    // A failed join (full / not-found / unreachable) leaves the wizard up; the player can rescan.
+    // A failed join (full / not-found / room gone after a "New code" reset / unreachable): roll back the
+    // OPTIMISTIC reconnect so we don't strand the player on a fake "You're in!" card — clearing the
+    // local profile drops back to the interactive wizard, where they can re-enter or rescan a fresh QR.
+    // eslint-disable-next-line unicorn/no-null -- the controller view layer speaks `null` for "not joined"
+    if (saved) ctx.set({ joinedProfile: null });
   }
 }

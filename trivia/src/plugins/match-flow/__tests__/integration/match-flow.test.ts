@@ -183,7 +183,8 @@ async function driveToQuestion(count: number, timers: typeof TIMEOUT_STEAL_TIMER
     c.controller.intent("join-profile", {
       name: PROFILE_NAMES[i] ?? `P${i}`,
       color: PROFILE_COLORS[i] ?? "red",
-      avatar: "cat"
+      avatar: "cat",
+      playerToken: `token-${i}`
     });
   }
   await vi.waitFor(
@@ -215,7 +216,7 @@ async function driveToQuestion(count: number, timers: typeof TIMEOUT_STEAL_TIMER
     { timeout: 5000 }
   );
 
-  return { host, controllers };
+  return { host, controllers, sig, code };
 }
 
 describe("match-flow plugin integration", () => {
@@ -273,7 +274,8 @@ describe("match-flow plugin integration", () => {
     controller.controller.intent("join-profile", {
       name: "Alice",
       color: "red",
-      avatar: "cat"
+      avatar: "cat",
+      playerToken: "token-alice"
     });
 
     // Wait for players slice to reflect the join
@@ -301,6 +303,242 @@ describe("match-flow plugin integration", () => {
 
     await host.stop();
     await controller.stop();
+  });
+
+  // ─── mid-match join lock + phone reconnect (stable playerToken) ────────────
+
+  it("mid-match join lock: a brand-new token cannot join once play has left the lobby", {
+    timeout: 15_000
+  }, async () => {
+    restoreFetch = mockFetch();
+    const { host, controllers, sig, code } = await driveToQuestion(2, STABLE_QUESTION_TIMERS);
+    const lead = controllers[0];
+
+    // A brand-new phone (token never seen) tries to join AFTER the match has started.
+    const latecomer = createApp({
+      plugins: [controllerPlugin],
+      pluginConfigs: { transport: { signaling: sig }, session: { generateQr: false } }
+    });
+    await latecomer.start();
+    await latecomer.controller.joinRoom(code);
+    await vi.waitFor(() => expect(latecomer.controller.read("players")).toBeDefined(), {
+      timeout: 5000
+    });
+
+    latecomer.controller.intent("join-profile", {
+      name: "Late",
+      color: "purple",
+      avatar: "cat",
+      playerToken: "brand-new-token"
+    });
+
+    // Give the (rejected) intent time to round-trip; the roster must NOT grow.
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const entries = lead?.controller.read("players")?.entries as unknown[] | undefined;
+    expect(entries?.length).toBe(2);
+
+    await host.stop();
+    await Promise.all([...controllers, latecomer].map(c => c.stop()));
+  });
+
+  it("reconnect: a reloaded phone (same token, fresh peerId) reclaims its seat, no duplicate", {
+    timeout: 15_000
+  }, async () => {
+    restoreFetch = mockFetch();
+    const { host, controllers, sig, code } = await driveToQuestion(2, STABLE_QUESTION_TIMERS);
+    const lead = controllers[0];
+
+    // Player 0 joined with "token-0" (driveToQuestion). Simulate a reload: a NEW controller app
+    // (the framework mints a fresh peerId) joins the same room and re-sends join-profile with that
+    // SAME token — the host must re-bind player 0's seat in place, not append a third player.
+    const reloaded = createApp({
+      plugins: [controllerPlugin],
+      pluginConfigs: { transport: { signaling: sig }, session: { generateQr: false } }
+    });
+    await reloaded.start();
+    await reloaded.controller.joinRoom(code);
+    await vi.waitFor(() => expect(reloaded.controller.read("players")).toBeDefined(), {
+      timeout: 5000
+    });
+
+    const reloadedPeerId = reloaded.session.self().selfId;
+    reloaded.controller.intent("join-profile", {
+      name: "Alice",
+      color: "red",
+      avatar: "cat",
+      playerToken: "token-0"
+    });
+
+    // Roster stays at 2 (re-bind in place), and player 0's seat now carries the reloaded peerId.
+    await vi.waitFor(
+      () => {
+        const entries = lead?.controller.read("players")?.entries as
+          | Array<{ peerId: string }>
+          | undefined;
+        expect(entries?.length).toBe(2);
+        expect(entries?.some(e => e.peerId === reloadedPeerId)).toBe(true);
+      },
+      { timeout: 5000 }
+    );
+
+    await host.stop();
+    await Promise.all([...controllers, reloaded].map(c => c.stop()));
+  });
+
+  it("reconnect: a reloaded HOST reclaims the host role (isHost + hostPeer follow the new peerId)", {
+    timeout: 15_000
+  }, async () => {
+    restoreFetch = mockFetch();
+    const sig = inMemory();
+    const host = createApp({
+      plugins: [stagePlugin, questionBankPlugin, scoringPlugin, languagePlugin, matchFlowPlugin],
+      pluginConfigs: {
+        transport: { signaling: sig },
+        session: { generateQr: false },
+        ...STABLE_QUESTION_TIMERS
+      }
+    });
+    const make = () =>
+      createApp({
+        plugins: [controllerPlugin],
+        pluginConfigs: { transport: { signaling: sig }, session: { generateQr: false } }
+      });
+    const alice = make();
+    const bob = make();
+    await Promise.all([host.start(), alice.start(), bob.start()]);
+
+    const { code } = host.stage.createRoom();
+    await alice.controller.joinRoom(code);
+    await bob.controller.joinRoom(code);
+    await vi.waitFor(() => expect(alice.controller.read("players")).toBeDefined(), {
+      timeout: 5000
+    });
+
+    // Alice joins FIRST → she is the host (host identity is recorded by her token).
+    alice.controller.intent("join-profile", {
+      name: "Alice",
+      color: "red",
+      avatar: "cat",
+      playerToken: "tok-alice"
+    });
+    await vi.waitFor(
+      () => expect((host.sync.read("players")?.entries as unknown[])?.length).toBe(1),
+      {
+        timeout: 5000
+      }
+    );
+    bob.controller.intent("join-profile", {
+      name: "Bob",
+      color: "blue",
+      avatar: "cat",
+      playerToken: "tok-bob"
+    });
+    await vi.waitFor(
+      () => expect((host.sync.read("players")?.entries as unknown[])?.length).toBe(2),
+      {
+        timeout: 5000
+      }
+    );
+
+    // Alice's phone reloads: a fresh controller app (new peerId) re-sends join-profile with her token.
+    const aliceReloaded = make();
+    await aliceReloaded.start();
+    await aliceReloaded.controller.joinRoom(code);
+    await vi.waitFor(() => expect(aliceReloaded.controller.read("players")).toBeDefined(), {
+      timeout: 5000
+    });
+    const newPeerId = aliceReloaded.session.self().selfId;
+    aliceReloaded.controller.intent("join-profile", {
+      name: "Alice",
+      color: "red",
+      avatar: "cat",
+      playerToken: "tok-alice"
+    });
+
+    // Host role follows the token to the new peerId; exactly one host; roster still 2.
+    await vi.waitFor(
+      () => {
+        const entries = host.sync.read("players")?.entries as
+          | Array<{ peerId: string; isHost: boolean }>
+          | undefined;
+        const match = host.sync.read("match") as { hostPeer?: string } | undefined;
+        expect(entries?.length).toBe(2);
+        expect(entries?.find(e => e.peerId === newPeerId)?.isHost).toBe(true);
+        expect(entries?.filter(e => e.isHost).length).toBe(1);
+        expect(match?.hostPeer).toBe(newPeerId);
+      },
+      { timeout: 5000 }
+    );
+
+    await host.stop();
+    await Promise.all([alice, bob, aliceReloaded].map(c => c.stop()));
+  });
+
+  it("join lock uses the LIVE phase: a new token is rejected the instant play leaves the lobby", {
+    timeout: 15_000
+  }, async () => {
+    restoreFetch = mockFetch();
+    const sig = inMemory();
+    const host = createApp({
+      plugins: [stagePlugin, questionBankPlugin, scoringPlugin, languagePlugin, matchFlowPlugin],
+      pluginConfigs: {
+        transport: { signaling: sig },
+        session: { generateQr: false },
+        ...STABLE_QUESTION_TIMERS
+      }
+    });
+    const make = () =>
+      createApp({
+        plugins: [controllerPlugin],
+        pluginConfigs: { transport: { signaling: sig }, session: { generateQr: false } }
+      });
+    const alice = make();
+    const late = make();
+    await Promise.all([host.start(), alice.start(), late.start()]);
+
+    const { code } = host.stage.createRoom();
+    await alice.controller.joinRoom(code);
+    await late.controller.joinRoom(code);
+    await vi.waitFor(() => expect(alice.controller.read("players")).toBeDefined(), {
+      timeout: 5000
+    });
+
+    alice.controller.intent("join-profile", {
+      name: "Alice",
+      color: "red",
+      avatar: "cat",
+      playerToken: "tok-alice"
+    });
+    await vi.waitFor(
+      () => expect((host.sync.read("players")?.entries as unknown[])?.length).toBe(1),
+      {
+        timeout: 5000
+      }
+    );
+
+    // Start the game and, the instant the host's AUTHORITATIVE phase leaves lobby, fire the latecomer.
+    // The lock reads the live phase (not the lagging clock cache), so the brand-new token is rejected.
+    alice.controller.intent("start-game", {});
+    await vi.waitFor(
+      () =>
+        expect((host.sync.read("match") as { phase?: string } | undefined)?.phase).not.toBe(
+          "lobby"
+        ),
+      { timeout: 5000 }
+    );
+    late.controller.intent("join-profile", {
+      name: "Late",
+      color: "green",
+      avatar: "cat",
+      playerToken: "tok-late"
+    });
+
+    // Give the (rejected) intent ample time to round-trip; the roster must NOT grow past Alice.
+    await new Promise(resolve => setTimeout(resolve, 600));
+    expect((host.sync.read("players")?.entries as unknown[])?.length).toBe(1);
+
+    await host.stop();
+    await Promise.all([alice, late].map(c => c.stop()));
   });
 
   // ─── question slice never carries correctSlot/answerCheck ──────────────────

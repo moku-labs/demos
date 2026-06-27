@@ -41,6 +41,8 @@ export type Api = {
     opts: { correct: boolean; steal: boolean; tier: Tier; category: CategoryId }
   ): void;
   reset(): void;
+  /** Re-key a player's score + stats from a stale peerId to their reconnected peerId (phone reload). */
+  rebindPeer(oldPeerId: PeerId, newPeerId: PeerId): void;
   leaderboard(): readonly ScoreEntry[];
   endStats(): EndStats;
 };

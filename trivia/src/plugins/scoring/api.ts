@@ -61,6 +61,46 @@ function ensureStats(state: State, peerId: PeerId): PlayerStats {
 }
 
 /**
+ * Re-key a peer's score + host-internal stats from `oldPeerId` to `newPeerId` (a phone reconnect:
+ * the room framework minted a fresh peerId for the same human). Moves the leaderboard `entries` row
+ * and the `State` stats record under the new key (rewriting the row's `peerId`), and re-publishes the
+ * board so the synced `scores` slice tracks the new peerId. A no-op when the player had no prior score
+ * (never awarded) or the ids are equal. The returned rows are the new board (empty array if unchanged).
+ *
+ * @param state - The host-internal stats Map (mutated: re-keyed old→new).
+ * @param entries - The leaderboard mirror Map (mutated: re-keyed old→new).
+ * @param oldPeerId - The departing/stale peerId to migrate from.
+ * @param newPeerId - The reconnecting phone's fresh peerId to migrate to.
+ * @returns The re-published board rows, or `undefined` when nothing changed (skip the slice write).
+ * @example
+ * ```ts
+ * const rows = rebindScore(state, entries, "old", "new");
+ * if (rows) mutate("scores", () => ({ entries: rows }));
+ * ```
+ */
+export function rebindScore(
+  state: State,
+  entries: Map<PeerId, ScoreEntry>,
+  oldPeerId: PeerId,
+  newPeerId: PeerId
+): ScoreEntry[] | undefined {
+  if (oldPeerId === newPeerId) return undefined;
+
+  const stats = state.get(oldPeerId);
+  if (stats !== undefined) {
+    state.delete(oldPeerId);
+    state.set(newPeerId, stats);
+  }
+
+  const row = entries.get(oldPeerId);
+  if (row === undefined) return undefined;
+  entries.delete(oldPeerId);
+  entries.set(newPeerId, { ...row, peerId: newPeerId });
+
+  return [...entries.values()];
+}
+
+/**
  * Stamp a score entry with this peer's synced end-stats (`topCategory` + `bestStreak`),
  * read from the host-internal stats map so the phone final card (A15) can show them.
  *

@@ -23,6 +23,7 @@ import { ramp } from "../../lib/difficulty";
 import { intent } from "../../lib/room";
 import type { CategoryId, Lang, PlayerProfile, TriviaState } from "../../lib/types";
 import { findPlayer } from "../../lib/view";
+import { rememberIdentity } from "./profile";
 import type { ControllerContext, ControllerState } from "./types";
 
 /** The per-intent callbacks the phone screens fire (each wired to a bridge intent / local state). */
@@ -42,7 +43,10 @@ type ControllerHandlers = {
 function makeHandlers(ctx: ControllerContext, state: ControllerState): ControllerHandlers {
   return {
     onJoin: profile => {
-      intent("join-profile", profile);
+      // Persist the profile + a stable per-room token so a reload re-claims THIS seat (not a new
+      // player), and send the token with the join so the host keys the roster slot on it.
+      const playerToken = rememberIdentity(state.code, profile);
+      intent("join-profile", { ...profile, playerToken });
       ctx.set({ joinedProfile: profile });
     },
     onStartGame: () => intent("start-game", {}),

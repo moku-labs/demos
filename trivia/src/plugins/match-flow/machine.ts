@@ -330,6 +330,14 @@ export function handlePeerLeft(deps: PeerLeftDeps): void {
       }));
       mutate("players", () => ({ entries: promotedPlayers }));
       mutate("match", draft => ({ ...draft, hostPeer: nextHost.peerId }));
+      // Move host identity to the promoted player's TOKEN so a later reconnect stays consistent (and
+      // the original host, if they ever return, comes back as a regular player — deterministic).
+      for (const [token, pid] of state.tokens) {
+        if (pid === nextHost.peerId) {
+          state.hostToken = token;
+          break;
+        }
+      }
     }
   }
 
