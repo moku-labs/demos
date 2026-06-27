@@ -18,7 +18,12 @@
  */
 export function ReconnectStrip() {
   return (
-    <div data-component="reconnect-strip" role="status">
+    <div
+      data-component="reconnect-strip"
+      role="status"
+      aria-live="polite"
+      aria-label="Reconnecting to room"
+    >
       <span data-icon aria-hidden="true">
         📡
       </span>

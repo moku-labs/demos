@@ -121,6 +121,11 @@ function emitLifecycle(event: RoomLifecycle): void {
  * Boot the TV/stage role: start the stage app, open a room, wire slice subscriptions, and push the
  * first snapshot. Resolves with the room descriptor (code + joinUrl) for the lobby QR.
  *
+ * Note: `app.sync.subscribe` fires on inbound frames from peers only — it does NOT fire when the
+ * host itself calls `stage.mutate`. To keep the TV re-rendering after intent handlers mutate state,
+ * we supplement the subscribe wiring with a 250 ms polling interval that calls `notify()` so the
+ * StageLobby player grid (and other host-driven slices) updates on the TV immediately.
+ *
  * @param signaling - Optional signaling override (tests inject a shared `inMemory()`).
  * @returns The opened room's descriptor.
  * @example
@@ -136,7 +141,11 @@ async function bootStage(signaling?: Signaling): Promise<RoomDescriptor> {
   role = "stage";
   selfId = null;
   descriptor = opened;
+  // Wire subscribe for inbound-frame notifications (peers reconnecting, resync, etc.).
   for (const ns of SLICES) app.sync.subscribe(ns, notify);
+  // Poll every 250 ms so the TV re-renders when intent handlers mutate slices locally
+  // (sync.subscribe does not fire for the host's own stage.mutate calls).
+  setInterval(notify, 250);
   notify();
   return opened;
 }

@@ -20,5 +20,5 @@ export function StageLayout(
   _ctx: Router.LayoutContext<Router.RouteState>,
   children: ComponentChildren
 ): VNode {
-  return <div data-layout="stage">{children}</div>;
+  return <main data-layout="stage">{children}</main>;
 }

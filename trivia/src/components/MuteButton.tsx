@@ -26,6 +26,7 @@ export function MuteButton({ muted, onToggle }: MuteButtonProps) {
       data-component="mute-button"
       data-muted={muted ? "true" : undefined}
       aria-pressed={muted}
+      aria-label={muted ? "Unmute sound" : "Mute sound"}
       onClick={onToggle}
     >
       <span data-icon aria-hidden="true">

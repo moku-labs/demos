@@ -13,6 +13,12 @@ import { SITE } from "./config";
 import { islands } from "./islands";
 import { routes } from "./routes";
 
+// The E2E suite builds with `TRIVIA_E2E=1` (set by the Playwright webServer), which swaps in a
+// test-only client entry able to render deterministic fixture phase screens (tests/e2e/harness). The
+// production build/deploy never sets it, so `src/spa.tsx` is the entry and NO fixture/harness code is
+// ever bundled into the shipped client.
+const clientEntry = process.env.TRIVIA_E2E === "1" ? "tests/e2e/harness/spa-e2e.ts" : "src/spa.tsx";
+
 /**
  * The production web client app — consumed by `scripts/build.ts` (`app.cli.build()` + the post-build
  * `app.collection.write(...)` bank emit) and the `dev` cli passthrough. The whole composition is a
@@ -47,7 +53,7 @@ export const app = createApp({
     // Client build → dist/client (served by the worker's ASSETS binding). SPA game: no feeds/sitemap/OG.
     build: {
       outDir: "dist/client",
-      clientEntry: "src/spa.tsx",
+      clientEntry,
       template: "src/index.html",
       notFound: { path: "src/404.html" },
       minify: true,

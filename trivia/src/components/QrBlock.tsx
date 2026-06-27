@@ -27,7 +27,11 @@ export function QrBlock({ matrix, hint }: QrBlockProps): JSX.Element {
   const cells = matrix ? matrix.modules.length : size * size;
 
   return (
-    <div data-component="qr-block">
+    <div
+      data-component="qr-block"
+      role="img"
+      aria-label={hint ?? "QR code — scan to join the room"}
+    >
       <div data-grid data-placeholder={matrix ? undefined : "true"} style={{ "--size": size }}>
         {Array.from({ length: cells }, (_, i) => (
           <span key={i} data-cell={matrix?.modules[i] ? "on" : undefined} />

@@ -4,5 +4,15 @@
    from @fontsource (no runtime CDN). Add a family = vendor its woff2 into
    public/fonts/<family>/, author src/styles/<family>.css, @import it here.
    ============================================================ */
+
+/*
+ * Layer order — MUST appear before any @layer block so the browser cascade
+ * priority is: reset (lowest) → tokens → base → animations → components →
+ * utilities (highest). CSS Cascade Level 5 allows @layer statements before
+ * @import. The bundler inlines @imports in order, so this first-imported file
+ * is where the order statement must live to precede all component @layer blocks.
+ */
+@layer reset, tokens, base, animations, components, utilities;
+
 @import "./fredoka.css";
 @import "./quicksand.css";

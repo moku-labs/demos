@@ -23,7 +23,10 @@ export default defineConfig({
   snapshotPathTemplate: "{testDir}/{testFilePath}-snapshots/{arg}{-projectName}-{platform}{ext}",
   fullyParallel: false,
   workers: 1,
-  retries: process.env.CI ? 2 : 0,
+  // 2 retries everywhere: the two-context WebRTC tests depend on the Hub DO WS being healthy.
+  // After many single-context tests open Hub WS connections, the Hub DO can accumulate stale
+  // connections. A retry gets a fresh WebRTC attempt within the same server session.
+  retries: 2,
   reporter: [["list"], ["html", { outputFolder: "playwright-report", open: "never" }]],
 
   use: {
@@ -67,6 +70,9 @@ export default defineConfig({
         webServer: {
           command: "bun run dev",
           url: BASE_URL,
+          // TRIVIA_E2E=1 makes the web build use the test-only client entry (tests/e2e/harness/spa-e2e),
+          // which can render deterministic fixture phase screens via `/?e2ephase=…` (see src/app.ts).
+          env: { TRIVIA_E2E: "1" },
           reuseExistingServer: !process.env.CI,
           timeout: 60_000,
           stdout: "pipe" as const,

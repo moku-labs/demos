@@ -61,6 +61,15 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
   const code = ctx.params.code ?? "";
   ctx.set({ code });
 
+  // Fix data-layout — the server always serves the stage layout for all routes (SPA mode, no SSR).
+  // On direct load to /controller/:code the outer [data-layout] element has data-layout="stage"
+  // instead of "controller", which prevents all [data-layout="controller"] CSS from applying.
+  // (The layout root is a semantic <main>, so the landmark is already correct — only the attr needs fixing.)
+  const layoutElement = ctx.el.closest<HTMLElement>("[data-layout]");
+  if (layoutElement && layoutElement.dataset.layout !== "controller") {
+    layoutElement.dataset.layout = "controller";
+  }
+
   ctx.cleanup(
     subscribe(s => {
       if (s.question?.id) rememberSeen(s.question.id);

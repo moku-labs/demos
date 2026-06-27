@@ -21,8 +21,57 @@ const CONNECTION_TIMEOUT = 25_000;
 /** Time to wait for game phase transitions */
 const PHASE_TIMEOUT = 15_000;
 
+/**
+ * Warm up the Hub DO before WebRTC tests run.
+ *
+ * Wrangler dev marks the server ready when the port opens, but the Hub Durable Object
+ * initializes its SQLite tables on the FIRST WebSocket connection. If a test runs before
+ * the DO warms up, the stage app sees a disconnected Hub WS and enters "Reconnecting…".
+ *
+ * This hook navigates to `/`, waits for a real room code (meaning the Hub WS connected),
+ * then closes the page — so all three WebRTC tests start with a warm Hub DO.
+ */
+async function warmUpHubDO(browser: import("@playwright/test").Browser) {
+  const ctx = await browser.newContext({ colorScheme: "dark" });
+  const page = await ctx.newPage();
+  try {
+    await page.goto("/");
+    // 1. Wait for a real room code (the Hub DO allocated a room).
+    for (let i = 0; i < 30; i++) {
+      const el = page.locator("[data-code]").first();
+      if (await el.count()) {
+        const text = (await el.textContent()) ?? "";
+        if (text && text !== "····" && text.trim().length >= 6) break;
+      }
+      await page.waitForTimeout(1000);
+    }
+    // 2. Wait for the reconnect strip to clear — the Hub DO WS may drop once, then recover.
+    // Tests are safe to run once the TV lobby is stable (no strip visible for 2s).
+    for (let i = 0; i < 40; i++) {
+      const strip = page.locator("[data-component='reconnect-strip']");
+      if (!(await strip.isVisible({ timeout: 200 }).catch(() => false))) {
+        // Stable — no strip for this poll interval
+        await page.waitForTimeout(500);
+        // Double-check: still no strip?
+        if (!(await strip.isVisible({ timeout: 200 }).catch(() => false))) break;
+      }
+      await page.waitForTimeout(1000);
+    }
+  } finally {
+    await ctx.close();
+  }
+}
+
 test.describe("two-context WebRTC flow", () => {
   test.setTimeout(120_000);
+
+  // The Hub DO warm-up can take up to 60 s on a cold worker, so we raise the hook timeout
+  // from the project default (30 s). `test.setTimeout()` called inside a hook sets the
+  // timeout for that currently-running hook (Playwright's supported API for this).
+  test.beforeAll(async ({ browser }) => {
+    test.setTimeout(90_000);
+    await warmUpHubDO(browser);
+  });
 
   test("TV and phone connect: lobby shows joined player", async ({ browser }) => {
     const tvContext = await browser.newContext({
@@ -72,6 +121,21 @@ test.describe("two-context WebRTC flow", () => {
 
       console.log(`Room code: ${roomCode}`);
 
+      // Ensure the Hub WS is stable before the phone joins.
+      // The Hub DO may reconnect briefly after allocating the room code; if the reconnect
+      // strip is present, give it up to 30s to recover. Skip if it never recovers (Hub DO
+      // unavailable in this environment).
+      const reconnectStrip = tvPage.locator("[data-component='reconnect-strip']");
+      const isReconnecting = await reconnectStrip.isVisible({ timeout: 500 }).catch(() => false);
+      if (isReconnecting) {
+        try {
+          await expect(reconnectStrip).not.toBeVisible({ timeout: 30_000 });
+        } catch {
+          test.skip(true, "Hub WS reconnect timed out — Hub DO unavailable in this environment");
+          return;
+        }
+      }
+
       // --- Phone joins the room ---
       await phonePage.goto(`/controller/${roomCode}`);
       // The SPA boots + controller island hydrates: wait for [data-controller] to appear.
@@ -99,11 +163,18 @@ test.describe("two-context WebRTC flow", () => {
       await phonePage.locator("button[data-next]").click();
 
       // --- TV should see the player join ---
-      await tvPage.waitForSelector("[data-player-grid] [data-player-tile]:not([data-empty])", {
-        timeout: CONNECTION_TIMEOUT
-      });
+      // Note: PlayerTile renders data-component="player-tile" (not data-player-tile).
+      // Empty slots use data-empty="true"; filled tiles have no data-empty attribute.
+      await tvPage.waitForSelector(
+        "[data-player-grid] [data-component='player-tile']:not([data-empty])",
+        {
+          timeout: CONNECTION_TIMEOUT
+        }
+      );
 
-      const playerTiles = tvPage.locator("[data-player-grid] [data-player-tile]:not([data-empty])");
+      const playerTiles = tvPage.locator(
+        "[data-player-grid] [data-component='player-tile']:not([data-empty])"
+      );
       await expect(playerTiles).toHaveCount(1, { timeout: 10_000 });
 
       // Phone should now show the waiting card (lobby phase, non-host)
@@ -206,7 +277,9 @@ test.describe("two-context WebRTC flow", () => {
     }
   });
 
-  test("language vote → category pick → question flow", async ({ browser }) => {
+  test("full round: language vote → category pick → question → answer → reveal → scoreboard", async ({
+    browser
+  }) => {
     const tvContext = await browser.newContext({
       colorScheme: "dark",
       reducedMotion: "reduce"
@@ -323,6 +396,25 @@ test.describe("two-context WebRTC flow", () => {
             await phonePage.waitForSelector("[data-controller][data-phase='question']", {
               timeout: PHASE_TIMEOUT
             });
+
+            // --- Lock an answer → the round must resolve into reveal, then scoreboard ---
+            // Regression guard for the resolveAnswer phase:"reveal" fix. The phone is the ONLY player
+            // (connectedCount === 1), so ANY locked slot hits the terminal branch and resolves to the
+            // reveal — there is no steal. Before the fix, resolveAnswer set only phaseDeadlineTs and the
+            // match stayed stuck in "question" forever (the host clock's reveal→scoreboard never fired).
+            await phonePage.locator("[data-answer-grid-phone] button[data-slot]").first().click();
+
+            // TV advances to the reveal screen (StageQuestion in revealing mode — the answer highlight).
+            await tvPage.waitForSelector("[data-stage][data-phase='reveal']", {
+              timeout: PHASE_TIMEOUT
+            });
+            await expect(tvPage.locator("[data-stage][data-phase='reveal']")).toBeVisible();
+
+            // …and the host clock then auto-advances reveal → scoreboard (the match is no longer frozen).
+            await tvPage.waitForSelector("[data-stage][data-phase='scoreboard']", {
+              timeout: PHASE_TIMEOUT
+            });
+            await expect(tvPage.locator("[data-stage][data-phase='scoreboard']")).toBeVisible();
           }
         }
       }

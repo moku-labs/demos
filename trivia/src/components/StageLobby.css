@@ -11,6 +11,23 @@
     width: 100%;
     align-items: center;
     gap: clamp(28px, 6vw, 72px);
+    /* Collapse to vertical stack on very small viewports (< 540px) — the TV is designed for 16:9 but
+       the code can also be opened on a small browser tab or laptop. Stacking keeps it usable. */
+    flex-wrap: wrap;
+  }
+
+  /* On narrow viewports let the join column center itself and fill available width. */
+  @media (max-width: 540px) {
+    :scope {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-y: auto;
+    }
+
+    [data-lobby-players] {
+      width: 100%;
+    }
   }
 
   [data-lobby-join] {

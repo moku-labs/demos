@@ -21,9 +21,9 @@ export function ControllerLayout(
   children: ComponentChildren
 ): VNode {
   return (
-    <div data-layout="controller">
+    <main data-layout="controller">
       <div data-region="notch" />
       {children}
-    </div>
+    </main>
   );
 }

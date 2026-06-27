@@ -1,5 +1,5 @@
 import type { JSX } from "preact";
-import { useState } from "preact/hooks";
+import { useRef, useState } from "preact/hooks";
 import type { JoinProfile, JoinWizardProps } from "./types";
 
 /** The three wizard steps, in order. */
@@ -58,12 +58,26 @@ export function JoinWizard({
   const nameReady = name.trim().length > 0;
   const isLast = step === 3;
 
+  // Guard against double-click skipping a wizard step: track whether we are actively
+  // transitioning. The ref stays true for two animation frames (enough to absorb a
+  // double-click's second event at 50–200 ms) without blocking deliberate rapid taps.
+  const transitioningRef = useRef(false);
+
   const advance = (): void => {
+    if (transitioningRef.current) return;
     if (step === 1 && !nameReady) return;
     if (isLast) {
       onJoin({ name: name.trim(), avatar, color } satisfies JoinProfile);
       return;
     }
+    // Lock for two rAF ticks so the DOM update for the new step lands before the
+    // second click of a double-click can fire on the Next button.
+    transitioningRef.current = true;
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        transitioningRef.current = false;
+      })
+    );
     setStep(step + 1);
   };
 
@@ -93,10 +107,14 @@ export function JoinWizard({
       <div data-stage>
         {step === 1 && (
           <div data-step="name">
-            <strong data-heading>Enter your name</strong>
+            <h2 data-heading>Enter your name</h2>
             <input
               data-name-input
               type="text"
+              inputMode="text"
+              autoCapitalize="words"
+              autoCorrect="off"
+              spellcheck={false}
               value={name}
               maxLength={16}
               placeholder="Your name"
@@ -112,7 +130,7 @@ export function JoinWizard({
 
         {step === 2 && (
           <div data-step="avatar">
-            <strong data-heading>Pick your avatar</strong>
+            <h2 data-heading>Pick your avatar</h2>
             <div data-avatar-grid>
               {avatars.map(a => (
                 <button
@@ -133,7 +151,7 @@ export function JoinWizard({
 
         {step === 3 && (
           <div data-step="color">
-            <strong data-heading>Pick your color</strong>
+            <h2 data-heading>Pick your color</h2>
             <div data-color-row>
               {colors.map(c => {
                 const taken = takenColors.includes(c.hex);

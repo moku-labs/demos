@@ -60,10 +60,15 @@
   /* ── Step 1 — name input ── */
   [data-name-input] {
     width: 100%;
-    padding: var(--space-3) var(--space-4);
+    /* Explicit padding + min-height on form elements inside @scope — Chromium UA styles for
+       <input> can suppress @scope-applied padding; restating it with !important ensures the
+       clay look survives regardless of UA specificity. Tap target: ≥44px per WCAG 2.5.5. */
+    padding: var(--space-3) var(--space-4) !important;
+    min-height: 48px;
+    box-sizing: border-box;
     border-radius: var(--radius-md);
-    background: rgba(0, 0, 0, 0.28);
-    border: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.28) !important;
+    border: 1px solid var(--border) !important;
     box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.4);
     font-family: var(--font-display);
     font-weight: 500;
@@ -80,7 +85,7 @@
   [data-avatar-grid] {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-2);
+    gap: var(--space-3);
     width: 100%;
   }
 
@@ -88,12 +93,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    /* aspect-ratio keeps cells square; min-height ensures ≥44px WCAG 2.5.5 tap target */
     aspect-ratio: 1;
+    min-height: 64px;
     font-size: 30px;
     line-height: 1;
     border-radius: var(--radius-md);
-    background: var(--surface);
-    border: 2px solid var(--border);
+    /* !important: Chromium UA button styles can suppress @scope-applied background on <button>;
+       restating explicitly ensures the clay card look renders. */
+    background: var(--surface) !important;
+    border: 2px solid var(--border) !important;
     box-shadow: var(--shadow-sm);
     transition:
       transform var(--dur-hover) var(--spring),
@@ -123,11 +132,14 @@
   }
 
   [data-swatch] {
-    width: 36px;
-    height: 36px;
+    /* 44×44 minimum touch target (WCAG 2.5.5). !important on background/border: Chromium UA
+       button styles suppress @scope-applied background on <button>; the inline --swatch custom
+       property provides the player colour. */
+    width: 44px;
+    height: 44px;
     border-radius: var(--radius-pill);
-    background: var(--swatch);
-    border: 2px solid rgba(255, 255, 255, 0.28);
+    background: var(--swatch) !important;
+    border: 2px solid rgba(255, 255, 255, 0.28) !important;
     box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35);
     transition:
       transform var(--dur-hover) var(--spring),
@@ -162,12 +174,17 @@
   }
 
   [data-back] {
-    padding: var(--space-2) var(--space-3);
+    /* min-height ensures ≥44px tap target (WCAG 2.5.5); !important on padding overrides
+       Chromium UA button styles that suppress @scope-applied padding on <button>. */
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-3) !important;
     font-family: var(--font-display);
     font-weight: 600;
     font-size: 15px;
     color: var(--ink-dim);
-    background: none;
+    background: none !important;
     transition: color var(--dur-hover) ease;
   }
 
@@ -176,14 +193,22 @@
   }
 
   [data-next] {
+    /* display: inline-flex + min-height: Chromium UA styles for <button> suppress @scope-applied
+       padding and background when the element is disabled; explicit display + min-height + !important
+       on the structural properties guarantees the clay button look and the ≥44px tap target at all
+       enabled/disabled states. WCAG 2.5.5. */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin-left: auto;
-    padding: var(--space-3) var(--space-6);
+    min-height: 44px;
+    padding: var(--space-3) var(--space-6) !important;
     border-radius: var(--radius-pill);
-    font-family: var(--font-display);
-    font-weight: 700;
+    font-family: var(--font-display) !important;
+    font-weight: 700 !important;
     font-size: 16px;
-    color: #3a2c00;
-    background: linear-gradient(165deg, color-mix(in srgb, var(--clay-lemon) 92%, white), var(--clay-lemon));
+    color: #3a2c00 !important;
+    background: linear-gradient(165deg, color-mix(in srgb, var(--clay-lemon) 92%, white), var(--clay-lemon)) !important;
     box-shadow:
       0 8px 18px rgba(255, 224, 102, 0.42),
       inset 0 2px 0 rgba(255, 255, 255, 0.5);
