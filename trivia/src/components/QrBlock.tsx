@@ -5,17 +5,18 @@ import type { QrBlockProps } from "./types";
 const PLACEHOLDER_SIZE = 9;
 
 /**
- * The breathing join-QR card on the TV lobby (design §6 A1, §G "QR block").
+ * The join-QR card on the TV lobby (design §6 A1, §G "QR block").
  *
  * Renders the encoded `matrix` ({@link QrBlockProps.matrix}) as a `size×size` CSS grid of cells —
- * dark cells are filled — inside a 120×120 white clay card that gently breathes on a 2.5s loop. When
+ * dark cells are filled — inside a large (clamped ~200–300px) white clay card. The real QR is
+ * intentionally STATIC (no scale/glow animation), so the modules stay crisp for phone cameras. When
  * `matrix` is `null` (before generation) a softly pulsing placeholder grid stands in. The scan-hint
  * line sits below.
  *
  * @param props - The QR block props.
  * @param props.matrix - The row-major QR matrix (`true` = dark module), or `null` for the placeholder.
  * @param props.hint - The scan-hint line shown beneath the card.
- * @returns The breathing QR card with its hint line.
+ * @returns The QR card with its hint line.
  * @example
  * ```tsx
  * <QrBlock matrix={qr} hint="Scan or enter code at trivia.play" />

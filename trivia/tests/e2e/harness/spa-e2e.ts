@@ -11,10 +11,17 @@
 import { createApp } from "@moku-labs/web/browser";
 import { SITE } from "../../../src/config";
 import { islands as realIslands } from "../../../src/islands";
-import { routes } from "../../../src/routes";
+import { routes, urls } from "../../../src/routes";
 import { fixtureIslands } from "./islands";
 
 const fixtureMode = new URLSearchParams(globalThis.location.search).has("e2ephase");
+
+// Mirror the ?room= normalization from src/spa.tsx so the routing regression tests
+// work correctly against the harness server.
+const room = new URLSearchParams(globalThis.location.search).get("room");
+if (room && globalThis.location.pathname === "/") {
+  globalThis.history.replaceState(null, "", urls.toUrl("controller", { code: room }));
+}
 
 // Marker a spec can assert so it fails fast with a clear message if a non-harness dev server was reused
 // (a plain `bun run dev` without TRIVIA_E2E=1 serves src/spa.tsx, which has no fixture screens).

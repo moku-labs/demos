@@ -11,13 +11,16 @@
     grid-template-columns: repeat(var(--size), 1fr);
     grid-template-rows: repeat(var(--size), 1fr);
     gap: 1px;
-    width: 120px;
-    height: 120px;
-    padding: var(--space-2);
-    border-radius: var(--radius-sm);
+    /* A real ~25-module QR must be large enough to scan from across the couch — scales with the TV
+       (the prototype's 120px faux-QR was placeholder-sized). Design §A1 "QR code at large size". */
+    width: clamp(200px, 22vw, 300px);
+    height: clamp(200px, 22vw, 300px);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
     background: #fff;
     box-shadow: var(--shadow-lg);
-    animation: qr-breathe 2.5s ease-in-out infinite;
+    /* No breathing/scale animation on a real QR — the motion + shadow pulse hurt scan recognition.
+       (The pre-generation placeholder keeps its soft pulse below — there's no code to scan yet.) */
   }
 
   [data-cell] {

@@ -8,7 +8,16 @@
 import { createApp } from "@moku-labs/web/browser";
 import { SITE } from "./config";
 import { islands } from "./islands";
-import { routes } from "./routes";
+import { routes, urls } from "./routes";
+
+// The room framework encodes the phone join URL in its fixed `${origin}/?room=CODE` form (room's
+// `buildJoinUrl`), which matches our `/` = TV route. Normalize that scanned deep-link into our
+// `/controller/{code}` route BEFORE the SPA matches, so a scanned QR boots the phone controller —
+// not a second TV. Only the TV-root carrying `?room=` is rewritten; real controller links are untouched.
+const room = new URLSearchParams(globalThis.location.search).get("room");
+if (room && globalThis.location.pathname === "/") {
+  globalThis.history.replaceState(null, "", urls.toUrl("controller", { code: room }));
+}
 
 const app = createApp({
   config: { mode: "spa" },

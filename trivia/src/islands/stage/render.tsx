@@ -15,6 +15,7 @@ import { StagePodium } from "../../components/StagePodium";
 import { StageQuestion } from "../../components/StageQuestion";
 import { StageScoreboard } from "../../components/StageScoreboard";
 import { TRIVIA } from "../../config";
+import { resetRoom } from "../../lib/room";
 import type { TriviaState } from "../../lib/types";
 import { findPlayer } from "../../lib/view";
 import type { StageState } from "./types";
@@ -52,7 +53,7 @@ function endCountdownSeconds(s: TriviaState, now: number): number {
 function screenFor(state: StageState): JSX.Element {
   const { s, now, qr, code, endStats } = state;
   const phase = s.match.phase;
-  if (phase === "lobby") return <StageLobby s={s} qr={qr} code={code} />;
+  if (phase === "lobby") return <StageLobby s={s} qr={qr} code={code} onReset={resetRoom} />;
   if (phase === "languageVote") return <StageLanguage s={s} now={now} />;
   if (phase === "categoryPick") return <StageCategory s={s} />;
   if (phase === "question") return <StageQuestion s={s} now={now} revealing={false} />;
@@ -69,7 +70,7 @@ function screenFor(state: StageState): JSX.Element {
       </Fragment>
     );
   }
-  return <StageLobby s={s} qr={qr} code={code} />;
+  return <StageLobby s={s} qr={qr} code={code} onReset={resetRoom} />;
 }
 
 /**

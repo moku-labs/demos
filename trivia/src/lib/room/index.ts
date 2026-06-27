@@ -117,6 +117,32 @@ function emitLifecycle(event: RoomLifecycle): void {
 
 // ─── Boot (idempotent) ──────────────────────────────────────────────────────────
 
+/** Substring of the room session plugin's host-reentry localStorage keys (`moku.room.reentry.{code}`). */
+const REENTRY_KEY_INFIX = ".reentry.";
+
+/**
+ * Forget any persisted host-reentry record so the next stage boot mints a FRESH room instead of
+ * reclaiming the previous code. The room `session` plugin persists a host-only `HostReentryRecord` at
+ * `moku.room.reentry.{code}` and restores it during `app.start()` (its `detectHostReload`), which sets
+ * `role:"host"` on the OLD code — that both pins the room across reloads and makes our unconditional
+ * `createRoom()` throw ("a room is already active"), blanking the lobby code/QR. This demo wants every
+ * TV load to be a brand-new room, so we drop those records up front. DOM-guarded (no-op headless).
+ *
+ * @example
+ * ```ts
+ * clearHostReentry(); // then app.start() opens a fresh room
+ * ```
+ */
+function clearHostReentry(): void {
+  if (typeof localStorage === "undefined") return;
+  const stale: string[] = [];
+  for (let i = 0; i < localStorage.length; i += 1) {
+    const key = localStorage.key(i);
+    if (key?.includes(REENTRY_KEY_INFIX)) stale.push(key);
+  }
+  for (const key of stale) localStorage.removeItem(key);
+}
+
 /**
  * Boot the TV/stage role: start the stage app, open a room, wire slice subscriptions, and push the
  * first snapshot. Resolves with the room descriptor (code + joinUrl) for the lobby QR.
@@ -134,6 +160,7 @@ function emitLifecycle(event: RoomLifecycle): void {
  * ```
  */
 async function bootStage(signaling?: Signaling): Promise<RoomDescriptor> {
+  clearHostReentry(); // every TV load = a fresh room (no stale-code reclaim, no createRoom() throw)
   const app = createStageApp(emitLifecycle, signaling);
   await app.start();
   const opened = app.stage.createRoom();
@@ -296,6 +323,22 @@ export function onLifecycle(fn: (event: RoomLifecycle) => void): () => void {
 export async function qr(): Promise<QrMatrix | null> {
   if (role === "stage" && stageApp) return stageApp.stage.qr();
   return null;
+}
+
+/**
+ * Reset the TV's room: forget the persisted host-reentry record and reload, so the stage boots a
+ * brand-new room code + QR (the old code is invalidated; any joined phones rescan). Wired to the
+ * lobby's "New code" control. A reload is the clean teardown — it re-runs the idempotent stage boot,
+ * which mints a fresh room via {@link clearHostReentry}. No-op when there is no DOM (headless/tests).
+ *
+ * @example
+ * ```ts
+ * <button onClick={resetRoom}>New code</button>
+ * ```
+ */
+export function resetRoom(): void {
+  clearHostReentry();
+  if (typeof location !== "undefined") location.reload();
 }
 
 /**

@@ -19,6 +19,8 @@ export type StageLobbyProps = {
   qr: QrMatrix | null;
   /** The room code (from the descriptor). */
   code: string;
+  /** Regenerate the room (new code + QR). When omitted, the reset control is hidden. */
+  onReset?: () => void;
 };
 
 /**
@@ -28,10 +30,10 @@ export type StageLobbyProps = {
  * @returns The lobby screen.
  * @example
  * ```tsx
- * <StageLobby s={s} qr={qr} code={code} />
+ * <StageLobby s={s} qr={qr} code={code} onReset={resetRoom} />
  * ```
  */
-export function StageLobby({ s, qr, code }: StageLobbyProps): JSX.Element {
+export function StageLobby({ s, qr, code, onReset }: StageLobbyProps): JSX.Element {
   const joined = s.players.filter(p => p.connected).length;
   const slots = Math.max(TRIVIA.players.max, s.players.length);
   const empties = Math.max(0, slots - s.players.length);
@@ -41,6 +43,11 @@ export function StageLobby({ s, qr, code }: StageLobbyProps): JSX.Element {
       <div data-lobby-join>
         <RoomCodeBadge code={code || "····"} />
         <QrBlock matrix={qr} hint="Scan to join — or enter the code" />
+        {onReset ? (
+          <button type="button" data-reset onClick={onReset} aria-label="Generate a new room code">
+            ↻ New code
+          </button>
+        ) : null}
       </div>
       <div data-lobby-players>
         <h2 data-heading>Players joining</h2>
