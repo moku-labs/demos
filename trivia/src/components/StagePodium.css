@@ -1,0 +1,45 @@
+/**
+ * StagePodium — the TV final podium layout (A8): the title, the top-3 podium blocks, the also-rans row,
+ * and the stat line. @scope-encapsulated, data-* only; pulled into layer(components) via the aggregator.
+ */
+@scope ([data-component="stage-podium"]) {
+  :scope {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-5);
+  }
+
+  [data-title] {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.4vw, 44px);
+  }
+
+  [data-podium-stage] {
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(16px, 3vw, 40px);
+  }
+
+  [data-also-rans] {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  [data-also-ran] {
+    padding: 6px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-display);
+  }
+
+  [data-stat-line] {
+    color: var(--ink-dim);
+  }
+}

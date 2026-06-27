@@ -1,0 +1,25 @@
+/**
+ * StageScoreboard — the TV interstitial scoreboard layout (A7): the title + the ranked tile column.
+ * @scope-encapsulated, data-* only; pulled into layer(components) via the aggregator.
+ */
+@scope ([data-component="stage-scoreboard"]) {
+  :scope {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  [data-title] {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.4vw, 44px);
+  }
+
+  [data-scoreboard-list] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+}

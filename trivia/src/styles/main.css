@@ -141,6 +141,21 @@
     overflow: hidden;
   }
 
+  /* The stage island host fills the layout; the frame root is a flex column. */
+  [data-island="stage"] {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  [data-stage] {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    position: relative;
+  }
+
   /* Per-phase warm-highlight shift (the active player's mood bleeds into the gradient). */
   [data-stage][data-phase="categoryPick"],
   [data-stage][data-phase="question"],

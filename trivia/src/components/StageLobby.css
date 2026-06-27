@@ -1,0 +1,45 @@
+/**
+ * StageLobby — the TV lobby screen layout (A1). The components own their look; this owns the arrangement
+ * (room-code/QR column + the joining-players grid). @scope-encapsulated, data-* only; pulled into
+ * layer(components) via the aggregator.
+ */
+@scope ([data-component="stage-lobby"]) {
+  :scope {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    align-items: center;
+    gap: clamp(28px, 6vw, 72px);
+  }
+
+  [data-lobby-join] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+  }
+
+  [data-lobby-players] {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  [data-heading] {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 2.4vw, 30px);
+    margin-bottom: var(--space-4);
+  }
+
+  [data-player-grid] {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  [data-help] {
+    margin-top: var(--space-5);
+    color: var(--ink-dim);
+  }
+}

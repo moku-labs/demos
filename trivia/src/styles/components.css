@@ -31,9 +31,14 @@
 @import "../components/RoundIntro.css";
 @import "../components/ScoreChip.css";
 @import "../components/ScoreboardTile.css";
+@import "../components/StageCategory.css";
+@import "../components/StageLanguage.css";
+@import "../components/StageLobby.css";
+@import "../components/StagePodium.css";
+@import "../components/StageQuestion.css";
+@import "../components/StageScoreboard.css";
 @import "../components/TimerRing.css";
 @import "../components/TurnChip.css";
 
 /* Island screen layouts (how the components arrange per phase). */
-@import "../islands/stage/stage.css";
 @import "../islands/controller/controller.css";
