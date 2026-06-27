@@ -9,12 +9,15 @@ export default [
   {
     ignores: [
       "dist/**",
+      "dist-e2e/**",
       "coverage/**",
       "bun.lock",
       ".claude/**",
       ".planning/**",
       "node_modules/**",
-      "declarations.d.ts"
+      "declarations.d.ts",
+      "playwright-report/**",
+      "test-results/**"
     ]
   },
 
@@ -143,6 +146,18 @@ export default [
       "unicorn/no-useless-undefined": "off",
       "sonarjs/no-duplicate-string": "off",
       "unicorn/prevent-abbreviations": "off"
+    }
+  },
+
+  // 7b. Playwright E2E specs: e2e flows are long and browser-shaped (DOM APIs return `null`, ms
+  // timeouts, informal inline comments), so relax the rules that don't fit that ergonomics.
+  {
+    files: ["tests/e2e/**/*.ts"],
+    rules: {
+      "sonarjs/cognitive-complexity": "off",
+      "unicorn/no-null": "off",
+      "unicorn/numeric-separators-style": "off",
+      "jsdoc/escape-inline-tags": "off"
     }
   },
 

@@ -4,7 +4,12 @@ node_modules
 # build output
 out
 dist
+dist-e2e
 *.tgz
+
+# Playwright e2e run artifacts (the committed baselines live in tests/e2e/**-snapshots/)
+playwright-report
+test-results
 
 # code coverage
 coverage
