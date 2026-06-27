@@ -30,6 +30,7 @@ const defaultConfig: Config = {
   roundIntroMs: TRIVIA.timers.roundIntroMs,
   revealMs: TRIVIA.timers.revealMs,
   scoreboardMs: TRIVIA.timers.scoreboardMs,
+  endCountdownMs: TRIVIA.timers.endCountdownMs,
   tickMs: 250
 };
 

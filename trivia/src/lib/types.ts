@@ -31,6 +31,15 @@ export type ScoreEntry = {
   delta: number;
   rank: number;
   prevRank: number;
+  /**
+   * The player's leading category by correct-answer count, or `null` when they have none.
+   * Optional: only the phone final card (A15) reads it; scoreboard/reveal/podium ignore it.
+   */
+  topCategory?: CategoryId | null;
+  /**
+   * The player's best answer streak this match. Optional, for the same reason as `topCategory`.
+   */
+  bestStreak?: number;
 };
 
 /** A joined player's identity (chosen in the join wizard). */

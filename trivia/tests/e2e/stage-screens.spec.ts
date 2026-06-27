@@ -161,6 +161,8 @@ test.describe("TV Stage — phase screens render (deterministic fixtures)", () =
     await expect(page.locator("[data-component='confetti']")).toBeAttached();
     await expect(page.locator("[data-also-ran]")).toHaveCount(2);
     await expect(page.locator("[data-stat-line]")).toContainText("Most steals");
+    // A8: the "↩ Play Again" coral pill (presentational cue on the TV; players tap it on their phones).
+    await expect(page.locator("[data-play-again]")).toBeVisible();
   });
 });
 

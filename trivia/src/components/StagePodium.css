@@ -42,4 +42,33 @@
   [data-stat-line] {
     color: var(--ink-dim);
   }
+
+  /* Play-again cue (A8): a presentational coral clay pill — NO input on the TV (play-again is
+     triggered from the phones). Mirrors ClayButton's coral tone: inset white top highlight + a
+     colour-matched coral drop shadow. */
+  [data-podium-actions] {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-2);
+  }
+
+  [data-play-again] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 14px 28px;
+    border-radius: var(--radius-pill);
+    background: var(--clay-coral);
+    color: #fff8f0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(15px, 1.5vw, 18px);
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow:
+      0 8px 20px rgba(255, 107, 107, 0.45),
+      0 4px 10px rgba(0, 0, 0, 0.28),
+      inset 0 2px 0 rgba(255, 255, 255, 0.55);
+  }
 }

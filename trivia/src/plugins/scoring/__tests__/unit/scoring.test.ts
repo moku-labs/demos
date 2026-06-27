@@ -246,6 +246,57 @@ describe("computeAward — perCategory", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// computeAward — synced end-stats (topCategory + bestStreak on the entry)
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("computeAward — synced end-stats on the entry", () => {
+  it("stamps topCategory + bestStreak on the awarded peer's entry", () => {
+    const { award } = makeBoard();
+    award(PEER_A, { correct: true, steal: false, tier: "easy", category: "animals" });
+    award(PEER_A, { correct: true, steal: false, tier: "easy", category: "animals" });
+    const result = award(PEER_A, { correct: true, steal: false, tier: "easy", category: "space" });
+    const entry = result.find(e => e.peerId === PEER_A);
+    expect(entry?.topCategory).toBe("animals"); // 2 animals > 1 space
+    expect(entry?.bestStreak).toBe(3);
+  });
+
+  it("keeps bestStreak at its peak after a wrong answer breaks the run", () => {
+    const { award } = makeBoard();
+    award(PEER_A, { correct: true, steal: false, tier: "easy", category: "animals" });
+    award(PEER_A, { correct: true, steal: false, tier: "easy", category: "animals" });
+    const result = award(PEER_A, {
+      correct: false,
+      steal: false,
+      tier: "easy",
+      category: "animals"
+    });
+    expect(result.find(e => e.peerId === PEER_A)?.bestStreak).toBe(2);
+  });
+
+  it("a peer with no correct answers carries topCategory null and bestStreak 0", () => {
+    const { award } = makeBoard();
+    const result = award(PEER_A, {
+      correct: false,
+      steal: false,
+      tier: "easy",
+      category: "animals"
+    });
+    const entry = result.find(e => e.peerId === PEER_A);
+    expect(entry?.topCategory).toBeNull();
+    expect(entry?.bestStreak).toBe(0);
+  });
+
+  it("re-stamps every peer's stats on each publish (B keeps its own after A's award)", () => {
+    const { award } = makeBoard();
+    award(PEER_B, { correct: true, steal: false, tier: "easy", category: "music" }); // B: music, streak 1
+    const result = award(PEER_A, { correct: true, steal: false, tier: "easy", category: "food" });
+    const bEntry = result.find(e => e.peerId === PEER_B);
+    expect(bEntry?.topCategory).toBe("music");
+    expect(bEntry?.bestStreak).toBe(1);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // computeAward — rank + prevRank
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -373,6 +424,16 @@ describe("resetBoard", () => {
     award(PEER_A, { correct: true, steal: false, tier: "easy", category: "animals" });
     const zeroed = resetBoard(state, entries);
     expect(zeroed.some(e => e.peerId === PEER_A)).toBe(true);
+  });
+
+  it("clears the synced stat fields (topCategory null, bestStreak 0) in the snapshot", () => {
+    const { state, entries, award } = makeBoard();
+    award(PEER_A, { correct: true, steal: false, tier: "easy", category: "animals" });
+    award(PEER_A, { correct: true, steal: false, tier: "easy", category: "animals" });
+    const zeroed = resetBoard(state, entries);
+    const entry = zeroed.find(e => e.peerId === PEER_A);
+    expect(entry?.topCategory).toBeNull();
+    expect(entry?.bestStreak).toBe(0);
   });
 });
 

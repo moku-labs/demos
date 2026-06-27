@@ -20,6 +20,7 @@ import type { ReadSlice } from "./adapters";
 import { clearSliceCache, setSliceCache } from "./cache";
 import type { QuestionBankDeps, ScoringDeps } from "./handlers";
 import {
+  advanceFromFinal,
   advanceFromReveal,
   advanceFromScoreboard,
   advanceRoundIntro,
@@ -88,6 +89,8 @@ function runTick(deps: ClockDeps): void {
     advanceFromReveal(stage, config.scoreboardMs);
   } else if (phase === "scoreboard" && deadlinePassed) {
     advanceFromScoreboard(stage, config, state, match, players, round);
+  } else if (phase === "final" && deadlinePassed) {
+    advanceFromFinal(stage, scoring, state);
   }
 }
 

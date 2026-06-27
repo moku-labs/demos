@@ -80,6 +80,9 @@ export function StagePodium({ s, endStats }: StagePodiumProps): JSX.Element {
             : ""}
         </p>
       )}
+      <div data-podium-actions>
+        <span data-play-again>↩ Play Again</span>
+      </div>
     </div>
   );
 }

@@ -19,7 +19,8 @@ export const TRIVIA = {
     voteWindowMs: 5000,
     roundIntroMs: 2000,
     revealMs: 3500,
-    scoreboardMs: 3000
+    scoreboardMs: 3000,
+    endCountdownMs: 15_000
   },
   difficultyBands: { easy: [1, 4], medium: [5, 8], hard: [9, 12] },
   languages: ["en", "ru"],

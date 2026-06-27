@@ -5,9 +5,38 @@
  */
 import type { JSX } from "preact";
 import { rank } from "../lib/leaderboard";
-import type { TriviaState } from "../lib/types";
-import { findPlayer, formatScore } from "../lib/view";
+import type { ScoreEntry, TriviaState } from "../lib/types";
+import { categoryMeta, findPlayer, formatScore } from "../lib/view";
 import { ClayButton } from "./ClayButton";
+
+/**
+ * Build the A15 muted stat sub-line ("Top category: {name} · Best streak: {n}") from this player's
+ * synced score entry. Returns `null` when the entry carries no end-stats (e.g. the player never
+ * answered correctly and has no streak), so the card omits the line entirely rather than showing
+ * empty halves.
+ *
+ * @param entry - This player's `ScoreEntry` (its `topCategory`/`bestStreak` are synced from the host).
+ * @returns The stat line text, or `null` when there is nothing to show.
+ * @example
+ * ```ts
+ * finalStats({ topCategory: "animals", bestStreak: 3, ... }); // "Top category: Animals: Weird & Wonderful · Best streak: 3"
+ * ```
+ */
+function finalStats(entry: ScoreEntry | undefined): string | null {
+  const topCategory = entry?.topCategory;
+  const bestStreak = entry?.bestStreak ?? 0;
+
+  const parts: string[] = [];
+  if (topCategory) {
+    // Short category label (the part before any ":") so the sub-line stays one line on the phone card —
+    // matches the design A15 "Top category: Animals" rather than the full "Animals: Weird & Wonderful".
+    const shortName = categoryMeta(topCategory).name.split(":")[0]?.trim() ?? "";
+    parts.push(`Top category: ${shortName}`);
+  }
+  if (bestStreak > 0) parts.push(`Best streak: ${bestStreak}`);
+
+  return parts.length > 0 ? parts.join(" · ") : null;
+}
 
 /** Props for the phone final card. */
 export type PhoneFinalProps = {
@@ -36,6 +65,7 @@ export function PhoneFinal({ s, onPlayAgain, onLeaveOpen }: PhoneFinalProps): JS
   const place = entry?.rank ?? ranked.length;
   const medal = place === 1 ? "🥇" : place === 2 ? "🥈" : place === 3 ? "🥉" : "🎖";
   const ordinal = place === 1 ? "1st" : place === 2 ? "2nd" : place === 3 ? "3rd" : `${place}th`;
+  const stats = finalStats(entry);
 
   return (
     <div data-component="phone-final" data-screen="final">
@@ -47,6 +77,7 @@ export function PhoneFinal({ s, onPlayAgain, onLeaveOpen }: PhoneFinalProps): JS
         <span data-final-score style={{ color: self?.color ?? "#fff" }}>
           {formatScore(entry?.total ?? 0)} pts
         </span>
+        {stats !== null && <span data-final-stats>{stats}</span>}
       </div>
       <div data-final-actions>
         <ClayButton tone="lemon" onClick={onPlayAgain}>

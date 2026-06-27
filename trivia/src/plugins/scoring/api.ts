@@ -61,6 +61,32 @@ function ensureStats(state: State, peerId: PeerId): PlayerStats {
 }
 
 /**
+ * Stamp a score entry with this peer's synced end-stats (`topCategory` + `bestStreak`),
+ * read from the host-internal stats map so the phone final card (A15) can show them.
+ *
+ * A peer with no host-internal stats (never awarded) gets `topCategory: null` and
+ * `bestStreak: 0`. The fields are optional on `ScoreEntry`, but we always populate
+ * them on publish so the synced `scores` slice is self-describing.
+ *
+ * @param entry - The score entry to decorate (not mutated; a copy is returned).
+ * @param state - The host-internal stats Map.
+ * @returns A new `ScoreEntry` carrying `topCategory` and `bestStreak`.
+ * @example
+ * ```ts
+ * const stamped = decorateWithStats(entry, state); // { ...entry, topCategory: "animals", bestStreak: 3 }
+ * ```
+ */
+function decorateWithStats(entry: ScoreEntry, state: State): ScoreEntry {
+  const stats = state.get(entry.peerId);
+  return {
+    ...entry,
+    // eslint-disable-next-line unicorn/no-null -- the synced ScoreEntry uses null for "no top category yet"
+    topCategory: stats ? (topCategoryFor(stats.perCategory) ?? null) : null,
+    bestStreak: stats?.bestStreak ?? 0
+  };
+}
+
+/**
  * Recompute ranks for all entries from scratch, preserving `prevRank`.
  *
  * Rank 1 = highest total. Tied players receive the same rank.
@@ -153,7 +179,7 @@ export function computeAward(
 
   const reranked = recomputeRanks([...entries.values()]);
   for (const entry of reranked) {
-    entries.set(entry.peerId, entry);
+    entries.set(entry.peerId, decorateWithStats(entry, state));
   }
 
   return [...entries.values()];
@@ -173,14 +199,15 @@ export function computeAward(
  * ```
  */
 export function resetBoard(state: State, entries: Map<PeerId, ScoreEntry>): ScoreEntry[] {
-  for (const [peerId, entry] of entries.entries()) {
-    entries.set(peerId, { ...entry, total: 0, delta: 0, rank: 0, prevRank: 0 });
-  }
   for (const stats of state.values()) {
     stats.steals = 0;
     stats.curStreak = 0;
     stats.bestStreak = 0;
     stats.perCategory = {};
+  }
+  for (const [peerId, entry] of entries.entries()) {
+    const zeroed: ScoreEntry = { ...entry, total: 0, delta: 0, rank: 0, prevRank: 0 };
+    entries.set(peerId, decorateWithStats(zeroed, state));
   }
   return [...entries.values()];
 }

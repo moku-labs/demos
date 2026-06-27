@@ -126,6 +126,32 @@ describe("scoring plugin (integration)", () => {
     expect(entry?.total).toBe(0);
   });
 
+  // ── synced end-stats on the scores slice (A15 phone final card) ──────────
+
+  it("award publishes topCategory + bestStreak on the entry in the slice", () => {
+    const app = createTestStageApp();
+    const PEER = "p-stats";
+    app.scoring.award(PEER, { correct: true, steal: false, tier: "easy", category: "animals" });
+    app.scoring.award(PEER, { correct: true, steal: false, tier: "easy", category: "animals" });
+
+    const slice = app.sync.read("scores") as { entries: ScoreEntry[] } | undefined;
+    const entry = slice?.entries.find(e => e.peerId === PEER);
+    expect(entry?.topCategory).toBe("animals");
+    expect(entry?.bestStreak).toBe(2);
+  });
+
+  it("reset() clears topCategory + bestStreak on the entry in the slice", () => {
+    const app = createTestStageApp();
+    const PEER = "p-stats";
+    app.scoring.award(PEER, { correct: true, steal: false, tier: "easy", category: "animals" });
+    app.scoring.reset();
+
+    const slice = app.sync.read("scores") as { entries: ScoreEntry[] } | undefined;
+    const entry = slice?.entries.find(e => e.peerId === PEER);
+    expect(entry?.topCategory).toBeNull();
+    expect(entry?.bestStreak).toBe(0);
+  });
+
   // ── reset re-publishes zeroed board ─────────────────────────────────────
 
   it("reset() zeros all totals and deltas in the slice", () => {

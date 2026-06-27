@@ -16,6 +16,7 @@ import { resolveAnswer, rotationPeer } from "./machine";
 import type {
   Config,
   MatchSlice,
+  Outcome,
   Phase,
   PlayersSlice,
   QuestionSlice,
@@ -164,8 +165,8 @@ export function advanceFromScoreboard(
     stage.mutate("match", draft => ({
       ...draft,
       phase: "final" as Phase,
-      // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
-      phaseDeadlineTs: null
+      // The podium lingers, then the clock auto-returns to the lobby once this deadline passes (D4).
+      phaseDeadlineTs: Date.now() + config.endCountdownMs
     }));
     return;
   }
@@ -179,5 +180,69 @@ export function advanceFromScoreboard(
     round: nextRound,
     activePeer: activePeer ?? match.activePeer,
     phaseDeadlineTs: Date.now() + config.roundIntroMs
+  }));
+}
+
+/**
+ * final auto-return: once the end-of-match countdown (D4) expires, reset for a fresh game and drop the
+ * group back to the lobby. Mirrors the play-again reset (scores cleared, per-question lock + tried set
+ * dropped, question/steal/reveal cleared) but lands on "lobby" — round 1, no active player, vote re-open
+ * — and does NOT auto-start a round (the group must tap start-game again). The chosen language is kept.
+ *
+ * @param stage - The stage facade (mutate).
+ * @param scoring - The scoring API (to reset scores for the next game).
+ * @param state - The host-internal plugin state (per-question lock + tried set).
+ * @example
+ * ```ts
+ * advanceFromFinal(stage, scoring, state);
+ * ```
+ */
+export function advanceFromFinal(
+  stage: Pick<StageApi, "mutate">,
+  scoring: Pick<ScoringDeps, "reset">,
+  state: State
+): void {
+  scoring.reset();
+  state.locked = false;
+  state.tried = new Set();
+
+  stage.mutate("match", draft => ({
+    ...draft,
+    phase: "lobby" as Phase,
+    round: 1,
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (no active player in the lobby)
+    activePeer: null,
+    paused: false,
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (no phase deadline in the lobby)
+    phaseDeadlineTs: null
+  }));
+
+  // Clear the post-question slices so a fresh game starts from a blank board.
+  stage.mutate("question", () => ({
+    id: "",
+    category: "",
+    tier: "",
+    type: "text",
+    prompt: "",
+    options: [],
+    answeringPeer: "",
+    mode: "answer",
+    deadlineTs: 0
+  }));
+  stage.mutate("steal", () => ({
+    active: false,
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
+    stealPeer: null,
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
+    deadlineTs: null
+  }));
+  stage.mutate("reveal", () => ({
+    correctSlot: 0,
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
+    pickedSlot: null,
+    outcome: "wrong" as Outcome,
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
+    scorerPeer: null,
+    answerText: ""
   }));
 }

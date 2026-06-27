@@ -107,6 +107,9 @@ test.describe("Phone — final + reveal screens (deterministic fixtures)", () =>
     await expect(page.locator("[data-final-place]")).toContainText("1st");
     await expect(page.locator("[data-final-score]")).toContainText("1,400");
     await expect(page.locator("[data-final-actions] button")).toHaveCount(2);
+    // A15: the muted stat sub-line (top category + best streak, synced from the host per-player).
+    await expect(page.locator("[data-final-stats]")).toContainText("Top category");
+    await expect(page.locator("[data-final-stats]")).toContainText("Best streak");
   });
 
   test("reveal flash correct (A13): bright green wash, points line", async ({ page }) => {

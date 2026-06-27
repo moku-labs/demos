@@ -5,7 +5,8 @@
  * mute control are their own sibling islands now. DOM glue only — all game logic is host-side.
  */
 import type { Spa } from "@moku-labs/web/browser";
-import type { JSX } from "preact";
+import { Fragment, type JSX } from "preact";
+import { EndCountdownChip } from "../../components/EndCountdownChip";
 import { RoundIntro } from "../../components/RoundIntro";
 import { StageCategory } from "../../components/StageCategory";
 import { StageLanguage } from "../../components/StageLanguage";
@@ -40,6 +41,13 @@ function TopBar({ s }: { s: TriviaState }) {
   );
 }
 
+/** Remaining whole seconds before the end-of-match auto-return (D4), clamped to ≥ 0. */
+function endCountdownSeconds(s: TriviaState, now: number): number {
+  const deadline = s.match.phaseDeadlineTs;
+  if (deadline === null) return 0;
+  return Math.max(0, Math.ceil((deadline - now) / 1000));
+}
+
 /** Pick the screen body component for the current phase. */
 function screenFor(state: StageState): JSX.Element {
   const { s, now, qr, code, endStats } = state;
@@ -50,7 +58,17 @@ function screenFor(state: StageState): JSX.Element {
   if (phase === "question") return <StageQuestion s={s} now={now} revealing={false} />;
   if (phase === "reveal") return <StageQuestion s={s} now={now} revealing />;
   if (phase === "scoreboard") return <StageScoreboard s={s} />;
-  if (phase === "final") return <StagePodium s={s} endStats={endStats} />;
+  if (phase === "final") {
+    // The podium lingers; only once the host arms the end-of-match countdown (phaseDeadlineTs set) does
+    // the D4 "returning to lobby in N…" chip tick down (the host clock then auto-returns at the deadline).
+    const countingDown = s.match.phaseDeadlineTs !== null;
+    return (
+      <Fragment>
+        <StagePodium s={s} endStats={endStats} />
+        {countingDown && <EndCountdownChip seconds={endCountdownSeconds(s, now)} />}
+      </Fragment>
+    );
+  }
   return <StageLobby s={s} qr={qr} code={code} />;
 }
 

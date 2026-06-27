@@ -40,6 +40,13 @@
     font-size: clamp(26px, 9vw, 36px);
   }
 
+  [data-final-stats] {
+    margin-top: var(--space-1);
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--ink-dim);
+  }
+
   [data-final-actions] {
     display: flex;
     gap: var(--space-3);

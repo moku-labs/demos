@@ -60,10 +60,13 @@
     font-size: clamp(16px, 1.8vw, 22px);
   }
 
+  /* Timer ring: top-centre of the question body with top padding so it clears the top bar / round
+     badge above and the meta-bar's category tag + turn chip on either side (no UI obstruction). */
   [data-timer] {
     position: absolute;
-    top: 2px;
-    right: 6px;
+    top: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 3;
   }
 

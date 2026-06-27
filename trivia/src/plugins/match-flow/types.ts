@@ -25,6 +25,8 @@ export type Config = {
   roundIntroMs: number;
   revealMs: number;
   scoreboardMs: number;
+  /** How long the podium lingers before auto-returning to the lobby (final phase). */
+  endCountdownMs: number;
   tickMs: number;
 };
 

@@ -120,6 +120,25 @@ const CORRECT_CYCLE_TIMERS = {
 };
 
 /**
+ * One-round match (`rounds: 1`) with a short end-countdown so the single round lands on the podium and
+ * the D4 auto-return-to-lobby deadline fires within a `vi.waitFor` window. Reveal/scoreboard windows are
+ * comfortable so the post-answer cycle is observable before the match ends.
+ */
+const SINGLE_ROUND_ENDGAME_TIMERS = {
+  matchFlow: {
+    rounds: 1,
+    answerMs: 5000,
+    stealMs: 3000,
+    roundIntroMs: 200,
+    revealMs: 300,
+    scoreboardMs: 300,
+    endCountdownMs: 400,
+    tickMs: 30
+  },
+  language: { voteWindowMs: 80 }
+};
+
+/**
  * Spin up a host + `count` controllers on one inMemory signaling, join + profile all of them, start
  * the game (the first joiner is host + round-1 active player), let the language vote auto-confirm, then
  * have the active player pick a category so a question is published. Returns the started apps; the
@@ -450,6 +469,44 @@ describe("match-flow plugin integration", () => {
         const match = lead?.controller.read("match");
         expect(match?.phase).toBe("roundIntro");
         expect(match?.round).toBe(2);
+      },
+      { timeout: 5000 }
+    );
+
+    await host.stop();
+    await Promise.all(controllers.map(c => c.stop()));
+  });
+
+  // ─── last round → final podium → end-countdown auto-returns to the lobby (D4) ──
+  // After the only round (rounds:1) resolves, the match reaches "final" (the podium with the D4
+  // countdown chip). Once the end-countdown deadline passes, the host clock resets for a fresh game
+  // and drops the group back to the lobby (round 1) — without auto-starting.
+
+  it("the final podium auto-returns to the lobby after the end-of-match countdown (D4)", {
+    timeout: 20_000
+  }, async () => {
+    restoreFetch = mockFetch();
+    // Single player on a one-round match → the sole connected player is the round-1 active answerer.
+    const { host, controllers } = await driveToQuestion(1, SINGLE_ROUND_ENDGAME_TIMERS);
+    const lead = controllers[0];
+
+    // Lock the correct slot (fixture `answerCheck: "sha:0"` → slot 1 is correct) to resolve the round.
+    lead?.controller.intent("answer-lock", { slot: 1 });
+
+    // The only round resolves through reveal → scoreboard → "final" (the podium), since rounds === 1.
+    await vi.waitFor(
+      () => {
+        expect(lead?.controller.read("match")?.phase).toBe("final");
+      },
+      { timeout: 8000 }
+    );
+
+    // The end-of-match countdown deadline then fires → the clock resets the game back to the lobby.
+    await vi.waitFor(
+      () => {
+        const match = lead?.controller.read("match");
+        expect(match?.phase).toBe("lobby");
+        expect(match?.round).toBe(1);
       },
       { timeout: 5000 }
     );

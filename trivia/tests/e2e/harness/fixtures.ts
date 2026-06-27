@@ -173,11 +173,35 @@ const PLAYERS: PlayerProfile[] = [
 // folds these into `prevRank`. Pixel's pre-rank 3 → live rank 2 makes the scoreboard show it overtaking
 // Tofu. `delta` (Mochi +200) drives the reveal score-rollup chips.
 const SCORES: ScoreEntry[] = [
-  { peerId: "p1", total: 1400, delta: 200, rank: 1, prevRank: 1 },
-  { peerId: "p2", total: 1100, delta: 0, rank: 3, prevRank: 3 },
-  { peerId: "p3", total: 800, delta: 0, rank: 2, prevRank: 2 },
-  { peerId: "p4", total: 500, delta: 0, rank: 4, prevRank: 4 },
-  { peerId: "p5", total: 200, delta: 0, rank: 5, prevRank: 5 }
+  {
+    peerId: "p1",
+    total: 1400,
+    delta: 200,
+    rank: 1,
+    prevRank: 1,
+    topCategory: "animals",
+    bestStreak: 4
+  },
+  {
+    peerId: "p2",
+    total: 1100,
+    delta: 0,
+    rank: 3,
+    prevRank: 3,
+    topCategory: "space",
+    bestStreak: 3
+  },
+  { peerId: "p3", total: 800, delta: 0, rank: 2, prevRank: 2, topCategory: "music", bestStreak: 2 },
+  { peerId: "p4", total: 500, delta: 0, rank: 4, prevRank: 4, topCategory: "food", bestStreak: 2 },
+  {
+    peerId: "p5",
+    total: 200,
+    delta: 0,
+    rank: 5,
+    prevRank: 5,
+    topCategory: "movies-tv",
+    bestStreak: 1
+  }
 ];
 
 const CATEGORIES: CategoryAvailView[] = TRIVIA.categories.map(category => ({
