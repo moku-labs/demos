@@ -102,6 +102,24 @@ const STABLE_QUESTION_TIMERS = {
 };
 
 /**
+ * Long answer window (the lock beats the timeout) with comfortable, equal reveal/scoreboard/roundIntro
+ * windows so the full post-answer cycle (question → reveal → scoreboard → next roundIntro) is each
+ * observable by `vi.waitFor` without racing the next auto-advance.
+ */
+const CORRECT_CYCLE_TIMERS = {
+  matchFlow: {
+    rounds: 12,
+    answerMs: 5000,
+    stealMs: 3000,
+    roundIntroMs: 500,
+    revealMs: 500,
+    scoreboardMs: 500,
+    tickMs: 30
+  },
+  language: { voteWindowMs: 80 }
+};
+
+/**
  * Spin up a host + `count` controllers on one inMemory signaling, join + profile all of them, start
  * the game (the first joiner is host + round-1 active player), let the language vote auto-confirm, then
  * have the active player pick a category so a question is published. Returns the started apps; the
@@ -346,5 +364,55 @@ describe("match-flow plugin integration", () => {
     await host.stop();
     await bob?.stop();
     await carol?.stop();
+  });
+
+  // ─── correct answer-lock → reveal → scoreboard → next round ───────────────
+  // Regression: resolveAnswer used to set only phaseDeadlineTs (never phase:"reveal"), so the host
+  // clock — which advances reveal→scoreboard only when phase==="reveal" — never fired, freezing the
+  // live game on the question screen after the first lock. This drives a full correct-answer round.
+
+  it("a correct answer-lock advances question → reveal → scoreboard → the next round's intro", {
+    timeout: 20_000
+  }, async () => {
+    restoreFetch = mockFetch();
+    // Single player → the sole connected player is the round-1 active answerer (deterministic lock).
+    const { host, controllers } = await driveToQuestion(1, CORRECT_CYCLE_TIMERS);
+    const lead = controllers[0];
+
+    // The bank fixture is `answerCheck: "sha:0"` → decode("sha:0") === 1, so slot 1 is the correct
+    // answer (salt "sha" len 3: (0 - 3 + 4) % 4 = 1). Locking it drives the active-correct branch.
+    lead?.controller.intent("answer-lock", { slot: 1 });
+
+    // (1) The resolved correct answer must move the match into the reveal phase — the bug fix.
+    await vi.waitFor(
+      () => {
+        expect(lead?.controller.read("match")?.phase).toBe("reveal");
+      },
+      { timeout: 5000 }
+    );
+    // The reveal slice carries the correct-answer highlight the TV renders.
+    expect(lead?.controller.read("reveal")?.outcome).toBe("correct");
+    expect(lead?.controller.read("reveal")?.scorerPeer).toBeTruthy();
+
+    // (2) The host clock then auto-advances reveal → scoreboard once the reveal hold expires.
+    await vi.waitFor(
+      () => {
+        expect(lead?.controller.read("match")?.phase).toBe("scoreboard");
+      },
+      { timeout: 5000 }
+    );
+
+    // (3) …and scoreboard → the next round's intro (round increments) — the match is no longer frozen.
+    await vi.waitFor(
+      () => {
+        const match = lead?.controller.read("match");
+        expect(match?.phase).toBe("roundIntro");
+        expect(match?.round).toBe(2);
+      },
+      { timeout: 5000 }
+    );
+
+    await host.stop();
+    await Promise.all(controllers.map(c => c.stop()));
   });
 });

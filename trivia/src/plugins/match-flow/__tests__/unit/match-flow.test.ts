@@ -251,8 +251,10 @@ describe("resolveAnswer — steal machine", () => {
     const stealCall = calls.find(c => c.ns === "steal");
     expect(stealCall?.result.active).toBe(false);
 
-    // match should set phaseDeadlineTs
+    // match should advance to the reveal phase (regression: a correct answer used to set only
+    // phaseDeadlineTs and stay stuck in "question", freezing the game after the first lock).
     const matchCall = calls.find(c => c.ns === "match");
+    expect(matchCall?.result.phase).toBe("reveal");
     expect(matchCall?.result.phaseDeadlineTs).toBeGreaterThan(Date.now());
 
     // scoring.award called with correct:true, steal:false
@@ -302,6 +304,9 @@ describe("resolveAnswer — steal machine", () => {
 
     // No reveal yet
     expect(calls1.find(c => c.ns === "reveal")).toBeUndefined();
+    // …and the steal branch must NOT advance the phase — it stays in "question" with steal active
+    // (regression guard for the reveal-phase fix: only the two TERMINAL branches set phase:"reveal").
+    expect(calls1.find(c => c.ns === "match")).toBeUndefined();
 
     // Now p2 steals and answers correctly
     const { mutate: mutate2, calls: calls2 } = makeMockMutate();
@@ -576,6 +581,10 @@ describe("resolveAnswer — steal machine", () => {
     // Reveal written immediately
     const revealCall = calls.find(c => c.ns === "reveal");
     expect(revealCall?.result.outcome).toBe("wrong");
+
+    // …and the terminal branch advances the match into the reveal phase (regression guard).
+    const matchCall = calls.find(c => c.ns === "match");
+    expect(matchCall?.result.phase).toBe("reveal");
   });
 
   // (g) Answerer disconnect mid-question → timeout path

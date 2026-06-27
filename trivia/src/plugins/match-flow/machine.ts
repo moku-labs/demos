@@ -208,6 +208,7 @@ export function resolveAnswer(deps: ResolveAnswerDeps): void {
 
     mutate("match", draft => ({
       ...draft,
+      phase: "reveal",
       phaseDeadlineTs: revealDeadline
     }));
 
@@ -270,6 +271,7 @@ export function resolveAnswer(deps: ResolveAnswerDeps): void {
 
     mutate("match", draft => ({
       ...draft,
+      phase: "reveal",
       phaseDeadlineTs: revealDeadline
     }));
 
