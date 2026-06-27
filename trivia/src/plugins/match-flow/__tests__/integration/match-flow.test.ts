@@ -337,6 +337,48 @@ describe("match-flow plugin integration", () => {
     await Promise.all(controllers.map(c => c.stop()));
   });
 
+  // ─── active LOCKS a wrong answer → steal → stealer lock resolves (no freeze) ──
+
+  it("active locks a wrong answer → steal opens → the stealer's lock resolves to reveal (no freeze)", {
+    timeout: 15_000
+  }, async () => {
+    restoreFetch = mockFetch();
+    // Long answer + steal windows so the MANUAL locks (not the clock timeouts) drive the flow — this is
+    // the path that froze the match: the active player actively locking a WRONG slot set `state.locked`
+    // and opened a steal, but the lock handler never re-unlocked, so the stealer's lock AND the
+    // steal-timeout were swallowed by the `state.locked` guard. Regression for that fix.
+    const { host, controllers } = await driveToQuestion(2, STABLE_QUESTION_TIMERS);
+    const lead = controllers[0];
+
+    // The bank fixture `answerCheck: "sha:0"` decodes to slot 1 = CORRECT, so slot 0 is WRONG. Only the
+    // active answerer's lock is honoured (the other controller's is rejected on the answeringPeer guard).
+    for (const c of controllers) c.controller.intent("answer-lock", { slot: 0 });
+
+    // The active player's wrong lock opens a steal targeting the other player.
+    await vi.waitFor(
+      () => {
+        expect(lead?.controller.read("steal")?.active).toBe(true);
+        expect(lead?.controller.read("question")?.mode).toBe("steal");
+      },
+      { timeout: 4000 }
+    );
+
+    // The stealer now locks (also wrong). Before the fix `state.locked` was stuck true, so this lock was
+    // ignored and the match never left "question". With the fix all players are tried → terminal reveal.
+    for (const c of controllers) c.controller.intent("answer-lock", { slot: 0 });
+
+    await vi.waitFor(
+      () => {
+        expect(lead?.controller.read("match")?.phase).toBe("reveal");
+        expect(lead?.controller.read("steal")?.active).toBe(false);
+      },
+      { timeout: 5000 }
+    );
+
+    await host.stop();
+    await Promise.all(controllers.map(c => c.stop()));
+  });
+
   // ─── disconnect mid-question advances the machine ─────────────────────────
 
   it("disconnect of the answerer mid-question advances the steal machine", {

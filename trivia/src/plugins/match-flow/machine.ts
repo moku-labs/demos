@@ -158,12 +158,14 @@ export function findNextUntried(
  *   (and `playerCount > 1`), enters steal mode; otherwise writes reveal (outcome: "wrong"/"unanswered").
  *
  * @param deps - Typed deps from the caller (no raw ctx).
+ * @returns `true` if a steal opened (the question stays live for the next answerer — callers must
+ *   re-unlock `state.locked`); `false` if the question resolved to the reveal.
  * @example
  * ```ts
- * resolveAnswer({ state, match, question, steal, players, correct, pickedSlot, correctSlot, mutate, award, revealMs, stealMs });
+ * const stealOpened = resolveAnswer({ state, match, question, steal, players, correct, pickedSlot, correctSlot, mutate, award, revealMs, stealMs });
  * ```
  */
-export function resolveAnswer(deps: ResolveAnswerDeps): void {
+export function resolveAnswer(deps: ResolveAnswerDeps): boolean {
   const {
     state,
     match,
@@ -213,7 +215,7 @@ export function resolveAnswer(deps: ResolveAnswerDeps): void {
     }));
 
     award(answererPeer, { correct: true, steal: isSteal, tier, category });
-    return;
+    return false;
   }
 
   // ── Wrong / timeout ───────────────────────────────────────────────────────
@@ -244,6 +246,8 @@ export function resolveAnswer(deps: ResolveAnswerDeps): void {
       stealPeer: next,
       deadlineTs: stealDeadline
     }));
+
+    return true;
   } else {
     // All tried (or single player) — write terminal reveal
     // Outcome: timeout (pickedSlot===undefined) → "unanswered"; wrong answer → "wrong"
@@ -278,6 +282,8 @@ export function resolveAnswer(deps: ResolveAnswerDeps): void {
     // Award the current answerer for completeness (correct:false → 0 pts, streak reset)
     award(answererPeer, { correct: false, steal: isSteal, tier, category });
   }
+
+  return false;
 }
 
 // ─── Peer-left handler ────────────────────────────────────────────────────────

@@ -263,7 +263,7 @@ export function initMatchFlow(
 
     const { correctSlot, correct } = questionBank.grade(question.id, slot);
 
-    resolveAnswer({
+    const stealOpened = resolveAnswer({
       state,
       match,
       question,
@@ -277,6 +277,11 @@ export function initMatchFlow(
       revealMs: config.revealMs,
       stealMs: config.stealMs
     });
+
+    // A wrong lock that opens a steal keeps the question live for the next answerer — re-unlock so the
+    // stealer's lock (and the steal-timeout) aren't swallowed by the `state.locked` guard. Without this
+    // the match freezes in the steal sub-phase (the timeout path already does this; the lock path didn't).
+    if (stealOpened) state.locked = false;
   });
 
   // ── play-again: any phone on the final card restarts (scores reset, language + seen kept) ──
