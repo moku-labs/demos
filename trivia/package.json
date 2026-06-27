@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@moku-labs/room": "0.3.1",
-    "@moku-labs/web": "2.2.2",
+    "@moku-labs/web": "2.3.0",
     "@moku-labs/worker": "0.15.0",
     "preact": "10.29.3",
     "preact-render-to-string": "6.7.0"

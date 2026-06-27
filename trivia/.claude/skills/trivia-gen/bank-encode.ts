@@ -11,12 +11,12 @@
  * 3. salts the resulting correct slot into `answerCheck` (decoded only at grade time by
  *    `src/plugins/question-bank/decode.ts` — anti-spoiler obfuscation, never security).
  *
- * No I/O lives here — `scripts/gen-bank.ts` wraps these pure functions with filesystem reads/writes and
+ * No I/O lives here — `./gen-bank.ts` wraps these pure functions with filesystem reads/writes and
  * console output, and `tests/unit/bank-encode.test.ts` round-trips every transform against `decode()`.
  */
 import { createHash } from "node:crypto";
-import type { CategoryId, Lang, Tier } from "../../src/config";
-import type { PublicQuestion } from "../../src/lib/types";
+import type { CategoryId, Lang, Tier } from "../../../src/config";
+import type { PublicQuestion } from "../../../src/lib/types";
 
 /** The exactly-four option count every question carries (one correct + three distractors). */
 const OPTION_COUNT = 4;
@@ -61,7 +61,7 @@ export type RawQuestion = {
 
 /**
  * The obfuscated, runtime-ready question: a `PublicQuestion` plus the salted `answerCheck`. This is the
- * exact object shape written to `public/bank/{lang}/{category}.json` and read back as `LoadedQuestion`.
+ * exact object shape written to `bank/{lang}/{category}.json` and read back as `LoadedQuestion`.
  *
  * @example
  * ```ts

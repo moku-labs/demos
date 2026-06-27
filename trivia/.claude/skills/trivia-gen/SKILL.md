@@ -4,19 +4,19 @@ description: >
   Generate validated, genuinely-fun EN+RU trivia questions for the Moku "Trivia" couch-multiplayer demo.
   A multi-agent pipeline — generate (one author per language×category) → 4-lens review (facts /
   single-answer / fun / language) → repair loop → deterministic encode — that writes the obfuscated bank
-  to public/bank/{lang}/{category}.json. INVOKED ONLY via the /trivia-gen slash command; never run
-  automatically and never write questions by hand.
+  to bank/{lang}/{category}.json (the web `collection` source the build emits to dist/client/bank/**).
+  INVOKED ONLY via the /trivia-gen slash command; never run automatically and never write questions by hand.
 ---
 
 # trivia-gen — the Trivia question-bank generator
 
 This skill is the finished implementation of the pipeline sketched in
 [`spec/TRIVIA_SKILL.md`](../../../spec/TRIVIA_SKILL.md). It generates the question bank the game loads at
-match start (`questionBank.load(lang)` → `fetch("/bank/{lang}/{category}.json")`).
+match start (`questionBank.load(lang)` → the web `collection` provider fetches `/bank/{lang}/{category}.json`).
 
 > **Invocation rule (hard):** generation runs **only** when the user types `/trivia-gen`. The command
 > (`.claude/commands/trivia-gen.md`) carries `disable-model-invocation: true`, so it cannot be triggered
-> automatically. Do **not** start this pipeline from any other prompt, and never edit `public/bank/**` by
+> automatically. Do **not** start this pipeline from any other prompt, and never edit `bank/**` by
 > hand — always go through the encoder so ids and answer obfuscation stay correct.
 
 ## The one quality bar that matters
@@ -108,26 +108,26 @@ Also dedupe by *meaning* within and across shards (the encoder dedupes only exac
 
 Re-review anything a reviewer rewrote until a clean pass (no factual/ambiguity/dullness flags remain).
 
-### 4 — Encode + write (deterministic — the only writer of `public/bank/**`)
+### 4 — Encode + write (deterministic — the only writer of `bank/**`)
 
-Run the committed encoder over the reviewed shards:
+Run the skill's encoder over the reviewed shards:
 
 ```sh
-bun scripts/gen-bank.ts --source scratchpad/final --out public/bank --min 4
+bun .claude/skills/trivia-gen/gen-bank.ts --source scratchpad/final --out bank --min 4
 ```
 
 It computes each `id = sha256(lang|category|normPrompt).slice(0,12)`, deterministically shuffles the option
 slots, salts the correct slot into `answerCheck`, and **fails loudly** unless every id is globally unique,
-every `answerCheck` round-trips through `src/lib/decode.ts`, and every `(category, tier)` meets the floor.
-Pure transforms live in [`scripts/lib/bank-encode.ts`](../../../scripts/lib/bank-encode.ts); the runtime
-decoder is [`src/lib/decode.ts`](../../../src/lib/decode.ts). It is **idempotent**: stable ids mean
+every `answerCheck` round-trips through `src/plugins/question-bank/decode.ts`, and every `(category, tier)`
+meets the floor. Pure transforms live in [`bank-encode.ts`](./bank-encode.ts); the runtime decoder is
+[`src/plugins/question-bank/decode.ts`](../../../src/plugins/question-bank/decode.ts). It is **idempotent**: stable ids mean
 re-running over the same content yields byte-identical files (clean git diffs), so topping up a tier just
 appends new questions.
 
 ### 5 — Verify
 
-`bun run test` (the encoder + bank tests stay green) and `bun run build` (confirm the new shards copy into
-`dist/client/bank/**` — the `publicDir` the worker serves as `ASSETS`).
+`bun run test` (the encoder + bank tests stay green) and `bun run build` (confirm the new shards are
+emitted by the `collection` provider into `dist/client/bank/**` — what the worker serves as `ASSETS`).
 
 ## Answer obfuscation (anti-spoiler, NOT security)
 
@@ -135,10 +135,11 @@ The correct answer is stored only as `answerCheck = "${salt}:${(correctSlot + sa
 as a plaintext index. Salts vary in length per question, so two questions whose correct answer lands in the
 same slot encode differently and the bank doesn't betray its answers at a glance. This is obfuscation for
 casual readers, not real secrecy (anything client-side is inspectable). The game decodes it only at grade
-time via `src/lib/decode.ts`. The scheme is owned entirely by the encoder — never reproduce it by hand.
+time via `src/plugins/question-bank/decode.ts`. The scheme is owned entirely by the encoder — never reproduce it by hand.
 
 ## Output
 
-- `public/bank/{lang}/{category}.json` — an array of encoded questions per shard, served from `ASSETS`.
+- `bank/{lang}/{category}.json` — an array of encoded questions per shard (the `collection` source; the
+  build emits it to `dist/client/bank/**`, served from `ASSETS`).
 - Keep the spread balanced across tiers so full 12-round matches assemble; don't repeat existing content
   (stable ids make re-adding a no-op).

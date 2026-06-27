@@ -1,31 +1,44 @@
 /**
  * @file Web client — Node build composition (`mode: "spa"`); consumed by the build/dev scripts.
  */
-import { buildPlugin, cliPlugin, createApp, dataPlugin, deployPlugin } from "@moku-labs/web";
+import {
+  buildPlugin,
+  cliPlugin,
+  collectionPlugin,
+  createApp,
+  dataPlugin,
+  deployPlugin
+} from "@moku-labs/web";
 import { SITE } from "./config";
 import { islands } from "./islands";
 import { routes } from "./routes";
 
 /**
- * The production web client app — consumed by `scripts/build.ts` (`app.cli.build()`) and the
- * `dev` cli passthrough. The whole composition is a directly-visible `createApp` literal, so a reader
- * sees the full plugin set + config at a glance. Game data is fetched live from ASSETS, so the
+ * The production web client app — consumed by `scripts/build.ts` (`app.cli.build()` + the post-build
+ * `app.collection.write(...)` bank emit) and the `dev` cli passthrough. The whole composition is a
+ * directly-visible `createApp` literal, so a reader sees the full plugin set + config at a glance. The
+ * question bank is build-authored JSON served as static shards (the `collection` provider), so the
  * RSS/sitemap/OG/image passes are off.
  *
  * @example
  * ```ts
  * await app.cli.build();
+ * await app.collection.write(bankShards, { outDir: "dist/client" });
  * ```
  */
 export const app = createApp({
   config: { stage: "production", mode: "spa" },
-  // Dependency order: data → build → deploy → cli. The bank is fetched live from ASSETS, not Markdown,
-  // so no content plugin is composed (web ≥ 1.15.0 no longer requires content for build).
-  plugins: [dataPlugin, buildPlugin, deployPlugin, cliPlugin],
+  // Dependency order: data → collection → build → deploy → cli. The bank ships as build-authored JSON
+  // shards via the `collection` provider (emitted in scripts/build.ts), not Markdown, so no content
+  // plugin is composed (web ≥ 1.15.0 no longer requires content for build).
+  plugins: [dataPlugin, collectionPlugin, buildPlugin, deployPlugin, cliPlugin],
   pluginConfigs: {
     site: { name: SITE.name, url: SITE.url, author: SITE.author, description: SITE.description },
     router: { routes },
     spa: { islands },
+    // The question bank is a `collection` of build-authored JSON shards emitted to dist/client/bank/**
+    // (served as static ASSETS); the room question-bank plugin fetches them via the same `/` baseUrl.
+    collection: { baseUrl: "/" },
     // cli's outDir (serve/preview + the post-build 404 check) is aligned with build.outDir so they all
     // target the dir the worker serves as ASSETS.
     cli: { outDir: "dist/client" },

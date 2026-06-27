@@ -15,7 +15,7 @@ plugin list, and risks are in [`.planning/context-trivia.md`](./.planning/contex
 brainstorm output). **Planner/builder: reference `spec/` — do not re-search for the design.**
 
 > **Stack (settled 2026-06-26; room→0.3.1 2026-06-27):** **@moku-labs/room@0.3.1** (a standalone
-> `@moku-labs/core` framework — NOT the old 0.1.x plugin-pack), **@moku-labs/web@2.2.2**, **preact@10.29.3**. The app
+> `@moku-labs/core` framework — NOT the old 0.1.x plugin-pack), **@moku-labs/web@2.3.0**, **preact@10.29.3**. The app
 > is **one `@moku-labs/web` SPA whose role is chosen by the URL** (`/` = TV/stage, `/controller/:code` =
 > phone) + per-role room `createApp`s (`src/lib/room/`) + **one** `@moku-labs/room/server` Hub-DO worker
 > (`src/server.ts` + `src/cloudflare/worker.ts`) that serves the SPA via `ASSETS` and brokers
@@ -100,11 +100,15 @@ for app shape (multiple `createApp` instances, side-by-side frameworks, folder s
 
 ## Dependency stack
 
-`@moku-labs/room@0.3.1` + `@moku-labs/web@2.2.2` + `@moku-labs/worker@0.15.0` + `preact@10.29.3` +
+`@moku-labs/room@0.3.1` + `@moku-labs/web@2.3.0` + `@moku-labs/worker@0.15.0` + `preact@10.29.3` +
 `preact-render-to-string@6.7.0`; all four frameworks pin one aligned `@moku-labs/core@1.5.0`.
 **`@moku-labs/worker@0.15.0` is a direct dependency** — `src/server.ts` composes ONE worker app (atlas-style)
 with room's `hubPlugin` (`@moku-labs/room/server` 0.3.1 exports the hub as a worker plugin; worker is its
-optional peer dep). `server.hub.handle` is the runtime; `server.cli.{dev,deploy}` generate `wrangler.jsonc`. `qrcode`/`trystero` are **bundled inside room** (not direct deps). Dev tooling tracks the latest
+optional peer dep). `server.hub.handle` is the runtime; `server.cli.{dev,deploy}` generate `wrangler.jsonc`.
+The **question bank** ships as build-authored JSON via @moku-labs/web's `collection` provider (new in 2.3.0):
+`app.collection.write` in `scripts/build.ts`/`dev.ts` emits `bank/{lang}/{category}.json` → `dist/client/bank/**`
+(served as `ASSETS`), and the room question-bank loader reads it via `loadCollectionShard` — NOT from `public/`.
+`qrcode`/`trystero` are **bundled inside room** (not direct deps). Dev tooling tracks the latest
 used by `demos/atlas` (biome/eslint/vitest/tsdown/wrangler).
 The "latest of everything" directive holds — bump room first, then the rest, keeping `core` aligned.
 

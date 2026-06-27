@@ -1,5 +1,5 @@
 /**
- * @file Unit tests for the deterministic bank encoder (`scripts/lib/bank-encode.ts`).
+ * @file Unit tests for the deterministic bank encoder (`.claude/skills/trivia-gen/bank-encode.ts`).
  *
  * The load-bearing guarantee: the committed ENCODER (`/trivia-gen` write stage) and the committed runtime
  * DECODER (`src/plugins/question-bank/decode.ts`) are exact inverses — if they drift, the game grades every answer wrong.
@@ -16,7 +16,7 @@ import {
   type RawQuestion,
   shuffleOptions,
   validateRaw
-} from "../../scripts/lib/bank-encode";
+} from "../../.claude/skills/trivia-gen/bank-encode";
 import { decode } from "../../src/plugins/question-bank/decode";
 
 const baseRaw: RawQuestion = {

@@ -1,15 +1,21 @@
 /**
- * @file Web-client build entry — bundles the SPA to `dist/client` via the web app's `cli.build()`.
+ * @file Web-client build entry — bundles the SPA to `dist/client` via the web app's `cli.build()`, then
+ * emits the build-authored question bank as static collection shards into the same output.
  *
- * This produces only the static client (HTML shell + content-hashed `assets/*`). The Cloudflare Worker
- * (`src/cloudflare/worker.ts`) is bundled separately by wrangler at deploy/dev time; the generated
- * `wrangler.jsonc`'s `assets.directory` points at the `dist/client` this script writes. Run via
- * `bun run build`.
+ * The client bundle is the static SPA (HTML shell + content-hashed `assets/*`). The question bank lives
+ * as build-authored JSON under `bank/{lang}/{category}.json` (NOT `public/` — it's a `collection`, not a
+ * verbatim public asset); `app.collection.write(...)` persists each shard to `dist/client/bank/**` AFTER
+ * the build's clean phase, so the room question-bank plugin can fetch them at runtime from `/bank/**`.
+ * The Cloudflare Worker (`src/cloudflare/worker.ts`) is bundled separately by wrangler; the generated
+ * `wrangler.jsonc`'s `assets.directory` points at this `dist/client`. Run via `bun run build`.
  */
 import { app } from "../src/app";
+import { readBankShards } from "./lib/bank-shards";
 
 const result = await app.cli.build();
-const summary = `web client → ${result.outDir} · ${result.pageCount} page(s) · ${Math.round(result.durationMs)}ms`;
+const bank = await app.collection.write(await readBankShards(), { outDir: result.outDir });
+
+const summary = `web client → ${result.outDir} · ${result.pageCount} page(s) · ${Math.round(result.durationMs)}ms · bank ${bank.fileCount} shards`;
 
 // eslint-disable-next-line no-console -- build-script progress feedback
 console.log(summary); // @log-sink -- node-only CLI progress feedback

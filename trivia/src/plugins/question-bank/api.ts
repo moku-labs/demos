@@ -1,13 +1,16 @@
 /**
  * @file question-bank plugin — pure domain helpers (fetchAndIndexBank, selectNext, gradeAnswer,
- * computeAvailability, parseSeenHistory, makeSeenHandler, loadBank). No room context or imports
- * here — these are plain functions that take `State`/`Config`/callbacks and return values.
- * `index.ts` calls them from inline arrow functions where `ctx` is fully inferred.
+ * computeAvailability, parseSeenHistory, makeSeenHandler, loadBank). No room context here — these are
+ * plain functions that take `State`/`Config`/callbacks and return values. `index.ts` calls them from
+ * inline arrow functions where `ctx` is fully inferred. The bank shards are read through the
+ * `@moku-labs/web` `collection` provider's reader (`loadCollectionShard`) — the build emits them as the
+ * `bank` collection, the loader fetches them by `(collection, shard)` at the same site-root baseUrl.
  *
  * Answer secrecy rule: `answerCheck` and `correctSlot` never leave these functions into a
  * synced slice. `gradeAnswer` is the sole point where `decode()` is called.
  */
 import type { JsonValue } from "@moku-labs/room";
+import { loadCollectionShard } from "@moku-labs/web/browser";
 import { TRIVIA } from "../../config";
 import type { PublicQuestion } from "../../lib/types";
 import { decode } from "./decode";
@@ -60,11 +63,12 @@ export function computeAvailability(state: State, config: Config): readonly Cate
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Fetch all `(lang, category)` shards under `bankBaseUrl` and build the in-memory index.
+ * Fetch all `(lang, category)` shards of the `bank` collection and build the in-memory index.
  *
- * Mutates `state.index` and `state.lang` on success. Throws on any HTTP or network error
- * so the caller (the inline `load` wrapper in `index.ts`) can write the `error` status to
- * the `bank` slice.
+ * Reads each shard through the web `collection` provider (`loadCollectionShard(bankBaseUrl, "bank",
+ * "{lang}/{category}")`), which throws on any HTTP error so the caller (the inline `load` wrapper in
+ * `index.ts`) can write the `error` status to the `bank` slice. Mutates `state.index`/`state.lang` on
+ * success.
  *
  * @param state - The host-internal plugin state to mutate on success.
  * @param config - Plugin config (bankBaseUrl, categories).
@@ -77,15 +81,9 @@ export function computeAvailability(state: State, config: Config): readonly Cate
  */
 export async function fetchAndIndexBank(state: State, config: Config, lang: string): Promise<void> {
   const shards = await Promise.all(
-    config.categories.map(async category => {
-      const url = `${config.bankBaseUrl}/${lang}/${category}.json`;
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`[question-bank] Failed to fetch ${url}.\n  HTTP ${response.status}.`);
-      }
-      const questions = (await response.json()) as LoadedQuestion[];
-      return questions;
-    })
+    config.categories.map(category =>
+      loadCollectionShard<LoadedQuestion[]>(config.bankBaseUrl, "bank", `${lang}/${category}`)
+    )
   );
 
   // Build index: key = `${category}:${tier}` → LoadedQuestion[]

@@ -20,7 +20,9 @@ import type { Api, Config } from "./types";
 
 /** Default plugin config — `satisfies Config` validates shape without widening literals. */
 const DEFAULT_CONFIG = {
-  bankBaseUrl: "/bank",
+  // The site-root baseUrl of the web `collection` provider; the bank is the `bank` collection, so its
+  // shards resolve to `/bank/{lang}/{category}.json` (emitted to dist/client/bank/** by the build).
+  bankBaseUrl: "/",
   categories: ["animals", "space", "movies-tv", "food", "strange", "music"],
   maxSeenPerController: 500
 } satisfies Config;

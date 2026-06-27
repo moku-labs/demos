@@ -56,5 +56,5 @@ wrangler.jsonc
 # Planning artifacts
 .planning
 
-# /trivia-gen scratch (raw + reviewed shards before the deterministic encode into public/bank)
+# /trivia-gen scratch (raw + reviewed shards before the deterministic encode into bank/)
 scratchpad

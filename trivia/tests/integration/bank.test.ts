@@ -1,8 +1,9 @@
 /**
- * @file Integration test for the SHIPPED question bank (`public/bank/**`).
+ * @file Integration test for the SHIPPED question bank (`bank/**`, the build-authored collection source).
  *
  * Loads the real committed bank exactly as the host does at match start — through the question-bank
- * plugin's `fetchAndIndexBank` over a `fetch` stub that serves the on-disk shards — then proves the
+ * plugin's `fetchAndIndexBank` (which reads via the web `collection` provider) over a `fetch` stub that
+ * serves the on-disk `bank/**` shards in place of the worker's ASSETS — then proves the
  * properties the game depends on: every `(category, tier)` bucket is populated for both languages,
  * every question grades correctly (the encoder ↔ `decode()` contract holds on real data), a full
  * 12-round ramped match assembles, and questions never repeat across a back-to-back replay.
@@ -18,7 +19,7 @@ import type { Config } from "../../src/plugins/question-bank/types";
 const categories = TRIVIA.categories.map(category => category.id);
 const languages = TRIVIA.languages as readonly Lang[];
 const tiers: readonly Tier[] = ["easy", "medium", "hard"];
-const config: Config = { bankBaseUrl: "/bank", categories, maxSeenPerController: 500 };
+const config: Config = { bankBaseUrl: "/", categories, maxSeenPerController: 500 };
 
 /** Map a 1-based round to its tier via the design's difficulty bands (1–4 easy, 5–8 medium, 9–12 hard). */
 function tierForRound(round: number): Tier {
@@ -28,10 +29,11 @@ function tierForRound(round: number): Tier {
 }
 
 beforeEach(() => {
-  // Serve the real on-disk bank shards in place of the worker's ASSETS over HTTP.
+  // Serve the real on-disk bank shards in place of the worker's ASSETS over HTTP. The collection
+  // provider fetches `/bank/{lang}/{category}.json`; map that back to the top-level `bank/` source dir.
   vi.stubGlobal("fetch", (input: string | URL) => {
     const url = typeof input === "string" ? input : input.toString();
-    const path = url.replace(/^\/bank\//, "public/bank/");
+    const path = url.replace(/^\/bank\//, "bank/");
     const body = readFileSync(path, "utf8");
     return Promise.resolve({
       ok: true,

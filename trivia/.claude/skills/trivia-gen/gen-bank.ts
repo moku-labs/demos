@@ -1,19 +1,21 @@
 /**
- * @file `bun scripts/gen-bank.ts` — the `/trivia-gen` pipeline's deterministic "write" stage.
+ * @file `bun .claude/skills/trivia-gen/gen-bank.ts` — the `/trivia-gen` pipeline's deterministic "write"
+ * stage. Lives in the skill (not `scripts/`, which is build/dev/deploy only) so the skill GENERATES AND
+ * ENCODES the bank end to end.
  *
  * Reads reviewer-approved RAW question shards from `--source/{lang}/{category}.json` (plaintext
- * `correctIndex`), encodes each via `scripts/lib/bank-encode.ts` (stable id, shuffled slots, salted
- * `answerCheck`), and writes the obfuscated bank to `--out/{lang}/{category}.json` (default
- * `public/bank`, served verbatim from the worker's `ASSETS`). It enforces the bank's invariants so a
- * malformed set fails generation instead of shipping: globally-unique ids, a `decode()` round-trip per
- * question (the committed encoder must match the committed runtime decoder), and a per-`(category,tier)`
- * floor (`--min`). Pure transforms live in `./lib/bank-encode`; this file owns the filesystem + console.
+ * `correctIndex`), encodes each via `./bank-encode.ts` (stable id, shuffled slots, salted `answerCheck`),
+ * and writes the obfuscated bank to `--out/{lang}/{category}.json` (default `bank`, the `collection`
+ * source dir the build emits to `dist/client/bank/**`). It enforces the bank's invariants so a malformed
+ * set fails generation instead of shipping: globally-unique ids, a `decode()` round-trip per question
+ * (the encoder must match the committed runtime decoder), and a per-`(category,tier)` floor (`--min`).
+ * Pure transforms live in `./bank-encode`; this file owns the filesystem + console.
  *
- * Usage: `bun scripts/gen-bank.ts --source scratchpad/raw --out public/bank --min 4`
+ * Usage: `bun .claude/skills/trivia-gen/gen-bank.ts --source scratchpad/final --out bank --min 4`
  */
-import { type CategoryId, type Lang, TRIVIA, type Tier } from "../src/config";
-import { decode } from "../src/plugins/question-bank/decode";
-import { type EncodedQuestion, encodeQuestion, type RawQuestion } from "./lib/bank-encode";
+import { type CategoryId, type Lang, TRIVIA, type Tier } from "../../../src/config";
+import { decode } from "../../../src/plugins/question-bank/decode";
+import { type EncodedQuestion, encodeQuestion, type RawQuestion } from "./bank-encode";
 
 /** The ordered tiers used for the per-shard count table + floor check. */
 const TIERS: readonly Tier[] = ["easy", "medium", "hard"];
@@ -109,7 +111,7 @@ function printSummary(rows: readonly ShardSummary[], total: number): void {
 }
 
 const sourceDir = readFlag("--source", "scratchpad/raw");
-const outDir = readFlag("--out", "public/bank");
+const outDir = readFlag("--out", "bank");
 const minPerBucket = Number.parseInt(readFlag("--min", "0"), 10);
 
 const languages = TRIVIA.languages as readonly Lang[];

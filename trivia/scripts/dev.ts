@@ -13,6 +13,7 @@
  */
 import { app as web } from "../src/app";
 import { server } from "../src/server";
+import { readBankShards } from "./lib/bank-shards";
 
 // Dev port + stage come straight from the CLI args — explicit, no hidden framework resolution.
 const portFlag = process.argv.indexOf("--port");
@@ -25,6 +26,12 @@ const stage = stageFlag === -1 ? "production" : (process.argv[stageFlag + 1] ?? 
 await server.cli.dev({
   port,
   stage,
-  webBuild: () => web.cli.build(),
+  // Cold build: bundle the SPA, then emit the build-authored bank shards into the same output so the
+  // worker serves `/bank/**` as ASSETS (the same emit scripts/build.ts does for production).
+  webBuild: async () => {
+    const result = await web.cli.build();
+    await web.collection.write(await readBankShards(), { outDir: result.outDir });
+    return result;
+  },
   onChange: changes => web.cli.update(changes)
 });
