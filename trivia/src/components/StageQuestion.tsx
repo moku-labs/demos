@@ -203,7 +203,7 @@ export function StageQuestion({ s, now, revealing }: StageQuestionProps): JSX.El
       {s.steal.active && !revealing && <StealStrip s={s} now={now} />}
 
       {revealing && (
-        <div data-score-rollup>
+        <div data-score-rollup role="status" aria-label="Score update">
           {rank(s.scores).map(entry => {
             const player = findPlayer(s.players, entry.peerId);
             if (!player) return null;

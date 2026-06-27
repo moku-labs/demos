@@ -32,7 +32,12 @@ export function TimerRing({ remainingMs, totalMs }: TimerRingProps): JSX.Element
   const zone = low ? "low" : fraction > 0.5 ? "high" : fraction > 0.25 ? "mid" : "warn";
 
   return (
-    <div data-component="timer-ring" data-zone={zone}>
+    <div
+      data-component="timer-ring"
+      data-zone={zone}
+      role="timer"
+      aria-label={`${seconds} seconds remaining`}
+    >
       <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
         <circle data-track cx="40" cy="40" r="35" />
         <circle
@@ -43,7 +48,9 @@ export function TimerRing({ remainingMs, totalMs }: TimerRingProps): JSX.Element
           style={{ strokeDasharray: DASH, strokeDashoffset: offset }}
         />
       </svg>
-      <span data-num>{seconds}</span>
+      <span data-num aria-hidden="true">
+        {seconds}
+      </span>
     </div>
   );
 }
