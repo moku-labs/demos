@@ -12,6 +12,7 @@
  */
 import { app as web } from "../src/app";
 import { server } from "../src/server";
+import { readBankShards } from "./lib/bank-shards";
 
 const ci = process.argv.includes("--ci");
 
@@ -22,4 +23,16 @@ const deleteFlag = process.argv.includes("--delete");
 const stageFlag = process.argv.indexOf("--stage");
 const stage = stageFlag === -1 ? "production" : (process.argv[stageFlag + 1] ?? "production");
 
-await server.cli.deploy({ ci, stage, delete: deleteFlag, webBuild: () => web.cli.build() });
+await server.cli.deploy({
+  ci,
+  stage,
+  delete: deleteFlag,
+  // Build the SPA, then emit the build-authored bank shards into the same output so the deployed
+  // worker serves `/bank/**` as ASSETS — WITHOUT this the host's questionBank.load() 404s in
+  // production and every category-pick silently no-ops (parity with scripts/dev.ts + build.ts).
+  webBuild: async () => {
+    const result = await web.cli.build();
+    await web.collection.write(await readBankShards(), { outDir: result.outDir });
+    return result;
+  }
+});
