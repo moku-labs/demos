@@ -1,0 +1,33 @@
+/**
+ * PhoneLanguageVote — the phone language vote screen layout: stacked vote buttons + the leader hint.
+ * @scope-encapsulated, data-* only; pulled into layer(components) via the aggregator.
+ */
+@scope ([data-component="phone-language-vote"]) {
+  :scope {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    align-items: stretch;
+    justify-content: center;
+    gap: var(--space-5);
+    text-align: center;
+  }
+
+  [data-phone-title] {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 6vw, 28px);
+    text-align: center;
+  }
+
+  [data-vote-buttons] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  [data-wait-hint] {
+    color: var(--ink-dim);
+    animation: blink 1.6s ease-in-out infinite;
+  }
+}

@@ -1,0 +1,26 @@
+/**
+ * PhoneCategory — the phone category list layout (A11): the title + the stacked category buttons.
+ * @scope-encapsulated, data-* only; pulled into layer(components) via the aggregator.
+ */
+@scope ([data-component="phone-category"]) {
+  :scope {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    gap: var(--space-4);
+  }
+
+  [data-phone-title] {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 6vw, 28px);
+    text-align: center;
+  }
+
+  [data-category-list] {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+}

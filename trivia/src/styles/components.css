@@ -22,6 +22,11 @@
 @import "../components/MidJoinModal.css";
 @import "../components/MuteButton.css";
 @import "../components/PauseOverlay.css";
+@import "../components/PhoneAnswer.css";
+@import "../components/PhoneCategory.css";
+@import "../components/PhoneFinal.css";
+@import "../components/PhoneLanguageVote.css";
+@import "../components/PhoneWaitingCard.css";
 @import "../components/PlayerTile.css";
 @import "../components/PodiumBlock.css";
 @import "../components/QrBlock.css";
@@ -39,6 +44,3 @@
 @import "../components/StageScoreboard.css";
 @import "../components/TimerRing.css";
 @import "../components/TurnChip.css";
-
-/* Island screen layouts (how the components arrange per phase). */
-@import "../islands/controller/controller.css";

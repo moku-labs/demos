@@ -226,6 +226,21 @@
     overflow: hidden;
   }
 
+  /* The controller island host fills the layout; the frame root is a padded flex column. */
+  [data-island="controller"] {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  [data-controller] {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    padding: clamp(34px, 6vh, 48px) clamp(14px, 5vw, 22px) clamp(16px, 4vh, 24px);
+  }
+
   /* Per-phase phone background shift. */
   [data-controller][data-phase="waiting"] {
     background: linear-gradient(165deg, #0f2e1c, #0a2114);

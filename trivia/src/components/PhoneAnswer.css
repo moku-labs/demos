@@ -1,0 +1,45 @@
+/**
+ * PhoneAnswer — the phone answer grid layout (A12): the label, the 2×2 answer buttons, the countdown bar.
+ * @scope-encapsulated, data-* only; pulled into layer(components) via the aggregator.
+ */
+@scope ([data-component="phone-answer"]) {
+  :scope {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    gap: var(--space-3);
+  }
+
+  [data-phone-label] {
+    font-family: var(--font-display);
+    text-align: center;
+    color: var(--ink-dim);
+  }
+
+  [data-answer-grid-phone] {
+    display: grid;
+    flex: 1;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: var(--space-3);
+  }
+
+  [data-countdown] {
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  [data-countdown] [data-fill] {
+    height: 100%;
+    border-radius: var(--radius-pill);
+    background: var(--clay-mint);
+    transition: width 0.25s linear;
+  }
+
+  [data-countdown] [data-fill][data-low="true"] {
+    background: var(--clay-coral);
+  }
+}
