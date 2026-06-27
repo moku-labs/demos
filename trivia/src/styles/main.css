@@ -275,6 +275,16 @@
       max(clamp(14px, 5vw, 22px), env(safe-area-inset-left));
   }
 
+  /* Landscape (rotated phone): trim the vertical padding so the short height has more room for the
+     content; per-screen grids (answer, category, avatar) also reflow in their own component CSS. */
+  @media (orientation: landscape) {
+    [data-controller] {
+      padding-block:
+        max(var(--space-3), env(safe-area-inset-top))
+        max(var(--space-3), env(safe-area-inset-bottom));
+    }
+  }
+
   /* Per-phase phone background shift. (Joined lobby = the A10 waiting room → dark green.) */
   [data-controller][data-phase="lobby"] {
     background: linear-gradient(165deg, #0f2e1c, #0a2114);

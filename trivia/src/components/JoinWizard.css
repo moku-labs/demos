@@ -122,6 +122,21 @@
       var(--shadow-md);
   }
 
+  /* Landscape: aspect-ratio:1 over wide 4-col cells makes ~200px cells that clip the 2nd row →
+     constrain the grid width + cap the cell height so the 4×2 grid fits the short height. */
+  @media (orientation: landscape) {
+    [data-avatar-grid] {
+      max-width: 480px;
+      margin-inline: auto;
+    }
+
+    [data-avatar-cell] {
+      aspect-ratio: auto;
+      min-height: 0;
+      height: clamp(48px, 16vh, 72px);
+    }
+  }
+
   /* ── Step 3 — colour swatches ── */
   [data-color-row] {
     display: flex;

@@ -141,6 +141,37 @@ export default defineConfig({
         deviceScaleFactor: 1,
         colorScheme: "dark"
       }
+    },
+
+    // ──────────────────────────────────────────────────────────────────────────────
+    // Phone LANDSCAPE project — 844×390. The phone is designed portrait-first, but rotation
+    // must still work + look good; this re-runs the phone visual specs at landscape so every
+    // mobile screen has a landscape baseline. chromium + webkit.
+    // ──────────────────────────────────────────────────────────────────────────────
+    {
+      name: "phone-landscape-chromium",
+      testMatch: PHONE_ONLY_SPECS,
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 844, height: 390 },
+        isMobile: true,
+        hasTouch: true,
+        deviceScaleFactor: 1,
+        colorScheme: "dark",
+        launchOptions: { args: chromiumFlags }
+      }
+    },
+    {
+      name: "phone-landscape-webkit",
+      testMatch: ["**/phone-screens.spec.ts", "**/controller-rendering.spec.ts"],
+      use: {
+        ...devices["Desktop Safari"],
+        viewport: { width: 844, height: 390 },
+        isMobile: true,
+        hasTouch: true,
+        deviceScaleFactor: 1,
+        colorScheme: "dark"
+      }
     }
   ],
 

@@ -23,4 +23,13 @@
     flex-direction: column;
     gap: var(--space-3);
   }
+
+  /* Landscape: 6 stacked buttons overflow the short height → reflow to a 2-column grid (3 rows). */
+  @media (orientation: landscape) {
+    [data-category-list] {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-auto-rows: 1fr;
+    }
+  }
 }
