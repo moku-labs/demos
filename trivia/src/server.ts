@@ -1,20 +1,18 @@
 /**
- * @file Server composition — two side-by-side apps for the single Cloudflare worker (idiom I2).
+ * @file Server composition — ONE `@moku-labs/worker` app (atlas-style), composing room's `hubPlugin`.
  *
- * - `room` (`@moku-labs/room/server`) is the **runtime**: `room.hub.handle` routes the signaling WS
- *   upgrade → the per-room `Hub` Durable Object and everything else → static ASSETS (the SPA + the
- *   `/bank/**` question shards). It is the fetch the Cloudflare entry (`cloudflare/worker.ts`) delegates to.
- * - `server` (`@moku-labs/worker`) is the **build/deploy tooling**: it owns NO request handling here —
- *   it exists purely so `server.cli.dev` / `server.cli.deploy` **generate `wrangler.jsonc`** (the room
- *   server core ships no config generator; the Layer-3 app owns its wrangler config). Its `durableObjects`
- *   + `kv` + `deploy.assets` declarations mirror room's hub binding defaults (`ROOM_HUB` / `Hub` / `ASSETS`
- *   / `RATE_LIMIT`) so the emitted bindings match what `room.hub.handle` reads at runtime.
+ * Full app-side control: trivia owns its worker composition instead of room owning a server core.
+ * - `server.hub.handle` (room's `hubPlugin`) is the runtime fetch — signaling WS → the per-room `Hub` DO /
+ *   everything else → ASSETS (the SPA + the `/bank/**` shards). `cloudflare/worker.ts` delegates to it.
+ * - `server.cli.{dev,deploy}` (`@moku-labs/worker`) generate `wrangler.jsonc` + run wrangler.
  *
- * The `Hub` DO uses workers-native SQLite (`migrations[].new_sqlite_classes`, applied by wrangler) — there
- * is no D1 binding and no `wrangler d1 migrations apply` step. `wrangler.jsonc` is a generated artifact
- * (gitignored, never committed; ids captured at deploy).
+ * `deployPlugin` depends on all five resource plugins, so all are composed; only `kv` (RATE_LIMIT) + the
+ * `durableObjects` Hub are configured (storage/d1/queues stay at their empty default → emit no bindings).
+ * The hub uses workers-native SQLite (`migrations[].new_sqlite_classes`) — no D1, no migrate step. The
+ * binding names match room's hub config defaults (ROOM_HUB / Hub / RATE_LIMIT / ASSETS), so the hub reads
+ * the same `env` the generated `wrangler.jsonc` declares. `wrangler.jsonc` is gitignored + generated.
  */
-import { createApp as createRoomServer } from "@moku-labs/room/server";
+import { hubPlugin } from "@moku-labs/room/server";
 import {
   cliPlugin,
   createApp,
@@ -27,54 +25,38 @@ import {
 } from "@moku-labs/worker";
 
 /**
- * The room signaling app — the worker's runtime fetch handler. `room.hub.handle(request, env, ctx)` serves
- * ASSETS (incl. the `/controller/{code}` deep-link) AND brokers the WebRTC signaling WS upgrade through the
- * per-room `Hub` DO; `cloudflare/worker.ts` delegates `fetch` to it.
+ * The trivia worker app. `server.hub.handle` is the runtime fetch (room's signaling hub); `server.cli.dev`/
+ * `server.cli.deploy` (driven by `scripts/dev.ts`/`deploy.ts`) generate `wrangler.jsonc` + run wrangler.
  *
  * @example
  * ```ts
- * export default { fetch: (req, env, ctx) => room.hub.handle(req, env, ctx) };
- * ```
- */
-export const room = createRoomServer();
-
-/**
- * The worker tooling app — composed purely to drive `server.cli.dev` / `server.cli.deploy`, which
- * **generate `wrangler.jsonc`** from these declarations (`@moku-labs/worker`'s `deployPlugin` writes the
- * config; the room server core ships no generator). The runtime fetch is `room.hub.handle`, not this app's
- * default `serverPlugin` (left at its empty-endpoints default).
- *
- * `deploy.wrangler.assets` is the escape hatch that fully replaces the generated assets block with
- * `run_worker_first: true` — REQUIRED so the signaling WS upgrade (`/{code}`) reaches the `Hub` DO instead
- * of being swallowed by the SPA-fallback asset server; non-WS requests the hub forwards to ASSETS.
- *
- * @example
- * ```ts
- * await server.cli.dev({ webBuild: () => web.cli.build() }); // generates wrangler.jsonc + runs wrangler dev
+ * export default { fetch: (req, env, ctx) => server.hub.handle(req, env, ctx) };
+ * await server.cli.dev({ webBuild: () => web.cli.build() });
  * ```
  */
 export const server = createApp({
   config: { name: "trivia", stage: "production", compatibilityDate: "2026-06-17" },
-  // `deployPlugin` depends on all five resource plugins; trivia only uses KV (rate-limit) + a DO (the
-  // signaling Hub), so `storage`/`d1`/`queues` compose at their empty-config default and emit no bindings.
   plugins: [
     storagePlugin,
     kvPlugin,
     d1Plugin,
     queuesPlugin,
     durableObjectsPlugin,
+    hubPlugin,
     deployPlugin,
     cliPlugin
   ],
   pluginConfigs: {
-    // Rate-limit KV, read on the signaling-join path (`env.RATE_LIMIT`) — the hub's `rateLimit.kvBinding` default.
+    // Rate-limit KV the hub reads on the signaling-join path (`env.RATE_LIMIT`).
     kv: { rateLimit: { name: "trivia-ratelimit", binding: "RATE_LIMIT" } },
-    // The per-room signaling DO — `Hub` is re-exported from `cloudflare/worker.ts`; SQLite-backed (below).
+    // The per-room signaling DO — `Hub` (room) is re-exported from `cloudflare/worker.ts`; SQLite-backed.
     durableObjects: { hub: { binding: "ROOM_HUB", className: "Hub" } },
     deploy: {
       entry: "src/cloudflare/worker.ts",
       nodeCompat: true,
       assets: { binding: "ASSETS", directory: "dist/client", spa: true },
+      // `run_worker_first` routes EVERY request through `server.hub.handle` first, so the signaling WS
+      // upgrade reaches the Hub DO instead of being swallowed by the SPA-fallback asset server.
       wrangler: {
         observability: { enabled: true, logs: { enabled: true } },
         assets: {
