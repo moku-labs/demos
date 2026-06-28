@@ -3,6 +3,7 @@
  * the host clock + all authoritative game logic live in the room plugins — this island reads + displays.
  */
 import { qr, startStage, stats, subscribe } from "../../lib/room";
+import { startSoundDirector } from "../../lib/sound";
 import type { StageContext } from "./types";
 
 /**
@@ -27,6 +28,10 @@ export async function startStageIsland(ctx: StageContext): Promise<void> {
 
   const ticker = setInterval(() => ctx.set({ now: Date.now() }), 250);
   ctx.cleanup(() => clearInterval(ticker));
+
+  // The TV carries the music + all the drama: a state-diff director turns every phase/score/steal
+  // transition into sound (the phone runs its own controller-surface director).
+  ctx.cleanup(startSoundDirector("stage"));
 
   try {
     const descriptor = await startStage();

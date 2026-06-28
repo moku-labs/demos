@@ -21,6 +21,7 @@ import type { JoinProfile } from "../../components/types";
 import { TRIVIA } from "../../config";
 import { ramp } from "../../lib/difficulty";
 import { intent } from "../../lib/room";
+import { sound } from "../../lib/sound";
 import type { CategoryId, Lang, PlayerProfile, TriviaState } from "../../lib/types";
 import { findPlayer } from "../../lib/view";
 import { rememberIdentity } from "./profile";
@@ -41,6 +42,8 @@ type ControllerHandlers = {
 
 /** Build the per-intent callbacks (closures over the current island ctx + state). */
 function makeHandlers(ctx: ControllerContext, state: ControllerState): ControllerHandlers {
+  // Every handler is a user gesture, so each unlocks the AudioContext (browser autoplay policy) before
+  // playing its confirmation SFX/haptic — the phone's tap feedback, paired with the engine mute gate.
   return {
     onJoin: profile => {
       // Persist the profile + a stable per-room token so a reload re-claims THIS seat (not a new
@@ -48,18 +51,50 @@ function makeHandlers(ctx: ControllerContext, state: ControllerState): Controlle
       const playerToken = rememberIdentity(state.code, profile);
       intent("join-profile", { ...profile, playerToken });
       ctx.set({ joinedProfile: profile });
+      sound.unlock();
+      sound.play("join.confirm");
+      sound.haptic("confirm");
     },
-    onStartGame: () => intent("start-game", {}),
-    onVote: lang => intent("language-vote", { lang }),
-    onPickCategory: id => intent("category-pick", { category: id as CategoryId }),
+    onStartGame: () => {
+      sound.unlock();
+      sound.play("host.start");
+      intent("start-game", {});
+    },
+    onVote: lang => {
+      sound.unlock();
+      sound.play("ui.tap");
+      intent("language-vote", { lang });
+    },
+    onPickCategory: id => {
+      // The TV plays category.chosen on the categoryReveal beat; the phone pick is a light tap confirm.
+      sound.unlock();
+      sound.play("ui.tap");
+      intent("category-pick", { category: id as CategoryId });
+    },
     onLock: slot => {
+      sound.unlock();
+      sound.play("phone.lockin");
+      sound.haptic("lockin");
       intent("answer-lock", { slot });
       ctx.set({ lockedSlot: slot, lockedQid: state.s.question?.id ?? null });
     },
-    onPlayAgain: () => intent("play-again", {}),
-    onLeaveOpen: () => ctx.set({ leaving: true }),
-    onStay: () => ctx.set({ leaving: false }),
-    onLeave: () => ctx.set({ leaving: false, left: true })
+    onPlayAgain: () => {
+      sound.unlock();
+      sound.play("match.playagain");
+      intent("play-again", {});
+    },
+    onLeaveOpen: () => {
+      sound.play("ui.modal.open");
+      ctx.set({ leaving: true });
+    },
+    onStay: () => {
+      sound.play("ui.back");
+      ctx.set({ leaving: false });
+    },
+    onLeave: () => {
+      sound.play("ui.back");
+      ctx.set({ leaving: false, left: true });
+    }
   };
 }
 

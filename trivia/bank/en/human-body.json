@@ -1,0 +1,170 @@
+[
+  {
+    "id": "47ff58ee985a",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which organ is the largest in the human body?",
+    "options": [
+      "The lungs",
+      "The brain",
+      "The skin",
+      "The liver"
+    ],
+    "answerCheck": "mtnr:2"
+  },
+  {
+    "id": "77debcf431d5",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "How many bones does an adult human body have?",
+    "options": [
+      "106",
+      "406",
+      "206",
+      "306"
+    ],
+    "answerCheck": "wvtx:2"
+  },
+  {
+    "id": "6fbc44b585b8",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these is the smallest bone in your body?",
+    "options": [
+      "Kneecap",
+      "Tailbone",
+      "Stapes (in the ear)",
+      "Little toe bone"
+    ],
+    "answerCheck": "qzs:1"
+  },
+  {
+    "id": "40127bfeb22f",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Your heart is roughly the size of which everyday object?",
+    "options": [
+      "An orange",
+      "A tennis ball",
+      "Your own fist",
+      "A golf ball"
+    ],
+    "answerCheck": "zqk22:3"
+  },
+  {
+    "id": "26167eec5d86",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Babies are born with around 270 bones, but adults only have 206. What happened to the rest?",
+    "options": [
+      "They shrink and disappear",
+      "They are shed like baby teeth",
+      "They dissolve in the bloodstream",
+      "They fuse together over time"
+    ],
+    "answerCheck": "hd29qv:1"
+  },
+  {
+    "id": "57a30bc76068",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Your eye has a small 'blind spot' where you can't see anything. Why?",
+    "options": [
+      "The cornea is thicker in that area",
+      "The pupil can't dilate wide enough",
+      "The lens blocks light there",
+      "There are no photoreceptors where the optic nerve connects"
+    ],
+    "answerCheck": "a5gnfab:2"
+  },
+  {
+    "id": "46e85917a55d",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The human liver is unique among organs — what can it do that almost no other organ can?",
+    "options": [
+      "Regenerate itself even after 80% is removed",
+      "Store enough energy for 30 days without food",
+      "Produce its own blood supply",
+      "Function for up to a week outside the body"
+    ],
+    "answerCheck": "13l7pc:2"
+  },
+  {
+    "id": "8df32ff1aa53",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "By the time you reach age 70, roughly how much dead skin will your body have shed over your lifetime?",
+    "options": [
+      "About 5 kg (11 lbs)",
+      "About 15 kg (33 lbs)",
+      "About 35 kg (77 lbs)",
+      "About 80 kg (176 lbs)"
+    ],
+    "answerCheck": "1rjbj2:0"
+  },
+  {
+    "id": "b9adf94fc632",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Your tongue has thousands of taste buds — but taste buds also appear somewhere else on the body. Where?",
+    "options": [
+      "On the fingertips",
+      "Inside the nostrils",
+      "On the inner lips only",
+      "On the epiglottis and soft palate"
+    ],
+    "answerCheck": "kl8ntf:1"
+  },
+  {
+    "id": "ecf629abc253",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which part of the human body has no blood supply at all and gets oxygen directly from the air?",
+    "options": [
+      "Fingernails",
+      "The cornea of the eye",
+      "The outer layer of skin (epidermis)",
+      "Tooth enamel"
+    ],
+    "answerCheck": "pwv:0"
+  },
+  {
+    "id": "223d690e671b",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The small intestine is much longer than the large intestine. About how long is the small intestine in a living adult?",
+    "options": [
+      "About 1 metre (3 ft)",
+      "About 3–5 metres (10–16 ft)",
+      "About 9 metres (30 ft)",
+      "About 15 metres (50 ft)"
+    ],
+    "answerCheck": "w5bg6c:3"
+  },
+  {
+    "id": "e14b4c5d2ddc",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Your body replaces almost all its cells over the course of years — but one type of cell you are born with mostly stays with you for life. Which?",
+    "options": [
+      "Red blood cells",
+      "Skin cells",
+      "Liver cells",
+      "Neurons in the cerebral cortex"
+    ],
+    "answerCheck": "zdt:2"
+  }
+]

@@ -1,0 +1,170 @@
+[
+  {
+    "id": "624fa2fa1a0a",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What gas do plants absorb from the air to make food?",
+    "options": [
+      "Nitrogen",
+      "Oxygen",
+      "Carbon dioxide",
+      "Hydrogen"
+    ],
+    "answerCheck": "lg3kv:3"
+  },
+  {
+    "id": "ac8cc4ed3566",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which planet in our solar system has the most moons?",
+    "options": [
+      "Jupiter",
+      "Neptune",
+      "Saturn",
+      "Uranus"
+    ],
+    "answerCheck": "v31v:2"
+  },
+  {
+    "id": "20b438ee29c3",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the chemical symbol for gold?",
+    "options": [
+      "Go",
+      "Gl",
+      "Gd",
+      "Au"
+    ],
+    "answerCheck": "djh:2"
+  },
+  {
+    "id": "25d7ef952f2e",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "How many bones are in an adult human body?",
+    "options": [
+      "106",
+      "306",
+      "206",
+      "406"
+    ],
+    "answerCheck": "uo2alz:0"
+  },
+  {
+    "id": "8293777dcf55",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A bolt of lightning is hotter than the surface of the Sun. Roughly how hot does it get?",
+    "options": [
+      "10,000°C",
+      "100,000°C",
+      "5,500°C",
+      "30,000°C"
+    ],
+    "answerCheck": "yslqc04:2"
+  },
+  {
+    "id": "fc3e73b37e17",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Pavlov's famous experiment, what did the dogs learn to salivate at?",
+    "options": [
+      "The ringing of a bell",
+      "The smell of food",
+      "The sight of meat",
+      "A flashing light"
+    ],
+    "answerCheck": "jbnvk:1"
+  },
+  {
+    "id": "cb38ca014e89",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which unit measures the frequency of sound waves?",
+    "options": [
+      "Pascal",
+      "Hertz",
+      "Decibel",
+      "Watt"
+    ],
+    "answerCheck": "3me2c:2"
+  },
+  {
+    "id": "0f04acb37076",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Honey never spoils. Archaeologists have eaten honey found in ancient Egyptian tombs that was how old?",
+    "options": [
+      "100 years",
+      "10,000 years",
+      "3,000 years",
+      "500 years"
+    ],
+    "answerCheck": "9w9m:2"
+  },
+  {
+    "id": "d1a87215d947",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In the double-slit experiment, what bizarre thing happens when scientists observe which slit an electron goes through?",
+    "options": [
+      "The interference pattern disappears",
+      "The electron splits in two",
+      "The electron moves backwards in time",
+      "Both slits glow simultaneously"
+    ],
+    "answerCheck": "5m2k10g:3"
+  },
+  {
+    "id": "3545f2298535",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Mpemba effect is the controversial observation that hot water can freeze faster than cold. What is it named after?",
+    "options": [
+      "A Tanzanian student who noticed it making ice cream in 1963",
+      "An Ancient Greek philosopher who described it first",
+      "A Russian physicist who proved it in 1901",
+      "A NASA engineer who rediscovered it in the 1980s"
+    ],
+    "answerCheck": "fd2q:0"
+  },
+  {
+    "id": "db5b906dc646",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Gallium is a metal with an unusually low melting point. What happens if you hold a piece of gallium in your warm hand?",
+    "options": [
+      "It starts to glow faintly",
+      "It becomes magnetic",
+      "It melts into liquid",
+      "It turns bright red"
+    ],
+    "answerCheck": "kp4:1"
+  },
+  {
+    "id": "63e9da872ca9",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A neutron star is so dense that a teaspoon of its material would weigh roughly how much on Earth?",
+    "options": [
+      "As much as all humans combined",
+      "As much as a car",
+      "As much as a billion tons",
+      "As much as Mount Everest"
+    ],
+    "answerCheck": "67zkq:3"
+  }
+]

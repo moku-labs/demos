@@ -22,7 +22,7 @@ import type { Config, MatchSlice, Phase, PlayersSlice, State } from "./types";
 // ─── Slice registration ─────────────────────────────────────────────────────────
 
 /**
- * Register the five synced slices with their initial (lobby) shapes. Nullable cells start `null`
+ * Register the six synced slices with their initial (lobby) shapes. Nullable cells start `null`
  * (a valid JSON cell); the `question`/`reveal` slices start blank and are only read in their phase.
  *
  * @param sync - The `syncPlugin` registerSlice API.
@@ -81,6 +81,9 @@ function registerSlices(sync: SyncDeps): void {
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
     deadlineTs: null
   });
+
+  // `offer` — the current round's random category subset the picker shows (set each roundIntro → categoryPick).
+  sync.registerSlice("offer", { items: [] });
 }
 
 /**
@@ -334,6 +337,8 @@ export function initMatchFlow(
     if (typeof payload !== "object" || payload === null) return;
     const category = (payload as Record<string, unknown>).category;
     if (typeof category !== "string") return;
+    // Only a category from THIS round's offered subset is pickable — a phone can't pick off-menu.
+    if (!state.offered.includes(category as CategoryId)) return;
 
     stage.mutate("match", draft => {
       const phase = draft.phase as Phase | undefined;

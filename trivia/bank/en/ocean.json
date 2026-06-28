@@ -1,0 +1,170 @@
+[
+  {
+    "id": "a374a27ec91c",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the largest ocean on Earth?",
+    "options": [
+      "Arctic Ocean",
+      "Pacific Ocean",
+      "Atlantic Ocean",
+      "Indian Ocean"
+    ],
+    "answerCheck": "8z59a:2"
+  },
+  {
+    "id": "74b6b0b2bf30",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which animal has the largest heart of any creature that has ever lived?",
+    "options": [
+      "Great white shark",
+      "Blue whale",
+      "Giant squid",
+      "Elephant seal"
+    ],
+    "answerCheck": "4gd:0"
+  },
+  {
+    "id": "ef8c03b7afb5",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What force is mainly responsible for causing ocean tides?",
+    "options": [
+      "The Moon's gravity",
+      "Earth's rotation",
+      "Wind patterns",
+      "Underwater volcanoes"
+    ],
+    "answerCheck": "fhmw:0"
+  },
+  {
+    "id": "ea5c861b54c0",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The Great Barrier Reef — the world's largest coral reef system — lies off the coast of which country?",
+    "options": [
+      "South Africa",
+      "Australia",
+      "Brazil",
+      "Indonesia"
+    ],
+    "answerCheck": "esjgw7:3"
+  },
+  {
+    "id": "ec83f2217188",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "An octopus has three hearts. What does each of the two 'gill hearts' actually do?",
+    "options": [
+      "Pump blood through the gills to pick up oxygen",
+      "Control arm movement independently",
+      "Regulate body temperature",
+      "Store ink for defense"
+    ],
+    "answerCheck": "jjqwpit:3"
+  },
+  {
+    "id": "87788fb3daa7",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Pacific Ocean is so vast it covers roughly what fraction of Earth's total surface area?",
+    "options": [
+      "About one fifth",
+      "About one quarter",
+      "About one half",
+      "About one third"
+    ],
+    "answerCheck": "m58:2"
+  },
+  {
+    "id": "588c333b5b9e",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "When do 'spring tides' — the most extreme high and low tides — occur?",
+    "options": [
+      "Only in spring and autumn",
+      "When the Sun, Earth, and Moon are aligned",
+      "During the strongest ocean storms",
+      "When the Moon is at its farthest from Earth"
+    ],
+    "answerCheck": "qmq9mm:3"
+  },
+  {
+    "id": "3bd9115e22ad",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "About 75% of deep-sea animals produce their own light. What is this ability called?",
+    "options": [
+      "Fluorescent radiation",
+      "Chemiluminescence",
+      "Photosynthesis",
+      "Bioluminescence"
+    ],
+    "answerCheck": "4bu:2"
+  },
+  {
+    "id": "88a0d03be97a",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Hydrothermal vents on the ocean floor spew superheated water. How hot can the water ejected by a 'black smoker' vent get?",
+    "options": [
+      "Up to 1,000 °C — near the melting point of rock",
+      "Up to 100 °C — boiling point at sea level",
+      "Up to 60 °C — like a hot bath",
+      "Up to 400 °C — well above boiling, kept liquid by pressure"
+    ],
+    "answerCheck": "152m01:1"
+  },
+  {
+    "id": "a1216018b822",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The deepest known point on Earth, Challenger Deep, sits at roughly what depth?",
+    "options": [
+      "About 6,500 metres",
+      "About 10,900 metres",
+      "About 8,800 metres",
+      "About 14,000 metres"
+    ],
+    "answerCheck": "vwi:0"
+  },
+  {
+    "id": "7596f99a51e3",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A female anglerfish dangles a glowing lure to attract prey in the deep sea. What actually produces that light?",
+    "options": [
+      "A chemical reaction triggered when she opens her mouth",
+      "A specialized electric organ in her forehead",
+      "Concentrated deep-sea phosphorus she absorbs through diet",
+      "Symbiotic bioluminescent bacteria living inside the lure"
+    ],
+    "answerCheck": "7oxm10:1"
+  },
+  {
+    "id": "5169d2ef1ccd",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Octopus blood is blue instead of red. Which copper-based protein is responsible for carrying oxygen in their blood?",
+    "options": [
+      "Haemocyanin",
+      "Chlorophyll",
+      "Myoglobin",
+      "Haemoglobin"
+    ],
+    "answerCheck": "l7iv:0"
+  }
+]

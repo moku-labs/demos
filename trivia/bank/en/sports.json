@@ -1,0 +1,170 @@
+[
+  {
+    "id": "0f1f0470d1bd",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "How many players are on the court for one basketball team at a time?",
+    "options": [
+      "5",
+      "6",
+      "4",
+      "7"
+    ],
+    "answerCheck": "9vo:3"
+  },
+  {
+    "id": "2495bbda29e1",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In soccer, what does a red card mean for the player who receives it?",
+    "options": [
+      "A 10-minute sin bin",
+      "A penalty shot against their team",
+      "Immediate ejection from the match",
+      "A free kick for the opponent"
+    ],
+    "answerCheck": "05a7kyr:1"
+  },
+  {
+    "id": "6ea67935f05b",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which country invented modern lawn tennis in the 1870s?",
+    "options": [
+      "United Kingdom",
+      "Australia",
+      "United States",
+      "France"
+    ],
+    "answerCheck": "3xdbf:1"
+  },
+  {
+    "id": "7bedd1078f7f",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In the Olympics, how many rings are on the flag — and what do they represent?",
+    "options": [
+      "5 rings, for the five continents that compete",
+      "3 rings, for mind, body, and spirit",
+      "6 rings, for the six inhabited continents",
+      "4 rings, for the four seasons"
+    ],
+    "answerCheck": "wxcfwze:3"
+  },
+  {
+    "id": "e51fd390f9eb",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In cycling's Tour de France, the race leader wears a yellow jersey. What does the GREEN jersey mean?",
+    "options": [
+      "Points leader — usually the best sprinter",
+      "Best young rider under 25",
+      "Best climber in the mountains",
+      "The rider who won the most stages"
+    ],
+    "answerCheck": "xyfxamt:3"
+  },
+  {
+    "id": "f29ec6a9951a",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In American football, a 'safety' scores points for the DEFENDING team. How many points is it worth?",
+    "options": [
+      "3",
+      "1",
+      "6",
+      "2"
+    ],
+    "answerCheck": "yz1:2"
+  },
+  {
+    "id": "ee0d6034064d",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which sport uses a 'shuttlecock' — and why is it sometimes called that?",
+    "options": [
+      "Cricket, because early balls were stuffed with cock feathers",
+      "Squash, because the rubber cock shuttles off the wall",
+      "Badminton, because the feathered projectile shuttles back and forth like a cock (rooster) pecking",
+      "Polo, because players shuttled between posts called cocks"
+    ],
+    "answerCheck": "2t5:1"
+  },
+  {
+    "id": "82a464cf6dd5",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What rare feat in baseball is it when a batter reaches base because the catcher drops strike three?",
+    "options": [
+      "Dropped third strike",
+      "Interference walk",
+      "Passed-ball base award",
+      "Wild pitch advancement"
+    ],
+    "answerCheck": "hy4fhy:2"
+  },
+  {
+    "id": "4ecd54ee6721",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "What is the maximum break (perfect score) in a single frame of snooker — and why is 147 so tricky to achieve?",
+    "options": [
+      "147 — pot all 15 reds each followed by a black, then all 6 colours in sequence",
+      "155 — only possible with a free ball awarded at the start",
+      "162 — theoretical maximum including a re-rack",
+      "135 — you'd need to pot every red with a colour, then all colours in order"
+    ],
+    "answerCheck": "76cap:1"
+  },
+  {
+    "id": "3ceb357b2df7",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Ancient Greek Olympians competed completely nude. What Greek root word — meaning 'naked' — gives us the modern English words 'gym' and 'gymnasium'?",
+    "options": [
+      "Stadion",
+      "Gymnos",
+      "Athlon",
+      "Palaestra"
+    ],
+    "answerCheck": "3euu88o:0"
+  },
+  {
+    "id": "6cd8690e2037",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "At the 1904 St. Louis Olympic marathon, Frederick Lorz crossed the finish line first and was nearly awarded the gold medal — until officials discovered the truth. What had he done?",
+    "options": [
+      "He had swapped race numbers with a faster runner mid-race",
+      "He had started an hour early under a false identity",
+      "He had taken a stimulant injection supplied by his trainer",
+      "He had ridden roughly 11 miles of the course in an automobile"
+    ],
+    "answerCheck": "app42o:1"
+  },
+  {
+    "id": "58c15683c678",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In cricket's Laws, a batsman could be dismissed 'Handled the Ball' — but this mode of dismissal was merged into another in 2017. Which one?",
+    "options": [
+      "Obstructing the field",
+      "Run out",
+      "Timed out",
+      "Hit wicket"
+    ],
+    "answerCheck": "kbx:3"
+  }
+]

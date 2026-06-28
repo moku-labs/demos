@@ -14,6 +14,7 @@
  * @see README.md
  */
 import { createPlugin, intentPlugin, stagePlugin, syncPlugin } from "@moku-labs/room";
+import { TRIVIA } from "../../config";
 import { computeAvailability, gradeAnswer, loadBank, makeSeenHandler, selectNext } from "./api";
 import { createQuestionBankState } from "./state";
 import type { Api, Config } from "./types";
@@ -23,7 +24,10 @@ const DEFAULT_CONFIG = {
   // The site-root baseUrl of the web `collection` provider; the bank is the `bank` collection, so its
   // shards resolve to `/bank/{lang}/{category}.json` (emitted to dist/client/bank/** by the build).
   bankBaseUrl: "/",
-  categories: ["animals", "space", "movies-tv", "food", "strange", "music"],
+  // The full category pool (derived from TRIVIA so the two never drift). Every category is loaded; the
+  // picker offers a random `TRIVIA.offerCount` subset each round, and a category whose shard hasn't been
+  // generated yet is tolerated by `fetchAndIndexBank` and surfaces as exhausted (so it's never offered).
+  categories: TRIVIA.categories.map(category => category.id),
   maxSeenPerController: 500
 } satisfies Config;
 

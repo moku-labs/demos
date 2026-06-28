@@ -8,7 +8,7 @@
  * every question grades correctly (the encoder ↔ `decode()` contract holds on real data), a full
  * 12-round ramped match assembles, and questions never repeat across a back-to-back replay.
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { type CategoryId, type Lang, type Tier, TRIVIA } from "../../src/config";
 import { fetchAndIndexBank, gradeAnswer, selectNext } from "../../src/plugins/question-bank/api";
@@ -20,6 +20,16 @@ const categories = TRIVIA.categories.map(category => category.id);
 const languages = TRIVIA.languages as readonly Lang[];
 const tiers: readonly Tier[] = ["easy", "medium", "hard"];
 const config: Config = { bankBaseUrl: "/", categories, maxSeenPerController: 500 };
+
+/**
+ * The categories whose shard is actually shipped on disk for `lang`. The pool is 20 but a category's
+ * questions are authored on demand (the `/trivia-gen` pipeline), so only the generated ones have a shard;
+ * `fetchAndIndexBank` tolerates the rest. The game only ever offers playable categories, so the bank's
+ * invariants (full tier coverage, no-repeat matches) are asserted over the shipped set, not the whole pool.
+ */
+function shippedCategories(lang: Lang): CategoryId[] {
+  return categories.filter(category => existsSync(`bank/${lang}/${category}.json`));
+}
 
 /** Map a 1-based round to its tier via the design's difficulty bands (1–4 easy, 5–8 medium, 9–12 hard). */
 function tierForRound(round: number): Tier {
@@ -48,8 +58,14 @@ afterEach(() => {
 });
 
 describe("shipped question bank", () => {
-  it("populates every (category, tier) bucket for both languages (≥4 each)", async () => {
+  it("populates every shipped (category, tier) bucket for both languages (≥4 each)", async () => {
     for (const lang of languages) {
+      const shipped = shippedCategories(lang);
+      // There must always be at least a full offer's worth of playable categories to draw from.
+      expect(shipped.length, `${lang} shipped categories`).toBeGreaterThanOrEqual(
+        TRIVIA.offerCount
+      );
+
       const state = createQuestionBankState();
       await fetchAndIndexBank(state, config, lang);
 
@@ -57,7 +73,7 @@ describe("shipped question bank", () => {
       expect(index, `${lang} index`).toBeDefined();
       if (!index) continue;
 
-      for (const category of categories) {
+      for (const category of shipped) {
         for (const tier of tiers) {
           const bucket = index.get(`${category}:${tier}`);
           expect(bucket, `${lang} ${category}:${tier}`).toBeDefined();
@@ -102,9 +118,10 @@ describe("shipped question bank", () => {
       const state = createQuestionBankState();
       await fetchAndIndexBank(state, config, lang);
 
+      const shipped = shippedCategories(lang);
       const seen = new Set<string>();
       for (let round = 1; round <= TRIVIA.rounds; round++) {
-        const category = categories[(round - 1) % categories.length] as CategoryId;
+        const category = shipped[(round - 1) % shipped.length] as CategoryId;
         const picked = selectNext(state, category, tierForRound(round));
         expect(picked, `${lang} round ${round} ${category}`).toBeDefined();
         if (!picked) continue;
@@ -120,10 +137,11 @@ describe("shipped question bank", () => {
       const state = createQuestionBankState();
       await fetchAndIndexBank(state, config, lang);
 
+      const shipped = shippedCategories(lang);
       const all = new Set<string>();
       for (let match = 0; match < 2; match++) {
         for (let round = 1; round <= TRIVIA.rounds; round++) {
-          const category = categories[(round - 1) % categories.length] as CategoryId;
+          const category = shipped[(round - 1) % shipped.length] as CategoryId;
           const picked = selectNext(state, category, tierForRound(round));
           expect(picked, `${lang} match ${match} round ${round}`).toBeDefined();
           if (!picked) continue;

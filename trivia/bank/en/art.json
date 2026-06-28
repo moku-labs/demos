@@ -1,0 +1,170 @@
+[
+  {
+    "id": "be6462704804",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which Renaissance artist painted the Mona Lisa?",
+    "options": [
+      "Botticelli",
+      "Michelangelo",
+      "Raphael",
+      "Leonardo da Vinci"
+    ],
+    "answerCheck": "e6m:2"
+  },
+  {
+    "id": "9105b2e00062",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The Eiffel Tower was originally built as the entrance arch for which event?",
+    "options": [
+      "The coronation of Napoleon III",
+      "The 1900 Summer Olympics",
+      "The 1889 World's Fair in Paris",
+      "The French Revolution centenary parade"
+    ],
+    "answerCheck": "d8rsh:3"
+  },
+  {
+    "id": "2be59e5b5fca",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which two primary colours do you mix to make orange?",
+    "options": [
+      "Red and blue",
+      "Yellow and blue",
+      "Red and yellow",
+      "Blue and green"
+    ],
+    "answerCheck": "los3o:3"
+  },
+  {
+    "id": "96f708f3463e",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The famous sculpture of a man sitting and thinking, head resting on his fist, is called what?",
+    "options": [
+      "The Scholar",
+      "The Philosopher",
+      "The Thinker",
+      "The Dreamer"
+    ],
+    "answerCheck": "k8ycx:3"
+  },
+  {
+    "id": "71c0e38df68e",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Vincent van Gogh sold only ONE painting during his entire lifetime. What was it called?",
+    "options": [
+      "Sunflowers",
+      "Starry Night",
+      "Irises",
+      "The Red Vineyard"
+    ],
+    "answerCheck": "5ugx1:0"
+  },
+  {
+    "id": "7bc93516242f",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Art Nouveau movement got its name from a shop in which city?",
+    "options": [
+      "Paris",
+      "Brussels",
+      "Barcelona",
+      "Vienna"
+    ],
+    "answerCheck": "5h3y847:3"
+  },
+  {
+    "id": "3aed59dbb66c",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which Japanese art form — a centuries-old practice of folding paper into animals and geometric shapes — literally translates as \"paper folding\"?",
+    "options": [
+      "Kintsugi",
+      "Origami",
+      "Ikebana",
+      "Washi"
+    ],
+    "answerCheck": "r3c:0"
+  },
+  {
+    "id": "e1723d7977c7",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Guggenheim Museum in Bilbao, Spain — one of the most celebrated buildings of the 20th century — was designed by which architect?",
+    "options": [
+      "Norman Foster",
+      "Renzo Piano",
+      "Zaha Hadid",
+      "Frank Gehry"
+    ],
+    "answerCheck": "36khw:0"
+  },
+  {
+    "id": "a8332dccdda4",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Frida Kahlo painted many self-portraits because she spent long periods bedridden after a bus accident. What unusual feature did she include in almost all of them?",
+    "options": [
+      "A mirror painted into the background",
+      "A unibrow she deliberately emphasised",
+      "A pet monkey sitting on her shoulder",
+      "Flowers woven directly into her painted hair"
+    ],
+    "answerCheck": "5wx:0"
+  },
+  {
+    "id": "5e8f27c741bd",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Pantone colour-matching system assigns numbers to specific hues. What colour is Pantone 448 C, officially voted the world's ugliest colour and used on cigarette packaging to deter smokers?",
+    "options": [
+      "Ash grey",
+      "Jaundice yellow",
+      "Bile green",
+      "Opaque couché (dark drab brown)"
+    ],
+    "answerCheck": "jkr8gxb:2"
+  },
+  {
+    "id": "6253a4831c86",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The ancient Egyptians used a blue pigment so prized that its formula was lost for centuries. What is it called?",
+    "options": [
+      "Ultramarine",
+      "Egyptian Blue",
+      "Cobalt Blue",
+      "Prussian Blue"
+    ],
+    "answerCheck": "z7qisb:3"
+  },
+  {
+    "id": "afffb88631d2",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which radical design school, founded in Weimar, Germany in 1919, united fine art with craft and industrial production — and was shut down by the Nazis in 1933?",
+    "options": [
+      "Constructivism",
+      "The Bauhaus",
+      "The Vienna Secession",
+      "De Stijl"
+    ],
+    "answerCheck": "wve535:3"
+  }
+]

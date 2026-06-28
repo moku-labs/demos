@@ -1,0 +1,170 @@
+[
+  {
+    "id": "81516de9473d",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which author wrote the Harry Potter series?",
+    "options": [
+      "C.S. Lewis",
+      "J.K. Rowling",
+      "Roald Dahl",
+      "Philip Pullman"
+    ],
+    "answerCheck": "9a64l:2"
+  },
+  {
+    "id": "6bf6ec2e10f7",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the name of the whale in Moby-Dick?",
+    "options": [
+      "Captain Ahab",
+      "Moby Dick",
+      "The Great White",
+      "Leviathan"
+    ],
+    "answerCheck": "1c19e5:3"
+  },
+  {
+    "id": "dbdd08dcb15f",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In \"Romeo and Juliet\", the two feuding families are the Montagues and the…?",
+    "options": [
+      "Veronas",
+      "Borgias",
+      "Medicis",
+      "Capulets"
+    ],
+    "answerCheck": "9qln:3"
+  },
+  {
+    "id": "c90221b88df1",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which Shakespeare play features the line \"To be, or not to be\"?",
+    "options": [
+      "Hamlet",
+      "Macbeth",
+      "Romeo and Juliet",
+      "Othello"
+    ],
+    "answerCheck": "5zq:3"
+  },
+  {
+    "id": "cce24ab783e6",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The opening line \"It was the best of times, it was the worst of times\" belongs to which novel?",
+    "options": [
+      "A Tale of Two Cities",
+      "Great Expectations",
+      "Oliver Twist",
+      "Bleak House"
+    ],
+    "answerCheck": "kwxz:0"
+  },
+  {
+    "id": "06d3e61b9e11",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What is the word for the dot above the letters 'i' and 'j'? It's the smallest named part of a letter.",
+    "options": [
+      "Umlaut",
+      "Cedilla",
+      "Tittle",
+      "Diaeresis"
+    ],
+    "answerCheck": "hr03c:3"
+  },
+  {
+    "id": "dfd84c477d24",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "George Orwell chose \"1984\" as the title by inverting the year he finished writing the book. What year did he actually finish it?",
+    "options": [
+      "1949",
+      "1948",
+      "1946",
+      "1947"
+    ],
+    "answerCheck": "c6ehm:2"
+  },
+  {
+    "id": "ada4ca84c04a",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A pangram is a sentence using every letter of the alphabet at least once. Which of these is the most famous English pangram?",
+    "options": [
+      "Sphinx of black quartz, judge my vow.",
+      "Pack my box with five dozen liquor jugs.",
+      "The quick brown fox jumps over the lazy dog.",
+      "How vexingly quick daft zebras jump!"
+    ],
+    "answerCheck": "cj4:1"
+  },
+  {
+    "id": "b41ce5356f35",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Mary Shelley wrote Frankenstein after a famous bet with friends to each write a ghost story. Which famous poet hosted the gathering?",
+    "options": [
+      "William Wordsworth",
+      "Lord Byron",
+      "Alfred Lord Tennyson",
+      "John Keats"
+    ],
+    "answerCheck": "uvkzph1:0"
+  },
+  {
+    "id": "2e41ba6d1fe3",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The word \"salary\" comes from the Latin \"salarium\". What were Roman soldiers reportedly paid — at least partially — in, giving the word its root?",
+    "options": [
+      "Silver coins",
+      "Grain rations",
+      "Olive oil",
+      "Salt"
+    ],
+    "answerCheck": "sfzca39:2"
+  },
+  {
+    "id": "49a9b3099e23",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which novel, famously written without using the letter 'e', is the longest lipogrammatic novel in English literature?",
+    "options": [
+      "Ella Minnow Pea by Mark Dunn",
+      "A Void by Georges Perec",
+      "Eunoia by Christian Bök",
+      "Gadsby by Ernest Vincent Wright"
+    ],
+    "answerCheck": "c8rw:3"
+  },
+  {
+    "id": "1833f258c216",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The first known use of the word \"selfie\" in print appeared in an online post from which country in 2002?",
+    "options": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "Canada"
+    ],
+    "answerCheck": "h4e:1"
+  }
+]

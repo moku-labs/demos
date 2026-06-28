@@ -225,6 +225,9 @@ const CATEGORIES: CategoryAvailView[] = TRIVIA.categories.map(category => ({
   exhausted: false
 }));
 
+/** This round's offered subset (the picker shows a random `offerCount`; the fixture pins the first six). */
+const OFFER: CategoryAvailView[] = CATEGORIES.slice(0, TRIVIA.offerCount);
+
 const QUESTION: QuestionView = {
   id: "q-demo",
   category: "space",
@@ -349,6 +352,7 @@ function triviaState(
     scores: SCORES,
     bank: { status: "ready", lang: "en", error: null },
     categories: CATEGORIES,
+    offer: OFFER,
     languageVote: { open: false, options: [], deadlineTs: null, leading: "en", confirmed: "en" }
   };
 
@@ -601,11 +605,13 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
 
   if (phase === "categoryExhausted") {
     // D2: Category-exhausted toast on top of category pick — "Animals" is exhausted
-    const categoriesWithExhausted = CATEGORIES.map(c =>
-      c.id === "animals" ? { ...c, exhausted: true } : c
-    );
+    const markAnimalsExhausted = (list: CategoryAvailView[]): CategoryAvailView[] =>
+      list.map(c => (c.id === "animals" ? { ...c, exhausted: true } : c));
     return {
-      s: triviaState("categoryPick", null, { categories: categoriesWithExhausted }),
+      s: triviaState("categoryPick", null, {
+        categories: markAnimalsExhausted(CATEGORIES),
+        offer: markAnimalsExhausted(OFFER)
+      }),
       qr: null,
       code: "TRIV1234",
       now: FIXED_NOW,

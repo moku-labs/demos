@@ -1,10 +1,11 @@
 /**
  * @file StageCategory — the TV category pick screen (A3, spectator view): who's picking + the category
- * grid (exhausted categories dimmed). Rendered for both `categoryPick` and `categoryReveal` phases.
- * When a category is chosen (`match.chosenCategory` set), the chosen card glows + scales (state="chosen"),
- * all others dim to 28% (state="dimmed"), and the F3 category banner drops in above the grid.
- * Until the bank has loaded (`bank.status !== "ready"`) the chooser row shows a subtle "Loading
- * questions…" line in place of the difficulty pips (mirroring the phone's inert-button wait state).
+ * grid. Renders this round's offered subset (`s.offer`) — a fresh random draw — not the full pool.
+ * Rendered for both `categoryPick` and `categoryReveal` phases. When a category is chosen
+ * (`match.chosenCategory` set), the chosen card glows + scales (state="chosen"), all others dim to 28%
+ * (state="dimmed"), and the F3 category banner drops in above the grid. Until the bank has loaded
+ * (`bank.status !== "ready"`) the chooser row shows a subtle "Loading questions…" line in place of the
+ * difficulty pips (mirroring the phone's inert-button wait state).
  */
 import type { JSX } from "preact";
 import type { CategoryId } from "../config";
@@ -73,7 +74,7 @@ export function StageCategory({ s }: StageCategoryProps): JSX.Element {
       {/* F3 category banner — drops in above the grid once a category is chosen. */}
       {chosenMeta && <CategoryBanner category={chosenMeta} color={active?.color} />}
       <div data-category-grid>
-        {TRIVIA.categories.map(category => (
+        {s.offer.map(category => (
           <CategoryCard
             key={category.id}
             category={category}

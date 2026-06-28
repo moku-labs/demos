@@ -30,6 +30,8 @@ export type Config = {
   scoreboardMs: number;
   /** How long the podium lingers before auto-returning to the lobby (final phase). */
   endCountdownMs: number;
+  /** How many categories the picker offers each round — a fresh random draw from the full pool. */
+  offerCount: number;
   tickMs: number;
 };
 
@@ -40,6 +42,8 @@ export type Config = {
  * reconciled to its existing roster slot/score/turn, and a brand-new token is rejected mid-match.
  * `hostToken` is the playerToken of the current host — host identity is token-derived (not peerId) so
  * a host that reloads reclaims the role even if a heartbeat `peer-left` promoted someone first.
+ * `offered` is the current round's random category subset (the ids the picker shows) — the
+ * `category-pick` intent rejects any category that isn't in it, so a phone can't pick off-menu.
  * `pendingQuestion` holds the resolved question during the `categoryReveal` beat so it is consumed-once
  * and published at the reveal→question transition rather than at pick time.
  */
@@ -48,6 +52,7 @@ export type State = {
   locked: boolean;
   tokens: Map<string, PeerId>;
   hostToken: string;
+  offered: CategoryId[];
   /** The question resolved at pick-time, staged here for the reveal→question advance. */
   pendingQuestion: QuestionSlice | null;
 };

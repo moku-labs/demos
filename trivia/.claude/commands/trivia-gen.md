@@ -19,6 +19,9 @@ Follow `.claude/skills/trivia-gen/SKILL.md` exactly:
 3. **Review** with the four lenses (facts / single-answer / fun / language) and **repair** until clean →
    `scratchpad/final/{lang}/{category}.json`.
 4. **Encode + write** the obfuscated bank: `bun .claude/skills/trivia-gen/gen-bank.ts --source scratchpad/final --out bank --min 4`.
+   When the run targeted a **subset** (a `categories=` argument), pass the **same** ids to the encoder so it
+   only writes those shards and leaves the rest of `bank/` untouched (an *additive* run):
+   `… gen-bank.ts --categories <the same list> --source scratchpad/final --out bank --min 4`.
 5. **Verify**: `bun run test` and `bun run build`.
 
 Never hand-write `id`/`answerCheck` or edit `bank/**` directly — the encoder owns ids, slot shuffling,
