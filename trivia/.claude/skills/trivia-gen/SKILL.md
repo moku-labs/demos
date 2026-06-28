@@ -19,6 +19,19 @@ match start (`questionBank.load(lang)` → the web `collection` provider fetches
 > automatically. Do **not** start this pipeline from any other prompt, and never edit `bank/**` by
 > hand — always go through the encoder so ids and answer obfuscation stay correct.
 
+## Default behaviour — additive top-up (never replace)
+
+**`/trivia-gen` with no arguments ADDS ~10 new questions to every category, in both languages, keeping all
+existing questions.** It reads the live category pool from `src/config.ts` (`TRIVIA.categories` — 20 today),
+authors `count` (default **10**) genuinely-new questions per (category, language) spread across the tiers,
+and the encoder **merges**: every existing shard is kept byte-for-byte and only new questions are appended.
+**Duplicates are eliminated** at two layers — the review lens drops re-worded near-duplicates by meaning, and
+the encoder drops exact duplicates by content-addressed id (`dedupeRaw`), so a question is never double-added
+and re-running is a clean no-op. A bare run therefore grows the bank (e.g. ~12 → ~22 per category/language).
+
+To **rebuild from scratch** instead (retire/replace questions), add `--replace` to the encode step — that is
+the only way an existing question leaves the bank.
+
 ## The one quality bar that matters
 
 **Questions must be genuinely fun — interesting, surprising, varied.** A factually-correct but dull
@@ -34,13 +47,15 @@ and worked examples.
 | Arg | Default | Meaning |
 |-----|---------|---------|
 | `lang` | `all` | `en`, `ru`, or `all` (both). Russian is **required** in the overall pool. |
-| `count` | `4` | Questions to author **per (category, tier)** bucket. The encoder floor is `--min 4`. |
+| `count` | `10` | **New** questions to ADD per (category, language), spread across the tiers (or all in the chosen tier when `difficulty` is a single tier). Added on top of what's already there. |
 | `categories` | all (20) | Comma list of ids from `TRIVIA.categories`; otherwise every category. |
 | `difficulty` | `mixed` | A single tier, or `mixed` (all three — the normal case). |
 
-Examples: `/trivia-gen` (full refresh — all 20) · `/trivia-gen lang=ru categories=space,music count=6` ·
-`/trivia-gen categories=geography,history,science,sports,video-games,art,books,tech,mythology,nature,human-body,inventions,ocean,cars`
-(author just the new categories) · `/trivia-gen difficulty=hard` (top up the hard tier everywhere).
+Examples: `/trivia-gen` (add ~10 new to **all 20**, both languages, keep existing) ·
+`/trivia-gen lang=ru categories=space,music count=6` (add 6 each to two RU categories) ·
+`/trivia-gen difficulty=hard count=5` (add 5 hard questions to every category) ·
+`/trivia-gen categories=geography,history count=12` (top up just two categories). To **rebuild** a category
+from scratch (drop old questions), the encode step takes `--replace` — see step 4.
 
 ## Fixed data contract (read from `src/config.ts`)
 
@@ -60,13 +75,16 @@ Examples: `/trivia-gen` (full refresh — all 20) · `/trivia-gen lang=ru catego
 
 ### Sizing
 
-Author **≥ `count` (default 4) questions per (category, tier)** — i.e. ≥ 12 per (category, language). For a
-full 20-category run that is ≥ 240 per language, ≥ 480 total at the default. This guarantees a 12-round
-match always assembles from any offered subset and **does not repeat across replays** for a group (the
-no-repeat key is the per-question id, unioned across the group and persisted per-phone). More is better for
-variety; the floor is enforced by `--min`. The game tolerates a category whose shard isn't generated yet
-(it's simply never offered), so you can fill the new categories in incremental `/trivia-gen categories=…`
-runs — but the bank is only "complete" once all 20 are authored in both languages.
+Each call **adds `count` new questions per (category, language)** (default **10**), spread across the three
+tiers (e.g. 4 easy / 3 medium / 3 hard) so the easy→hard ramp stays balanced — the additions accumulate on
+top of whatever the shard already holds. The encoder enforces a **per-tier floor** on the *resulting* shard
+(`--min 4`, i.e. ≥ 4 per tier ⇒ ≥ 12 per category/language), which a topped-up shard always satisfies.
+
+More questions is strictly better: a bigger bank means a 12-round match always assembles from any offered
+subset and **does not repeat across replays** for a group (the no-repeat key is the per-question id, unioned
+across the group and persisted per-phone — and ids are stable, so a top-up never disturbs that history). The
+game tolerates a category whose shard isn't generated yet (it's simply never offered), so a brand-new
+category can be filled by an additive `/trivia-gen categories=…` run.
 
 ## RAW question shape (what the author/review agents write)
 
@@ -94,10 +112,17 @@ shuffles slots deterministically, and salts the correct slot).
 
 ### 1 — Generate (fan-out: one author per language × category)
 
-Spawn one author agent per requested `(lang, category)` (up to 12 for a full run). Each authors
-`count`-per-tier questions to `scratchpad/raw/{lang}/{category}.json` in the RAW shape above. Give every
-agent: the category id + display name + emoji, the language (RU-first for `ru`), the tier calibration, the
-"genuinely fun" bar, the exactly-4-options / one-correct / plausible-distractors rules, and the output path.
+Spawn one author agent per requested `(lang, category)` (up to **40** for a full run — 20 categories × 2
+languages). Each authors `count` (default 10) **new** questions to `scratchpad/raw/{lang}/{category}.json` in
+the RAW shape above, spread across the tiers. Give every agent: the category id + display name + emoji, the
+language (RU-first for `ru`), the tier calibration, the "genuinely fun" bar, the exactly-4-options /
+one-correct / plausible-distractors rules, and the output path.
+
+**Avoid duplicates (additive runs):** the agent MUST first read the category's **existing** prompts from
+`bank/{lang}/{category}.json` and author questions that are new *in meaning* — not a reworded version of one
+already there. The encoder is an exact-prompt safety net (it silently drops a question whose normalized
+prompt already exists), but it cannot catch a paraphrase, so semantic novelty is the author's job. Pass the
+agent the list of existing prompts for its shard.
 
 ### 2 — Review (fan-out: 4 lenses, one reviewer per category covering both languages)
 
@@ -118,34 +143,43 @@ Re-review anything a reviewer rewrote until a clean pass (no factual/ambiguity/d
 
 ### 4 — Encode + write (deterministic — the only writer of `bank/**`)
 
-Run the skill's encoder over the reviewed shards:
+Run the skill's encoder over the reviewed shards. The source shards hold **only the new questions** — the
+encoder reads the existing `bank/` shard itself and keeps it:
 
 ```sh
 bun .claude/skills/trivia-gen/gen-bank.ts --source scratchpad/final --out bank --min 4
 ```
 
-**Additive runs — `--categories`.** By default the encoder requires a source shard for **every**
-`TRIVIA.categories` id (it fails on any missing). When you authored only a subset (the `categories=`
-argument), pass the **same** subset so it encodes (and rewrites) only those shards and never touches the
-rest of `bank/`:
+**Merge is the default (add, never replace).** For each shard the encoder keeps every existing question
+**byte-for-byte** and appends only the genuinely-new ones, dropping any whose content-addressed id already
+exists (`dedupeRaw`). So the source only needs the questions you're adding; existing ones are preserved from
+`bank/` directly. The run prints `+new` / `dup` columns and an `N added · M duplicate(s) skipped` total.
+
+**Scope — `--categories`.** The encoder requires a source shard for every category it processes (it fails on
+any missing). When you authored only a subset (the `categories=` argument), pass the **same** subset so it
+touches only those shards and leaves the rest of `bank/` exactly as they are:
 
 ```sh
-# add / top-up only the listed categories — the other shards in bank/ are left exactly as they are
+# add to only the listed categories — every other shard in bank/ is untouched
 bun .claude/skills/trivia-gen/gen-bank.ts --categories geography,history,ocean --source scratchpad/final --out bank --min 4
 ```
 
-Unknown ids fail loudly (a typo can't silently skip a shard). Omit `--categories` for a full-pool run.
-Because ids are content-derived, re-encoding an existing category with its current questions present in the
-source is a byte-identical no-op, and authoring extra questions into a shard's source simply **appends**
-them (stable ids → the group's no-repeat history survives a top-up).
+**Rebuild — `--replace`.** To rebuild a shard from its source alone (the destructive path — questions absent
+from the source are dropped), add `--replace`. This is the **only** way an existing question leaves the bank;
+use it to retire or fix questions, never for a routine top-up:
 
-It computes each `id = sha256(lang|category|normPrompt).slice(0,12)`, deterministically shuffles the option
-slots, salts the correct slot into `answerCheck`, and **fails loudly** unless every id is globally unique,
-every `answerCheck` round-trips through `src/plugins/question-bank/decode.ts`, and every `(category, tier)`
-meets the floor. Pure transforms live in [`bank-encode.ts`](./bank-encode.ts); the runtime decoder is
-[`src/plugins/question-bank/decode.ts`](../../../src/plugins/question-bank/decode.ts). It is **idempotent**: stable ids mean
-re-running over the same content yields byte-identical files (clean git diffs), so topping up a tier just
-appends new questions.
+```sh
+bun .claude/skills/trivia-gen/gen-bank.ts --categories animals --source scratchpad/final --out bank --min 4 --replace
+```
+
+Unknown ids fail loudly (a typo can't silently skip a shard). Omit `--categories` for the whole pool. The
+encoder computes each `id = sha256(lang|category|normPrompt).slice(0,12)`, deterministically shuffles the
+option slots, salts the correct slot into `answerCheck`, and **fails loudly** unless every id is globally
+unique, every `answerCheck` round-trips through `src/plugins/question-bank/decode.ts`, and every
+`(category, tier)` meets the floor. Pure transforms live in [`bank-encode.ts`](./bank-encode.ts); the runtime
+decoder is [`src/plugins/question-bank/decode.ts`](../../../src/plugins/question-bank/decode.ts). It is
+**idempotent**: stable ids mean re-running an additive top-up adds nothing the second time and yields
+byte-identical files (clean git diffs).
 
 ### 5 — Verify
 

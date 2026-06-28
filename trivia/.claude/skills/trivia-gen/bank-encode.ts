@@ -111,6 +111,51 @@ export function computeId(lang: Lang, category: CategoryId, prompt: string): str
 }
 
 /**
+ * Partition incoming raw questions into the genuinely-new ones to encode and the exact duplicates to drop,
+ * deduping by the content-addressed {@link computeId} both against an existing-id set AND within the batch
+ * itself (first occurrence wins). This is what makes a `/trivia-gen` top-up *additive*: a question whose
+ * normalized prompt already exists in the shard (same id) is skipped, so re-running never double-writes it,
+ * while never-seen prompts pass through to be appended.
+ *
+ * Near-duplicates that are merely *reworded* (a different prompt → a different id) are NOT caught here — that
+ * is the review lens's job. This is the deterministic, exact-prompt safety net beneath it.
+ *
+ * @param lang - The shard language (part of the id).
+ * @param category - The shard category id (part of the id).
+ * @param incoming - The newly-authored raw questions to consider adding.
+ * @param existingIds - Ids already present in the bank shard to dedupe against (use `new Set()` for none).
+ * @returns `fresh` — questions to encode and append; `duplicates` — those skipped as already-present.
+ * @example
+ * ```ts
+ * const existingIds = new Set(existing.map(q => q.id));
+ * const { fresh, duplicates } = dedupeRaw("en", "animals", authored, existingIds);
+ * // fresh: never-seen prompts to append; duplicates: prompts whose id already exists.
+ * ```
+ */
+export function dedupeRaw(
+  lang: Lang,
+  category: CategoryId,
+  incoming: readonly RawQuestion[],
+  existingIds: ReadonlySet<string>
+): { fresh: RawQuestion[]; duplicates: RawQuestion[] } {
+  const seen = new Set<string>(existingIds);
+  const fresh: RawQuestion[] = [];
+  const duplicates: RawQuestion[] = [];
+
+  for (const raw of incoming) {
+    const id = computeId(lang, category, raw.prompt);
+    if (seen.has(id)) {
+      duplicates.push(raw);
+      continue;
+    }
+    seen.add(id);
+    fresh.push(raw);
+  }
+
+  return { fresh, duplicates };
+}
+
+/**
  * Derive a 32-bit unsigned seed from an arbitrary string (the id, optionally namespaced). Pure and
  * deterministic — the same string always yields the same seed.
  *

@@ -9,6 +9,7 @@
 import { describe, expect, it } from "vitest";
 import {
   computeId,
+  dedupeRaw,
   deriveSalt,
   encodeAnswerCheck,
   encodeQuestion,
@@ -186,5 +187,44 @@ describe("validateRaw", () => {
 
   it("rejects an image question with no imageUrl", () => {
     expect(() => validateRaw("animals", { ...baseRaw, type: "image" })).toThrow(/imageUrl/);
+  });
+});
+
+describe("dedupeRaw", () => {
+  const a: RawQuestion = { ...baseRaw, prompt: "Question A about wood frogs?" };
+  const b: RawQuestion = { ...baseRaw, prompt: "Question B about arctic foxes?" };
+
+  it("returns every question as fresh when the bank is empty", () => {
+    const { fresh, duplicates } = dedupeRaw("en", "animals", [a, b], new Set());
+    expect(fresh).toEqual([a, b]);
+    expect(duplicates).toHaveLength(0);
+  });
+
+  it("skips an incoming question whose id already exists in the bank (additive top-up)", () => {
+    const existing = new Set([computeId("en", "animals", a.prompt)]);
+    const { fresh, duplicates } = dedupeRaw("en", "animals", [a, b], existing);
+    expect(fresh).toEqual([b]);
+    expect(duplicates).toEqual([a]);
+  });
+
+  it("treats a prompt differing only in casing/whitespace as a duplicate", () => {
+    const existing = new Set([computeId("en", "animals", a.prompt)]);
+    const reworded: RawQuestion = { ...a, prompt: `  ${a.prompt.toUpperCase()} ` };
+    const { fresh, duplicates } = dedupeRaw("en", "animals", [reworded], existing);
+    expect(fresh).toHaveLength(0);
+    expect(duplicates).toEqual([reworded]);
+  });
+
+  it("dedupes exact repeats within one batch, first occurrence winning", () => {
+    const repeat: RawQuestion = { ...a, options: ["Wood frog", "Newt", "Toad", "Salamander"] };
+    const { fresh, duplicates } = dedupeRaw("en", "animals", [a, repeat], new Set());
+    expect(fresh).toEqual([a]);
+    expect(duplicates).toEqual([repeat]);
+  });
+
+  it("keeps the same prompt in a different shard (id is scoped by lang + category)", () => {
+    const existing = new Set([computeId("en", "animals", a.prompt)]);
+    expect(dedupeRaw("ru", "animals", [a], existing).fresh).toEqual([a]);
+    expect(dedupeRaw("en", "space", [a], existing).fresh).toEqual([a]);
   });
 });

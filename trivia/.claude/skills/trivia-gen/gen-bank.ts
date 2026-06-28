@@ -11,11 +11,18 @@
  * (the encoder must match the committed runtime decoder), and a per-`(category,tier)` floor (`--min`).
  * Pure transforms live in `./bank-encode`; this file owns the filesystem + console.
  *
- * Usage: `bun .claude/skills/trivia-gen/gen-bank.ts --source scratchpad/final --out bank --min 4`
+ * **Additive by default (merge).** Each existing shard is kept *verbatim* (byte-identical) and only
+ * genuinely-new questions are appended — exact duplicates (same content-addressed id) are dropped via
+ * `dedupeRaw`, so a top-up never replaces or double-writes a question and the group's no-repeat history
+ * survives. Pass `--replace` to rebuild a shard from its source alone (the old destructive behavior, e.g.
+ * to retire questions). Use `--categories a,b` to touch only some shards; omit it for the whole pool.
+ *
+ * Usage (additive top-up): `bun .claude/skills/trivia-gen/gen-bank.ts --source scratchpad/final --out bank --min 4`
+ * Usage (from-scratch rebuild): add `--replace`.
  */
 import { type CategoryId, type Lang, TRIVIA, type Tier } from "../../../src/config";
 import { decode } from "../../../src/plugins/question-bank/decode";
-import { type EncodedQuestion, encodeQuestion, type RawQuestion } from "./bank-encode";
+import { dedupeRaw, type EncodedQuestion, encodeQuestion, type RawQuestion } from "./bank-encode";
 
 /** The ordered tiers used for the per-shard count table + floor check. */
 const TIERS: readonly Tier[] = ["easy", "medium", "hard"];
@@ -64,8 +71,18 @@ function resolveCategories(flag: string, all: readonly CategoryId[]): CategoryId
   return all.filter(id => requested.includes(id));
 }
 
-/** One row of the end-of-run summary table. */
-type ShardSummary = { lang: Lang; category: CategoryId; easy: number; medium: number; hard: number };
+/** One row of the end-of-run summary table (per-tier totals of the written shard + what this run added). */
+type ShardSummary = {
+  lang: Lang;
+  category: CategoryId;
+  easy: number;
+  medium: number;
+  hard: number;
+  /** Genuinely-new questions appended this run. */
+  added: number;
+  /** Incoming questions skipped as exact duplicates of an already-present one. */
+  skipped: number;
+};
 
 /**
  * Encode a single shard's raw questions, enforcing global id-uniqueness and the `decode()` round-trip.
@@ -104,13 +121,13 @@ function encodeShard(
   });
 }
 
-/** Tally a shard's per-tier counts and assert each tier meets the floor. */
+/** Tally a written shard's per-tier counts and assert each tier meets the floor. */
 function tallyAndCheck(
   lang: Lang,
   category: CategoryId,
   encoded: readonly EncodedQuestion[],
   minPerBucket: number
-): ShardSummary {
+): Record<Tier, number> {
   const counts: Record<Tier, number> = { easy: 0, medium: 0, hard: 0 };
   for (const question of encoded) counts[question.tier]++;
 
@@ -119,13 +136,16 @@ function tallyAndCheck(
       throw new Error(`[gen-bank] ${lang}/${category} ${tier}: ${counts[tier]} question(s) < floor ${minPerBucket}.`);
     }
   }
-  return { lang, category, easy: counts.easy, medium: counts.medium, hard: counts.hard };
+  return counts;
 }
 
-/** Render the per-shard summary table. */
-function printSummary(rows: readonly ShardSummary[], total: number): void {
-  out("\n  lang  category      easy  med  hard  total");
-  out("  ────  ──────────    ────  ───  ────  ─────");
+/** Render the per-shard summary table — per-tier totals of the written shard plus this run's adds/dupes. */
+function printSummary(
+  rows: readonly ShardSummary[],
+  totals: { total: number; added: number; skipped: number; replace: boolean }
+): void {
+  out("\n  lang  category      easy  med  hard  total  +new  dup");
+  out("  ────  ──────────    ────  ───  ────  ─────  ────  ───");
   for (const row of rows) {
     const rowTotal = row.easy + row.medium + row.hard;
     const cells = [
@@ -134,30 +154,64 @@ function printSummary(rows: readonly ShardSummary[], total: number): void {
       String(row.easy).padStart(4),
       String(row.medium).padStart(4),
       String(row.hard).padStart(4),
-      String(rowTotal).padStart(5)
+      String(rowTotal).padStart(5),
+      String(row.added).padStart(4),
+      String(row.skipped).padStart(3)
     ];
-    out(`  ${cells[0]}  ${cells[1]}  ${cells[2]} ${cells[3]} ${cells[4]} ${cells[5]}`);
+    out(`  ${cells[0]}  ${cells[1]}  ${cells[2]} ${cells[3]} ${cells[4]} ${cells[5]}  ${cells[6]}  ${cells[7]}`);
   }
-  out(`\n  ${rows.length} shard(s) · ${total} question(s) written.`);
+  const verb = totals.replace ? "written (replace)" : "in bank";
+  out(
+    `\n  ${rows.length} shard(s) · ${totals.total} question(s) ${verb} · ${totals.added} added · ${totals.skipped} duplicate(s) skipped.`
+  );
+}
+
+/**
+ * Read the current encoded shard from the out dir so a default (merge) run can keep it verbatim and append
+ * only new questions. Returns `[]` when the shard doesn't exist yet (a brand-new category) — and is never
+ * called under `--replace`, where the shard is rebuilt from source alone.
+ *
+ * @param dir - The bank output dir (`--out`).
+ * @param lang - The shard language.
+ * @param category - The shard category id.
+ * @returns The existing encoded questions, or `[]` when the shard file is absent.
+ */
+async function readExistingShard(dir: string, lang: Lang, category: CategoryId): Promise<EncodedQuestion[]> {
+  const path = `${dir}/${lang}/${category}.json`;
+  const existing = Bun.file(path);
+  if (!(await existing.exists())) return [];
+
+  const data = (await existing.json()) as unknown;
+  if (!Array.isArray(data)) throw new Error(`[gen-bank] existing shard ${path} is not a JSON array.`);
+  return data as EncodedQuestion[];
 }
 
 const sourceDir = readFlag("--source", "scratchpad/raw");
 const outDir = readFlag("--out", "bank");
 const minPerBucket = Number.parseInt(readFlag("--min", "0"), 10);
+// Default is additive (merge): keep existing questions, append only new. `--replace` rebuilds from source.
+const replace = process.argv.includes("--replace");
 
 const languages = TRIVIA.languages as readonly Lang[];
 const allCategories = TRIVIA.categories.map(category => category.id);
 const categories = resolveCategories(readFlag("--categories", ""), allCategories);
 
+out(
+  replace
+    ? "  replace mode · existing shards are rebuilt from source (questions not in the source are dropped)"
+    : "  merge mode · existing questions are kept; only new, de-duplicated questions are appended"
+);
 if (categories.length < allCategories.length) {
   out(
-    `  additive run · encoding ${categories.length} of ${allCategories.length} categor${categories.length === 1 ? "y" : "ies"}: ${categories.join(", ")}`
+    `  scoped run · ${categories.length} of ${allCategories.length} categor${categories.length === 1 ? "y" : "ies"}: ${categories.join(", ")} (other shards untouched)`
   );
 }
 
 const seenIds = new Map<string, string>();
 const summaries: ShardSummary[] = [];
 let total = 0;
+let totalAdded = 0;
+let totalSkipped = 0;
 
 for (const lang of languages) {
   for (const category of categories) {
@@ -168,12 +222,36 @@ for (const lang of languages) {
     const raw = (await file.json()) as RawQuestion[];
     if (!Array.isArray(raw)) throw new Error(`[gen-bank] ${sourcePath} is not a JSON array.`);
 
-    const encoded = encodeShard(lang, category, raw, seenIds);
-    summaries.push(tallyAndCheck(lang, category, encoded, minPerBucket));
-    total += encoded.length;
+    // Keep the current shard verbatim (byte-identical) and register its ids so cross-shard collisions and
+    // exact-prompt duplicates are both caught. `--replace` starts from an empty shard instead.
+    const existing = replace ? [] : await readExistingShard(outDir, lang, category);
+    const existingIds = new Set<string>();
+    for (const question of existing) {
+      existingIds.add(question.id);
+      seenIds.set(question.id, `${lang}/${category}`);
+    }
 
-    await Bun.write(`${outDir}/${lang}/${category}.json`, `${JSON.stringify(encoded, null, 2)}\n`);
+    // Drop exact duplicates (same content-addressed id), then encode only the genuinely-new questions.
+    const { fresh, duplicates } = dedupeRaw(lang, category, raw, existingIds);
+    const freshEncoded = encodeShard(lang, category, fresh, seenIds);
+    const combined = [...existing, ...freshEncoded];
+
+    const counts = tallyAndCheck(lang, category, combined, minPerBucket);
+    summaries.push({
+      lang,
+      category,
+      easy: counts.easy,
+      medium: counts.medium,
+      hard: counts.hard,
+      added: freshEncoded.length,
+      skipped: duplicates.length
+    });
+    total += combined.length;
+    totalAdded += freshEncoded.length;
+    totalSkipped += duplicates.length;
+
+    await Bun.write(`${outDir}/${lang}/${category}.json`, `${JSON.stringify(combined, null, 2)}\n`);
   }
 }
 
-printSummary(summaries, total);
+printSummary(summaries, { total, added: totalAdded, skipped: totalSkipped, replace });
