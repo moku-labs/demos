@@ -52,6 +52,30 @@
     filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.45));
   }
 
+  /* A5 image question: a DEDICATED layout so the image reads CLEARLY at a normal size and the
+     image + prompt sit centred as a group — never pinned to the top under the timer ring, never
+     overlapping the answer grid. (Text questions keep the flex-1 prompt-fit above.) */
+  [data-hero][data-image] {
+    justify-content: center;
+    gap: var(--space-5);
+  }
+
+  /* Size the image by HEIGHT (so it always fits the hero's vertical space) at a clear, normal scale;
+     width follows the flag's native aspect ratio. */
+  [data-hero][data-image] [data-hero-image] [data-component="flag"] {
+    width: auto;
+    height: clamp(96px, 16vh, 168px);
+    aspect-ratio: 60 / 38;
+    border-radius: 10px;
+  }
+
+  /* The prompt no longer grows to fill — it sits at its natural size beneath the image so the pair
+     centres together; a max-height keeps the fit hook scaling a long image prompt if one ever appears. */
+  [data-hero][data-image] [data-prompt-fit] {
+    flex: 0 1 auto;
+    max-height: 34vh;
+  }
+
   /* Bounded measuring box for the prompt — WIDE (most of the stage width) so the question area is
      generous, but height-capped by flex so the fit hook scales the font to fit without vertical growth. */
   [data-prompt-fit] {

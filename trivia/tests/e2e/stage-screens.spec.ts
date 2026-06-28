@@ -252,6 +252,38 @@ test.describe("TV Stage — question variants", () => {
     await expect(page.locator("[data-answer-grid] [data-component='answer-tile']")).toHaveCount(4);
     await expect(page.locator("[data-timer]")).toBeVisible();
   });
+
+  // Image questions get a dedicated layout: the image must read CLEARLY at a normal size and never
+  // overlap the timer (top) or the answer grid (bottom). Regression guard for the broken flag layout
+  // (image shrank to a 60px thumbnail jammed under the timer ring).
+  test("question-flag (A5): image is normal-sized and does NOT overlap the timer or answer grid", async ({
+    page
+  }) => {
+    await gotoStage(page, "questionFlag");
+    await settleForShot(page);
+
+    const flag = await page.locator("[data-hero-image] [data-component='flag']").boundingBox();
+    const timer = await page.locator("[data-timer]").boundingBox();
+    const grid = await page.locator("[data-answer-grid]").boundingBox();
+    expect(flag, "flag image must render").not.toBeNull();
+    expect(timer).not.toBeNull();
+    expect(grid).not.toBeNull();
+    if (flag && timer && grid) {
+      // Clear, normal size — not the 60×38 default thumbnail.
+      expect(
+        flag.height,
+        "flag must be a clear, normal size (not a tiny thumbnail)"
+      ).toBeGreaterThan(90);
+      // No vertical overlap with the timer above (flag top below the timer's bottom edge)…
+      expect(flag.y, "flag must sit below the timer ring").toBeGreaterThanOrEqual(
+        timer.y + timer.height - 1
+      );
+      // …nor with the answer grid below (flag bottom above the grid's top edge).
+      expect(flag.y + flag.height, "flag must sit above the answer grid").toBeLessThanOrEqual(
+        grid.y + 1
+      );
+    }
+  });
 });
 
 // ─── Reveal variant tests ─────────────────────────────────────────────────────────────

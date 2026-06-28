@@ -194,7 +194,7 @@ export function StageQuestion({ s, now, revealing }: StageQuestionProps): JSX.El
         )}
       </div>
 
-      <div data-hero>
+      <div data-hero data-image={question.type === "image" ? true : undefined}>
         {question.type === "image" && (
           <div data-hero-image>
             <Flag code={(question.imageUrl?.replace("flag:", "") as "us" | "ru" | "bd") ?? "bd"} />
