@@ -124,6 +124,21 @@ Run the skill's encoder over the reviewed shards:
 bun .claude/skills/trivia-gen/gen-bank.ts --source scratchpad/final --out bank --min 4
 ```
 
+**Additive runs — `--categories`.** By default the encoder requires a source shard for **every**
+`TRIVIA.categories` id (it fails on any missing). When you authored only a subset (the `categories=`
+argument), pass the **same** subset so it encodes (and rewrites) only those shards and never touches the
+rest of `bank/`:
+
+```sh
+# add / top-up only the listed categories — the other shards in bank/ are left exactly as they are
+bun .claude/skills/trivia-gen/gen-bank.ts --categories geography,history,ocean --source scratchpad/final --out bank --min 4
+```
+
+Unknown ids fail loudly (a typo can't silently skip a shard). Omit `--categories` for a full-pool run.
+Because ids are content-derived, re-encoding an existing category with its current questions present in the
+source is a byte-identical no-op, and authoring extra questions into a shard's source simply **appends**
+them (stable ids → the group's no-repeat history survives a top-up).
+
 It computes each `id = sha256(lang|category|normPrompt).slice(0,12)`, deterministically shuffles the option
 slots, salts the correct slot into `answerCheck`, and **fails loudly** unless every id is globally unique,
 every `answerCheck` round-trips through `src/plugins/question-bank/decode.ts`, and every `(category, tier)`
