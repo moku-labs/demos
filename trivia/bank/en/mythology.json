@@ -1,0 +1,170 @@
+[
+  {
+    "id": "34f9899fc200",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which Greek god is the ruler of the sea?",
+    "options": [
+      "Hades",
+      "Poseidon",
+      "Zeus",
+      "Ares"
+    ],
+    "answerCheck": "7a2r1a3:0"
+  },
+  {
+    "id": "82d7a3a08ce0",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Norse mythology, what is the name of the great ash tree that connects the nine worlds?",
+    "options": [
+      "Asgard",
+      "Bifrost",
+      "Yggdrasil",
+      "Midgard"
+    ],
+    "answerCheck": "fro:1"
+  },
+  {
+    "id": "bffc7d2f0f10",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which Egyptian god has the head of a jackal and guides souls to the afterlife?",
+    "options": [
+      "Horus",
+      "Osiris",
+      "Anubis",
+      "Ra"
+    ],
+    "answerCheck": "d9rpf:3"
+  },
+  {
+    "id": "d7427de27c2c",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Greek mythology, what creature has the body of a lion and the head of a human?",
+    "options": [
+      "Sphinx",
+      "Chimera",
+      "Centaur",
+      "Minotaur"
+    ],
+    "answerCheck": "wdjbfv:2"
+  },
+  {
+    "id": "6da065b27db7",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Norse mythology, Odin sacrificed one of his eyes — but what did he get in return?",
+    "options": [
+      "The ability to fly",
+      "Control over thunder",
+      "Wisdom from the well of Mimir",
+      "Immortality"
+    ],
+    "answerCheck": "02y8sl:0"
+  },
+  {
+    "id": "b139ccff1058",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Greek hero Achilles was invulnerable everywhere except one spot. What was his weakness?",
+    "options": [
+      "His left ear",
+      "His right hand",
+      "His heel",
+      "His neck"
+    ],
+    "answerCheck": "oc2wl:3"
+  },
+  {
+    "id": "55c86d890313",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Japanese mythology, the sun goddess Amaterasu hid in a cave and plunged the world into darkness. What lured her out?",
+    "options": [
+      "A sacred sword",
+      "Laughter and a mirror",
+      "The sound of a rooster crowing",
+      "A divine storm"
+    ],
+    "answerCheck": "7cuyvh:3"
+  },
+  {
+    "id": "7d088d7d5356",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Egyptian myth, the god Set killed Osiris and scattered his body into 14 pieces. Who reassembled him?",
+    "options": [
+      "Horus",
+      "Bastet",
+      "Thoth",
+      "Isis"
+    ],
+    "answerCheck": "ks13sv:1"
+  },
+  {
+    "id": "4403267216c5",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Greek myth, Prometheus stole fire from the gods — but what was the punishment chained to a rock brought him daily?",
+    "options": [
+      "Snakes bit his feet for eternity",
+      "His blood was slowly drained into the sea",
+      "He was forced to hold up the sky",
+      "A vulture ate his liver, which regrew each night"
+    ],
+    "answerCheck": "20abwqm:2"
+  },
+  {
+    "id": "d88951effdbd",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Norse myth, the trickster Loki fathered many strange children. Which of these is NOT one of Loki's offspring?",
+    "options": [
+      "Jormungandr the world serpent",
+      "Sleipnir the eight-legged horse",
+      "Fenrir the wolf",
+      "Huginn the raven"
+    ],
+    "answerCheck": "4dtcqeh:2"
+  },
+  {
+    "id": "59cc3031b5d8",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Aztec god Quetzalcoatl was a feathered serpent — but what was one of his key roles in Aztec cosmology?",
+    "options": [
+      "God of war who demanded blood sacrifice",
+      "Bringer of drought and famine",
+      "Ruler of the dead who judged souls",
+      "Creator of humanity using bones from the underworld"
+    ],
+    "answerCheck": "erhgf:0"
+  },
+  {
+    "id": "2280084a47f8",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Mesopotamian myth, the hero Gilgamesh sought a plant of immortality at the bottom of the sea. What ultimately happened to it?",
+    "options": [
+      "He gave it to the gods in exchange for safe passage",
+      "A serpent stole it while he slept",
+      "He ate it but it turned him mortal anyway",
+      "It dissolved when he reached the surface"
+    ],
+    "answerCheck": "yyfz1:2"
+  }
+]

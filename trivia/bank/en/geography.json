@@ -1,0 +1,170 @@
+[
+  {
+    "id": "d5812ddc51be",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The Sahara Desert is roughly the same size as which country?",
+    "options": [
+      "Russia",
+      "Brazil",
+      "Australia",
+      "The United States"
+    ],
+    "answerCheck": "rnp:2"
+  },
+  {
+    "id": "6f313151f7f8",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which ocean is the largest on Earth?",
+    "options": [
+      "Pacific Ocean",
+      "Indian Ocean",
+      "Atlantic Ocean",
+      "Arctic Ocean"
+    ],
+    "answerCheck": "hkwkfv:2"
+  },
+  {
+    "id": "67b0ad0d3d03",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Lake Baikal holds about 20% of all the world's unfrozen fresh surface water. What is unusual about its age?",
+    "options": [
+      "It was created by a meteor impact about 2 million years ago",
+      "It is roughly 25–30 million years old, making it the oldest lake on Earth",
+      "It is geologically young at only 500,000 years old",
+      "It formed during the last Ice Age, making it about 15,000 years old"
+    ],
+    "answerCheck": "2q6p:1"
+  },
+  {
+    "id": "0885c78ca364",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which continent has no permanent human residents and no countries?",
+    "options": [
+      "The Arctic",
+      "Antarctica",
+      "Patagonia",
+      "Greenland"
+    ],
+    "answerCheck": "gjbk:1"
+  },
+  {
+    "id": "f0fc6267e27f",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "China and Russia are tied for a peculiar world record: which one?",
+    "options": [
+      "Longest coastline",
+      "Most UNESCO World Heritage Sites",
+      "Most land borders with other countries (14 each)",
+      "Largest number of time zones"
+    ],
+    "answerCheck": "9ewf8s:0"
+  },
+  {
+    "id": "e1727a47080d",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Saudi Arabia is the largest country in the world with no permanent natural rivers. Which other Gulf state shares this distinction?",
+    "options": [
+      "Kuwait",
+      "Jordan",
+      "Iraq",
+      "Bahrain"
+    ],
+    "answerCheck": "myi3:0"
+  },
+  {
+    "id": "2b87b9b79357",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Amazon and Nile rivers trade blows for 'world's longest'. Which river drains the largest watershed — collecting water from the most land area?",
+    "options": [
+      "The Mississippi-Missouri",
+      "The Amazon",
+      "The Nile",
+      "The Congo"
+    ],
+    "answerCheck": "gtbdz:2"
+  },
+  {
+    "id": "491712d58bb1",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which country is sometimes called the 'Land of a Thousand Lakes' — and actually has over 187,000 of them?",
+    "options": [
+      "Sweden",
+      "Canada",
+      "Finland",
+      "Norway"
+    ],
+    "answerCheck": "cmha2:3"
+  },
+  {
+    "id": "5afe8eb6b271",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Lesotho, Vatican City, and San Marino share a rare geographical trait. What is it?",
+    "options": [
+      "They are all smaller than a major city airport",
+      "They are all entirely surrounded by a single other country",
+      "They have no coastline and no rivers",
+      "They are all island nations"
+    ],
+    "answerCheck": "n3sn:1"
+  },
+  {
+    "id": "3a48bde0270b",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Atacama Desert in South America is so arid that some weather stations there have never recorded rainfall. On which coast of the continent does it sit?",
+    "options": [
+      "The northern (Caribbean) coast",
+      "The eastern (Atlantic) coast",
+      "It is landlocked in the interior",
+      "The western (Pacific) coast"
+    ],
+    "answerCheck": "kiaib:0"
+  },
+  {
+    "id": "d9f4d9c5f80b",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Mount Chimborazo in Ecuador is not the tallest mountain above sea level, yet its summit is the farthest point from Earth's centre. Why?",
+    "options": [
+      "It sits on a high plateau that adds to its effective height",
+      "Earth bulges at the equator, giving equatorial peaks extra distance from the core",
+      "It was taller before significant erosion over millennia",
+      "Its base is below sea level, making its total rise larger"
+    ],
+    "answerCheck": "yerg8:2"
+  },
+  {
+    "id": "a6a9e19242db",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which European country shares a land border with Morocco — not because of a sea crossing, but because it holds two small enclaves on the African continent?",
+    "options": [
+      "Spain",
+      "Italy",
+      "France",
+      "Portugal"
+    ],
+    "answerCheck": "076:3"
+  }
+]

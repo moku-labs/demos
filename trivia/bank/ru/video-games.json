@@ -1,0 +1,170 @@
+[
+  {
+    "id": "fa7495249b86",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Как зовут усатого водопроводчика — главного героя Nintendo?",
+    "options": [
+      "Марио",
+      "Луиджи",
+      "Варио",
+      "Тоад"
+    ],
+    "answerCheck": "06gcj1:2"
+  },
+  {
+    "id": "c2ae6b9609d6",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Тетрис придумал советский программист Алексей Пажитнов. В каком году была создана игра?",
+    "options": [
+      "1982",
+      "1991",
+      "1978",
+      "1984"
+    ],
+    "answerCheck": "mxli:3"
+  },
+  {
+    "id": "62d3a74dc1ea",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Какого цвета ёж Соник — маскот компании Sega?",
+    "options": [
+      "Зелёного",
+      "Синего",
+      "Красного",
+      "Жёлтого"
+    ],
+    "answerCheck": "qenxs:2"
+  },
+  {
+    "id": "0cdf920cc7a6",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В игре Pac-Man главный герой поедает точки и убегает от призраков. Как зовут одного из четырёх призраков-преследователей?",
+    "options": [
+      "Бобо",
+      "Дракула",
+      "Спуки",
+      "Блинки"
+    ],
+    "answerCheck": "86x4u0t:2"
+  },
+  {
+    "id": "3be927ffc867",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "«Ведьмак 3: Дикая охота» получил рекордное число наград «Игра года» — около 250. Как называется польская студия-разработчик?",
+    "options": [
+      "Techland",
+      "11 bit studios",
+      "People Can Fly",
+      "CD Projekt Red"
+    ],
+    "answerCheck": "f1qzn:0"
+  },
+  {
+    "id": "06a245382228",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Space Invaders вышла в 1978 году и стала хитом, буквально опустошив монетные хранилища автоматов в Японии. Кто разработал эту игру?",
+    "options": [
+      "Atari",
+      "Namco",
+      "Taito",
+      "Nintendo"
+    ],
+    "answerCheck": "tqxf7:3"
+  },
+  {
+    "id": "c81f26532f9e",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Какую фигуру в Тетрисе принято считать самой желанной — той, которая закрывает сразу четыре линии и приносит «тетрис»?",
+    "options": [
+      "S-блок",
+      "T-блок",
+      "I-блок",
+      "L-блок"
+    ],
+    "answerCheck": "bo8yxg:0"
+  },
+  {
+    "id": "f070cbe75dfb",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Super Mario Bros. вышла в 1985 году и помогла спасти индустрию видеоигр после кризиса 1983 года. На какой консоли она дебютировала?",
+    "options": [
+      "Game Boy",
+      "Sega Master System",
+      "Atari 2600",
+      "Nintendo Famicom (NES)"
+    ],
+    "answerCheck": "bzyn:3"
+  },
+  {
+    "id": "3f668d4a182b",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Алексей Пажитнов долгие годы не получал роялти за Тетрис — права принадлежали советскому государству. В каком году он наконец основал The Tetris Company и получил контроль над игрой?",
+    "options": [
+      "2001",
+      "1996",
+      "1991",
+      "1994"
+    ],
+    "answerCheck": "uea4:1"
+  },
+  {
+    "id": "0dd5ad4d9f01",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Sonic the Hedgehog создавался как маскот Sega — конкурент Марио. Какой художник выиграл внутренний конкурс дизайнов и нарисовал облик Соника?",
+    "options": [
+      "Юдзи Нака",
+      "Масато Накамура",
+      "Хироказу Ясухара",
+      "Наото Осима"
+    ],
+    "answerCheck": "zeb6v:0"
+  },
+  {
+    "id": "b9e21e30d38b",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Pac-Man стал первой массовой игрой с персонажами-призраками. Оригинальное японское название (パックマン) происходит от звукоподражания. Что именно оно имитирует?",
+    "options": [
+      "Звук монетки в автомате",
+      "Английское слово «pack» (упаковка)",
+      "Имя создателя Тору Иватани",
+      "Звук поедания — «пак-пак»"
+    ],
+    "answerCheck": "08s:2"
+  },
+  {
+    "id": "53117ae1b178",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Жестокость Mortal Kombat и Night Trap в 1993 году вызвала слушания в Сенате США и привела к созданию системы возрастных рейтингов для игр. Как называется эта организация, существующая по сей день?",
+    "options": [
+      "USK",
+      "CERO",
+      "PEGI",
+      "ESRB"
+    ],
+    "answerCheck": "xrc:2"
+  }
+]
