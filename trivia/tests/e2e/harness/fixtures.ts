@@ -14,12 +14,12 @@
  *
  * ### TV / Stage (`StagePhaseKey`)
  * `question` | `steal` | `reveal` | `scoreboard` | `final`
- * | `lobby` | `languageVote` | `categoryPick` | `roundIntro`
+ * | `lobby` | `languageVote` | `categoryPick` | `categoryReveal` | `categoryLoading` | `roundIntro`
  * | `questionRu` | `questionFlag` | `revealWrongSteal` | `revealTimeout` | `revealStolen`
  * | `pauseOverlay` | `disconnectBanner` | `categoryExhausted` | `reconnectStrip` | `endCountdown`
  *
  * ### Phone / Controller (`PhonePhaseKey`)
- * `final` | `reveal` | `revealWrong` | `waiting` | `categoryPick`
+ * `final` | `reveal` | `revealWrong` | `waiting` | `categoryPick` | `categoryReveal` | `categoryLoading`
  * | `answer` | `answerLocked` | `leaveModal` | `midJoin`
  */
 
@@ -64,6 +64,7 @@ export const FIXED_NOW = Date.parse("2026-01-01T12:00:00Z");
 /**
  * The stage phase screens the harness can render.
  * `steal` is the steal sub-state of the `question` phase.
+ * `categoryReveal` is the new phase: chosen card glows + F3 banner before advancing to question.
  * Keys with `*Overlay` / `*Banner` / `*Toast` / `*Strip` / `*Chip` render the overlay component
  * inline on top of a base phase — the `stageFixtureState` return carries an `overlay` discriminant
  * that the harness island uses to inject the overlay alongside the stage render.
@@ -77,6 +78,9 @@ export type StagePhaseKey =
   | "lobby"
   | "languageVote"
   | "categoryPick"
+  | "categoryReveal"
+  // Bank-not-ready beat: the picker opens before the question bank has loaded (loading hint shown).
+  | "categoryLoading"
   | "roundIntro"
   // Question variants (A4 Russian, A5 flag/image low-timer)
   | "questionRu"
@@ -99,6 +103,9 @@ export type PhonePhaseKey =
   | "revealWrong"
   | "waiting"
   | "categoryPick"
+  | "categoryReveal"
+  // Bank-not-ready beat: the active player's picker opens before the bank has loaded (buttons inert).
+  | "categoryLoading"
   | "answer"
   | "answerLocked"
   | "leaveModal"
@@ -113,6 +120,8 @@ const STAGE_PHASE_KEYS = new Set<StagePhaseKey>([
   "lobby",
   "languageVote",
   "categoryPick",
+  "categoryReveal",
+  "categoryLoading",
   "roundIntro",
   "questionRu",
   "questionFlag",
@@ -132,6 +141,8 @@ const PHONE_PHASE_KEYS = new Set<PhonePhaseKey>([
   "revealWrong",
   "waiting",
   "categoryPick",
+  "categoryReveal",
+  "categoryLoading",
   "answer",
   "answerLocked",
   "leaveModal",
@@ -325,7 +336,8 @@ function triviaState(
       language: "en",
       hostPeer: "p1",
       paused: false,
-      phaseDeadlineTs: null
+      phaseDeadlineTs: null,
+      chosenCategory: null
     },
     players: PLAYERS,
     question: QUESTION,
@@ -413,6 +425,43 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
     };
   }
 
+  if (phase === "categoryReveal") {
+    // A3 chosen state: Mochi (p1) picked "Outer Space" — chosen card glows + F3 banner drops in.
+    // chosenCategory="space" → the space card is state="chosen", others dim to 28%.
+    return {
+      s: triviaState("categoryReveal", null, {
+        match: {
+          phase: "categoryReveal",
+          round: 6,
+          activePeer: "p1",
+          language: "en",
+          hostPeer: "p1",
+          paused: false,
+          phaseDeadlineTs: FIXED_NOW + 1300,
+          chosenCategory: "space"
+        }
+      }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
+  if (phase === "categoryLoading") {
+    // Bank-not-ready: the picker is open (categoryPick) but the bank is still loading → the chooser row
+    // shows the "Loading questions…" line in place of the difficulty pips.
+    return {
+      s: triviaState("categoryPick", null, {
+        bank: { status: "loading", lang: "en", error: null }
+      }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
   if (phase === "roundIntro") {
     return {
       s: triviaState("roundIntro", null),
@@ -437,7 +486,8 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
           language: "ru",
           hostPeer: "p1",
           paused: false,
-          phaseDeadlineTs: null
+          phaseDeadlineTs: null,
+          chosenCategory: null
         }
       }),
       qr: null,
@@ -519,7 +569,8 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
           language: "en",
           hostPeer: "p1",
           paused: true,
-          phaseDeadlineTs: null
+          phaseDeadlineTs: null,
+          chosenCategory: null
         }
       }),
       qr: null,
@@ -641,6 +692,48 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
   if (phase === "categoryPick") {
     return {
       s: triviaState("categoryPick", "p1"),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: false
+    };
+  }
+
+  // category reveal (A11→A3): Mochi chose "space"; controller shows it chosen + others faded
+  if (phase === "categoryReveal") {
+    return {
+      s: triviaState("categoryReveal", "p1", {
+        match: {
+          phase: "categoryReveal",
+          round: 6,
+          activePeer: "p1",
+          language: "en",
+          hostPeer: "p1",
+          paused: false,
+          phaseDeadlineTs: FIXED_NOW + 1300,
+          chosenCategory: "space"
+        }
+      }),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: false
+    };
+  }
+
+  // category pick while the bank loads (A11 not-ready): Mochi (p1, active) sees the picker, but the bank
+  // is still loading → buttons render inert under the "Loading questions…" hint (no tap is dropped).
+  if (phase === "categoryLoading") {
+    return {
+      s: triviaState("categoryPick", "p1", {
+        bank: { status: "loading", lang: "en", error: null }
+      }),
       now: FIXED_NOW,
       code: "TRIV1234",
       joinedProfile: null,

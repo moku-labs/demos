@@ -144,7 +144,10 @@ function joinedScreen(
   if (phase === "roundIntro") {
     return <PhoneWaitingCard emoji="✨" title={`Round ${s.match.round}`} subtitle="Get ready…" />;
   }
-  if (phase === "categoryPick") {
+  if (phase === "categoryPick" || phase === "categoryReveal") {
+    // During the reveal beat (phase="categoryReveal") the active player keeps the category list
+    // visible with the chosen button lit + others faded (driven by match.chosenCategory); non-active
+    // players keep the same "X is picking…" waiting card through the beat.
     return isActive ? (
       <PhoneCategory s={s} onPickCategory={handlers.onPickCategory} />
     ) : (

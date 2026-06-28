@@ -29,6 +29,10 @@ const CONTROLLER_PHASE: Record<PhonePhaseKey, string> = {
   revealWrong: "reveal",
   waiting: "lobby",
   categoryPick: "categoryPick",
+  // categoryReveal: active player sees the same category-pick list but with chosen button highlighted
+  categoryReveal: "categoryReveal",
+  // categoryLoading: picker open but bank still loading — renders the categoryPick screen (buttons inert)
+  categoryLoading: "categoryPick",
   answer: "question",
   answerLocked: "question",
   leaveModal: "question",
@@ -74,6 +78,42 @@ test.describe("Phone — category pick (A11)", () => {
     await expect(page.locator("[data-component='category-button']")).toHaveCount(6);
     // Header shows active player's name
     await expect(page.locator("[data-phone-title]")).toContainText("Mochi");
+  });
+});
+
+test.describe("Phone — category reveal beat (A11 feedback)", () => {
+  test("chosen category button is selected; others fade and are non-interactive", async ({
+    page
+  }) => {
+    await gotoPhone(page, "categoryReveal");
+    const root = page.locator("[data-component='phone-category']");
+    await expect(root).toBeVisible();
+    // Root marks the revealing state
+    await expect(root).toHaveAttribute("data-revealing", "true");
+    // 6 buttons still present
+    await expect(page.locator("[data-component='category-button']")).toHaveCount(6);
+    // Exactly 1 button is in selected state (the chosen "space" category)
+    await expect(
+      page.locator("[data-component='category-button'][data-selected='true']")
+    ).toHaveCount(1);
+  });
+});
+
+test.describe("Phone — category pick while the bank loads (A11 not-ready)", () => {
+  test("buttons render inert under a loading hint until the bank is ready", async ({ page }) => {
+    await gotoPhone(page, "categoryLoading");
+    const root = page.locator("[data-component='phone-category']");
+    await expect(root).toBeVisible();
+    // Root marks the bank-not-ready wait state.
+    await expect(root).toHaveAttribute("data-waiting", "true");
+    // The 6 buttons still render (stable layout) but are non-interactive (a tap is never dropped silently).
+    await expect(page.locator("[data-component='category-button']")).toHaveCount(6);
+    await expect(page.locator("[data-component='category-button']").first()).toHaveCSS(
+      "pointer-events",
+      "none"
+    );
+    // The loading hint is shown.
+    await expect(page.locator("[data-category-hint]")).toContainText("Loading questions");
   });
 });
 
@@ -162,6 +202,10 @@ test.describe("Phone — mid-join modal (E2)", () => {
 const PHONE_SCREENS: ReadonlyArray<{ phase: PhonePhaseKey; shot: string }> = [
   { phase: "waiting", shot: "phone-waiting.png" },
   { phase: "categoryPick", shot: "phone-category.png" },
+  // categoryReveal beat: chosen button lit + others faded
+  { phase: "categoryReveal", shot: "phone-category-reveal.png" },
+  // categoryLoading: bank-not-ready wait — buttons dimmed + "Loading questions…" hint
+  { phase: "categoryLoading", shot: "phone-category-loading.png" },
   { phase: "answer", shot: "phone-answer.png" },
   { phase: "answerLocked", shot: "phone-answer-locked.png" },
   { phase: "reveal", shot: "phone-reveal-flash.png" },

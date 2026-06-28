@@ -54,12 +54,13 @@ export type PlayerProfile = {
 
 // ─── Render views (the bridge casts raw JSON cells into these) ───────────────────
 
-/** The eight match phases the islands route on (mirrors match-flow's `Phase`). */
+/** The nine match phases the islands route on (mirrors match-flow's `Phase`). */
 export type Phase =
   | "lobby"
   | "languageVote"
   | "roundIntro"
   | "categoryPick"
+  | "categoryReveal"
   | "question"
   | "reveal"
   | "scoreboard"
@@ -77,6 +78,8 @@ export type MatchView = {
   hostPeer: PeerId | null;
   paused: boolean;
   phaseDeadlineTs: number | null;
+  /** The category chosen during the `categoryReveal` beat; `null` outside that phase. */
+  chosenCategory: CategoryId | null;
 };
 
 /** `question` slice view — the active question (secret-free; `null` when no question is live). */

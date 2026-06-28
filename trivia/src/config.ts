@@ -18,6 +18,8 @@ export const TRIVIA = {
     stealMs: 8000,
     voteWindowMs: 5000,
     roundIntroMs: 2000,
+    /** Category-chosen reveal beat: chosen card glows + F3 banner before question (A11: ~1.3 s). */
+    categoryRevealMs: 1300,
     revealMs: 3500,
     scoreboardMs: 3000,
     endCountdownMs: 15_000

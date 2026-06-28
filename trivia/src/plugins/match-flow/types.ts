@@ -9,6 +9,7 @@ export type Phase =
   | "languageVote"
   | "roundIntro"
   | "categoryPick"
+  | "categoryReveal"
   | "question"
   | "reveal"
   | "scoreboard"
@@ -23,6 +24,8 @@ export type Config = {
   answerMs: number;
   stealMs: number;
   roundIntroMs: number;
+  /** How long the category-chosen reveal beat holds before advancing to the question (ms). */
+  categoryRevealMs: number;
   revealMs: number;
   scoreboardMs: number;
   /** How long the podium lingers before auto-returning to the lobby (final phase). */
@@ -37,12 +40,16 @@ export type Config = {
  * reconciled to its existing roster slot/score/turn, and a brand-new token is rejected mid-match.
  * `hostToken` is the playerToken of the current host — host identity is token-derived (not peerId) so
  * a host that reloads reclaims the role even if a heartbeat `peer-left` promoted someone first.
+ * `pendingQuestion` holds the resolved question during the `categoryReveal` beat so it is consumed-once
+ * and published at the reveal→question transition rather than at pick time.
  */
 export type State = {
   tried: Set<PeerId>;
   locked: boolean;
   tokens: Map<string, PeerId>;
   hostToken: string;
+  /** The question resolved at pick-time, staged here for the reveal→question advance. */
+  pendingQuestion: QuestionSlice | null;
 };
 
 /** `match` slice — phase routing, the active player, language, host, pause, and the phase deadline. */
@@ -54,6 +61,8 @@ export type MatchSlice = {
   hostPeer: PeerId | null;
   paused: boolean;
   phaseDeadlineTs: number | null;
+  /** The category the active player just chose; set in `categoryReveal`, cleared at `question`. */
+  chosenCategory: CategoryId | null;
 };
 
 /** `players` slice — the joined player roster (lobby tiles, turn chips, scoreboard names). */

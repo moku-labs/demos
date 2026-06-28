@@ -19,5 +19,12 @@ import type { State } from "./types";
  * ```
  */
 export function createMatchFlowState(): State {
-  return { tried: new Set(), locked: false, tokens: new Map(), hostToken: "" };
+  return {
+    tried: new Set(),
+    locked: false,
+    tokens: new Map(),
+    hostToken: "",
+    // eslint-disable-next-line unicorn/no-null -- pendingQuestion is null until a category is chosen
+    pendingQuestion: null
+  };
 }

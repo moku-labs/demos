@@ -27,6 +27,7 @@ function badgeFor(s: TriviaState): string {
   if (phase === "languageVote") return "Match setup";
   if (phase === "scoreboard") return `After Round ${round}`;
   if (phase === "final") return "🏆 Final Results";
+  // categoryReveal and all in-round phases share the "Round N / M" badge.
   return `Round ${round} / ${TRIVIA.rounds}`;
 }
 
@@ -55,7 +56,7 @@ function screenFor(state: StageState): JSX.Element {
   const phase = s.match.phase;
   if (phase === "lobby") return <StageLobby s={s} qr={qr} code={code} onReset={resetRoom} />;
   if (phase === "languageVote") return <StageLanguage s={s} now={now} />;
-  if (phase === "categoryPick") return <StageCategory s={s} />;
+  if (phase === "categoryPick" || phase === "categoryReveal") return <StageCategory s={s} />;
   if (phase === "question") return <StageQuestion s={s} now={now} revealing={false} />;
   if (phase === "reveal") return <StageQuestion s={s} now={now} revealing />;
   if (phase === "scoreboard") return <StageScoreboard s={s} />;
