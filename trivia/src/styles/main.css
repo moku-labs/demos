@@ -469,6 +469,11 @@
     *::before,
     *::after {
       animation-duration: 0.001ms !important;
+      /* Also zero out the delay so staggered entrances (e.g. CategoryButton --i * 70ms) don't
+         create a visible sequential reveal even when motion is collapsed. Without this, buttons
+         would still wait 70ms/140ms/… before their 0.001ms animation fires, causing the stagger
+         to be felt as a delay band rather than a motion band. */
+      animation-delay: 0ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.12s !important;
     }
