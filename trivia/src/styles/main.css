@@ -237,8 +237,11 @@
 
   [data-island="mute"] {
     position: fixed;
-    /* Nudged 10px higher than the default top inset (design tweak) — floored at 0 so it never clips. */
-    top: max(0px, calc(clamp(10px, 1.6vh, 18px) - 10px));
+    /* Align the mute pill with the top bar's optical centre. The bar uses clamp(10px,1.6vh,18px)
+       top/bottom padding around ~34px of content, so its centre sits at roughly padding+17px. The
+       pill is 44px tall, so top = padding − (44−34)/2 = padding − 5 centres it against the bar.
+       Floored at 0 so it never clips on very short viewports. */
+    top: max(0px, calc(clamp(10px, 1.6vh, 18px) - 5px));
     right: clamp(16px, 3vw, 40px);
     z-index: 6;
   }
