@@ -166,5 +166,285 @@
       "Canada"
     ],
     "answerCheck": "h4e:1"
+  },
+  {
+    "id": "d0a848a40e44",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In \"Charlotte's Web\", what kind of animal is Charlotte?",
+    "options": [
+      "A rat",
+      "A spider",
+      "A goose",
+      "A pig"
+    ],
+    "answerCheck": "4sakz:2"
+  },
+  {
+    "id": "3c2e2cb168e8",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which detective lives at 221B Baker Street?",
+    "options": [
+      "Sam Spade",
+      "Philip Marlowe",
+      "Hercule Poirot",
+      "Sherlock Holmes"
+    ],
+    "answerCheck": "y1uy2d:1"
+  },
+  {
+    "id": "ec3e68e27195",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is a group of related books, told in order, usually called?",
+    "options": [
+      "A glossary",
+      "An index",
+      "A series",
+      "An anthology"
+    ],
+    "answerCheck": "rwj4n:3"
+  },
+  {
+    "id": "d5c0baa39303",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Roald Dahl's story, which golden item lets children tour Willy Wonka's factory?",
+    "options": [
+      "A golden coin",
+      "A golden key",
+      "A golden ticket",
+      "A golden egg"
+    ],
+    "answerCheck": "u90vmu:0"
+  },
+  {
+    "id": "1582955e3072",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What do you call the short summary printed on the back of a book to tempt you to read it?",
+    "options": [
+      "Footnote",
+      "Preface",
+      "Blurb",
+      "Epilogue"
+    ],
+    "answerCheck": "xjtf6:3"
+  },
+  {
+    "id": "843cae0f7ce9",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which long-haired princess in a Grimm fairy tale lets down her hair from a tower?",
+    "options": [
+      "Sleeping Beauty",
+      "Rapunzel",
+      "Snow White",
+      "Cinderella"
+    ],
+    "answerCheck": "1liwa:2"
+  },
+  {
+    "id": "9e24e93f0f09",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A word that means the opposite of another word is called what?",
+    "options": [
+      "An antonym",
+      "A synonym",
+      "A homonym",
+      "An acronym"
+    ],
+    "answerCheck": "kp49:0"
+  },
+  {
+    "id": "056f0397cd77",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which author created the world of Middle-earth, the setting of The Hobbit?",
+    "options": [
+      "J.R.R. Tolkien",
+      "C.S. Lewis",
+      "Ursula K. Le Guin",
+      "George R.R. Martin"
+    ],
+    "answerCheck": "ikd8:0"
+  },
+  {
+    "id": "6ace9069db55",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Dr. Seuss wrote \"Green Eggs and Ham\" to win a bet from his publisher. What was the dare?",
+    "options": [
+      "Use no more than 50 different words",
+      "Never use the letter S",
+      "Write it overnight",
+      "Make every line rhyme with 'ham'"
+    ],
+    "answerCheck": "qc8d:0"
+  },
+  {
+    "id": "12d14eae0e92",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What does the common abbreviation \"e.g.\" actually stand for in Latin?",
+    "options": [
+      "Et alia (and others)",
+      "Exempli gratia (for example)",
+      "Id est (that is)",
+      "Et cetera (and the rest)"
+    ],
+    "answerCheck": "gip3:1"
+  },
+  {
+    "id": "b2a269b747b3",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Greek mythology and Homer's epics, whose 'heel' became a phrase for a fatal weakness?",
+    "options": [
+      "Achilles",
+      "Odysseus",
+      "Hector",
+      "Perseus"
+    ],
+    "answerCheck": "wmj:3"
+  },
+  {
+    "id": "694159e272e0",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Jane Austen's most famous novel opens by declaring a single rich man \"must be in want of\" what?",
+    "options": [
+      "A country estate",
+      "A wife",
+      "An heir",
+      "A fortune"
+    ],
+    "answerCheck": "yh2zur:3"
+  },
+  {
+    "id": "01e579ead7e6",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A 'haiku' is a short poem traditionally built on a syllable pattern across three lines. What is that pattern?",
+    "options": [
+      "3-5-3",
+      "5-5-5",
+      "7-5-7",
+      "5-7-5"
+    ],
+    "answerCheck": "7d7txi:1"
+  },
+  {
+    "id": "a65f5ae8cca3",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The word \"nightmare\" originally referred to a 'mare' that was believed to be what?",
+    "options": [
+      "A female horse",
+      "A dark storm cloud",
+      "A type of fever",
+      "A demon that sat on sleepers"
+    ],
+    "answerCheck": "ridzc:0"
+  },
+  {
+    "id": "4203417b93f2",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which Russian author wrote the epic novel \"War and Peace\"?",
+    "options": [
+      "Fyodor Dostoevsky",
+      "Leo Tolstoy",
+      "Anton Chekhov",
+      "Ivan Turgenev"
+    ],
+    "answerCheck": "79c:0"
+  },
+  {
+    "id": "46a5282d037d",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "An 'oxymoron' joins two contradictory words. Which of these phrases is a true oxymoron?",
+    "options": [
+      "Busy as a bee",
+      "Raining cats and dogs",
+      "Deafening silence",
+      "Time will tell"
+    ],
+    "answerCheck": "f1j5la:0"
+  },
+  {
+    "id": "6844da939dd9",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which Gabriel García Márquez novel opens with Colonel Aureliano Buendía facing a firing squad?",
+    "options": [
+      "One Hundred Years of Solitude",
+      "Chronicle of a Death Foretold",
+      "The Autumn of the Patriarch",
+      "Love in the Time of Cholera"
+    ],
+    "answerCheck": "fker:0"
+  },
+  {
+    "id": "4f35e299195b",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The everyday word \"quarantine\" comes from an Italian phrase meaning what length of time ships once waited at port?",
+    "options": [
+      "Forty days",
+      "Thirty days",
+      "Sixty days",
+      "Seven days"
+    ],
+    "answerCheck": "t0s5s:1"
+  },
+  {
+    "id": "539849419b3f",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In classic poetry, a line of five 'iambic' feet — the rhythm Shakespeare wrote in — is called what?",
+    "options": [
+      "Iambic pentameter",
+      "Dactylic hexameter",
+      "Trochaic tetrameter",
+      "Anapestic trimeter"
+    ],
+    "answerCheck": "h7ke:0"
+  },
+  {
+    "id": "e5ed06b9907e",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The word \"robot\" entered English from a 1920 Czech play by Karel Čapek. What does its root word mean?",
+    "options": [
+      "Servant of iron",
+      "Thinking machine",
+      "Forced labor",
+      "Metal man"
+    ],
+    "answerCheck": "bbe3:2"
   }
 ]

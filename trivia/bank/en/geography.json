@@ -166,5 +166,285 @@
       "Portugal"
     ],
     "answerCheck": "076:3"
+  },
+  {
+    "id": "7c8cc47816a7",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The Equator passes through the territory of which of these countries?",
+    "options": [
+      "Ecuador",
+      "Mexico",
+      "Egypt",
+      "South Africa"
+    ],
+    "answerCheck": "k92bk:1"
+  },
+  {
+    "id": "4a5db5901a92",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which country is both an entire continent and a single nation?",
+    "options": [
+      "Australia",
+      "Greenland",
+      "Madagascar",
+      "India"
+    ],
+    "answerCheck": "l7wid29:3"
+  },
+  {
+    "id": "a5680889ffb4",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Mount Everest, the highest point on land, sits on the border between Nepal and which other country?",
+    "options": [
+      "Bhutan",
+      "Pakistan",
+      "China",
+      "India"
+    ],
+    "answerCheck": "41a:1"
+  },
+  {
+    "id": "595dff3610d0",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which two continents does the Suez Canal separate?",
+    "options": [
+      "Africa and Asia",
+      "North and South America",
+      "Asia and Europe",
+      "Europe and Africa"
+    ],
+    "answerCheck": "ro75c8:2"
+  },
+  {
+    "id": "15103593dffd",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Greenland, the world's largest island, is a self-governing territory of which country?",
+    "options": [
+      "Norway",
+      "Iceland",
+      "Canada",
+      "Denmark"
+    ],
+    "answerCheck": "pjwp:3"
+  },
+  {
+    "id": "5ae220a27762",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which country has a maple leaf at the centre of its flag?",
+    "options": [
+      "Sweden",
+      "New Zealand",
+      "Lebanon",
+      "Canada"
+    ],
+    "answerCheck": "8cct0u:1"
+  },
+  {
+    "id": "2adaa965a254",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Istanbul is the only major city in the world that sits on two continents. Which two?",
+    "options": [
+      "Europe and Asia",
+      "Asia and Australia",
+      "Asia and Africa",
+      "Europe and Africa"
+    ],
+    "answerCheck": "gvr8he:2"
+  },
+  {
+    "id": "c2865f1dfda2",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "If you sailed due south from the southern tip of India across the open ocean, the first continent you'd hit is:",
+    "options": [
+      "Australia",
+      "Africa",
+      "South America",
+      "Antarctica"
+    ],
+    "answerCheck": "6kd:2"
+  },
+  {
+    "id": "e3ff7543f0c4",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Turkey's largest city is Istanbul, but its capital is a more central city. Which one?",
+    "options": [
+      "Antalya",
+      "Bursa",
+      "Ankara",
+      "Izmir"
+    ],
+    "answerCheck": "2jf:1"
+  },
+  {
+    "id": "16c0f086b2dc",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Dead Sea has the lowest land elevation on Earth, with its shore over 400 metres below sea level. It borders Jordan and which other country/territory?",
+    "options": [
+      "Egypt",
+      "Lebanon",
+      "Israel",
+      "Saudi Arabia"
+    ],
+    "answerCheck": "b03:1"
+  },
+  {
+    "id": "c3df2e8d8717",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which country's main territory is the only one to stretch across all four hemispheres — north and south of the Equator, and east and west of the International Date Line?",
+    "options": [
+      "Indonesia",
+      "Brazil",
+      "Ecuador",
+      "Kiribati"
+    ],
+    "answerCheck": "rkkp81:1"
+  },
+  {
+    "id": "60932cb121ec",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Russia covers more time zones than any other country. How many?",
+    "options": [
+      "7",
+      "11",
+      "5",
+      "15"
+    ],
+    "answerCheck": "a8wu2:2"
+  },
+  {
+    "id": "0e2d387c4a5d",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Strait of Gibraltar connects the Mediterranean Sea to which body of water?",
+    "options": [
+      "The Red Sea",
+      "The Atlantic Ocean",
+      "The Black Sea",
+      "The Indian Ocean"
+    ],
+    "answerCheck": "vqeqqa6:0"
+  },
+  {
+    "id": "b7b04916763d",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Italy is famously shaped like a boot, and at its 'toe' it nearly touches a large island. Which island is it?",
+    "options": [
+      "Corsica",
+      "Malta",
+      "Sicily",
+      "Sardinia"
+    ],
+    "answerCheck": "3lzla:3"
+  },
+  {
+    "id": "7c1dd2fd0176",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Canada and which other country share the longest international land border in the world?",
+    "options": [
+      "The United States",
+      "Mexico",
+      "Brazil",
+      "Russia"
+    ],
+    "answerCheck": "gc843:1"
+  },
+  {
+    "id": "76e8edb4e997",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The deepest known point in any ocean is the Challenger Deep, nearly 11 km down. In which ocean trench is it found?",
+    "options": [
+      "The Tonga Trench",
+      "The Puerto Rico Trench",
+      "The Java Trench",
+      "The Mariana Trench"
+    ],
+    "answerCheck": "uzkbvdk:2"
+  },
+  {
+    "id": "70be67312b14",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which country's name, in its own language, means roughly 'Land of the Eagles' — and indeed features a double-headed eagle on its flag?",
+    "options": [
+      "Austria",
+      "Armenia",
+      "Albania",
+      "Mongolia"
+    ],
+    "answerCheck": "xwd:1"
+  },
+  {
+    "id": "2f6875fb04b0",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Nile is unusual among major rivers because it flows in which overall direction?",
+    "options": [
+      "Westward, emptying into the Atlantic",
+      "Northward, emptying into the Mediterranean",
+      "Southward, emptying into the Indian Ocean",
+      "Eastward, emptying into the Red Sea"
+    ],
+    "answerCheck": "x534to:3"
+  },
+  {
+    "id": "8528f1f40d39",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Point Nemo, the most remote spot in the world's oceans, is so far from land that the nearest humans are often astronauts aboard the ISS passing overhead. In which ocean does it lie?",
+    "options": [
+      "The South Pacific",
+      "The Southern Ocean",
+      "The South Atlantic",
+      "The Indian Ocean"
+    ],
+    "answerCheck": "wxrbm:1"
+  },
+  {
+    "id": "fa42a5c43fe5",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which small African kingdom is bordered by South Africa on three sides and Mozambique on the fourth, and is Africa's last absolute monarchy?",
+    "options": [
+      "Lesotho",
+      "Botswana",
+      "Malawi",
+      "Eswatini"
+    ],
+    "answerCheck": "p7wlgad:2"
   }
 ]

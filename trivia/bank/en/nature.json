@@ -166,5 +166,285 @@
       "Fermentation by bacteria living on the pollen"
     ],
     "answerCheck": "h6do8w:0"
+  },
+  {
+    "id": "0960648e579f",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What gas do plants release into the air as a by-product of photosynthesis?",
+    "options": [
+      "Nitrogen",
+      "Carbon dioxide",
+      "Methane",
+      "Oxygen"
+    ],
+    "answerCheck": "0po9y1:1"
+  },
+  {
+    "id": "1baf0e2b60b6",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Peanuts grow in an unusual spot compared with most nuts. Where do they actually ripen?",
+    "options": [
+      "High on tree branches",
+      "Underground",
+      "Floating on water",
+      "Inside pinecones"
+    ],
+    "answerCheck": "knm4:1"
+  },
+  {
+    "id": "aec046ef2e47",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Sunflowers are known for slowly turning to follow what across the sky during the day?",
+    "options": [
+      "The Sun",
+      "The wind",
+      "The Moon",
+      "Passing birds"
+    ],
+    "answerCheck": "crd:3"
+  },
+  {
+    "id": "10d2533c049f",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these is NOT actually a tree, despite often being mistaken for one?",
+    "options": [
+      "Maple",
+      "Bamboo",
+      "Pine",
+      "Oak"
+    ],
+    "answerCheck": "jqbh:1"
+  },
+  {
+    "id": "bf7f3f0201cf",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A cactus has spines instead of normal leaves mainly to help it do what?",
+    "options": [
+      "Lose less water",
+      "Catch more sunlight",
+      "Attract bees",
+      "Store seeds"
+    ],
+    "answerCheck": "doy6:0"
+  },
+  {
+    "id": "9fb7b71a24ac",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What green pigment makes most plant leaves their colour and captures light for photosynthesis?",
+    "options": [
+      "Melanin",
+      "Chlorophyll",
+      "Keratin",
+      "Carotene"
+    ],
+    "answerCheck": "th9yk:2"
+  },
+  {
+    "id": "5889ac7adc56",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which fruit's seeds are the tiny dots you can see all over its outer surface?",
+    "options": [
+      "Orange",
+      "Grape",
+      "Strawberry",
+      "Apple"
+    ],
+    "answerCheck": "4bwg:2"
+  },
+  {
+    "id": "2510bba1aae9",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The fluffy white 'parachutes' that let dandelion seeds drift on the breeze are an example of which kind of seed dispersal?",
+    "options": [
+      "Animal fur",
+      "Explosive bursting",
+      "Wind",
+      "Water"
+    ],
+    "answerCheck": "t0mr:2"
+  },
+  {
+    "id": "69e3f75278ee",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Bananas grown commercially today are almost all clones of a single variety, making them dangerously vulnerable to disease. What is that variety called?",
+    "options": [
+      "Lady Finger",
+      "Cavendish",
+      "Gros Michel",
+      "Red Dacca"
+    ],
+    "answerCheck": "4ace6i:3"
+  },
+  {
+    "id": "6e9db93a3427",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Vanilla, one of the world's most popular flavours, comes from the seed pod of which kind of plant?",
+    "options": [
+      "An orchid",
+      "A cactus",
+      "A fern",
+      "A palm"
+    ],
+    "answerCheck": "odc:3"
+  },
+  {
+    "id": "4b5d2f6d624b",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "When acacia trees in Africa are nibbled by browsing animals, they can warn nearby trees to ramp up their defences by releasing what?",
+    "options": [
+      "A high-pitched sound",
+      "An electric pulse through the soil",
+      "A chemical gas into the air",
+      "A burst of pollen"
+    ],
+    "answerCheck": "73tl9l:0"
+  },
+  {
+    "id": "91a0e80ca5e1",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which everyday spice is the dried, ground-up bark of a tropical tree?",
+    "options": [
+      "Nutmeg",
+      "Cinnamon",
+      "Paprika",
+      "Black pepper"
+    ],
+    "answerCheck": "b60hs4h:0"
+  },
+  {
+    "id": "9210c0877965",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Mosses and ferns reproduce without flowers or seeds by releasing what instead?",
+    "options": [
+      "Tiny bulbs",
+      "Nectar drops",
+      "Pollen pellets",
+      "Spores"
+    ],
+    "answerCheck": "nuir:3"
+  },
+  {
+    "id": "d191eb7cc286",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Why does freshly cut grass give off that distinctive 'green' smell?",
+    "options": [
+      "It's a chemical distress signal the grass releases when wounded",
+      "Chlorophyll evaporates into the air",
+      "Soil bacteria are disturbed by the cut",
+      "The blades are releasing extra oxygen"
+    ],
+    "answerCheck": "i9ps:0"
+  },
+  {
+    "id": "336b423417f0",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Most plants use the common 'C3' route to capture carbon, but plants like corn and sugarcane use a more efficient method suited to hot, sunny climates. What is it called?",
+    "options": [
+      "Reverse photosynthesis",
+      "C4 photosynthesis",
+      "C2 photosynthesis",
+      "Anaerobic photosynthesis"
+    ],
+    "answerCheck": "ha2h6jw:0"
+  },
+  {
+    "id": "d6bc966e7385",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Many desert succulents open their leaf pores only at night to save water, storing carbon as acid until daytime. What is this water-saving form of photosynthesis called?",
+    "options": [
+      "CAM photosynthesis",
+      "Chemosynthesis",
+      "C4 photosynthesis",
+      "Photorespiration"
+    ],
+    "answerCheck": "vsgp3:1"
+  },
+  {
+    "id": "ee5623daf054",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Some plants in the pea and bean family enrich the soil with nitrogen thanks to bacteria living in nodules on their roots. What are these bacteria called?",
+    "options": [
+      "Cyanobacteria",
+      "Rhizobia",
+      "Mycoplasma",
+      "Lactobacilli"
+    ],
+    "answerCheck": "ztltfuz:0"
+  },
+  {
+    "id": "4359dea326a2",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The 'sensitive plant' Mimosa pudica famously folds its leaves the instant you touch it. What mechanism makes the movement happen so fast?",
+    "options": [
+      "An electric spark snaps the leaf shut",
+      "Tiny muscles contract in the stem",
+      "The leaf releases gas that pushes it closed",
+      "Cells at the leaf base rapidly lose water and go limp"
+    ],
+    "answerCheck": "fa4:2"
+  },
+  {
+    "id": "7f518795f53a",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Bamboo of a given species can suddenly flower all at once across an entire region — even plants growing on different continents — then die. Roughly how long is the cycle between these mass flowerings for many species?",
+    "options": [
+      "Many decades, sometimes over 100 years",
+      "About every 500 years",
+      "About every 5 years",
+      "Roughly once a year"
+    ],
+    "answerCheck": "h17:3"
+  },
+  {
+    "id": "11352bb02d18",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Lichens, which grow on rocks and tree bark almost everywhere, are not single organisms but a partnership between a fungus and what?",
+    "options": [
+      "An alga or cyanobacterium",
+      "A moss",
+      "A tiny insect",
+      "A type of yeast only"
+    ],
+    "answerCheck": "sh2j:0"
   }
 ]

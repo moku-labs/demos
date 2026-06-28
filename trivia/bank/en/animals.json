@@ -166,5 +166,285 @@
       "Hibernation"
     ],
     "answerCheck": "zng:3"
+  },
+  {
+    "id": "c2238989983c",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A group of crows has a famously ominous name. What is it?",
+    "options": [
+      "A murder",
+      "A gloom",
+      "A curse",
+      "A shadow"
+    ],
+    "answerCheck": "brs:3"
+  },
+  {
+    "id": "6552be378328",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which animal sleeps standing up and can even nap that way without falling over?",
+    "options": [
+      "Horse",
+      "Koala",
+      "Hamster",
+      "Sloth"
+    ],
+    "answerCheck": "3iw:3"
+  },
+  {
+    "id": "149c7ab1e435",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What unusual thing can a chameleon do with its two eyes?",
+    "options": [
+      "Move them in different directions at once",
+      "Shoot a jet of water",
+      "Glow in the dark",
+      "See straight through leaves"
+    ],
+    "answerCheck": "9sl2:0"
+  },
+  {
+    "id": "578793163157",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which animal has a tongue that can be longer than its entire body?",
+    "options": [
+      "Walrus",
+      "Hippo",
+      "Elephant",
+      "Chameleon"
+    ],
+    "answerCheck": "fzvo:3"
+  },
+  {
+    "id": "989e9b09e63f",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A platypus is one of the very few mammals that does what instead of giving birth to live young?",
+    "options": [
+      "Builds a cocoon",
+      "Carries young in a shell",
+      "Splits in two",
+      "Lays eggs"
+    ],
+    "answerCheck": "xud:2"
+  },
+  {
+    "id": "1a9f299d8832",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "An ostrich's eye is actually bigger than which of its own body parts?",
+    "options": [
+      "Its wing",
+      "Its brain",
+      "Its foot",
+      "Its heart"
+    ],
+    "answerCheck": "x3o:0"
+  },
+  {
+    "id": "79df37ea9a05",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which big cat is the only one that genuinely loves to swim and will happily cool off in water?",
+    "options": [
+      "Tiger",
+      "Snow leopard",
+      "Cheetah",
+      "Lion"
+    ],
+    "answerCheck": "jmh0k:1"
+  },
+  {
+    "id": "895da1fb86eb",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Some animals can taste with their feet. Which of these creatures actually does?",
+    "options": [
+      "Snail",
+      "Butterfly",
+      "Pigeon",
+      "Frog"
+    ],
+    "answerCheck": "d5pi:1"
+  },
+  {
+    "id": "ea50290cb1e6",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A koala has a surprising trait that can genuinely confuse a crime scene. What is it?",
+    "options": [
+      "Venomous claws",
+      "Fingerprints almost identical to a human's",
+      "Glowing eyes",
+      "Hands with six fingers"
+    ],
+    "answerCheck": "gid1u9:3"
+  },
+  {
+    "id": "ddee460210ae",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Naked mole-rats are remarkable for almost never developing which disease?",
+    "options": [
+      "Cancer",
+      "Diabetes",
+      "Arthritis",
+      "Rabies"
+    ],
+    "answerCheck": "gfbm7:1"
+  },
+  {
+    "id": "c319f0390e8b",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Why do sea otters often hold hands while sleeping at sea?",
+    "options": [
+      "To share body warmth",
+      "To listen for predators",
+      "To keep from drifting apart",
+      "To trade food"
+    ],
+    "answerCheck": "5mbu:2"
+  },
+  {
+    "id": "d0b533d87653",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What colour is a polar bear's skin underneath its fur?",
+    "options": [
+      "Pale blue",
+      "Pink",
+      "Black",
+      "White"
+    ],
+    "answerCheck": "6uo:1"
+  },
+  {
+    "id": "1931bfd3cb0a",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A lyrebird amazes listeners because it can do what with sound?",
+    "options": [
+      "Sing two notes at once",
+      "Echo a sound back for minutes",
+      "Hum underwater",
+      "Mimic almost any noise it hears, including chainsaws"
+    ],
+    "answerCheck": "9zh:2"
+  },
+  {
+    "id": "9df0e56bcd33",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Sloths move so slowly that what can actually grow in their fur?",
+    "options": [
+      "Mushrooms that glow",
+      "Algae",
+      "Tiny flowers",
+      "Coral"
+    ],
+    "answerCheck": "b6sn:1"
+  },
+  {
+    "id": "2a22201139c8",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A hummingbird survives cold nights by entering which deep, slowed-down state where its heart rate and temperature plummet?",
+    "options": [
+      "Estivation",
+      "Brumation",
+      "Hibernation",
+      "Torpor"
+    ],
+    "answerCheck": "om2:2"
+  },
+  {
+    "id": "8b1e9e241716",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A bombardier beetle defends itself by spraying attackers with a chemical jet that is roughly what temperature?",
+    "options": [
+      "Hot enough to melt metal",
+      "Near boiling, about 100 degrees Celsius",
+      "Lukewarm, like bathwater",
+      "Freezing cold"
+    ],
+    "answerCheck": "lpwjf3:3"
+  },
+  {
+    "id": "34403ce05660",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The classic figure for an electric eel's shock, used to stun prey, is roughly what voltage?",
+    "options": [
+      "Around 50 volts",
+      "Around 12 volts",
+      "Around 600 volts",
+      "Around 5 volts"
+    ],
+    "answerCheck": "2t83:2"
+  },
+  {
+    "id": "91fcccb46180",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Greenland shark is thought to be the longest-lived vertebrate, with individuals estimated to reach roughly what age?",
+    "options": [
+      "Around 400 years",
+      "Around 80 years",
+      "Around 1,000 years",
+      "Around 150 years"
+    ],
+    "answerCheck": "ha1:3"
+  },
+  {
+    "id": "16e4d8c7bcc9",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "What strange shape are a wombat's droppings, uniquely among animals?",
+    "options": [
+      "Cube-shaped",
+      "Spiral-shaped",
+      "Perfectly spherical",
+      "Star-shaped"
+    ],
+    "answerCheck": "30oiod:2"
+  },
+  {
+    "id": "17a427986fa3",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The mimic octopus has a rare talent that sets it apart even among octopuses. What is it?",
+    "options": [
+      "Producing its own light to lure prey",
+      "Regrowing a severed head",
+      "Surviving for hours on land",
+      "Impersonating other sea creatures like lionfish and sea snakes"
+    ],
+    "answerCheck": "hiphdf:1"
   }
 ]

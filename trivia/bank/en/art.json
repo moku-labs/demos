@@ -166,5 +166,285 @@
       "De Stijl"
     ],
     "answerCheck": "wve535:3"
+  },
+  {
+    "id": "f307ec434351",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which Dutch artist is famous for paintings of swirling skies and sunflowers, and for cutting off part of his own ear?",
+    "options": [
+      "Piet Mondrian",
+      "Johannes Vermeer",
+      "Rembrandt",
+      "Vincent van Gogh"
+    ],
+    "answerCheck": "id6tjn6:2"
+  },
+  {
+    "id": "ec23cfb31f70",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What do we call a painting of a bowl of fruit, flowers, or other objects that don't move?",
+    "options": [
+      "A portrait",
+      "A landscape",
+      "A still life",
+      "A fresco"
+    ],
+    "answerCheck": "3aq8:2"
+  },
+  {
+    "id": "7e96c6ac7328",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which famous melting-clocks painting was created by Salvador Dalí?",
+    "options": [
+      "Water Lilies",
+      "The Kiss",
+      "The Scream",
+      "The Persistence of Memory"
+    ],
+    "answerCheck": "2om54m3:2"
+  },
+  {
+    "id": "3bde3a5e5148",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The ceiling of the Sistine Chapel, showing God reaching out to Adam, was painted by which artist?",
+    "options": [
+      "Caravaggio",
+      "Michelangelo",
+      "Donatello",
+      "Raphael"
+    ],
+    "answerCheck": "jhf82:2"
+  },
+  {
+    "id": "e590eec491ee",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the name of the flat board an artist holds to mix paint colours while working?",
+    "options": [
+      "A canvas",
+      "An easel",
+      "A trowel",
+      "A palette"
+    ],
+    "answerCheck": "nhdh1:0"
+  },
+  {
+    "id": "b2591bf070d7",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Andy Warhol made a famous pop-art print of cans of which everyday product?",
+    "options": [
+      "Campbell's soup",
+      "Coca-Cola",
+      "Tomato ketchup",
+      "Baked beans"
+    ],
+    "answerCheck": "grk:3"
+  },
+  {
+    "id": "b7d6900ac0d3",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "On the artist's colour wheel, which colour sits directly opposite blue as its 'complementary' colour?",
+    "options": [
+      "Red",
+      "Orange",
+      "Purple",
+      "Green"
+    ],
+    "answerCheck": "jgvcfy:3"
+  },
+  {
+    "id": "8ba3c3a85ede",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Statue of Liberty was a gift to the United States from which country?",
+    "options": [
+      "Spain",
+      "Italy",
+      "France",
+      "Britain"
+    ],
+    "answerCheck": "dlms:2"
+  },
+  {
+    "id": "b52661a64d52",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Edvard Munch's 'The Scream' shows a figure clutching its face on a bridge under a sky of which dominant colour?",
+    "options": [
+      "Fiery orange-red",
+      "Deep purple",
+      "Pale green",
+      "Stormy grey"
+    ],
+    "answerCheck": "gnp25g3:3"
+  },
+  {
+    "id": "d70e0521b325",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which movement, named after a Monet painting, was first mocked by critics as the work of unfinished 'impressions'?",
+    "options": [
+      "Impressionism",
+      "Fauvism",
+      "Surrealism",
+      "Cubism"
+    ],
+    "answerCheck": "54p9wx:2"
+  },
+  {
+    "id": "709b8f3cf962",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In typography, what is the small decorative stroke at the ends of letters in fonts like Times New Roman called?",
+    "options": [
+      "A serif",
+      "A kern",
+      "A ligature",
+      "An ascender"
+    ],
+    "answerCheck": "lc2:3"
+  },
+  {
+    "id": "3239ad592c5d",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Pablo Picasso co-founded a movement that broke objects into geometric shapes seen from many angles at once. What was it called?",
+    "options": [
+      "Expressionism",
+      "Cubism",
+      "Futurism",
+      "Dadaism"
+    ],
+    "answerCheck": "9ru51f:3"
+  },
+  {
+    "id": "0d14ca2bf954",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which artist is best known for large 'drip paintings' made by flinging and pouring paint onto canvas laid on the floor?",
+    "options": [
+      "Jackson Pollock",
+      "Willem de Kooning",
+      "Mark Rothko",
+      "Roy Lichtenstein"
+    ],
+    "answerCheck": "tva:3"
+  },
+  {
+    "id": "fc5891c1b356",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Terracotta Army — thousands of life-sized clay soldiers — was buried to guard the tomb of the first emperor of which country?",
+    "options": [
+      "Japan",
+      "Egypt",
+      "China",
+      "India"
+    ],
+    "answerCheck": "xws:1"
+  },
+  {
+    "id": "910fe672d685",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "After Banksy's 'Girl with Balloon' shredded itself moments after selling at auction in 2018, the half-destroyed work was given a brand-new official title. What is it now called?",
+    "options": [
+      "Love Is in the Bin",
+      "Shredded Hope",
+      "Balloon Girl Reborn",
+      "The Last Laugh"
+    ],
+    "answerCheck": "f3y0u5:2"
+  },
+  {
+    "id": "99d26ec42efa",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "One 20th-century artist became so identified with a single deep shade that he patented his own version of it in 1960 and used it to paint blank monochrome canvases. Which artist?",
+    "options": [
+      "Mark Rothko",
+      "Kazimir Malevich",
+      "Yves Klein",
+      "Ad Reinhardt"
+    ],
+    "answerCheck": "6ki:1"
+  },
+  {
+    "id": "bae1dcde5574",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Japanese craft, 'kintsugi' repairs broken pottery by filling the cracks with lacquer dusted with which precious metal?",
+    "options": [
+      "Platinum",
+      "Copper",
+      "Gold",
+      "Silver"
+    ],
+    "answerCheck": "nht6:2"
+  },
+  {
+    "id": "47e00a2f1a8a",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The RGB colour model used by screens is 'additive' — what colour do you get when red, green, and blue light are combined at full strength?",
+    "options": [
+      "Grey",
+      "White",
+      "Yellow",
+      "Black"
+    ],
+    "answerCheck": "aih:0"
+  },
+  {
+    "id": "bb1ddccd5fbf",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Artemisia Gentileschi was a celebrated Baroque painter known for dramatic biblical scenes like 'Judith Slaying Holofernes'. In which century did she work?",
+    "options": [
+      "The 20th century",
+      "The 15th century",
+      "The 17th century",
+      "The 19th century"
+    ],
+    "answerCheck": "v2ei8t:0"
+  },
+  {
+    "id": "5f58939dcf6f",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Grant Wood's 'American Gothic' shows a stern farmer holding which tool beside a woman in front of a house?",
+    "options": [
+      "A pitchfork",
+      "A rake",
+      "A shovel",
+      "A scythe"
+    ],
+    "answerCheck": "3d53:0"
   }
 ]

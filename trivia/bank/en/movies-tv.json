@@ -166,5 +166,285 @@
       "A black rose"
     ],
     "answerCheck": "1r1n0:2"
+  },
+  {
+    "id": "fb4173ff8e9a",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In the Toy Story films, what kind of toy is Woody?",
+    "options": [
+      "A piggy bank",
+      "A cowboy",
+      "A spaceman",
+      "A dinosaur"
+    ],
+    "answerCheck": "32qi:1"
+  },
+  {
+    "id": "2f1962c83e65",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which sitcom features a group of friends who hang out at a New York coffee shop called Central Perk?",
+    "options": [
+      "Seinfeld",
+      "Friends",
+      "How I Met Your Mother",
+      "Cheers"
+    ],
+    "answerCheck": "y2ow14:3"
+  },
+  {
+    "id": "0e1a5db662ae",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Frozen, what is the name of Anna's magical, ice-powered sister?",
+    "options": [
+      "Rapunzel",
+      "Elsa",
+      "Merida",
+      "Moana"
+    ],
+    "answerCheck": "fwf:0"
+  },
+  {
+    "id": "c44ca5761f81",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which wizarding school does Harry Potter attend?",
+    "options": [
+      "Durmstrang",
+      "Beauxbatons",
+      "Ilvermorny",
+      "Hogwarts"
+    ],
+    "answerCheck": "06bv:3"
+  },
+  {
+    "id": "ac17afc7ee30",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In the Shrek films, what kind of creature is Shrek?",
+    "options": [
+      "An ogre",
+      "A giant",
+      "A troll",
+      "A goblin"
+    ],
+    "answerCheck": "iqw:3"
+  },
+  {
+    "id": "0b3adb7a53dc",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which superhero is known by the nickname 'the Caped Crusader'?",
+    "options": [
+      "Spider-Man",
+      "Iron Man",
+      "Superman",
+      "Batman"
+    ],
+    "answerCheck": "byli:3"
+  },
+  {
+    "id": "d68d3027fc5e",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In The Lion King, what are the names of the meerkat and warthog who teach Simba to live by 'Hakuna Matata'?",
+    "options": [
+      "Banzai and Shenzi",
+      "Nala and Sarabi",
+      "Timon and Pumbaa",
+      "Zazu and Rafiki"
+    ],
+    "answerCheck": "6s3:1"
+  },
+  {
+    "id": "dd0410b0a844",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In The Office (US), what fictional paper company employs Michael Scott and his staff?",
+    "options": [
+      "Sabre",
+      "Staples",
+      "Vance Refrigeration",
+      "Dunder Mifflin"
+    ],
+    "answerCheck": "hykb:3"
+  },
+  {
+    "id": "4fd1efbe8d5e",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The 2019 Korean film that won the Best Picture Oscar — a first for a non-English-language film — was directed by Bong Joon-ho. What is it called?",
+    "options": [
+      "The Handmaiden",
+      "Oldboy",
+      "Burning",
+      "Parasite"
+    ],
+    "answerCheck": "skyw0x:1"
+  },
+  {
+    "id": "06add100dd2e",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which actor played the Joker in Christopher Nolan's The Dark Knight (2008)?",
+    "options": [
+      "Joaquin Phoenix",
+      "Heath Ledger",
+      "Jared Leto",
+      "Jack Nicholson"
+    ],
+    "answerCheck": "7w8:0"
+  },
+  {
+    "id": "145a19fc18a5",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Breaking Bad, what is the name of the chemistry-teacher-turned-drug-kingpin played by Bryan Cranston?",
+    "options": [
+      "Gustavo Fring",
+      "Walter White",
+      "Jesse Pinkman",
+      "Saul Goodman"
+    ],
+    "answerCheck": "ygot0ue:0"
+  },
+  {
+    "id": "acf22bd6aedc",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The phrase 'Winter is coming' is the house motto of which family in Game of Thrones?",
+    "options": [
+      "Baratheon",
+      "Stark",
+      "Targaryen",
+      "Lannister"
+    ],
+    "answerCheck": "9dpyqq2:0"
+  },
+  {
+    "id": "638126f97405",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In which film does Tom Hanks befriend a volleyball he names 'Wilson'?",
+    "options": [
+      "Forrest Gump",
+      "Cast Away",
+      "Captain Phillips",
+      "Apollo 13"
+    ],
+    "answerCheck": "t4qn4h:3"
+  },
+  {
+    "id": "3844f031d802",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Studio Ghibli's logo features the round, grey forest spirit from which of its films?",
+    "options": [
+      "My Neighbor Totoro",
+      "Spirited Away",
+      "Princess Mononoke",
+      "Ponyo"
+    ],
+    "answerCheck": "gts38d:2"
+  },
+  {
+    "id": "14142348e19f",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Alfred Hitchcock famously made brief cameo appearances in his own films. In which film did he appear in a newspaper weight-loss ad because the single-setting story gave him nowhere else to show up?",
+    "options": [
+      "Lifeboat",
+      "Vertigo",
+      "Rear Window",
+      "Rope"
+    ],
+    "answerCheck": "mz4:3"
+  },
+  {
+    "id": "20cc8a265807",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In the original 1933 King Kong, the giant ape was brought to life mainly using which technique?",
+    "options": [
+      "A full-size animatronic",
+      "A man in a gorilla suit",
+      "Rear-projected real gorilla footage",
+      "Stop-motion animation of small models"
+    ],
+    "answerCheck": "gv78b:0"
+  },
+  {
+    "id": "1625699018c9",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Released in 1995, which film was the first ever feature made entirely with computer-generated animation?",
+    "options": [
+      "Toy Story",
+      "Antz",
+      "A Bug's Life",
+      "Shrek"
+    ],
+    "answerCheck": "qxbcw2:2"
+  },
+  {
+    "id": "eb9685c401f0",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The menacing two-note theme for the shark in Jaws was composed by which film composer?",
+    "options": [
+      "Hans Zimmer",
+      "John Williams",
+      "Ennio Morricone",
+      "Bernard Herrmann"
+    ],
+    "answerCheck": "71v5:1"
+  },
+  {
+    "id": "6eb914362cd8",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Blade Runner, the on-screen test used to tell replicants from humans by measuring emotional response is called the what test?",
+    "options": [
+      "Turing",
+      "Pavlov",
+      "Voight-Kampff",
+      "Rorschach"
+    ],
+    "answerCheck": "56u2:2"
+  },
+  {
+    "id": "363c36e48bb7",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Charlie Chaplin's iconic on-screen character, with the bowler hat, cane and toothbrush moustache, is best known by what name?",
+    "options": [
+      "The Little Tramp",
+      "The Kid",
+      "The Dictator",
+      "The Gold Digger"
+    ],
+    "answerCheck": "kq3:3"
   }
 ]

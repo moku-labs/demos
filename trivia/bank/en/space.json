@@ -166,5 +166,285 @@
       "Mercury"
     ],
     "answerCheck": "cln:0"
+  },
+  {
+    "id": "3586cb715533",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the name of the galaxy that contains our Solar System?",
+    "options": [
+      "The Sombrero",
+      "The Milky Way",
+      "Andromeda",
+      "The Whirlpool"
+    ],
+    "answerCheck": "hc1d2:2"
+  },
+  {
+    "id": "59996317a67e",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Who was the first human to walk on the Moon?",
+    "options": [
+      "Neil Armstrong",
+      "Yuri Gagarin",
+      "Michael Collins",
+      "Buzz Aldrin"
+    ],
+    "answerCheck": "vfuwi0h:3"
+  },
+  {
+    "id": "a4d41b7dd281",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A space rock that survives the fiery plunge and lands on the ground is called a what?",
+    "options": [
+      "A nebula",
+      "A meteor",
+      "A comet",
+      "A meteorite"
+    ],
+    "answerCheck": "zy0e:3"
+  },
+  {
+    "id": "db1044a5634c",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Saturn is best known for being surrounded by spectacular what?",
+    "options": [
+      "Rings",
+      "Moons",
+      "Lightning bolts",
+      "Clouds of fire"
+    ],
+    "answerCheck": "b2n3ybg:3"
+  },
+  {
+    "id": "853251aeb318",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Why can't you hear a sound out in the vacuum of space?",
+    "options": [
+      "Space is too cold for sound",
+      "Sound freezes instantly",
+      "Sounds are too quiet to notice",
+      "There is no air for sound to travel through"
+    ],
+    "answerCheck": "hi5m:3"
+  },
+  {
+    "id": "87b78fef3b4d",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Roughly how many planets orbit our Sun?",
+    "options": [
+      "Eight",
+      "Twenty",
+      "Fifty",
+      "Three"
+    ],
+    "answerCheck": "mof6i54:3"
+  },
+  {
+    "id": "049b2a01df8b",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the large, crewed laboratory that orbits Earth called?",
+    "options": [
+      "Voyager 1",
+      "The Hubble Telescope",
+      "The International Space Station",
+      "The Space Shuttle"
+    ],
+    "answerCheck": "jqh8l:3"
+  },
+  {
+    "id": "44fd6faf96d5",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What name is given to a region of space so dense that not even light can escape it?",
+    "options": [
+      "A white dwarf",
+      "A black hole",
+      "A red giant",
+      "A pulsar"
+    ],
+    "answerCheck": "pol9:1"
+  },
+  {
+    "id": "90b848cf4cb3",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which famous comet is visible from Earth roughly every 76 years?",
+    "options": [
+      "Hale-Bopp",
+      "Shoemaker-Levy",
+      "Halley's Comet",
+      "Comet Encke"
+    ],
+    "answerCheck": "sg2u:2"
+  },
+  {
+    "id": "08e729776291",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Why do astronauts appear to float inside an orbiting space station?",
+    "options": [
+      "There is no gravity that far up",
+      "The station spins to cancel gravity",
+      "Their suits are filled with helium",
+      "They are constantly falling around the Earth"
+    ],
+    "answerCheck": "8magge3:2"
+  },
+  {
+    "id": "aedefca89312",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What is the closest star to Earth other than the Sun?",
+    "options": [
+      "Polaris",
+      "Proxima Centauri",
+      "Sirius",
+      "Betelgeuse"
+    ],
+    "answerCheck": "rfi:0"
+  },
+  {
+    "id": "35dd98c647c6",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Saturn's largest moon, Titan, is remarkable for having lakes and seas made of what?",
+    "options": [
+      "Molten rock",
+      "Liquid water",
+      "Liquid mercury",
+      "Liquid methane and ethane"
+    ],
+    "answerCheck": "df9:2"
+  },
+  {
+    "id": "226050c8a93b",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Believe it or not, the Moon is slowly doing what, about 3.8 cm every year?",
+    "options": [
+      "Spinning faster",
+      "Getting noticeably brighter",
+      "Spiralling toward Earth",
+      "Drifting away from Earth"
+    ],
+    "answerCheck": "c6g81:0"
+  },
+  {
+    "id": "5d5ae395c18a",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which space telescope, launched in 1990, has beamed back many of our most famous deep-space images?",
+    "options": [
+      "Chandra",
+      "Hubble",
+      "Spitzer",
+      "Kepler"
+    ],
+    "answerCheck": "pqv56:2"
+  },
+  {
+    "id": "9871ebc47f62",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Launched in 1977, which spacecraft is now the most distant human-made object from Earth?",
+    "options": [
+      "Pioneer 10",
+      "New Horizons",
+      "Voyager 1",
+      "Cassini"
+    ],
+    "answerCheck": "lmqj:2"
+  },
+  {
+    "id": "83ccc7cbf046",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Jupiter's volcanic moon Io is the most volcanically active body in the Solar System. What chiefly powers all that activity?",
+    "options": [
+      "Constant meteor impacts",
+      "Sunlight focused by Jupiter",
+      "Tidal flexing from Jupiter's gravity",
+      "A radioactive core"
+    ],
+    "answerCheck": "e4mzuob:1"
+  },
+  {
+    "id": "63439b73e9a2",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The cosmic microwave background is best described as what?",
+    "options": [
+      "Leftover afterglow from the Big Bang",
+      "Static from the Sun's flares",
+      "Light bouncing off the Moon",
+      "Radio signals from distant aliens"
+    ],
+    "answerCheck": "8mrcg:1"
+  },
+  {
+    "id": "f0897e20c55e",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "What is the name of the vast belt of icy bodies beyond Neptune where Pluto resides?",
+    "options": [
+      "The Kuiper Belt",
+      "The heliosphere",
+      "The asteroid belt",
+      "The Oort Cloud"
+    ],
+    "answerCheck": "mnmm:0"
+  },
+  {
+    "id": "c094226422d2",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Astronomers think most of the matter holding galaxies together is invisible. What is it called?",
+    "options": [
+      "Antimatter",
+      "Dark matter",
+      "Neutrinos",
+      "Plasma"
+    ],
+    "answerCheck": "8n03z0:3"
+  },
+  {
+    "id": "6bed8555a03b",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "When a massive star collapses and rebounds in a colossal explosion, that event is called a what?",
+    "options": [
+      "A red giant",
+      "A solar flare",
+      "A magnetar",
+      "A supernova"
+    ],
+    "answerCheck": "4fhyk:0"
   }
 ]

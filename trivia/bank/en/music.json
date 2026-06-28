@@ -166,5 +166,285 @@
       "52"
     ],
     "answerCheck": "iaeb:1"
+  },
+  {
+    "id": "72e8b7139144",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which solo artist is widely known as the \"King of Pop\"?",
+    "options": [
+      "Prince",
+      "Justin Timberlake",
+      "Michael Jackson",
+      "Elvis Presley"
+    ],
+    "answerCheck": "85ig:2"
+  },
+  {
+    "id": "034953c15695",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which four-member band from Liverpool included John, Paul, George, and Ringo?",
+    "options": [
+      "The Kinks",
+      "The Beatles",
+      "The Beach Boys",
+      "The Rolling Stones"
+    ],
+    "answerCheck": "huc9l6q:0"
+  },
+  {
+    "id": "84e2802ead25",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the wooden stick a conductor waves to lead an orchestra called?",
+    "options": [
+      "A wand",
+      "A baton",
+      "A quill",
+      "A mallet"
+    ],
+    "answerCheck": "fiax:1"
+  },
+  {
+    "id": "c0440c384a59",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which streaming app, founded in Sweden, is famous for its annual \"Wrapped\" recap of your listening?",
+    "options": [
+      "Deezer",
+      "Spotify",
+      "Pandora",
+      "Tidal"
+    ],
+    "answerCheck": "bboh:1"
+  },
+  {
+    "id": "d504bc62a445",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Taylor Swift began her career in which genre before crossing over to pop?",
+    "options": [
+      "Heavy metal",
+      "Reggae",
+      "Jazz",
+      "Country"
+    ],
+    "answerCheck": "3zb2qg1:2"
+  },
+  {
+    "id": "29b0eb83a68b",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which Latin hit by Luis Fonsi and Daddy Yankee became a global smash in 2017?",
+    "options": [
+      "Despacito",
+      "Gasolina",
+      "Macarena",
+      "Bailando"
+    ],
+    "answerCheck": "x0ph:0"
+  },
+  {
+    "id": "5d83f0c8dde0",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Beyoncé first rose to fame as the lead singer of which girl group?",
+    "options": [
+      "The Pussycat Dolls",
+      "Destiny's Child",
+      "TLC",
+      "Spice Girls"
+    ],
+    "answerCheck": "k2klhj:3"
+  },
+  {
+    "id": "5ac4d72e603a",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "ABBA, the supergroup behind \"Dancing Queen,\" came from which country?",
+    "options": [
+      "Germany",
+      "The Netherlands",
+      "Sweden",
+      "Norway"
+    ],
+    "answerCheck": "n4tl:2"
+  },
+  {
+    "id": "a4c5418aa2c4",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which genre of music originated in Jamaica in the late 1960s and is closely tied to Bob Marley?",
+    "options": [
+      "Calypso",
+      "Reggae",
+      "Ska",
+      "Soca"
+    ],
+    "answerCheck": "49zx8nu:0"
+  },
+  {
+    "id": "92fddb1305a0",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The famous opera aria \"Nessun dorma\" comes from which Puccini opera?",
+    "options": [
+      "La Bohème",
+      "Turandot",
+      "Madama Butterfly",
+      "Tosca"
+    ],
+    "answerCheck": "9lqi15w:0"
+  },
+  {
+    "id": "2c850022ce08",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which DJ duo, known for wearing robot helmets, released the 2013 hit \"Get Lucky\"?",
+    "options": [
+      "Justice",
+      "Disclosure",
+      "The Chemical Brothers",
+      "Daft Punk"
+    ],
+    "answerCheck": "tgt:2"
+  },
+  {
+    "id": "e73c03b5f544",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "On a guitar, a small movable bar clamped across the strings to raise their pitch is called a what?",
+    "options": [
+      "Bridge",
+      "Fret",
+      "Plectrum",
+      "Capo"
+    ],
+    "answerCheck": "56w7u:0"
+  },
+  {
+    "id": "a0195417b344",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which 1992 Whitney Houston ballad, originally written by Dolly Parton, became one of the best-selling singles ever?",
+    "options": [
+      "Greatest Love of All",
+      "I Will Always Love You",
+      "I Have Nothing",
+      "Saving All My Love for You"
+    ],
+    "answerCheck": "c0vd:1"
+  },
+  {
+    "id": "684efc3a7ee2",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The 1969 Woodstock festival was actually held on a dairy farm in which U.S. state?",
+    "options": [
+      "California",
+      "Tennessee",
+      "Vermont",
+      "New York"
+    ],
+    "answerCheck": "lnfuvu:1"
+  },
+  {
+    "id": "c2128666e47d",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which annual U.S. music awards are nicknamed after a tiny gilded gramophone trophy?",
+    "options": [
+      "The Grammy Awards",
+      "The Juno Awards",
+      "The Brit Awards",
+      "The Tony Awards"
+    ],
+    "answerCheck": "wol:3"
+  },
+  {
+    "id": "e925b5b1cde9",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The DJ technique of moving a vinyl record back and forth to create a rhythmic sound is called what?",
+    "options": [
+      "Sampling",
+      "Crossfading",
+      "Looping",
+      "Scratching"
+    ],
+    "answerCheck": "yma:2"
+  },
+  {
+    "id": "16e08ed76b9b",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which English band's 1973 album \"The Dark Side of the Moon\" spent over 900 weeks on the Billboard charts?",
+    "options": [
+      "Yes",
+      "Pink Floyd",
+      "King Crimson",
+      "Genesis"
+    ],
+    "answerCheck": "e6qhhow:0"
+  },
+  {
+    "id": "59cf667e33f4",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which 1977 Fleetwood Mac album, made as the band members were breaking up, became one of the best-selling albums of all time?",
+    "options": [
+      "Hotel California",
+      "Hysteria",
+      "Rumours",
+      "Tapestry"
+    ],
+    "answerCheck": "ehx77:3"
+  },
+  {
+    "id": "b4fd3f20ae00",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which jazz trumpeter and singer was nicknamed \"Satchmo\" and famous for \"What a Wonderful World\"?",
+    "options": [
+      "Louis Armstrong",
+      "Chet Baker",
+      "Dizzy Gillespie",
+      "Miles Davis"
+    ],
+    "answerCheck": "ywk:3"
+  },
+  {
+    "id": "adee8829a781",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Before launching his solo career, Sting was the frontman of which band?",
+    "options": [
+      "The Cure",
+      "The Clash",
+      "The Police",
+      "Dire Straits"
+    ],
+    "answerCheck": "8lea:2"
   }
 ]

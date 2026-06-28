@@ -166,5 +166,285 @@
       "It dissolved when he reached the surface"
     ],
     "answerCheck": "yyfz1:2"
+  },
+  {
+    "id": "fce0b3ada0b5",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Norse mythology, who is the god of thunder who wields a hammer named Mjolnir?",
+    "options": [
+      "Tyr",
+      "Thor",
+      "Loki",
+      "Baldur"
+    ],
+    "answerCheck": "94t22d:3"
+  },
+  {
+    "id": "19d704d90f83",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which winged horse of Greek myth sprang from the blood of the slain Medusa?",
+    "options": [
+      "Cerberus",
+      "Pegasus",
+      "The Griffin",
+      "The Hydra"
+    ],
+    "answerCheck": "f5l3o:2"
+  },
+  {
+    "id": "53950347db18",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Greek myth, what was the name of the monstrous woman whose gaze turned people to stone?",
+    "options": [
+      "Circe",
+      "Medusa",
+      "Hera",
+      "Pandora"
+    ],
+    "answerCheck": "7ju:0"
+  },
+  {
+    "id": "3373ebdc6341",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "According to Roman legend, which twin brothers were raised by a she-wolf and went on to found Rome?",
+    "options": [
+      "Cain and Abel",
+      "Romulus and Remus",
+      "Castor and Pollux",
+      "Apollo and Dionysus"
+    ],
+    "answerCheck": "jp3sc:2"
+  },
+  {
+    "id": "0817ad09d3bb",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Greek mythology, who was the king cursed so that everything he touched turned to gold?",
+    "options": [
+      "King Priam",
+      "King Midas",
+      "King Agamemnon",
+      "King Minos"
+    ],
+    "answerCheck": "u3fhg:2"
+  },
+  {
+    "id": "b8cb2fb17caf",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Greek legend, how did the Greeks finally sneak their soldiers inside the walls of Troy?",
+    "options": [
+      "Disguised as travelling merchants",
+      "By scaling the cliffs at night",
+      "Through a secret tunnel under the wall",
+      "Hidden inside a giant wooden horse"
+    ],
+    "answerCheck": "rq1:2"
+  },
+  {
+    "id": "80cb6e29abc2",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Greek myth, what was the home of the gods, the tallest mountain in Greece?",
+    "options": [
+      "Mount Etna",
+      "Mount Vesuvius",
+      "Mount Olympus",
+      "Mount Parnassus"
+    ],
+    "answerCheck": "jnnq:2"
+  },
+  {
+    "id": "33bef1046243",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In the Greek myth of Theseus, what did Ariadne give him so he could find his way back out of the Labyrinth?",
+    "options": [
+      "A ball of thread",
+      "A magic torch",
+      "An enchanted compass",
+      "A trail of stones"
+    ],
+    "answerCheck": "3tbu:0"
+  },
+  {
+    "id": "1d4a94ce73e6",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Greek mythology, why did the craftsman Daedalus warn his son Icarus not to fly too close to the sun?",
+    "options": [
+      "The air was too thin to breathe",
+      "The sun god would strike him down",
+      "The light would blind him",
+      "The wax holding his feathers would melt"
+    ],
+    "answerCheck": "j7ghu:0"
+  },
+  {
+    "id": "8814f10df0a4",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Hindu mythology, which elephant-headed god is revered as the remover of obstacles?",
+    "options": [
+      "Ganesha",
+      "Hanuman",
+      "Shiva",
+      "Vishnu"
+    ],
+    "answerCheck": "q186a:1"
+  },
+  {
+    "id": "6da3f1fc356a",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Greek myth, the musician Orpheus journeyed to the underworld to retrieve his wife Eurydice. What condition caused him to lose her forever?",
+    "options": [
+      "He failed to play his lyre",
+      "He accepted food from Hades",
+      "He looked back at her before reaching the surface",
+      "He spoke her name aloud"
+    ],
+    "answerCheck": "jjr7j1:0"
+  },
+  {
+    "id": "cc4e4f11aa34",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Irish folklore, what is a leprechaun traditionally said to do for a living?",
+    "options": [
+      "Make and mend shoes",
+      "Guard ancient tombs",
+      "Brew enchanted ale",
+      "Forge magic swords"
+    ],
+    "answerCheck": "oi09t:1"
+  },
+  {
+    "id": "2d096feee18d",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Greek mythology, eating the seeds of which fruit bound Persephone to spend part of each year in the underworld?",
+    "options": [
+      "An apple",
+      "A pomegranate",
+      "A bunch of grapes",
+      "A fig"
+    ],
+    "answerCheck": "ce8:0"
+  },
+  {
+    "id": "9fd6f8a723e7",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Norse mythology, what is the name of the rainbow bridge connecting the realm of the gods to the world of humans?",
+    "options": [
+      "Bifrost",
+      "Gjallarbru",
+      "Valhalla",
+      "Naglfar"
+    ],
+    "answerCheck": "37e9:0"
+  },
+  {
+    "id": "2a8713d1ca09",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "For one of his twelve labours, Heracles had to clean the vast Augean stables in a single day. How did he manage it?",
+    "options": [
+      "He burned the filth away with fire",
+      "He commanded an army of birds to carry it off",
+      "He summoned a great wind to blow them clean",
+      "He diverted a river to wash them out"
+    ],
+    "answerCheck": "rd3103q:2"
+  },
+  {
+    "id": "e335f897f800",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Norse mythology, what was foretold to kill the god Baldur, despite his mother securing oaths from nearly everything not to harm him?",
+    "options": [
+      "A spear of fire",
+      "A sprig of mistletoe",
+      "The fangs of Fenrir",
+      "A drop of serpent venom"
+    ],
+    "answerCheck": "olh:0"
+  },
+  {
+    "id": "d79f5715222a",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In the Welsh and Arthurian tradition, what is the name of King Arthur's legendary sword?",
+    "options": [
+      "Excalibur",
+      "Tyrfing",
+      "Durendal",
+      "Gram"
+    ],
+    "answerCheck": "1vor51:2"
+  },
+  {
+    "id": "b213ada5e628",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Slavic folklore, the witch Baba Yaga is famously said to live in a hut that stands on what?",
+    "options": [
+      "A floating cloud",
+      "Giant chicken legs",
+      "A pillar of bone",
+      "The back of a turtle"
+    ],
+    "answerCheck": "t7ckqg3:0"
+  },
+  {
+    "id": "1e15c34c1e21",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Greek myth, the Sphinx of Thebes devoured travellers who failed her riddle. Who finally answered it correctly?",
+    "options": [
+      "Oedipus",
+      "Perseus",
+      "Jason",
+      "Bellerophon"
+    ],
+    "answerCheck": "2lra:0"
+  },
+  {
+    "id": "d1062578583c",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Polynesian mythology, the demigod Maui is famous in many legends for accomplishing which feat?",
+    "options": [
+      "Freezing the sea to cross it",
+      "Turning the moon into silver",
+      "Slowing the sun so days would be longer",
+      "Stealing thunder from the storm gods"
+    ],
+    "answerCheck": "l8pxo:3"
   }
 ]

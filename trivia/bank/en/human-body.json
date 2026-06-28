@@ -166,5 +166,285 @@
       "Neurons in the cerebral cortex"
     ],
     "answerCheck": "zdt:2"
+  },
+  {
+    "id": "136811eecb9f",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which red, iron-rich protein in your blood carries oxygen around the body?",
+    "options": [
+      "Hemoglobin",
+      "Insulin",
+      "Collagen",
+      "Keratin"
+    ],
+    "answerCheck": "uddvft:2"
+  },
+  {
+    "id": "bc60e3c2d82f",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the hard, white outer covering of a tooth called?",
+    "options": [
+      "Plaque",
+      "Enamel",
+      "Cartilage",
+      "Marrow"
+    ],
+    "answerCheck": "y7ktp:2"
+  },
+  {
+    "id": "ede77faacffc",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which organs fill with air every time you take a breath?",
+    "options": [
+      "The lungs",
+      "The spleen",
+      "The pancreas",
+      "The kidneys"
+    ],
+    "answerCheck": "223uvf9:3"
+  },
+  {
+    "id": "ad727b037b77",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the colored ring around the dark pupil of your eye called?",
+    "options": [
+      "The lens",
+      "The cornea",
+      "The iris",
+      "The retina"
+    ],
+    "answerCheck": "m450:2"
+  },
+  {
+    "id": "ff210957d009",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Your outer ear and the tip of your nose are flexible because they're made of what, rather than bone?",
+    "options": [
+      "Tendon",
+      "Fat",
+      "Cartilage",
+      "Muscle"
+    ],
+    "answerCheck": "klxtgxq:1"
+  },
+  {
+    "id": "a9aff262c361",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What do we call the wave of muscle squeezing that pushes food down from your throat to your stomach?",
+    "options": [
+      "Respiration",
+      "Circulation",
+      "Digestion",
+      "Peristalsis"
+    ],
+    "answerCheck": "3ua:2"
+  },
+  {
+    "id": "ad6fcac97a10",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which organ has the most sweat glands, helping cool you down when you're hot?",
+    "options": [
+      "The liver",
+      "The lungs",
+      "The skin",
+      "The heart"
+    ],
+    "answerCheck": "zu6z8e:0"
+  },
+  {
+    "id": "873206a8a5dc",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Roughly how many times does an average human heart beat in a single day?",
+    "options": [
+      "About 40,000 times",
+      "About 100,000 times",
+      "About 10,000 times",
+      "About 500,000 times"
+    ],
+    "answerCheck": "hsaag:2"
+  },
+  {
+    "id": "13cb1dfe31e7",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Why do your fingers wrinkle up after a long soak in the bath?",
+    "options": [
+      "The skin soaks up water and swells",
+      "Your nervous system shrinks blood vessels under the skin",
+      "Salt is pulled out of the skin",
+      "Blood drains away from your hands"
+    ],
+    "answerCheck": "ct4u:1"
+  },
+  {
+    "id": "020693daf5cd",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Stomach acid is strong enough to dissolve metal. Why doesn't it digest your own stomach?",
+    "options": [
+      "A layer of mucus constantly protects the stomach lining",
+      "The acid only activates when food arrives",
+      "The stomach has no living cells to harm",
+      "The acid is neutralized as soon as it forms"
+    ],
+    "answerCheck": "be4nkd:2"
+  },
+  {
+    "id": "ca9fb2764c6a",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which gland, about the size of a pea at the base of the brain, is often called the body's 'master gland'?",
+    "options": [
+      "The adrenal gland",
+      "The thymus",
+      "The pituitary gland",
+      "The thyroid"
+    ],
+    "answerCheck": "1rr:1"
+  },
+  {
+    "id": "6c319fe10630",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Goosebumps are left over from our furry ancestors. What actually causes that bumpy skin?",
+    "options": [
+      "Blood rushing to the skin's surface",
+      "Sweat glands clenching shut",
+      "Nerve endings swelling with fluid",
+      "Tiny muscles tugging each hair upright"
+    ],
+    "answerCheck": "zf56xy:1"
+  },
+  {
+    "id": "70a1b97141cc",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Your 'funny bone' isn't a bone at all. What do you actually hit when your elbow tingles painfully?",
+    "options": [
+      "A pocket of trapped air",
+      "A spare piece of cartilage",
+      "The ulnar nerve",
+      "A loose ligament"
+    ],
+    "answerCheck": "6pbf8iv:1"
+  },
+  {
+    "id": "64729b0bdb1c",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which two senses are so closely linked that a blocked nose makes food taste bland?",
+    "options": [
+      "Hearing and touch",
+      "Sight and hearing",
+      "Smell and taste",
+      "Touch and balance"
+    ],
+    "answerCheck": "xw3:1"
+  },
+  {
+    "id": "83e8f0a40149",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Bone is famously tough. Weight for weight, how does its strength roughly compare to steel?",
+    "options": [
+      "Bone is about as strong as steel but much lighter",
+      "Bone is far weaker than steel",
+      "Bone is exactly equal to steel in every way",
+      "Bone is ten times stronger than any metal"
+    ],
+    "answerCheck": "ecl:3"
+  },
+  {
+    "id": "bfa7a4bd36d9",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The femur and other large bones aren't just structural — their inner marrow has a vital job. What is it?",
+    "options": [
+      "Producing new blood cells",
+      "Filtering toxins from the blood",
+      "Generating most of the body's heat",
+      "Storing the body's main fat reserves"
+    ],
+    "answerCheck": "6ia:3"
+  },
+  {
+    "id": "d0f671d3a574",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which organ can keep beating for a short time even after being removed from the body, thanks to its own electrical pacemaker?",
+    "options": [
+      "The kidney",
+      "The brain",
+      "The heart",
+      "The liver"
+    ],
+    "answerCheck": "4fxyir:0"
+  },
+  {
+    "id": "1245fbd36e7e",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The vagus nerve is one of the body's most far-reaching nerves. Which best describes where it goes?",
+    "options": [
+      "It serves only the muscles of the face",
+      "It runs only within the spinal cord",
+      "It wanders from the brainstem down to the heart, lungs, and gut",
+      "It connects just the two halves of the brain"
+    ],
+    "answerCheck": "9c5:1"
+  },
+  {
+    "id": "ef42bc3645be",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Roughly how many cells make up an adult human body, by current scientific estimates?",
+    "options": [
+      "About 9 quadrillion",
+      "About 300 million",
+      "About 37 trillion",
+      "About 3 million"
+    ],
+    "answerCheck": "c7pvx:3"
+  },
+  {
+    "id": "5fd072477959",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Your gut hosts so many bacteria that they outnumber many of your own cells. What is this whole community called?",
+    "options": [
+      "The microbiome",
+      "The cytoplasm",
+      "The plasma pool",
+      "The lymph network"
+    ],
+    "answerCheck": "mxc:3"
   }
 ]

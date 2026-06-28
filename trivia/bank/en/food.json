@@ -166,5 +166,285 @@
       "France"
     ],
     "answerCheck": "lvj:2"
+  },
+  {
+    "id": "87896a111f47",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What ingredient gives traditional pesto alla genovese its bright green color?",
+    "options": [
+      "Basil",
+      "Parsley",
+      "Spinach",
+      "Mint"
+    ],
+    "answerCheck": "xlkl5e:2"
+  },
+  {
+    "id": "b7fdb5b883f5",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which fruit is the main ingredient in guacamole?",
+    "options": [
+      "Lime",
+      "Avocado",
+      "Tomato",
+      "Mango"
+    ],
+    "answerCheck": "220gj:2"
+  },
+  {
+    "id": "5f73814493ea",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Sushi rice gets its signature tang from being seasoned with what?",
+    "options": [
+      "Sake",
+      "Lemon juice",
+      "Vinegar",
+      "Soy sauce"
+    ],
+    "answerCheck": "ubyo1:3"
+  },
+  {
+    "id": "e0ccc7a0731b",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The spice cinnamon is made from which part of a tree?",
+    "options": [
+      "The leaves",
+      "The bark",
+      "The roots",
+      "The seeds"
+    ],
+    "answerCheck": "ts74eby:0"
+  },
+  {
+    "id": "e449b321448c",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What kind of bean is chocolate originally made from?",
+    "options": [
+      "Cacao bean",
+      "Vanilla bean",
+      "Coffee bean",
+      "Soybean"
+    ],
+    "answerCheck": "wgazw6:2"
+  },
+  {
+    "id": "e6fb47e96f05",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which dairy product is churned until it separates into a solid and buttermilk?",
+    "options": [
+      "Cream",
+      "Cheese",
+      "Butter",
+      "Yogurt"
+    ],
+    "answerCheck": "tz8fb1:0"
+  },
+  {
+    "id": "e580aca1e51b",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A classic Margherita pizza is topped with tomato, basil, and which cheese?",
+    "options": [
+      "Feta",
+      "Mozzarella",
+      "Parmesan",
+      "Cheddar"
+    ],
+    "answerCheck": "rk6rznj:0"
+  },
+  {
+    "id": "f0a5302e8b65",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The holes in Swiss cheese like Emmental are created by bacteria releasing what gas?",
+    "options": [
+      "Carbon dioxide",
+      "Hydrogen",
+      "Oxygen",
+      "Nitrogen"
+    ],
+    "answerCheck": "zhkfzma:3"
+  },
+  {
+    "id": "9c29008a072a",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which sushi-bar fish is so toxic that chefs in Japan need a license to prepare it?",
+    "options": [
+      "Mackerel",
+      "Eel",
+      "Yellowtail",
+      "Pufferfish"
+    ],
+    "answerCheck": "mlv:2"
+  },
+  {
+    "id": "0bad347e5991",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What gives an egg yolk its yellow-to-orange color?",
+    "options": [
+      "The hen's diet (carotenoids)",
+      "The shell's thickness",
+      "Iron in the yolk",
+      "The age of the egg"
+    ],
+    "answerCheck": "6cam97:2"
+  },
+  {
+    "id": "fc03d879c094",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Real balsamic vinegar of Modena is made by aging the cooked juice of what?",
+    "options": [
+      "Plums",
+      "Apples",
+      "Cherries",
+      "Grapes"
+    ],
+    "answerCheck": "ai0hf6:1"
+  },
+  {
+    "id": "8e4c5b2000b2",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Tequila can only legally be made from which plant?",
+    "options": [
+      "Aloe",
+      "Sugarcane",
+      "Cactus",
+      "Blue agave"
+    ],
+    "answerCheck": "5lv2:3"
+  },
+  {
+    "id": "d196f37bf990",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which fruit was historically so prized in Europe that hosts rented one as a centerpiece to show off?",
+    "options": [
+      "Pineapple",
+      "Pomegranate",
+      "Fig",
+      "Lemon"
+    ],
+    "answerCheck": "ija:3"
+  },
+  {
+    "id": "a5b73c2fa9dd",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Espresso is made by forcing hot water through ground coffee using what?",
+    "options": [
+      "A vacuum",
+      "Steam alone",
+      "High pressure",
+      "Gravity drip"
+    ],
+    "answerCheck": "o1el:2"
+  },
+  {
+    "id": "eb7615bcd304",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The savory brown crust on a seared steak or toasted bread comes from which chemical reaction?",
+    "options": [
+      "Oxidation",
+      "The Maillard reaction",
+      "Fermentation",
+      "Caramelization of sugar"
+    ],
+    "answerCheck": "9acgg:2"
+  },
+  {
+    "id": "3a928e8f4056",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The fungus that gives blue cheese its veins is a relative of which famous medicine?",
+    "options": [
+      "Insulin",
+      "Quinine",
+      "Penicillin",
+      "Aspirin"
+    ],
+    "answerCheck": "8lm7umf:1"
+  },
+  {
+    "id": "b3e5848d37d5",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Kopi luwak, one of the world's costliest coffees, is collected after the beans pass through which animal?",
+    "options": [
+      "An elephant",
+      "A civet",
+      "A goat",
+      "A monkey"
+    ],
+    "answerCheck": "xojtdca:0"
+  },
+  {
+    "id": "50e8b6ca6848",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The spice nutmeg comes from a tree that also yields a second, lacy red spice called what?",
+    "options": [
+      "Mace",
+      "Allspice",
+      "Clove",
+      "Star anise"
+    ],
+    "answerCheck": "2whq:0"
+  },
+  {
+    "id": "16f37b1b03d4",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The pasta shape 'orecchiette' is named after which body part it resembles?",
+    "options": [
+      "Little ears",
+      "Little eyes",
+      "Little tongues",
+      "Little fingers"
+    ],
+    "answerCheck": "flfqv:1"
+  },
+  {
+    "id": "64559e54ab0f",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Vanilla is the world's second-priciest spice partly because each flower must be pollinated how?",
+    "options": [
+      "Only at night by moths",
+      "By hand",
+      "By wind",
+      "By a special wasp"
+    ],
+    "answerCheck": "bsko6:2"
   }
 ]

@@ -166,5 +166,285 @@
       "Hit wicket"
     ],
     "answerCheck": "kbx:3"
+  },
+  {
+    "id": "f98e61a0fa2a",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In golf, what is the term for a score of one stroke under par on a hole?",
+    "options": [
+      "Eagle",
+      "Albatross",
+      "Bogey",
+      "Birdie"
+    ],
+    "answerCheck": "27b:2"
+  },
+  {
+    "id": "de910feb23ae",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "How many points is a touchdown worth in American football, before the extra point?",
+    "options": [
+      "7",
+      "3",
+      "6",
+      "5"
+    ],
+    "answerCheck": "02ldbd:0"
+  },
+  {
+    "id": "ebbd2ef9f894",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A regulation basketball hoop sits how high above the floor — the same height as the peach baskets James Naismith first nailed up in 1891?",
+    "options": [
+      "15 feet",
+      "12 feet",
+      "10 feet",
+      "8 feet"
+    ],
+    "answerCheck": "lgwy:2"
+  },
+  {
+    "id": "031115ba310f",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "How often are the Summer Olympic Games normally held?",
+    "options": [
+      "Every 5 years",
+      "Every 4 years",
+      "Every 2 years",
+      "Every year"
+    ],
+    "answerCheck": "9wfub:2"
+  },
+  {
+    "id": "5870b1e10016",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In tennis, what is the term for a serve the opponent fails to touch at all?",
+    "options": [
+      "A let",
+      "A fault",
+      "An ace",
+      "A volley"
+    ],
+    "answerCheck": "ewig:2"
+  },
+  {
+    "id": "6447cfe363fa",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which sport features positions called pitcher, catcher, and shortstop?",
+    "options": [
+      "Cricket",
+      "Baseball",
+      "Golf",
+      "Ice hockey"
+    ],
+    "answerCheck": "vnxd8ap:0"
+  },
+  {
+    "id": "dacc1bd3ec85",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In which sport would you perform a slam dunk?",
+    "options": [
+      "Volleyball",
+      "Handball",
+      "Water polo",
+      "Basketball"
+    ],
+    "answerCheck": "pi0:2"
+  },
+  {
+    "id": "454b8622d176",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "How many players from one team are on the field at the start of a rugby union match?",
+    "options": [
+      "13",
+      "18",
+      "11",
+      "15"
+    ],
+    "answerCheck": "7yr:2"
+  },
+  {
+    "id": "5b8f098630fc",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A standard marathon is 26.2 miles. Why the awkward extra 0.2 of a mile?",
+    "options": [
+      "The 1908 London course was lengthened so it would finish in front of the royal box",
+      "A surveyor's error in the 1896 Athens Games was never corrected",
+      "It rounds up an ancient Greek measurement that didn't convert cleanly",
+      "Organisers added a lap of the track to use up leftover tickets"
+    ],
+    "answerCheck": "plhh4r:2"
+  },
+  {
+    "id": "9640a782a77e",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Formula 1, what does the black-and-white chequered flag signify?",
+    "options": [
+      "Dangerous track conditions ahead",
+      "A driver has been disqualified",
+      "The end of the race or session",
+      "The start of the formation lap"
+    ],
+    "answerCheck": "s731q1:0"
+  },
+  {
+    "id": "a05f68754752",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In the sport of sumo, how does a wrestler most commonly win a bout?",
+    "options": [
+      "Lifting the opponent clean off the ground",
+      "Forcing the opponent out of the ring or making them touch the ground with anything but their feet",
+      "Pinning the opponent's shoulders to the mat for three seconds",
+      "Scoring the most points over three timed rounds"
+    ],
+    "answerCheck": "psg:0"
+  },
+  {
+    "id": "0e94c51a3907",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which boxer famously declared 'I am the greatest' and promised to 'float like a butterfly, sting like a bee'?",
+    "options": [
+      "Mike Tyson",
+      "Muhammad Ali",
+      "Joe Frazier",
+      "George Foreman"
+    ],
+    "answerCheck": "z9fjh:2"
+  },
+  {
+    "id": "389413481a2f",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A boxing 'ring' is actually square. Why is it still called a ring?",
+    "options": [
+      "Fighters touched a ring on the referee's hand to begin",
+      "The first champion's surname was Ring",
+      "Early bare-knuckle fights were held inside a circle drawn on the ground, and the name stuck",
+      "The corner posts were originally shaped like giant rings"
+    ],
+    "answerCheck": "4dftw:3"
+  },
+  {
+    "id": "a75c4036aef9",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which country has won the most FIFA Men's World Cup titles?",
+    "options": [
+      "Brazil",
+      "Germany",
+      "Italy",
+      "Argentina"
+    ],
+    "answerCheck": "tz20d:1"
+  },
+  {
+    "id": "d044189090f0",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A '180' is the highest score with three darts in a single throw. Which bed must all three darts land in to reach it?",
+    "options": [
+      "Bullseye",
+      "Treble 19",
+      "Treble 20",
+      "Double 20"
+    ],
+    "answerCheck": "5ft3sq:0"
+  },
+  {
+    "id": "ebc10860231f",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Most figure-skating jumps take off facing backward. Which jump is the exception — the only one entered facing forward, named after the skater who first landed it?",
+    "options": [
+      "The Lutz",
+      "The Rittberger (loop)",
+      "The Salchow",
+      "The Axel"
+    ],
+    "answerCheck": "p8szmc:1"
+  },
+  {
+    "id": "6a88dff23d35",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Why is the Stanley Cup, awarded to the NHL champions, unusual compared with most championship trophies?",
+    "options": [
+      "Only the team captain is ever allowed to touch it",
+      "A brand-new one is forged from melted-down hockey skates each season",
+      "Each winning player's name is engraved on it, and the same physical cup is passed on year after year",
+      "It is made entirely of solid gold and never leaves the league's vault"
+    ],
+    "answerCheck": "mr44v:3"
+  },
+  {
+    "id": "20c4c6e325dd",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "An Olympic 'gold' medal is mostly made of which metal, with only about six grams of actual gold plating it?",
+    "options": [
+      "Silver",
+      "Platinum",
+      "Bronze",
+      "Solid gold throughout"
+    ],
+    "answerCheck": "g90lr:1"
+  },
+  {
+    "id": "10f3ee0dba00",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Fosbury Flop revolutionised one Olympic event by having athletes clear the bar headfirst and on their backs. Which event?",
+    "options": [
+      "Long jump",
+      "Pole vault",
+      "Hurdles",
+      "High jump"
+    ],
+    "answerCheck": "w8m49fg:2"
+  },
+  {
+    "id": "507750e4167f",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "At Wimbledon, players must follow a famously strict dress rule that the other three tennis majors don't impose. What is it?",
+    "options": [
+      "They must use only wooden-framed rackets",
+      "They must wear almost entirely white",
+      "They are forbidden from wearing any headwear",
+      "They may not display a sponsor's logo of any kind"
+    ],
+    "answerCheck": "ttyf:1"
   }
 ]

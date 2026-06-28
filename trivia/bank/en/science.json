@@ -166,5 +166,285 @@
       "As much as Mount Everest"
     ],
     "answerCheck": "67zkq:3"
+  },
+  {
+    "id": "1ed0cdb4361b",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the center of an atom called?",
+    "options": [
+      "The electron",
+      "The nucleus",
+      "The proton",
+      "The orbit"
+    ],
+    "answerCheck": "ob0:0"
+  },
+  {
+    "id": "8aef89467747",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which part of a plant usually grows underground and soaks up water?",
+    "options": [
+      "The root",
+      "The stem",
+      "The flower",
+      "The leaf"
+    ],
+    "answerCheck": "v2z5ake:3"
+  },
+  {
+    "id": "f45f8aea43b0",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Water is made of hydrogen and which other element?",
+    "options": [
+      "Helium",
+      "Carbon",
+      "Nitrogen",
+      "Oxygen"
+    ],
+    "answerCheck": "xb13s1:1"
+  },
+  {
+    "id": "1f2b369b17f5",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What force pulls a dropped apple toward the ground?",
+    "options": [
+      "Gravity",
+      "Electricity",
+      "Magnetism",
+      "Friction"
+    ],
+    "answerCheck": "yajjnx:2"
+  },
+  {
+    "id": "20b9fc4a21f1",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which blood cells carry oxygen around your body?",
+    "options": [
+      "Red blood cells",
+      "Plasma cells",
+      "Platelets",
+      "White blood cells"
+    ],
+    "answerCheck": "7pgp3bt:3"
+  },
+  {
+    "id": "07c5ba9f9d5d",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "When water boils away, it turns into a gas called what?",
+    "options": [
+      "Mist",
+      "Steam",
+      "Smoke",
+      "Foam"
+    ],
+    "answerCheck": "20aezl1:0"
+  },
+  {
+    "id": "667d7213a29c",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which scientist is most famous for the theory of gravity and the laws of motion?",
+    "options": [
+      "Galileo Galilei",
+      "Isaac Newton",
+      "Albert Einstein",
+      "Nikola Tesla"
+    ],
+    "answerCheck": "1chpua2:0"
+  },
+  {
+    "id": "f44d6131819d",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Octopuses have an unusual circulatory system. How many hearts does an octopus have?",
+    "options": [
+      "Two",
+      "Three",
+      "One",
+      "Five"
+    ],
+    "answerCheck": "kkdv:1"
+  },
+  {
+    "id": "025818ea8d3b",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which planet spins on its side, rolling around the Sun almost like a ball?",
+    "options": [
+      "Mars",
+      "Venus",
+      "Mercury",
+      "Uranus"
+    ],
+    "answerCheck": "kke:2"
+  },
+  {
+    "id": "f0cb570e95be",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What is the hardest known naturally occurring mineral on Earth?",
+    "options": [
+      "Diamond",
+      "Quartz",
+      "Granite",
+      "Topaz"
+    ],
+    "answerCheck": "cd3:3"
+  },
+  {
+    "id": "8e9db6e1e9c6",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "On the pH scale, a substance with a pH of 1 is strongly what?",
+    "options": [
+      "Radioactive",
+      "Alkaline",
+      "Acidic",
+      "Neutral"
+    ],
+    "answerCheck": "567dere:1"
+  },
+  {
+    "id": "9d1c1b7ce4a9",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Bananas are slightly radioactive because they're rich in which element?",
+    "options": [
+      "Iron",
+      "Sodium",
+      "Calcium",
+      "Potassium"
+    ],
+    "answerCheck": "qpo8t:0"
+  },
+  {
+    "id": "c278a0664cdc",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which scientist won Nobel Prizes in two different sciences, physics and chemistry?",
+    "options": [
+      "Rosalind Franklin",
+      "Dorothy Hodgkin",
+      "Albert Einstein",
+      "Marie Curie"
+    ],
+    "answerCheck": "7nj6ndl:2"
+  },
+  {
+    "id": "533cdc775e67",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Sound cannot travel through which of these?",
+    "options": [
+      "Water",
+      "Air",
+      "The vacuum of space",
+      "Steel"
+    ],
+    "answerCheck": "zp5:1"
+  },
+  {
+    "id": "17a9346ed0e7",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Tardigrades, the tiny 'water bears', dry into a near-lifeless husk to survive extremes. What is this suspended state called?",
+    "options": [
+      "The tun state",
+      "Hibernation",
+      "Diapause",
+      "Torpor"
+    ],
+    "answerCheck": "82u:3"
+  },
+  {
+    "id": "2d3d79c6f41f",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Helium was discovered in the Sun before it was found on Earth. How was it first detected?",
+    "options": [
+      "A balloon experiment by the Wright brothers",
+      "Bubbles in volcanic lava",
+      "An unknown line in the Sun's spectrum",
+      "A meteorite that landed in 1868"
+    ],
+    "answerCheck": "p7zli:3"
+  },
+  {
+    "id": "6e326cc2ad98",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "At absolute zero (around -273°C), what happens to the motion of atoms?",
+    "options": [
+      "They move at the speed of light",
+      "They reach their minimum possible motion",
+      "They spin twice as fast",
+      "They turn into pure energy"
+    ],
+    "answerCheck": "u9x:0"
+  },
+  {
+    "id": "a332a4876094",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Glass is sometimes described by scientists as which surprising state of matter?",
+    "options": [
+      "A very slow-moving plasma",
+      "A frozen gas",
+      "A liquid crystal",
+      "An amorphous solid that lacks a crystal structure"
+    ],
+    "answerCheck": "r7r52:0"
+  },
+  {
+    "id": "c8891c83bfaa",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "What is the name of the boundary around a black hole beyond which not even light can escape?",
+    "options": [
+      "The singularity",
+      "The accretion disk",
+      "The photon ring",
+      "The event horizon"
+    ],
+    "answerCheck": "py9n:3"
+  },
+  {
+    "id": "333656c93687",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Roughly what fraction of human DNA actually codes for proteins, with the rest being non-coding?",
+    "options": [
+      "About 50%",
+      "About 2%",
+      "Nearly 100%",
+      "About 90%"
+    ],
+    "answerCheck": "9i4z:1"
   }
 ]

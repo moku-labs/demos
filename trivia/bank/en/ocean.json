@@ -166,5 +166,285 @@
       "Haemoglobin"
     ],
     "answerCheck": "l7iv:0"
+  },
+  {
+    "id": "5b99d08a934f",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What do you call a baby seal?",
+    "options": [
+      "A calf",
+      "A pup",
+      "A kit",
+      "A fawn"
+    ],
+    "answerCheck": "lq1q:1"
+  },
+  {
+    "id": "52da84eed31e",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these is the largest type of shark?",
+    "options": [
+      "Tiger shark",
+      "Hammerhead shark",
+      "Great white shark",
+      "Whale shark"
+    ],
+    "answerCheck": "mbb3:3"
+  },
+  {
+    "id": "3a6d3045bb46",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these is NOT a fish?",
+    "options": [
+      "Mackerel",
+      "Cod",
+      "Tuna",
+      "Dolphin"
+    ],
+    "answerCheck": "r6a2t7z:2"
+  },
+  {
+    "id": "11a5ce658edc",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "How many arms does a typical starfish have?",
+    "options": [
+      "Eight",
+      "Five",
+      "Ten",
+      "Three"
+    ],
+    "answerCheck": "5q9j:1"
+  },
+  {
+    "id": "81ecb46f5e1f",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A jellyfish's body is made up of roughly 95% of what?",
+    "options": [
+      "Salt",
+      "Fat",
+      "Muscle",
+      "Water"
+    ],
+    "answerCheck": "3u58ouu:2"
+  },
+  {
+    "id": "eaf28d725000",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which sea creature is famous for being able to change colour to blend into its surroundings?",
+    "options": [
+      "Sea cucumber",
+      "Octopus",
+      "Barnacle",
+      "Jellyfish"
+    ],
+    "answerCheck": "ago5:1"
+  },
+  {
+    "id": "c7ea51b422d5",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is a group of fish swimming together usually called?",
+    "options": [
+      "A school",
+      "A pack",
+      "A flock",
+      "A herd"
+    ],
+    "answerCheck": "1p0qp:1"
+  },
+  {
+    "id": "03f898835598",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Clownfish make their home among the stinging tentacles of which animal?",
+    "options": [
+      "Sea sponges",
+      "Coral polyps",
+      "Sea anemones",
+      "Sea urchins"
+    ],
+    "answerCheck": "kth:1"
+  },
+  {
+    "id": "fe9c31ab3eef",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A seahorse is unusual among animals because which parent carries the babies and gives birth?",
+    "options": [
+      "Neither — eggs are abandoned",
+      "Both equally",
+      "The mother",
+      "The father"
+    ],
+    "answerCheck": "w5j9wz:1"
+  },
+  {
+    "id": "2457445cd550",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What is coral mostly made of?",
+    "options": [
+      "A single giant plant",
+      "Colonies of tiny animals called polyps",
+      "Hardened seaweed",
+      "Mineral deposits with no living part"
+    ],
+    "answerCheck": "9rxu:1"
+  },
+  {
+    "id": "31d7ff42a174",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which fish can inflate itself into a spiky ball to scare off predators?",
+    "options": [
+      "Flying fish",
+      "Swordfish",
+      "Pufferfish",
+      "Lionfish"
+    ],
+    "answerCheck": "jt0t:2"
+  },
+  {
+    "id": "d9a47540495f",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The 'Gulf Stream' is a famous example of what kind of ocean feature?",
+    "options": [
+      "A coral reef",
+      "A warm ocean current",
+      "An underwater mountain range",
+      "A deep-sea trench"
+    ],
+    "answerCheck": "4qlpxu:3"
+  },
+  {
+    "id": "78db5012433c",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Sharks and rays have skeletons made of what, rather than bone?",
+    "options": [
+      "Calcium plates",
+      "Keratin",
+      "Tough muscle alone",
+      "Cartilage"
+    ],
+    "answerCheck": "u2n3jh4:2"
+  },
+  {
+    "id": "650343be24d1",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which of these whales is famous for the long, spiralled tusk that earned it the nickname 'unicorn of the sea'?",
+    "options": [
+      "Sperm whale",
+      "Beluga",
+      "Orca",
+      "Narwhal"
+    ],
+    "answerCheck": "kwy:2"
+  },
+  {
+    "id": "651a74536b83",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The sunlit surface layer of the ocean, where almost all photosynthesis happens, is known as which zone?",
+    "options": [
+      "The abyssal zone",
+      "The twilight (mesopelagic) zone",
+      "The sunlight (epipelagic) zone",
+      "The midnight (bathyal) zone"
+    ],
+    "answerCheck": "fnmyyd:0"
+  },
+  {
+    "id": "2c1eef57d002",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The mantis shrimp's club-like claw strikes so fast that it does what to the water around it?",
+    "options": [
+      "Turns it briefly into a magnetic field",
+      "Splits it into pure hydrogen and oxygen",
+      "Boils it, creating bubbles that collapse with a flash of light",
+      "Freezes it into a thin shell of ice"
+    ],
+    "answerCheck": "0klw41q:1"
+  },
+  {
+    "id": "1b0fb7461fdc",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Sea otters often hold hands or wrap themselves in kelp while sleeping. What is the main reason?",
+    "options": [
+      "To keep from drifting apart on the current",
+      "To stay warm by sharing body heat",
+      "To anchor their food stash",
+      "To hide their scent from sharks"
+    ],
+    "answerCheck": "6ennkfz:3"
+  },
+  {
+    "id": "3b3552471a32",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which of these is a real, well-documented behaviour of the mimic octopus?",
+    "options": [
+      "Producing sound to communicate over long distances",
+      "Impersonating other animals like sea snakes and lionfish",
+      "Building shells from collected sand grains",
+      "Surviving by photosynthesis like a plant"
+    ],
+    "answerCheck": "h07x:1"
+  },
+  {
+    "id": "88992859676f",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Roughly what percentage of the world's oxygen is produced by ocean plankton and algae?",
+    "options": [
+      "Almost none — forests make nearly all of it",
+      "About 90%",
+      "About half",
+      "About 5%"
+    ],
+    "answerCheck": "yff041:0"
+  },
+  {
+    "id": "372fc521969c",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Some sharks, like the great white, must keep swimming to breathe. What is this method of forcing water over the gills called?",
+    "options": [
+      "Buccal pumping",
+      "Spiracle breathing",
+      "Ram ventilation",
+      "Counter-current exchange"
+    ],
+    "answerCheck": "b3sv:2"
   }
 ]

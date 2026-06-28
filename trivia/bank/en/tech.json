@@ -166,5 +166,285 @@
       "1998"
     ],
     "answerCheck": "xwpvbdy:0"
+  },
+  {
+    "id": "9721291ff6d5",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What does the 'www' at the start of many web addresses stand for?",
+    "options": [
+      "World Web Window",
+      "Wide World Web",
+      "Web Wide World",
+      "World Wide Web"
+    ],
+    "answerCheck": "x96m8z:1"
+  },
+  {
+    "id": "b41d683fa330",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these is a popular web browser?",
+    "options": [
+      "Excel",
+      "Photoshop",
+      "Firefox",
+      "Spotify"
+    ],
+    "answerCheck": "hsd:1"
+  },
+  {
+    "id": "a3b902c2c708",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the small picture that represents an app on your phone's home screen called?",
+    "options": [
+      "An icon",
+      "A pixel",
+      "A tab",
+      "A widget"
+    ],
+    "answerCheck": "28hk:0"
+  },
+  {
+    "id": "fd6642fb4c55",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Roughly how many megabytes are in one gigabyte?",
+    "options": [
+      "10",
+      "1,000,000",
+      "1,000",
+      "100"
+    ],
+    "answerCheck": "38p:1"
+  },
+  {
+    "id": "425a0a8a1379",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which company created the Android mobile operating system?",
+    "options": [
+      "Google",
+      "Nokia",
+      "Amazon",
+      "Microsoft"
+    ],
+    "answerCheck": "u1hpm:1"
+  },
+  {
+    "id": "fb36f7caf4dc",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What does the '@' symbol separate in an email address?",
+    "options": [
+      "The username from the domain",
+      "The country from the city",
+      "The password from the username",
+      "The first name from the last name"
+    ],
+    "answerCheck": "6501j4j:3"
+  },
+  {
+    "id": "c2f3eaa4c987",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In computing, what does the abbreviation 'PDF' commonly refer to?",
+    "options": [
+      "A type of image filter",
+      "A password manager",
+      "A document file format",
+      "A web browser"
+    ],
+    "answerCheck": "s3g:1"
+  },
+  {
+    "id": "0142f1deff45",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which Sony gadget kicked off the personal-stereo craze in 1979, letting people carry their music on headphones for the first time?",
+    "options": [
+      "The Discman",
+      "The Trinitron",
+      "The Walkman",
+      "The MiniDisc"
+    ],
+    "answerCheck": "h1ug6:3"
+  },
+  {
+    "id": "758220420f50",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A 'byte' is made up of how many bits?",
+    "options": [
+      "8",
+      "4",
+      "16",
+      "10"
+    ],
+    "answerCheck": "0iu8:0"
+  },
+  {
+    "id": "ca63941757ea",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Often called the best-selling mobile phone of its era and famous for being nearly indestructible, which Nokia handset launched in 2000?",
+    "options": [
+      "Nokia 8210",
+      "Nokia 3310",
+      "Nokia Lumia",
+      "Nokia N95"
+    ],
+    "answerCheck": "qfeuiv:3"
+  },
+  {
+    "id": "705ab493aad8",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The programming language 'Python' is named after what?",
+    "options": [
+      "A type of snake",
+      "Its creator's pet",
+      "A Greek myth",
+      "The Monty Python comedy group"
+    ],
+    "answerCheck": "c0cir:0"
+  },
+  {
+    "id": "1fa02c696b42",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Before becoming a verb for web searching, 'Google' was a play on which enormous number?",
+    "options": [
+      "A million billion",
+      "A megabyte",
+      "A googol (1 followed by 100 zeros)",
+      "A gazillion"
+    ],
+    "answerCheck": "ji3ui0v:1"
+  },
+  {
+    "id": "56b074ea0eab",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The first message ever sent over ARPANET, the internet's ancestor, was meant to be 'LOGIN' — but the system crashed. Which two letters actually got through?",
+    "options": [
+      "'HI'",
+      "'OK'",
+      "'GO'",
+      "'LO'"
+    ],
+    "answerCheck": "y9gnk:0"
+  },
+  {
+    "id": "705739d14997",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What does the 'HTTP' in a web address stand for?",
+    "options": [
+      "High Transfer Text Process",
+      "Home Text Transfer Page",
+      "HyperText Transfer Protocol",
+      "Hyperlink Text Transit Path"
+    ],
+    "answerCheck": "xnbho:3"
+  },
+  {
+    "id": "c5e0a022c05d",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Nintendo, now famous for video games, was founded in 1889 — more than a century before the Game Boy. What did it originally make?",
+    "options": [
+      "Playing cards",
+      "Vacuum cleaners",
+      "Toy trains",
+      "Bicycles"
+    ],
+    "answerCheck": "vopkq:1"
+  },
+  {
+    "id": "25e4925654c5",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Ada Lovelace is often credited as history's first computer programmer for her notes on which 19th-century machine?",
+    "options": [
+      "Babbage's Analytical Engine",
+      "The ENIAC",
+      "The Jacquard loom",
+      "The Turing Machine"
+    ],
+    "answerCheck": "4gymv5x:3"
+  },
+  {
+    "id": "28f613662cf2",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "An actual moth trapped in a Harvard computer relay in 1947 is famously linked to which common tech term?",
+    "options": [
+      "'Glitch'",
+      "'Virus'",
+      "'Crash'",
+      "'Bug'"
+    ],
+    "answerCheck": "ouu:2"
+  },
+  {
+    "id": "0687db4e26a2",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The standard internet address format we mostly still use, IPv4, supports about how many unique addresses?",
+    "options": [
+      "About 4.3 billion",
+      "About 4.3 trillion",
+      "About 4.3 million",
+      "About 65,000"
+    ],
+    "answerCheck": "gc3n5:1"
+  },
+  {
+    "id": "2549c364da1e",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The hashtag symbol (#) has a formal name rooted in its use as a unit-of-weight mark. What is it?",
+    "options": [
+      "The octothorpe",
+      "The ampersand",
+      "The pilcrow",
+      "The interrobang"
+    ],
+    "answerCheck": "76l40:1"
+  },
+  {
+    "id": "2a4bafcad81a",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Douglas Engelbart built the very first computer mouse in the 1960s. What was its shell carved from?",
+    "options": [
+      "Ivory",
+      "Aluminium",
+      "Bakelite plastic",
+      "Wood"
+    ],
+    "answerCheck": "07kqxu:1"
   }
 ]

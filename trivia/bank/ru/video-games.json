@@ -166,5 +166,285 @@
       "ESRB"
     ],
     "answerCheck": "xrc:2"
+  },
+  {
+    "id": "18b5e98d3512",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В какой игре нужно добывать ресурсы и строить что угодно из кубических блоков, а по ночам отбиваться от зомби и скелетов?",
+    "options": [
+      "Fortnite",
+      "Minecraft",
+      "Terraria",
+      "Roblox"
+    ],
+    "answerCheck": "6dksg:2"
+  },
+  {
+    "id": "957987ca11c1",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Как называется культовая серия аркадных гонок от Nintendo, где Марио и друзья швыряют друг в друга банановую кожуру и красные панцири?",
+    "options": [
+      "Need for Speed",
+      "Forza",
+      "Mario Kart",
+      "Gran Turismo"
+    ],
+    "answerCheck": "q50kl:3"
+  },
+  {
+    "id": "dd92eda0923a",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В королевской битве Fortnite все игроки в начале матча прыгают на остров с одного и того же летящего транспорта. Что это за транспорт?",
+    "options": [
+      "Дирижабль",
+      "Школьный автобус",
+      "Дракон",
+      "Боевой автобус (Battle Bus)"
+    ],
+    "answerCheck": "wyx0et4:2"
+  },
+  {
+    "id": "663203d7fcc1",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Как зовут принцессу из серии Super Mario, которую регулярно похищает Боузер?",
+    "options": [
+      "Розалина",
+      "Дейзи",
+      "Зельда",
+      "Пич"
+    ],
+    "answerCheck": "o4pk:3"
+  },
+  {
+    "id": "565402680a5a",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В самой первой Pokémon игрок выбирает одного из трёх стартовых покемонов. Кто из них относится к огненному типу?",
+    "options": [
+      "Бульбазавр",
+      "Сквиртл",
+      "Чармандер",
+      "Пикачу"
+    ],
+    "answerCheck": "b62w8u5:1"
+  },
+  {
+    "id": "562ba9c0d5b6",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В какой игре экипаж космического корабля выполняет задания, а среди своих прячутся предатели-«импостеры»?",
+    "options": [
+      "Phasmophobia",
+      "Among Us",
+      "Fall Guys",
+      "Rust"
+    ],
+    "answerCheck": "19ev2:2"
+  },
+  {
+    "id": "56d090286fa4",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Как зовут отважную исследовательницу гробниц — героиню серии Tomb Raider?",
+    "options": [
+      "Самус Аран",
+      "Лара Крофт",
+      "Джилл Валентайн",
+      "Эйва Стерн"
+    ],
+    "answerCheck": "ng5nf:2"
+  },
+  {
+    "id": "09f2af93d7f7",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Долгое время Minecraft была самой продаваемой видеоигрой в истории. Какая студия её создала?",
+    "options": [
+      "Epic Games",
+      "Valve",
+      "Mojang",
+      "Re-Logic"
+    ],
+    "answerCheck": "djcn:2"
+  },
+  {
+    "id": "07f67774544d",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "В Grand Theft Auto V игрок по ходу сюжета переключается между тремя протагонистами. Кто из перечисленных НЕ входит в эту тройку?",
+    "options": [
+      "Тревор",
+      "Франклин",
+      "Майкл",
+      "Нико Беллик"
+    ],
+    "answerCheck": "vcv:2"
+  },
+  {
+    "id": "70fa78f2bb31",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Фраза «The cake is a lie» стала мемом благодаря игре с порталами и злым ИИ по имени GLaDOS. Что это за игра?",
+    "options": [
+      "BioShock",
+      "System Shock",
+      "Half-Life",
+      "Portal"
+    ],
+    "answerCheck": "orl0z:0"
+  },
+  {
+    "id": "b0f9d24b845e",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Платформер Crash Bandicoot 1990-х подарил Sony узнаваемого маскота. А каким животным является сам Крэш?",
+    "options": [
+      "Лисом",
+      "Енотом",
+      "Опоссумом",
+      "Бандикутом (сумчатым)"
+    ],
+    "answerCheck": "7ix:2"
+  },
+  {
+    "id": "3afeb9071978",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "В файтинге Street Fighter боец Рю выпускает фирменный сгусток энергии, выкрикивая название приёма. Как оно звучит?",
+    "options": [
+      "Тацумаки",
+      "Шорюкен",
+      "Фаталити",
+      "Хадокен"
+    ],
+    "answerCheck": "y2e:2"
+  },
+  {
+    "id": "93a8292ce207",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Серия названа в честь принцессы Зельды, но управляем мы обычно героем в зелёной тунике. Как зовут этого героя?",
+    "options": [
+      "Эпона",
+      "Линк",
+      "Ганон",
+      "Наби"
+    ],
+    "answerCheck": "wfwm2f:3"
+  },
+  {
+    "id": "1052b4c7d08b",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Какая датская студия создала мрачные чёрно-белые головоломки-платформеры Limbo и Inside?",
+    "options": [
+      "Frictional Games",
+      "Supergiant Games",
+      "Team Cherry",
+      "Playdead"
+    ],
+    "answerCheck": "1q9s:3"
+  },
+  {
+    "id": "ea74771ab71f",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Завязка оригинального Doom 1993 года разворачивается на спутниках одной планеты Солнечной системы. Какой именно?",
+    "options": [
+      "Сатурна (Титан)",
+      "Земли (на Луне)",
+      "Юпитера (Европа)",
+      "Марса (Фобос и Деймос)"
+    ],
+    "answerCheck": "hg8w:3"
+  },
+  {
+    "id": "d6460d9805ff",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Провальная «E.T. the Extra-Terrestrial» для Atari 2600 стала символом краха индустрии 1983 года. Что, по легенде позже подтверждённой раскопками, Atari сделала с горой непроданных картриджей?",
+    "options": [
+      "Сожгла на заводе",
+      "Утопила в океане",
+      "Закопала на свалке в пустыне Нью-Мексико",
+      "Переплавила в новые консоли"
+    ],
+    "answerCheck": "kry:1"
+  },
+  {
+    "id": "71d203bf6e13",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Чит-код «вверх-вверх-вниз-вниз-влево-вправо-влево-вправо-B-A» вошёл в историю игр. Под каким названием он известен?",
+    "options": [
+      "Код Atari",
+      "Код Konami",
+      "Код Nintendo",
+      "Код Sega"
+    ],
+    "answerCheck": "9coe:1"
+  },
+  {
+    "id": "9bb3d54905c7",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "В Metal Gear Solid (1998) босс Психо Мантис «читал мысли» игрока через геймпад. Что нужно было сделать, чтобы лишить его этой способности и победить?",
+    "options": [
+      "Переставить геймпад во второй порт",
+      "Зажать все кнопки сразу",
+      "Вытащить карту памяти",
+      "Выключить и включить консоль"
+    ],
+    "answerCheck": "1oeqp:1"
+  },
+  {
+    "id": "a7b71185f77c",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Появление какой консоли в Северной Америке в 1985 году принято считать концом игрового кризиса 1983 года?",
+    "options": [
+      "Atari 7800",
+      "Sega Genesis",
+      "Nintendo Entertainment System (NES)",
+      "ColecoVision"
+    ],
+    "answerCheck": "u661:2"
+  },
+  {
+    "id": "519376ed86de",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Герой серии Mega Man (в Японии — Rockman) забирает оружие побеждённых боссов. Какая японская компания создала эту серию?",
+    "options": [
+      "Bandai Namco",
+      "Square",
+      "Capcom",
+      "Konami"
+    ],
+    "answerCheck": "1bp8tbb:1"
   }
 ]

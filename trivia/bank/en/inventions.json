@@ -166,5 +166,285 @@
       "English scientist Christopher Merret, 1662"
     ],
     "answerCheck": "10m8c:0"
+  },
+  {
+    "id": "fb400d7bf993",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Thomas Edison is famous for perfecting which everyday device, which he patented in 1879?",
+    "options": [
+      "The light bulb",
+      "The vacuum cleaner",
+      "The refrigerator",
+      "The dishwasher"
+    ],
+    "answerCheck": "7udpakf:3"
+  },
+  {
+    "id": "97d606d412a2",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The Wright brothers, who built the first successful powered aeroplane, ran what kind of shop before they took to the skies?",
+    "options": [
+      "A printing press",
+      "A photography studio",
+      "A bicycle shop",
+      "A bakery"
+    ],
+    "answerCheck": "bmnbb:3"
+  },
+  {
+    "id": "150eac0fe5a9",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which squishy childhood favourite was originally invented as a cleaning product for wallpaper before being rebranded as a toy?",
+    "options": [
+      "Silly Putty",
+      "Play-Doh",
+      "Lego",
+      "Slinky"
+    ],
+    "answerCheck": "3q0b:1"
+  },
+  {
+    "id": "f8eb7317496a",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Johannes Gutenberg's 15th-century invention transformed the world by mass-producing what?",
+    "options": [
+      "Maps",
+      "Coins",
+      "Glass mirrors",
+      "Printed books"
+    ],
+    "answerCheck": "abm167:1"
+  },
+  {
+    "id": "2a0b84cd71be",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The popsicle was reportedly invented by an 11-year-old who left a cup of soda powder, water, and a stirring stick outside overnight. What froze it solid?",
+    "options": [
+      "A record-cold winter night",
+      "A faulty freezer",
+      "A snowstorm indoors",
+      "Dry ice"
+    ],
+    "answerCheck": "sr5xe5:2"
+  },
+  {
+    "id": "e42096701e27",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these breakfast foods was invented by the Kellogg brothers, partly as a bland health food meant to discourage certain urges?",
+    "options": [
+      "Cornflakes",
+      "Bagels",
+      "Waffles",
+      "Pancakes"
+    ],
+    "answerCheck": "tnrlfww:3"
+  },
+  {
+    "id": "59e3f7a5f7c5",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The QWERTY keyboard layout we still use today was originally designed for which machine?",
+    "options": [
+      "The piano",
+      "The typewriter",
+      "The cash register",
+      "The telegraph"
+    ],
+    "answerCheck": "ylz:0"
+  },
+  {
+    "id": "f355fcdd746b",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Ruth Wakefield, who ran a Massachusetts inn, created the chocolate chip cookie. Famously, she gave Nestlé the rights to print her recipe in exchange for what?",
+    "options": [
+      "A seat on Nestlé's board",
+      "A lifetime supply of chocolate",
+      "Royalties on every bag sold",
+      "A brand-new commercial oven"
+    ],
+    "answerCheck": "obqv:1"
+  },
+  {
+    "id": "299dda1b8dd8",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Garrett Morgan, an early-20th-century inventor, patented an improved version of which life-saving device, plus an early traffic signal?",
+    "options": [
+      "The fire extinguisher",
+      "The gas mask (safety hood)",
+      "The seatbelt",
+      "The smoke detector"
+    ],
+    "answerCheck": "0db2:1"
+  },
+  {
+    "id": "fe07a862cc70",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In 1903, decades before it became standard, Mary Anderson patented a hand-operated version of which car accessory after watching a streetcar driver struggle in the snow?",
+    "options": [
+      "The turn signal",
+      "The car heater",
+      "The rearview mirror",
+      "The windshield wiper"
+    ],
+    "answerCheck": "iful:3"
+  },
+  {
+    "id": "78a8b9309362",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Wilson Greatbatch accidentally invented the implantable cardiac pacemaker when he grabbed the wrong-sized component while building what?",
+    "options": [
+      "A heart-rhythm recording device",
+      "An electric thermometer",
+      "A radio receiver",
+      "A hearing aid"
+    ],
+    "answerCheck": "wkdr:0"
+  },
+  {
+    "id": "46637cfaa8ca",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Frisbee got its name from the Frisbie Pie Company, whose empty tins college students liked to do what with?",
+    "options": [
+      "Stack them into towers",
+      "Sell them back for cash",
+      "Toss and catch them",
+      "Use them as plates"
+    ],
+    "answerCheck": "pb8e:2"
+  },
+  {
+    "id": "cc3ad3a42671",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Hollywood actress Hedy Lamarr co-invented a 'frequency-hopping' system during WWII that helped lay the groundwork for which modern technology?",
+    "options": [
+      "Wi-Fi and Bluetooth",
+      "Touchscreens",
+      "Solar panels",
+      "The barcode scanner"
+    ],
+    "answerCheck": "2v73:0"
+  },
+  {
+    "id": "b85f0e9f06a1",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Potato chips were supposedly invented by chef George Crum when a customer kept sending back his fried potatoes, complaining they were too what?",
+    "options": [
+      "Cold",
+      "Greasy",
+      "Thick",
+      "Salty"
+    ],
+    "answerCheck": "3xsi:2"
+  },
+  {
+    "id": "c498492fa7d1",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "WD-40, the famous spray lubricant, got its odd name because it was developed to do what — on the 40th attempt?",
+    "options": [
+      "Dissolve 40 types of grease",
+      "Weld steel at 40 degrees",
+      "Weatherproof 40 surfaces",
+      "Displace water and prevent rust"
+    ],
+    "answerCheck": "cky5o0:1"
+  },
+  {
+    "id": "28603f47db45",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Margaret Knight won a patent battle in the 1870s against a man who stole her design for a machine that made what still-used item?",
+    "options": [
+      "The cardboard box",
+      "The stapler",
+      "The envelope",
+      "The flat-bottomed paper bag"
+    ],
+    "answerCheck": "8o2t:3"
+  },
+  {
+    "id": "9084935fec4f",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Saccharin, the first artificial sweetener, was discovered in 1879 when chemist Constantin Fahlberg noticed an odd sweetness. Where did he taste it?",
+    "options": [
+      "On his own bread at dinner, from unwashed lab residue",
+      "On a colleague's pipe",
+      "In a spilled beaker of tea",
+      "In a contaminated sugar sample"
+    ],
+    "answerCheck": "d93tta:2"
+  },
+  {
+    "id": "45b7874ab07b",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Charles Goodyear spent years and went into debt perfecting vulcanised rubber. His crucial 1839 breakthrough came when he accidentally did what to a rubber-and-sulphur mixture?",
+    "options": [
+      "Dropped it onto a hot stove",
+      "Froze it overnight",
+      "Mixed in lead by mistake",
+      "Left it in acid"
+    ],
+    "answerCheck": "3gd:3"
+  },
+  {
+    "id": "8aba86f4cb03",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Percy Shaw invented the 'cat's eye' road reflector in the 1930s. According to the popular account, what inspired the design?",
+    "options": [
+      "Reflective paint on a fence",
+      "The eyes of an actual cat caught in his headlights",
+      "Streetlights reflecting on wet roads",
+      "Glass beads in a children's toy"
+    ],
+    "answerCheck": "h9b:0"
+  },
+  {
+    "id": "4635390690ac",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Super Soaker water gun was invented by Lonnie Johnson, an aerospace engineer, while he was tinkering at home on a project related to what?",
+    "options": [
+      "A heat-pump refrigeration system",
+      "A new rocket fuel pump",
+      "A car cooling system",
+      "A garden irrigation system"
+    ],
+    "answerCheck": "svv:3"
   }
 ]

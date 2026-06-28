@@ -166,5 +166,285 @@
       "3D Realms"
     ],
     "answerCheck": "g5n:3"
+  },
+  {
+    "id": "d23ec20445c9",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Minecraft, which green exploding creature sneaks up behind players and hisses before detonating?",
+    "options": [
+      "Skeleton",
+      "Zombie",
+      "Enderman",
+      "Creeper"
+    ],
+    "answerCheck": "beb:2"
+  },
+  {
+    "id": "18a96d53506c",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which puzzle game has you rotating and stacking falling four-square blocks to clear horizontal lines?",
+    "options": [
+      "Tetris",
+      "Candy Crush",
+      "Bejeweled",
+      "Columns"
+    ],
+    "answerCheck": "op8h7p:2"
+  },
+  {
+    "id": "f98122c1e0ea",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In The Legend of Zelda series, what is the name of the green-clad hero the player controls?",
+    "options": [
+      "Ganon",
+      "Link",
+      "Navi",
+      "Zelda"
+    ],
+    "answerCheck": "23g:0"
+  },
+  {
+    "id": "4223f824e49b",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which mobile game launched in 2016 sent players walking around the real world to catch creatures using their phones?",
+    "options": [
+      "Angry Birds",
+      "Candy Crush Saga",
+      "Clash of Clans",
+      "Pokemon GO"
+    ],
+    "answerCheck": "wfk:2"
+  },
+  {
+    "id": "f8de90b3f52a",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Super Mario games, what does Mario typically eat to grow from small to big?",
+    "options": [
+      "Super Star",
+      "Green Shell",
+      "Fire Flower",
+      "Super Mushroom"
+    ],
+    "answerCheck": "jhsuqpy:2"
+  },
+  {
+    "id": "d1e1f378a4b2",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is Mario's day job, according to Nintendo?",
+    "options": [
+      "Plumber",
+      "Carpenter",
+      "Electrician",
+      "Chef"
+    ],
+    "answerCheck": "z5ukk5k:3"
+  },
+  {
+    "id": "4e171d54d21a",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In the Angry Birds games, what are the birds usually trying to attack?",
+    "options": [
+      "Robots",
+      "Cats",
+      "Snakes",
+      "Pigs"
+    ],
+    "answerCheck": "8nq5mi0:2"
+  },
+  {
+    "id": "e0c233d6033b",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Minecraft became the best-selling video game of all time. Which studio originally created it before Microsoft bought it?",
+    "options": [
+      "Valve",
+      "Mojang",
+      "Bethesda",
+      "Epic Games"
+    ],
+    "answerCheck": "tj9:0"
+  },
+  {
+    "id": "b042c015d2f7",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The 'Konami Code' (up, up, down, down, left, right, left, right, B, A) first appeared in which 1986 NES game?",
+    "options": [
+      "Castlevania",
+      "Gradius",
+      "Metal Gear",
+      "Contra"
+    ],
+    "answerCheck": "126:0"
+  },
+  {
+    "id": "23a983f5e35a",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The phrase 'The cake is a lie' became a famous gaming meme thanks to which 2007 puzzle game?",
+    "options": [
+      "Portal",
+      "The Stanley Parable",
+      "Limbo",
+      "Braid"
+    ],
+    "answerCheck": "riu5:0"
+  },
+  {
+    "id": "9443272cf0cd",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In fighting games, what is the common name for the Street Fighter input where you roll the stick and press punch to throw a fireball?",
+    "options": [
+      "Spinning Bird Kick",
+      "Hadouken",
+      "Sonic Boom",
+      "Shoryuken"
+    ],
+    "answerCheck": "5v3ywt4:0"
+  },
+  {
+    "id": "45f6be053244",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Tetris was created in 1984 by a programmer working in which country?",
+    "options": [
+      "Finland",
+      "Japan",
+      "United States",
+      "The Soviet Union"
+    ],
+    "answerCheck": "ae4n4:0"
+  },
+  {
+    "id": "62e4955b930d",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which company developed and distributes Steam, the dominant PC game storefront?",
+    "options": [
+      "Valve",
+      "Activision",
+      "Electronic Arts",
+      "Ubisoft"
+    ],
+    "answerCheck": "btifu:1"
+  },
+  {
+    "id": "8f8afdd31a95",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Among Us, what is the basic goal of the players who are NOT impostors?",
+    "options": [
+      "Score the most goals",
+      "Complete tasks and vote out impostors",
+      "Find the treasure",
+      "Survive a zombie horde"
+    ],
+    "answerCheck": "bmjne:2"
+  },
+  {
+    "id": "2b82eaea7b41",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Released in 1972 by Atari, which game is widely credited as the first commercially successful video game?",
+    "options": [
+      "Spacewar!",
+      "Breakout",
+      "Computer Space",
+      "Pong"
+    ],
+    "answerCheck": "ou70z:0"
+  },
+  {
+    "id": "cdfb4edc771a",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The cooperative game Journey, praised for its wordless online encounters with strangers, was made by which studio?",
+    "options": [
+      "Playdead",
+      "Supergiant Games",
+      "thatgamecompany",
+      "Team Ico"
+    ],
+    "answerCheck": "edet2ki:1"
+  },
+  {
+    "id": "700dd0259930",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Speedrunners of Super Mario Bros. chase a famous benchmark of beating the whole game in under how many minutes?",
+    "options": [
+      "Under 1 minute",
+      "Under 30 minutes",
+      "Under 5 minutes",
+      "Under 15 minutes"
+    ],
+    "answerCheck": "jj71d:3"
+  },
+  {
+    "id": "fd12d80736ee",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which composer wrote the iconic orchestral and choral score for the Halo series, including its monk-style chant theme?",
+    "options": [
+      "Martin O'Donnell",
+      "Koji Kondo",
+      "Nobuo Uematsu",
+      "Jeremy Soule"
+    ],
+    "answerCheck": "ro27juw:3"
+  },
+  {
+    "id": "d21ced761c2c",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The roguelike deck-builder that swept the indie scene, having you climb a spire by drafting cards, is called what?",
+    "options": [
+      "Hades",
+      "Hollow Knight",
+      "Slay the Spire",
+      "Dead Cells"
+    ],
+    "answerCheck": "7xen:2"
+  },
+  {
+    "id": "003e96d7e626",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In the original arcade Pac-Man, reaching level 256 triggers a famous game-breaking bug that scrambles half the screen. Why does it happen?",
+    "options": [
+      "A dead capacitor",
+      "An 8-bit counter overflowing",
+      "A coin-slot overload",
+      "A corrupted high-score table"
+    ],
+    "answerCheck": "eroh16:3"
   }
 ]

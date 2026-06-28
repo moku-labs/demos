@@ -166,5 +166,285 @@
       "The first Olympics"
     ],
     "answerCheck": "qw9i95:2"
+  },
+  {
+    "id": "a07776eae949",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Bananas are mildly radioactive because they're rich in which element?",
+    "options": [
+      "Calcium",
+      "Potassium",
+      "Iron",
+      "Sodium"
+    ],
+    "answerCheck": "hquzt11:0"
+  },
+  {
+    "id": "287887210c40",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A group of flamingos is delightfully known as a what?",
+    "options": [
+      "A flamboyance",
+      "A parade",
+      "A blush",
+      "A shimmer"
+    ],
+    "answerCheck": "fwv:3"
+  },
+  {
+    "id": "1d61340ebfff",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The dimples on a golf ball aren't just decoration. What do they actually help the ball do?",
+    "options": [
+      "Glow in the dark",
+      "Spin more slowly",
+      "Float on water",
+      "Fly farther"
+    ],
+    "answerCheck": "6ew:2"
+  },
+  {
+    "id": "72444ebed4f6",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Sharks have been around so long they're older than which of these?",
+    "options": [
+      "Jellyfish",
+      "The Moon",
+      "Bacteria",
+      "Trees"
+    ],
+    "answerCheck": "g2s:2"
+  },
+  {
+    "id": "aae061de9c3d",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A single bolt of lightning is roughly how hot compared to the surface of the Sun?",
+    "options": [
+      "About five times hotter",
+      "Exactly the same",
+      "About half as hot",
+      "A tiny fraction as hot"
+    ],
+    "answerCheck": "0b6xg:1"
+  },
+  {
+    "id": "a691efa2bc83",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Wombats are famous for producing droppings of an unusual shape. What shape?",
+    "options": [
+      "Cube-shaped",
+      "Star-shaped",
+      "Spiral",
+      "Perfectly round"
+    ],
+    "answerCheck": "78g:3"
+  },
+  {
+    "id": "0ff6835be323",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Hot water can sometimes freeze faster than cold water. This odd effect is named after a teenager who noticed it while making what at school?",
+    "options": [
+      "Soup",
+      "Tea",
+      "Ice cream",
+      "Jelly"
+    ],
+    "answerCheck": "zd2y:2"
+  },
+  {
+    "id": "623968432884",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Honey bees have been shown to recognise and remember individual what?",
+    "options": [
+      "Musical notes",
+      "Car models",
+      "Human faces",
+      "Phone numbers"
+    ],
+    "answerCheck": "yma861:0"
+  },
+  {
+    "id": "63f7c3340114",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What's the word, coined by scientists in 1964, for the pleasant earthy smell of rain falling on dry ground?",
+    "options": [
+      "Geosmin",
+      "Ozonia",
+      "Petrichor",
+      "Pluvium"
+    ],
+    "answerCheck": "5a6:1"
+  },
+  {
+    "id": "3fbd7e2c6e03",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "At the peak of the 17th-century Dutch 'tulip mania', a single rare tulip bulb could reportedly cost about as much as a:",
+    "options": [
+      "Loaf of bread",
+      "Horseshoe",
+      "Pair of shoes",
+      "House"
+    ],
+    "answerCheck": "9r2l5:0"
+  },
+  {
+    "id": "f51f3a2d1998",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "One of the first plastics ever made, used for buttons and jewellery around 1900, was created from formaldehyde and which surprising ingredient?",
+    "options": [
+      "Egg whites",
+      "Sawdust",
+      "Seawater",
+      "Milk"
+    ],
+    "answerCheck": "d1csyr:1"
+  },
+  {
+    "id": "0c39c9bc1699",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Some turtles can survive a winter underwater partly by absorbing oxygen through which surprising part of their body?",
+    "options": [
+      "Their rear end",
+      "Their feet",
+      "Their eyes",
+      "Their shell"
+    ],
+    "answerCheck": "mpbo:0"
+  },
+  {
+    "id": "c7a4c3a61bf8",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Voyager probes each carry a 'Golden Record' etched with sounds and images of Earth. Who was it intended for?",
+    "options": [
+      "Possible aliens",
+      "The United Nations",
+      "Voyager's engineers",
+      "Future astronauts"
+    ],
+    "answerCheck": "rsmibb:2"
+  },
+  {
+    "id": "85e315c3ba8e",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "By the common modern definition, a 'blue moon' is which of these?",
+    "options": [
+      "Any new moon",
+      "A second full moon in one calendar month",
+      "A total lunar eclipse",
+      "A moon that genuinely looks blue"
+    ],
+    "answerCheck": "xfa:0"
+  },
+  {
+    "id": "fca21c2caaa1",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Scotland's official national animal is a creature that doesn't actually exist. Which one?",
+    "options": [
+      "The unicorn",
+      "The phoenix",
+      "The griffin",
+      "The dragon"
+    ],
+    "answerCheck": "h7x:3"
+  },
+  {
+    "id": "5b3fab2bb1c7",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Pacific island of Yap historically used giant carved stone discs as money. The largest 'rai stones' are roughly the size of a:",
+    "options": [
+      "Football",
+      "Car",
+      "Dinner plate",
+      "Coin"
+    ],
+    "answerCheck": "0qklc:2"
+  },
+  {
+    "id": "df98db0d10ab",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Antarctica's 'Blood Falls' pours bright red liquid from a glacier. What gives it the colour?",
+    "options": [
+      "Red algae",
+      "Iron-rich brine",
+      "Spilled dye",
+      "Volcanic ash"
+    ],
+    "answerCheck": "0l90:1"
+  },
+  {
+    "id": "1e1d24301f1e",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The 'immortal jellyfish' (Turritopsis) can escape death by doing what?",
+    "options": [
+      "Freezing solid",
+      "Eating its own tentacles",
+      "Cloning itself endlessly",
+      "Reverting to its juvenile stage"
+    ],
+    "answerCheck": "3we2r:0"
+  },
+  {
+    "id": "da3dc7423a0e",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In 1807 Napoleon was famously routed during a hunt by a swarm of aggressive what?",
+    "options": [
+      "Rabbits",
+      "Geese",
+      "Swans",
+      "Bees"
+    ],
+    "answerCheck": "093o4:1"
+  },
+  {
+    "id": "016e673c6e62",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The metal gallium has such a low melting point that it will turn to liquid if you simply do what?",
+    "options": [
+      "Leave it in the shade",
+      "Blow on it",
+      "Put it in the fridge",
+      "Hold it in your hand"
+    ],
+    "answerCheck": "6l66x9:1"
   }
 ]

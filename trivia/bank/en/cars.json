@@ -166,5 +166,285 @@
       "Drum brakes cooled by water jets from an onboard tank"
     ],
     "answerCheck": "f4k30o:0"
+  },
+  {
+    "id": "2b2e61cf2c0a",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What does the 'EV' in 'EV charging station' stand for?",
+    "options": [
+      "Engine Velocity",
+      "Extra Voltage",
+      "Energy Valve",
+      "Electric Vehicle"
+    ],
+    "answerCheck": "lk69l:0"
+  },
+  {
+    "id": "e5907880ad6d",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which pedal makes a manual car go faster?",
+    "options": [
+      "The handbrake",
+      "The clutch",
+      "The brake",
+      "The accelerator"
+    ],
+    "answerCheck": "v4c:2"
+  },
+  {
+    "id": "23dbe1328b89",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which company makes the Mustang?",
+    "options": [
+      "Toyota",
+      "Ford",
+      "Chevrolet",
+      "Dodge"
+    ],
+    "answerCheck": "u9s:0"
+  },
+  {
+    "id": "1e0b738c344a",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The 'Beetle' is an iconic model from which carmaker?",
+    "options": [
+      "Renault",
+      "Volkswagen",
+      "Fiat",
+      "Honda"
+    ],
+    "answerCheck": "egxfkho:0"
+  },
+  {
+    "id": "fbca41ca5f23",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Roughly how many wheels does a typical articulated semi-truck rig have on the road?",
+    "options": [
+      "4",
+      "18",
+      "32",
+      "6"
+    ],
+    "answerCheck": "7o6o:1"
+  },
+  {
+    "id": "36f95e3a0244",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the spinning part you turn to steer a car called?",
+    "options": [
+      "The throttle",
+      "The gear stick",
+      "The steering wheel",
+      "The dashboard"
+    ],
+    "answerCheck": "qp6g:2"
+  },
+  {
+    "id": "9dd554fd84ef",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these is a famous luxury car brand from Britain?",
+    "options": [
+      "Bugatti",
+      "Lamborghini",
+      "Rolls-Royce",
+      "Lexus"
+    ],
+    "answerCheck": "qgnxinp:1"
+  },
+  {
+    "id": "3c1fffa9f588",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Formula 1 cars don't have a traditional ignition key. How does the driver actually start the car for a race?",
+    "options": [
+      "By bump-starting it down the pit lane",
+      "A push-button on the steering wheel after the team primes it in the garage",
+      "A foot-operated kickstart pedal",
+      "A pull-cord like a lawnmower"
+    ],
+    "answerCheck": "te8n:1"
+  },
+  {
+    "id": "e3df1eaa6d8b",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which everyday safety device, now standard worldwide, did Volvo famously patent in 1959 and then let rivals use for free?",
+    "options": [
+      "Anti-lock brakes",
+      "The three-point seatbelt",
+      "The airbag",
+      "The crumple zone"
+    ],
+    "answerCheck": "o6s29:2"
+  },
+  {
+    "id": "080544369550",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In NASCAR oval racing, why do the cars almost always turn only left?",
+    "options": [
+      "A historical rule banning right turns",
+      "Right turns are illegal under racing flags",
+      "The tracks are oval, so all four corners curve the same way",
+      "The engines are mounted off-centre to the left"
+    ],
+    "answerCheck": "4rv:1"
+  },
+  {
+    "id": "e6fbe2c7d0de",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The 1990s McLaren F1 supercar lined part of its engine bay with real gold. Why?",
+    "options": [
+      "Gold is the best reflector of engine heat, protecting nearby parts",
+      "To make it the most expensive car ever sold",
+      "Gold conducts the spark to the engine faster",
+      "It was purely a status symbol for buyers"
+    ],
+    "answerCheck": "ndv2cop:3"
+  },
+  {
+    "id": "ae87a962431d",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Who coined the term 'horsepower', and why?",
+    "options": [
+      "Gottlieb Daimler, to name his first racing engine",
+      "Karl Benz, to measure the pull of his first Motorwagen",
+      "James Watt, to sell his steam engines by comparing them to draft horses",
+      "Henry Ford, to rate the Model T against a team of oxen"
+    ],
+    "answerCheck": "29t3j:3"
+  },
+  {
+    "id": "38bcf0efe921",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The classic original Mini, designed by Alec Issigonis, used a clever trick to save space. What was it?",
+    "options": [
+      "The fuel tank doubled as a rear seat",
+      "The engine was mounted transversely (sideways) to free up cabin room",
+      "It had no doors, just a sliding canopy",
+      "The wheels folded inward when parked"
+    ],
+    "answerCheck": "p9blp:2"
+  },
+  {
+    "id": "ccf102eae63e",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Cruise control was invented in the 1940s by an engineer with a surprising trait. What was it?",
+    "options": [
+      "He was only 16 years old",
+      "He had never learned to drive",
+      "He had never owned a car",
+      "He was blind"
+    ],
+    "answerCheck": "39yf:3"
+  },
+  {
+    "id": "c966f6594217",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Mazda RX-7 and RX-8 are famous for an unusual engine design. What kind?",
+    "options": [
+      "A two-stroke diesel",
+      "A hydrogen fuel-cell stack",
+      "A Wankel rotary engine",
+      "A flat-six boxer"
+    ],
+    "answerCheck": "qculb:3"
+  },
+  {
+    "id": "a46ab5897e77",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Why is the Indianapolis 500 winner traditionally handed a bottle of milk in victory lane?",
+    "options": [
+      "Indiana is a major dairy state and lobbied for it",
+      "1930s winner Louis Meyer drank buttermilk to cool off on a hot day, and the photo started a tradition",
+      "Milk was the only cold drink allowed during Prohibition",
+      "It honours a driver who died and whose family ran a dairy"
+    ],
+    "answerCheck": "uk6z:1"
+  },
+  {
+    "id": "bcda0af7621f",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Volkswagen logo's 'VW' is well known, but what do the rings of the Audi logo represent?",
+    "options": [
+      "Audi's four engine cylinders",
+      "The four wheels of a car",
+      "Four founding partners of the company",
+      "Four merged car companies that formed Auto Union"
+    ],
+    "answerCheck": "wyo1kh1:2"
+  },
+  {
+    "id": "aa367ecd9cad",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In 1899, the first car ever to break 100 km/h set the record with what kind of power?",
+    "options": [
+      "A diesel engine",
+      "A petrol engine",
+      "A steam boiler",
+      "Electric motors and batteries"
+    ],
+    "answerCheck": "ik3do:0"
+  },
+  {
+    "id": "76d6615a7c56",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "ThrustSSC set the world land-speed record in 1997 with a feat no wheeled vehicle had achieved before. What was it?",
+    "options": [
+      "It ran entirely on solar power",
+      "It crossed a continent without refuelling",
+      "It exceeded the speed of sound on land",
+      "It reached the speed of a commercial jet at cruise"
+    ],
+    "answerCheck": "m2wr:2"
+  },
+  {
+    "id": "d7f2c802bb76",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Toyota Corolla holds a notable global distinction among cars. What is it?",
+    "options": [
+      "The only car ever driven to the South Pole",
+      "The first car with a built-in airbag",
+      "The best-selling car nameplate in the world",
+      "The fastest-accelerating production sedan ever"
+    ],
+    "answerCheck": "0fjx:2"
   }
 ]

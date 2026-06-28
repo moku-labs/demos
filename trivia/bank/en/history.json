@@ -166,5 +166,285 @@
       "About 1 in 10"
     ],
     "answerCheck": "4yrwzx:0"
+  },
+  {
+    "id": "c449360a4a18",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which ship famously sank on its maiden voyage in 1912 after hitting an iceberg?",
+    "options": [
+      "The Bismarck",
+      "The Titanic",
+      "The Mary Rose",
+      "The Lusitania"
+    ],
+    "answerCheck": "9myifv:3"
+  },
+  {
+    "id": "1cd6a3e1270d",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Cleopatra lived closer in time to which of these than to the building of the Great Pyramid?",
+    "options": [
+      "The Moon landing",
+      "The fall of Troy",
+      "The first Olympic Games",
+      "The reign of Hammurabi"
+    ],
+    "answerCheck": "3g9m:0"
+  },
+  {
+    "id": "158d1a80b28d",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Who was the nurse known as 'The Lady with the Lamp' during the Crimean War?",
+    "options": [
+      "Edith Cavell",
+      "Florence Nightingale",
+      "Clara Barton",
+      "Mary Seacole"
+    ],
+    "answerCheck": "f2kz:1"
+  },
+  {
+    "id": "80f23e4fc220",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Vikings reached North America around 1000 AD. What name did they give the land they found?",
+    "options": [
+      "Markland",
+      "Greenland",
+      "Vinland",
+      "Thule"
+    ],
+    "answerCheck": "5a93b0:0"
+  },
+  {
+    "id": "7256181f7cb3",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which wall, dividing a European city for decades, fell in 1989?",
+    "options": [
+      "The Berlin Wall",
+      "The Maginot Line",
+      "The Wall of Jericho",
+      "Hadrian's Wall"
+    ],
+    "answerCheck": "mne:3"
+  },
+  {
+    "id": "786a0e452372",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The last woolly mammoths died out on a remote Arctic island surprisingly recently — by which point one of these was already built?",
+    "options": [
+      "The Great Wall of China",
+      "Stonehenge had not yet been started",
+      "The Great Pyramid of Giza",
+      "The Colosseum"
+    ],
+    "answerCheck": "wnfng:3"
+  },
+  {
+    "id": "063fc0df0a8b",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which document, signed by King John of England in 1215, limited the power of the monarchy?",
+    "options": [
+      "The Treaty of Tordesillas",
+      "Magna Carta",
+      "The Domesday Book",
+      "The Bill of Rights"
+    ],
+    "answerCheck": "z2q3:1"
+  },
+  {
+    "id": "8600c9f8787d",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Roman soldiers were sometimes partly paid in a valuable commodity, which is said to be the origin of the word 'salary'. What was it?",
+    "options": [
+      "Wine",
+      "Bronze coins",
+      "Salt",
+      "Olive oil"
+    ],
+    "answerCheck": "azk3b5m:1"
+  },
+  {
+    "id": "c6b727c3ae5f",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Aztec capital Tenochtitlan was built on an island in the middle of a lake. What city stands over its ruins today?",
+    "options": [
+      "Lima",
+      "Havana",
+      "Bogotá",
+      "Mexico City"
+    ],
+    "answerCheck": "rf49if:1"
+  },
+  {
+    "id": "3ea0be7e48b7",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "How did the Inca Empire keep detailed records and numbers without a writing system?",
+    "options": [
+      "Carving symbols into stone tablets",
+      "Painted bark scrolls",
+      "Pressing marks into wet clay",
+      "Knotted strings called quipu"
+    ],
+    "answerCheck": "t6f3ia:1"
+  },
+  {
+    "id": "4e933a0e5385",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "On his 1324 pilgrimage, Mansa Musa of Mali handed out so much of one thing in Cairo that he wrecked its value there for years. What was it?",
+    "options": [
+      "Gold",
+      "Ivory",
+      "Spices",
+      "Salt"
+    ],
+    "answerCheck": "niq:3"
+  },
+  {
+    "id": "f0fd193b81c2",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Despite its name, the Hundred Years' War between England and France actually lasted how long?",
+    "options": [
+      "116 years",
+      "200 years",
+      "Exactly 100 years",
+      "About 50 years"
+    ],
+    "answerCheck": "mspzlg:2"
+  },
+  {
+    "id": "1bec2e32b808",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which English king had six wives and broke with the Catholic Church partly to divorce the first of them?",
+    "options": [
+      "Edward VI",
+      "Richard III",
+      "James I",
+      "Henry VIII"
+    ],
+    "answerCheck": "wcgt9:0"
+  },
+  {
+    "id": "aecbea07f365",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Rosetta Stone unlocked Egyptian hieroglyphs because it repeated one text in three scripts. Which language on it was the key scholars could already read?",
+    "options": [
+      "Latin",
+      "Arabic",
+      "Ancient Greek",
+      "Hebrew"
+    ],
+    "answerCheck": "9or2rn1:1"
+  },
+  {
+    "id": "551137558ea8",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In 1518 in Strasbourg, hundreds of people were reportedly struck by an outbreak of what bizarre, sometimes deadly behavior?",
+    "options": [
+      "Endless sneezing",
+      "Mass sleepwalking",
+      "Compulsive dancing",
+      "Uncontrollable laughing"
+    ],
+    "answerCheck": "r26v7:3"
+  },
+  {
+    "id": "63d51e445084",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Treaty of Tordesillas (1494) drew a line dividing newly 'discovered' lands between which two countries?",
+    "options": [
+      "Spain and the Netherlands",
+      "Spain and Portugal",
+      "Portugal and Italy",
+      "England and France"
+    ],
+    "answerCheck": "jzsfih:3"
+  },
+  {
+    "id": "32648b6d4ac6",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Tsar Peter the Great of Russia tried to modernize his nobles by personally enforcing a tax on what fashionable feature?",
+    "options": [
+      "Fur coats",
+      "Beards",
+      "Gold jewelry",
+      "Wigs"
+    ],
+    "answerCheck": "jmcgl5w:0"
+  },
+  {
+    "id": "d6030ef5a3ac",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The shortest recorded war in history, between Britain and Zanzibar in 1896, lasted roughly how long?",
+    "options": [
+      "About 2 days",
+      "About one week",
+      "About 40 minutes",
+      "About 6 hours"
+    ],
+    "answerCheck": "ewc:1"
+  },
+  {
+    "id": "50b2f0c726da",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Emperor Qin Shi Huang of China was buried with an army of thousands of life-sized figures. What were they made of?",
+    "options": [
+      "Wood",
+      "Bronze",
+      "Jade",
+      "Terracotta"
+    ],
+    "answerCheck": "x07nam:1"
+  },
+  {
+    "id": "96e1dce3687b",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which ancient civilization built elaborate covered drains and flushing-style toilets in cities like Mohenjo-daro over 4,000 years ago?",
+    "options": [
+      "Ancient Sparta",
+      "The Indus Valley Civilization",
+      "The Hittite Empire",
+      "The Olmecs"
+    ],
+    "answerCheck": "tcsy:1"
   }
 ]
