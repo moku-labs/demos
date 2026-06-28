@@ -97,14 +97,14 @@ test.describe("Phone controller — visual baseline", () => {
   });
 });
 
-test.describe("Phone controller — join wizard steps (A9 visual baselines)", () => {
-  /** Freeze the clock + collapse motion + settle for a deterministic screenshot. */
-  async function settle(page: import("@playwright/test").Page): Promise<void> {
-    await page.clock.setFixedTime(new Date("2026-01-01T12:00:00Z"));
-    await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.waitForTimeout(400);
-  }
+/** Freeze the clock + collapse motion + settle for a deterministic screenshot. */
+async function settleForShot(page: import("@playwright/test").Page): Promise<void> {
+  await page.clock.setFixedTime(new Date("2026-01-01T12:00:00Z"));
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.waitForTimeout(400);
+}
 
+test.describe("Phone controller — join wizard steps (A9 visual baselines)", () => {
   test("drives name → avatar → colour → You're-in and baselines each step", async ({ page }) => {
     await page.goto(`/controller/${FAKE_CODE}`);
     await page.waitForSelector("[data-controller][data-phase='join']", { timeout: 20_000 });
@@ -116,7 +116,7 @@ test.describe("Phone controller — join wizard steps (A9 visual baselines)", ()
     // Step 2 — avatar grid (first avatar pre-selected).
     await page.locator("button[data-next]").click();
     await page.waitForSelector("[data-step='avatar']");
-    await settle(page);
+    await settleForShot(page);
     await expect(page).toHaveScreenshot("phone-join-avatar.png", {
       fullPage: false,
       animations: "disabled"
@@ -125,7 +125,7 @@ test.describe("Phone controller — join wizard steps (A9 visual baselines)", ()
     // Step 3 — colour swatches (first free colour pre-selected; taken ones greyed).
     await page.locator("button[data-next]").click();
     await page.waitForSelector("[data-step='color']");
-    await settle(page);
+    await settleForShot(page);
     await expect(page).toHaveScreenshot("phone-join-color.png", {
       fullPage: false,
       animations: "disabled"
@@ -134,7 +134,7 @@ test.describe("Phone controller — join wizard steps (A9 visual baselines)", ()
     // Join Game → the "You're in! ♪" confirmation card.
     await page.locator("button[data-next]").click();
     await page.waitForSelector("[data-component='join-wizard'][data-joined='true']");
-    await settle(page);
+    await settleForShot(page);
     await expect(page).toHaveScreenshot("phone-join-confirm.png", {
       fullPage: false,
       animations: "disabled"

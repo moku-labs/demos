@@ -487,6 +487,7 @@ describe("match-flow plugin integration", () => {
         ...STABLE_QUESTION_TIMERS
       }
     });
+    // eslint-disable-next-line sonarjs/no-identical-functions -- identical body; different `sig` closure
     const make = () =>
       createApp({
         plugins: [controllerPlugin],

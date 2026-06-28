@@ -14,6 +14,7 @@ export default [
       "bun.lock",
       ".claude/**",
       ".planning/**",
+      ".wrangler/**",
       "node_modules/**",
       "declarations.d.ts",
       "playwright-report/**",

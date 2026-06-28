@@ -18,6 +18,7 @@
    "no active value" here (mirroring TriviaState's nullable peer/descriptor fields and the JSON slice
    cells the host plugins register as null), never `undefined`. */
 import type { JsonValue, QrMatrix, RoomDescriptor, Signaling } from "@moku-labs/room";
+import { hardNavigate } from "@moku-labs/web/browser";
 import type { EndStats } from "../../plugins/scoring/types";
 import type { IntentName, IntentPayload, PeerId, TriviaState } from "../types";
 import { createControllerApp } from "./controller";
@@ -136,8 +137,8 @@ const REENTRY_KEY_INFIX = ".reentry.";
 function clearHostReentry(): void {
   if (typeof localStorage === "undefined") return;
   const stale: string[] = [];
-  for (let i = 0; i < localStorage.length; i += 1) {
-    const key = localStorage.key(i);
+  for (let index = 0; index < localStorage.length; index += 1) {
+    const key = localStorage.key(index);
     if (key?.includes(REENTRY_KEY_INFIX)) stale.push(key);
   }
   for (const key of stale) localStorage.removeItem(key);
@@ -326,10 +327,19 @@ export async function qr(): Promise<QrMatrix | null> {
 }
 
 /**
- * Reset the TV's room: forget the persisted host-reentry record and reload, so the stage boots a
- * brand-new room code + QR (the old code is invalidated; any joined phones rescan). Wired to the
- * lobby's "New code" control. A reload is the clean teardown — it re-runs the idempotent stage boot,
- * which mints a fresh room via {@link clearHostReentry}. No-op when there is no DOM (headless/tests).
+ * Reset the TV's room: forget the persisted host-reentry record and reload with a hard navigation,
+ * so the stage boots a brand-new room code + QR (the old code is invalidated; any joined phones
+ * rescan). Wired to the lobby's "New code" control.
+ *
+ * `hardNavigate(location.href)` (from `@moku-labs/web/browser`) detaches the SPA's Navigation API
+ * interceptor before reloading — without this, the framework's `onNavigate` handler sees
+ * `pathWithSearch(url) === pathWithSearch(location)` (same URL reload) and converts the navigation
+ * into a no-op scroll-to-top, which is why a plain `location.reload()` produced "no request, no
+ * socket message". `hardNavigate` triggers a true full-page load so the module singleton
+ * re-initialises, `clearHostReentry` clears any stale reentry records, and `bootStage` mints a
+ * fresh room.
+ *
+ * No-op when there is no DOM (headless/tests).
  *
  * @example
  * ```ts
@@ -338,7 +348,7 @@ export async function qr(): Promise<QrMatrix | null> {
  */
 export function resetRoom(): void {
   clearHostReentry();
-  if (typeof location !== "undefined") location.reload();
+  if (typeof location !== "undefined") hardNavigate(location.href);
 }
 
 /**
