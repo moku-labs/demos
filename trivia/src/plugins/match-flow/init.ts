@@ -9,9 +9,10 @@
  * @see ./cache.ts — the shared slice cache the readers below pull from
  */
 import type { PeerId, StageApi } from "@moku-labs/room";
+import type { CategoryId, Tier } from "../../config";
 import { TRIVIA } from "../../config";
 import { ramp } from "../../lib/difficulty";
-import type { CategoryId, Lang } from "../../lib/types";
+import type { Lang } from "../../lib/types";
 import { buildAward, buildMutate, type ReadSlice } from "./adapters";
 import { cachedMatch, cachedPlayers, cachedQuestion, cachedSteal, makeIdleSteal } from "./cache";
 import type { IntentDeps, LanguageDeps, QuestionBankDeps, ScoringDeps, SyncDeps } from "./handlers";
@@ -42,7 +43,9 @@ function registerSlices(sync: SyncDeps): void {
     hostPeer: null,
     paused: false,
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
-    phaseDeadlineTs: null
+    phaseDeadlineTs: null,
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (null until a category is chosen)
+    chosenCategory: null
   });
 
   sync.registerSlice("players", { entries: [] });
@@ -353,20 +356,30 @@ export function initMatchFlow(
       state.tried = new Set();
       state.tried.add(meta.peerId);
 
-      stage.mutate("question", () => ({
+      // Stage the resolved question on host State (question-bank is consume-once). The clock will
+      // publish it and set deadlineTs when the categoryReveal beat expires. The category/tier/type
+      // come from questionBank which uses `string` in its API boundary — cast to the known enums
+      // (same boundary that the existing mutate path uses when assigning to the JSON slice).
+      state.pendingQuestion = {
         id: question.id,
-        category: question.category,
-        tier: question.tier,
-        type: question.type,
+        category: question.category as CategoryId,
+        tier: question.tier as Tier,
+        type: question.type as "text" | "image",
         ...(question.imageUrl === undefined ? {} : { imageUrl: question.imageUrl }),
         prompt: question.prompt,
         options: [...question.options],
         answeringPeer: meta.peerId,
-        mode: "answer",
-        deadlineTs: Date.now() + config.answerMs
-      }));
+        mode: "answer" as const,
+        // deadlineTs is set at the reveal→question transition (so the beat doesn't eat into answer time).
+        deadlineTs: 0
+      };
 
-      return { ...draft, phase: "question" as Phase };
+      return {
+        ...draft,
+        phase: "categoryReveal" as Phase,
+        chosenCategory: category,
+        phaseDeadlineTs: Date.now() + config.categoryRevealMs
+      };
     });
   });
 
@@ -419,6 +432,8 @@ export function initMatchFlow(
     scoring.reset();
     state.locked = false;
     state.tried = new Set();
+    // eslint-disable-next-line unicorn/no-null -- clear any staged pending question on play-again
+    state.pendingQuestion = null;
 
     const { language: lang, activePeer: previousActive } = match;
     const firstConnected = (cachedPlayers() ?? []).find(player => player.connected);
@@ -430,7 +445,9 @@ export function initMatchFlow(
       activePeer: firstConnected?.peerId ?? previousActive,
       language: lang,
       paused: false,
-      phaseDeadlineTs: Date.now() + config.roundIntroMs
+      phaseDeadlineTs: Date.now() + config.roundIntroMs,
+      // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell; no chosen category on reset
+      chosenCategory: null
     }));
   });
 }

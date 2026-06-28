@@ -34,6 +34,11 @@ export default defineConfig({
         "src/lib/room/stage.ts",
         "src/lib/room/controller.ts",
         "src/lib/room/observer.ts",
+        // Browser-only WebAudio glue (the pure core — ladder/haptics/director/map — stays in coverage,
+        // tested in tests/unit/sound/). These touch AudioContext/fetch/timers; exercised via e2e.
+        "src/lib/sound/index.ts",
+        "src/lib/sound/engine.ts",
+        "src/lib/sound/loader.ts",
         "src/islands/**",
         "src/app.ts",
         "src/server.ts",

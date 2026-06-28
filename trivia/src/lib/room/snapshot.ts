@@ -57,7 +57,8 @@ function defaultMatch(): MatchView {
     language: null,
     hostPeer: null,
     paused: false,
-    phaseDeadlineTs: null
+    phaseDeadlineTs: null,
+    chosenCategory: null
   };
 }
 

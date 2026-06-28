@@ -21,6 +21,7 @@ import { clearSliceCache, setSliceCache } from "./cache";
 import type { QuestionBankDeps, ScoringDeps } from "./handlers";
 import { selectOffer } from "./offer";
 import {
+  advanceFromCategoryReveal,
   advanceFromFinal,
   advanceFromReveal,
   advanceFromScoreboard,
@@ -79,6 +80,8 @@ function runTick(deps: ClockDeps): void {
     // Draw this round's random category offer (playable-first) from the live availability.
     const offered = selectOffer(questionBank.availability(), config.offerCount);
     advanceRoundIntro(stage, match, players, round, state, offered);
+  } else if (phase === "categoryReveal" && deadlinePassed) {
+    advanceFromCategoryReveal(stage, state, config.answerMs);
   } else if (phase === "question" && question) {
     resolveQuestionTimeout(
       { stage, config, state, questionBank, scoring, readSlice },

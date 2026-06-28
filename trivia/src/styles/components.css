@@ -6,6 +6,7 @@
  */
 @import "../components/AnswerButton.css";
 @import "../components/AnswerTile.css";
+@import "../components/CategoryBanner.css";
 @import "../components/CategoryButton.css";
 @import "../components/CategoryCard.css";
 @import "../components/CategoryExhaustedToast.css";

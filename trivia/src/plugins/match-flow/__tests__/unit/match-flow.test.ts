@@ -25,6 +25,8 @@ function makeMatchSlice(overrides: Partial<MatchSlice> = {}): MatchSlice {
     paused: false,
     // eslint-disable-next-line unicorn/no-null
     phaseDeadlineTs: null,
+    // eslint-disable-next-line unicorn/no-null
+    chosenCategory: null,
     ...overrides
   };
 }

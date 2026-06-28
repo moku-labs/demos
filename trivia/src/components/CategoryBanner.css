@@ -1,0 +1,49 @@
+/**
+ * CategoryBanner — F3 pill banner that drops in above the category grid on pick (design §6 F3).
+ * Adapts to the active player's colour via `--banner-color`; falls back to lemon if unset.
+ * @scope-encapsulated, data-* only; pulled into layer(components) via the aggregator.
+ */
+@scope ([data-component="category-banner"]) {
+  :scope {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    align-self: center;
+    padding: var(--space-2) var(--space-6);
+    border-radius: var(--radius-full, 999px);
+    background: rgba(13, 8, 32, 0.55);
+    border: 2px solid var(--banner-color, var(--clay-lemon));
+    box-shadow:
+      0 0 20px 2px color-mix(in srgb, var(--banner-color, var(--clay-lemon)) 45%, transparent),
+      var(--shadow-md);
+    /* Drops in from above: starts above viewport, springs to resting position. */
+    animation: banner-drop 0.45s var(--spring, cubic-bezier(0.34, 1.56, 0.64, 1)) both;
+  }
+
+  @keyframes banner-drop {
+    from {
+      transform: translateY(-40px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  [data-banner-emoji] {
+    font-size: 32px;
+    line-height: 1;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35));
+  }
+
+  [data-banner-name] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(18px, 2vw, 26px);
+    color: var(--banner-color, var(--clay-lemon));
+    text-shadow: 0 0 12px color-mix(in srgb, var(--banner-color, var(--clay-lemon)) 60%, transparent);
+    letter-spacing: 0.02em;
+  }
+}
