@@ -237,16 +237,23 @@
 
   [data-island="mute"] {
     position: fixed;
-    /* Align the mute pill with the top bar's optical centre. The bar uses clamp(10px,1.6vh,18px)
+    /* Align the mute pills with the top bar's optical centre. The bar uses clamp(10px,1.6vh,18px)
        top/bottom padding around ~34px of content, so its centre sits at roughly padding+17px. The
-       pill is 44px tall, so top = padding − (44−34)/2 = padding − 5 centres it against the bar.
-       Floored at 0 so it never clips on very short viewports. */
+       pills are 44px tall, so top = padding − (44−34)/2 = padding − 5 centres them against the bar.
+       Floored at 0 so they never clip on very short viewports. */
     top: max(0px, calc(clamp(10px, 1.6vh, 18px) - 5px));
     right: clamp(16px, 3vw, 40px);
     z-index: 6;
   }
 
-  /* ── Phone / controller surface (route "/controller/:code") ────────────────── */
+  /* The two audio-channel pills (Music + SFX) sit in a row inside the fixed mute host. */
+  [data-island="mute"] [data-component="audio-toggles"] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  /* ── Phone / controller surface (route "/code/:code") ────────────────── */
   [data-layout="controller"] {
     position: relative;
     display: flex;
@@ -257,8 +264,9 @@
     overflow: hidden;
   }
 
-  /* The controller island host fills the layout; the frame root is a padded flex column. */
-  [data-island="controller"] {
+  /* The controller + code-entry island hosts fill the layout so their flex children can centre. */
+  [data-island="controller"],
+  [data-island="code-entry"] {
     display: flex;
     flex: 1;
     min-height: 0;

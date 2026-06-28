@@ -1,6 +1,6 @@
 /**
  * @file Cloudflare entry — thin adapter (idiom I4). room's `hubPlugin` provides `server.hub.handle`, which
- * serves ASSETS (incl. the /controller/{code} deep-link AND the /bank/** shards) AND brokers the signaling
+ * serves ASSETS (incl. the /code/{code} deep-link AND the /bank/** shards) AND brokers the signaling
  * WS upgrade; this file only re-exports the `Hub` DO + delegates. The wrangler bindings (ROOM_HUB /
  * RATE_LIMIT / ASSETS) are GENERATED from `src/server.ts`'s worker app by `server.cli.{dev,deploy}`.
  */
@@ -13,7 +13,7 @@ type WorkerEnv = { ROOM_HUB: DurableObjectNamespace; RATE_LIMIT: KVNamespace; AS
 
 export default {
   /**
-   * Delegate every request to room's hub — it serves ASSETS (incl. the /controller/{code} deep-link)
+   * Delegate every request to room's hub — it serves ASSETS (incl. the /code/{code} deep-link)
    * AND the signaling WS upgrade, routing internally per the hub's assets binding; the worker does not branch.
    *
    * @param request - The incoming request.

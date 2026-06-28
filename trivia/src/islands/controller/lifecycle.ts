@@ -60,7 +60,9 @@ function rememberSeen(id: string): void {
  * ```
  */
 export async function startControllerIsland(ctx: ControllerContext): Promise<void> {
-  const code = ctx.params.code ?? "";
+  // Room codes are uppercase (room's confusable-free alphabet), so normalize the deep-link param —
+  // a hand-typed or shared `/code/abc` joins the same room as `/code/ABC` (no case confusion).
+  const code = (ctx.params.code ?? "").toUpperCase();
   ctx.set({ code });
 
   // Optimistic reconnect: if this phone already has a saved identity for THIS room, show the joined
@@ -70,7 +72,7 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
   if (saved) ctx.set({ joinedProfile: saved.profile });
 
   // Fix data-layout — the server always serves the stage layout for all routes (SPA mode, no SSR).
-  // On direct load to /controller/:code the outer [data-layout] element has data-layout="stage"
+  // On direct load to /code/:code the outer [data-layout] element has data-layout="stage"
   // instead of "controller", which prevents all [data-layout="controller"] CSS from applying.
   // (The layout root is a semantic <main>, so the landmark is already correct — only the attr needs fixing.)
   const layoutElement = ctx.el.closest<HTMLElement>("[data-layout]");

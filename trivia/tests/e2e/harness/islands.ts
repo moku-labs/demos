@@ -11,7 +11,7 @@
  *
  * URL routing:
  * - `/?e2ephase=<StagePhaseKey>` → stage fixture (TV surface)
- * - `/controller/<code>?e2ephase=<PhonePhaseKey>` → controller fixture (phone surface)
+ * - `/code/<code>?e2ephase=<PhonePhaseKey>` → controller fixture (phone surface)
  *
  * Imported ONLY by `spa-e2e.ts`, which is the client entry ONLY when `TRIVIA_E2E=1` (see `src/app.ts`),
  * so none of this — nor the fixtures — is ever part of the production bundle.

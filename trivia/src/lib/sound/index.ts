@@ -13,14 +13,35 @@
 import { onLifecycle, subscribe } from "../room";
 import type { TriviaState } from "../types";
 import { diffCues } from "./director";
-import { haptic, isMuted, music, play, setMuted, stopMusic, unlock } from "./engine";
+import {
+  haptic,
+  isMusicMuted,
+  isSfxMuted,
+  music,
+  play,
+  setMusicMuted,
+  setSfxMuted,
+  stopMusic,
+  unlock
+} from "./engine";
 import type { Cue, Surface } from "./types";
 
 /**
  * The imperative sound surface (a thin re-export of the engine). Islands import this for gesture-driven
- * SFX/haptics and the mute toggle; the reactive cues go through {@link startSoundDirector}.
+ * SFX/haptics and the two mute toggles (SFX + Music are independent channels); the reactive cues go
+ * through {@link startSoundDirector}.
  */
-export const sound = { play, haptic, music, stopMusic, setMuted, isMuted, unlock } as const;
+export const sound = {
+  play,
+  haptic,
+  music,
+  stopMusic,
+  setSfxMuted,
+  setMusicMuted,
+  isSfxMuted,
+  isMusicMuted,
+  unlock
+} as const;
 
 /** Ignore a scheduled cue whose deadline is absurdly far out (a clock-skew guard). */
 const MAX_SCHEDULE_MS = 60_000;

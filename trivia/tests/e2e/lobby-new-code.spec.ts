@@ -241,7 +241,7 @@ test.describe("lobby New-code button (Issue 2 regression)", () => {
       }
 
       // ── Phone joins C1 (sanity: C1 is live) ──────────────────────────────────
-      await phonePage.goto(`/controller/${codeC1}`);
+      await phonePage.goto(`/code/${codeC1}`);
       await phonePage.waitForSelector("[data-controller][data-phase='join']", { timeout: 20_000 });
 
       const nameInput = phonePage.locator("[data-name-input]");
@@ -284,7 +284,7 @@ test.describe("lobby New-code button (Issue 2 regression)", () => {
       });
       const phone2Page = await phone2Ctx.newPage();
       try {
-        await phone2Page.goto(`/controller/${codeC2}`);
+        await phone2Page.goto(`/code/${codeC2}`);
         await phone2Page.waitForSelector("[data-controller][data-phase='join']", {
           timeout: 20_000
         });

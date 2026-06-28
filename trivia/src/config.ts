@@ -34,7 +34,7 @@ export const TRIVIA = {
   players: { min: 1, max: 5 },
   rounds: 12,
   timers: {
-    answerMs: 15_000,
+    answerMs: 25_000,
     stealMs: 8000,
     voteWindowMs: 5000,
     roundIntroMs: 2000,

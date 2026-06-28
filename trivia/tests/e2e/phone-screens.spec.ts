@@ -3,7 +3,7 @@
  *
  * The live flow never reaches post-lobby phone screens in tests; the harness closes that gap by
  * driving the REAL controller render with frozen fixture state through the e2e harness —
- * `/controller/<code>?e2ephase=<phase>` mounts a fixture island (no room, no Hub) as a specific
+ * `/code/<code>?e2ephase=<phase>` mounts a fixture island (no room, no Hub) as a specific
  * player so each screen renders identically every run.
  *
  * Requires the harness build (TRIVIA_E2E=1, set by the Playwright webServer).
@@ -13,6 +13,9 @@
  * - A10 waiting room, A11 phone category pick, A12 answer grid (+ locked state),
  *   A13 reveal flash correct, A14 reveal flash wrong, A15 final card,
  *   E1 leave modal, E2 mid-join modal.
+ * - Non-active watcher screens: languageVote, roundIntro, categoryPickWatcher,
+ *   questionWatcher, revealWatcher, left.
+ * - /code entry page (join-by-code box) — new route, visual baseline.
  *
  * ## Viewport
  * This spec runs on `phone-chromium` (390×844) and `phone-webkit` (390×844 visual only).
@@ -37,12 +40,20 @@ const CONTROLLER_PHASE: Record<PhonePhaseKey, string> = {
   answer: "question",
   answerLocked: "question",
   leaveModal: "question",
-  midJoin: "question"
+  midJoin: "question",
+  // Non-active player watcher screens
+  languageVoteWatcher: "languageVote",
+  roundIntroWatcher: "roundIntro",
+  categoryPickWatcher: "categoryPick",
+  questionWatcher: "question",
+  revealWatcher: "reveal",
+  // left: state.left=true renders the "You left" card inside data-phase="final"
+  left: "final"
 };
 
 /** Navigate to a fixture phone screen and wait for the controller to render it. */
 async function gotoPhone(page: Page, phase: PhonePhaseKey): Promise<void> {
-  await page.goto(`/controller/TRIV1234?e2ephase=${phase}`);
+  await page.goto(`/code/TRIV1234?e2ephase=${phase}`);
   await page.waitForSelector(`[data-controller][data-phase='${CONTROLLER_PHASE[phase]}']`, {
     timeout: 20_000
   });
@@ -210,6 +221,80 @@ test.describe("Phone — mid-join modal (E2)", () => {
   });
 });
 
+// ─── Non-active player watcher screen functional tests ───────────────────────────────────
+
+test.describe("Phone — language vote (non-active watcher)", () => {
+  test("all players see the PhoneLanguageVote screen with vote buttons and tally", async ({
+    page
+  }) => {
+    await gotoPhone(page, "languageVoteWatcher");
+    // All players vote (including non-active ones); the vote screen should be visible.
+    await expect(page.locator("[data-component='phone-language-vote']")).toBeVisible();
+    // Two language vote buttons (English + Russian)
+    await expect(page.locator("[data-vote-buttons] button")).toHaveCount(2);
+    // Leading tally line is visible
+    await expect(page.locator("[data-wait-hint]")).toBeVisible();
+  });
+});
+
+test.describe("Phone — round intro watcher (C1)", () => {
+  test("non-active player sees the 'Round N · Get ready…' wait card during roundIntro", async ({
+    page
+  }) => {
+    await gotoPhone(page, "roundIntroWatcher");
+    // All phones see the same round intro wait card
+    await expect(page.locator("[data-component='phone-waiting-card']")).toBeVisible();
+    await expect(page.locator("[data-component='phone-waiting-card']")).toContainText("Round");
+    await expect(page.locator("[data-component='phone-waiting-card']")).toContainText("ready");
+  });
+});
+
+test.describe("Phone — category pick watcher (non-active)", () => {
+  test("non-active player sees '{name} is picking… / Watch the TV!' card", async ({ page }) => {
+    await gotoPhone(page, "categoryPickWatcher");
+    // Pixel (p2) is non-active — sees the waiting card with Mochi's name
+    await expect(page.locator("[data-component='phone-waiting-card']")).toBeVisible();
+    await expect(page.locator("[data-component='phone-waiting-card']")).toContainText("Mochi");
+    await expect(page.locator("[data-component='phone-waiting-card']")).toContainText("picking");
+    await expect(page.locator("[data-component='phone-waiting-card']")).toContainText("TV");
+  });
+});
+
+test.describe("Phone — question watcher (non-answering)", () => {
+  test("non-answering player sees '{name} is answering / Watch the TV — you might steal it!'", async ({
+    page
+  }) => {
+    await gotoPhone(page, "questionWatcher");
+    // Pixel (p2) is not answering — sees the watcher waiting card naming the answerer (Mochi)
+    await expect(page.locator("[data-component='phone-waiting-card']")).toBeVisible();
+    await expect(page.locator("[data-component='phone-waiting-card']")).toContainText("Mochi");
+    await expect(page.locator("[data-component='phone-waiting-card']")).toContainText("answering");
+    await expect(page.locator("[data-component='phone-waiting-card']")).toContainText("steal");
+  });
+});
+
+test.describe("Phone — reveal watcher (non-answerer)", () => {
+  test("non-answerer during reveal sees 'Revealing… / Watch the TV' card", async ({ page }) => {
+    await gotoPhone(page, "revealWatcher");
+    // Pixel (p2) did not answer (p1 answered) — sees the watcher reveal card
+    await expect(page.locator("[data-component='phone-waiting-card']")).toBeVisible();
+    await expect(page.locator("[data-component='phone-waiting-card']")).toContainText("Revealing");
+    await expect(page.locator("[data-component='phone-waiting-card']")).toContainText("TV");
+  });
+});
+
+test.describe("Phone — left screen", () => {
+  test("player who left sees 'You left the game / Thanks for playing!' card", async ({ page }) => {
+    await gotoPhone(page, "left");
+    // state.left=true renders the "You left" card — no leave modal, no reveal flash
+    await expect(page.locator("[data-component='phone-waiting-card']")).toBeVisible();
+    await expect(page.locator("[data-component='phone-waiting-card']")).toContainText("left");
+    await expect(page.locator("[data-component='phone-waiting-card']")).toContainText("playing");
+    // Controller must be in final phase (design: the left card reuses the data-phase="final" wrapper)
+    await expect(page.locator("[data-controller]")).toHaveAttribute("data-phase", "final");
+  });
+});
+
 // ─── Visual baselines (all at 390×844 — phone-chromium + phone-webkit projects) ──────
 
 const PHONE_SCREENS: ReadonlyArray<{ phase: PhonePhaseKey; shot: string }> = [
@@ -227,7 +312,14 @@ const PHONE_SCREENS: ReadonlyArray<{ phase: PhonePhaseKey; shot: string }> = [
   { phase: "revealWrong", shot: "phone-reveal-wrong.png" },
   { phase: "final", shot: "phone-final.png" },
   { phase: "leaveModal", shot: "phone-leave-modal.png" },
-  { phase: "midJoin", shot: "phone-mid-join.png" }
+  { phase: "midJoin", shot: "phone-mid-join.png" },
+  // Non-active player watcher screens (newly baselined)
+  { phase: "languageVoteWatcher", shot: "phone-language-vote-watcher.png" },
+  { phase: "roundIntroWatcher", shot: "phone-round-intro-watcher.png" },
+  { phase: "categoryPickWatcher", shot: "phone-category-pick-watcher.png" },
+  { phase: "questionWatcher", shot: "phone-question-watcher.png" },
+  { phase: "revealWatcher", shot: "phone-reveal-watcher.png" },
+  { phase: "left", shot: "phone-left.png" }
 ];
 
 test.describe("Phone — visual baselines (390×844)", () => {
@@ -238,4 +330,39 @@ test.describe("Phone — visual baselines (390×844)", () => {
       await expect(page).toHaveScreenshot(shot, { fullPage: false, animations: "disabled" });
     });
   }
+});
+
+// ─── /code entry page (join-by-code box) ─────────────────────────────────────────────────
+
+test.describe("Phone — /code entry page (join-by-code box)", () => {
+  test("functional: /code shows the code-entry box with input and Join button", async ({
+    page
+  }) => {
+    await page.goto("/code");
+    await page.waitForSelector("[data-component='code-entry']", { timeout: 20_000 });
+    await page.evaluate(() => document.fonts.ready);
+
+    await expect(page.locator("[data-component='code-entry']")).toBeVisible();
+    await expect(page.locator("[data-code-input]")).toBeVisible();
+    // Join button is present (disabled until code typed)
+    await expect(
+      page.locator("[data-component='code-entry'] [data-component='clay-button']")
+    ).toBeVisible();
+    // No stage or controller island (just the entry box)
+    expect(await page.locator("[data-island='stage']").count()).toBe(0);
+    expect(await page.locator("[data-controller]").count()).toBe(0);
+  });
+
+  test("visual: /code entry page baseline", async ({ page }) => {
+    await page.goto("/code");
+    await page.waitForSelector("[data-component='code-entry']", { timeout: 20_000 });
+    await page.evaluate(() => document.fonts.ready);
+    await page.clock.setFixedTime(new Date("2026-01-01T12:00:00Z"));
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.waitForTimeout(300);
+    await expect(page).toHaveScreenshot("phone-code-entry.png", {
+      fullPage: false,
+      animations: "disabled"
+    });
+  });
 });

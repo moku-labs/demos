@@ -13,7 +13,7 @@ import type { ComponentChildren, VNode } from "preact";
  * @returns The framed controller layout.
  * @example
  * ```tsx
- * route("/controller/{code}").layout(ControllerLayout).render(() => <ControllerPage />);
+ * route("/code/{code}").layout(ControllerLayout).render(() => <ControllerPage />);
  * ```
  */
 export function ControllerLayout(

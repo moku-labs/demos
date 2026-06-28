@@ -9,7 +9,7 @@
  * fixed sleeps) and answers on whichever phone is the current answerer, so the steal hand-off is handled
  * naturally. Skips gracefully if the Hub DO / WebRTC is unavailable in this environment.
  *
- * Requires the harness server (TRIVIA_E2E=1): `/` and `/controller/<code>` (no `?e2ephase=`) boot the REAL
+ * Requires the harness server (TRIVIA_E2E=1): `/` and `/code/<code>` (no `?e2ephase=`) boot the REAL
  * app — the fixture harness only intercepts `?e2ephase=` URLs.
  */
 import { type Browser, expect, type Page, test } from "@playwright/test";
@@ -41,7 +41,7 @@ async function readRoomCode(tv: Page): Promise<string> {
 
 /** Complete the 3-step join wizard (name → avatar → colour → join) on a phone. */
 async function joinPhone(phone: Page, code: string, name: string): Promise<void> {
-  await phone.goto(`/controller/${code}`);
+  await phone.goto(`/code/${code}`);
   await phone.waitForSelector("[data-controller][data-phase='join']", { timeout: 20_000 });
   const nameInput = phone.locator("[data-name-input]");
   if (await nameInput.count()) await nameInput.fill(name);

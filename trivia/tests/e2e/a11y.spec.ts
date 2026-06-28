@@ -40,7 +40,7 @@ test.describe("accessibility — TV stage", () => {
 
 test.describe("accessibility — phone controller", () => {
   test("join wizard passes axe WCAG 2.1 AA", async ({ page }) => {
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     // The SPA routes to controller: the controller island hydrates and renders [data-controller].
     // Note: the outer wrapper stays as data-layout="stage" (SPA swaps the island content, not the
     // layout div itself) — so we wait for the island to have rendered [data-controller].
@@ -63,7 +63,7 @@ test.describe("accessibility — phone controller", () => {
   });
 
   test("phone controller has interactive elements (not dead)", async ({ page }) => {
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-controller]", { timeout: 20_000 });
 
     // The join wizard should have at least one interactive element

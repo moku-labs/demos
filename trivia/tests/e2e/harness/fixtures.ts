@@ -111,7 +111,20 @@ export type PhonePhaseKey =
   | "answer"
   | "answerLocked"
   | "leaveModal"
-  | "midJoin";
+  | "midJoin"
+  // Non-active player watcher screens (user request: intermediate screens between rounds/actions)
+  // languageVote: everyone votes; Pixel (p2) sees the vote screen for language selection.
+  | "languageVoteWatcher"
+  // roundIntro: non-active player sees the "Round N — Get ready…" wait card.
+  | "roundIntroWatcher"
+  // categoryPickWatcher: non-active player (Pixel/p2) sees "{name} is picking… / Watch the TV!"
+  | "categoryPickWatcher"
+  // questionWatcher: non-answering player (Pixel/p2) sees "{name} is answering / Watch the TV!"
+  | "questionWatcher"
+  // revealWatcher: non-answerer during reveal sees "Revealing… / Watch the TV"
+  | "revealWatcher"
+  // left: the "You left the game / Thanks for playing!" card (state.left = true)
+  | "left";
 
 const STAGE_PHASE_KEYS = new Set<StagePhaseKey>([
   "question",
@@ -149,7 +162,13 @@ const PHONE_PHASE_KEYS = new Set<PhonePhaseKey>([
   "answer",
   "answerLocked",
   "leaveModal",
-  "midJoin"
+  "midJoin",
+  "languageVoteWatcher",
+  "roundIntroWatcher",
+  "categoryPickWatcher",
+  "questionWatcher",
+  "revealWatcher",
+  "left"
 ]);
 
 /**
@@ -839,6 +858,111 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedQid: null,
       leaving: false,
       left: false
+    };
+  }
+
+  // ── Non-active player watcher screens ──────────────────────────────────────────────────
+
+  // languageVoteWatcher: Pixel (p2) sees the PhoneLanguageVote screen during languageVote phase.
+  // Everyone votes, so non-active and active see the same screen here.
+  if (phase === "languageVoteWatcher") {
+    return {
+      s: triviaState("languageVote", "p2", {
+        languageVote: {
+          open: true,
+          options: [
+            { lang: "en", voters: ["p1", "p4"] },
+            { lang: "ru", voters: ["p3"] }
+          ],
+          deadlineTs: FIXED_NOW + 4_000,
+          leading: "en",
+          confirmed: null
+        }
+      }),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: false
+    };
+  }
+
+  // roundIntroWatcher: Pixel (p2) sees the "Round N · Get ready…" waiting card.
+  // All phones see the same waiting card during roundIntro.
+  if (phase === "roundIntroWatcher") {
+    return {
+      s: triviaState("roundIntro", "p2"),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: false
+    };
+  }
+
+  // categoryPickWatcher: Pixel (p2, non-active) sees "{Mochi} is picking… / Watch the TV!" card.
+  // The active player (p1/Mochi) sees the picker; non-active sees this waiting card.
+  if (phase === "categoryPickWatcher") {
+    return {
+      s: triviaState("categoryPick", "p2"),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: false
+    };
+  }
+
+  // questionWatcher: Pixel (p2, non-answering) sees "{Mochi} is answering / Watch the TV — you might steal it!"
+  // p1 is answeringPeer; p2 is the watcher.
+  if (phase === "questionWatcher") {
+    return {
+      s: triviaState("question", "p2"),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: false
+    };
+  }
+
+  // revealWatcher: Pixel (p2) is not the answerer (p1 answered), so sees "Revealing… / Watch the TV".
+  // p1 answered (correctly), p2 is a watcher during reveal.
+  if (phase === "revealWatcher") {
+    return {
+      s: triviaState("reveal", "p2", {
+        question: { ...QUESTION, answeringPeer: "p1" },
+        reveal: REVEAL_CORRECT
+      }),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: false
+    };
+  }
+
+  // left: player has explicitly left the game (state.left = true) — "You left / Thanks for playing!"
+  if (phase === "left") {
+    return {
+      s: triviaState("question", "p2"),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: true
     };
   }
 

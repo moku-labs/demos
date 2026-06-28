@@ -4,7 +4,7 @@
  * surface the islands consume. Created only in the browser (`trystero` is dynamically imported by room).
  *
  * Role split (the design's golden rule): the **TV** (`/`) runs the STAGE app — a pure shared display
- * that reads slices and sends NO intents. Each **phone** (`/controller/:code`) runs the CONTROLLER app —
+ * that reads slices and sends NO intents. Each **phone** (`/code/:code`) runs the CONTROLLER app —
  * a player that reads slices AND sends intents. The host clock + all authoritative game logic live in
  * the stage app's plugins; phones only mutate state by sending intents over the Wire.
  *
@@ -312,8 +312,30 @@ export function onLifecycle(fn: (event: RoomLifecycle) => void): () => void {
 }
 
 /**
- * The stage QR matrix for the lobby (async; the `qrcode` encoder is lazy-imported host-only). Resolves
- * `null` on a phone or before a room is open.
+ * Build the phone join URL the lobby QR encodes — the app's own `${origin}/code/{code}` deep-link.
+ *
+ * This is deliberately NOT room's `stage.qr()`: room hard-codes a `${origin}?room=CODE` join URL
+ * (`buildJoinUrl`), which would require the old `/?room=` → controller redirect to boot a phone. By
+ * encoding our short `/code/{code}` route directly, a scanned QR lands straight on the controller with
+ * no redirect, and the same short path is what players read off the TV and type at `/code`.
+ *
+ * @param code - The room code.
+ * @returns The absolute join URL, or a relative path when there is no DOM (tests/SSR).
+ * @example
+ * ```ts
+ * joinUrl("4F2KAB12"); // "https://trivia.play/code/4F2KAB12"
+ * ```
+ */
+function joinUrl(code: string): string {
+  const path = `/code/${code}`;
+  return typeof location === "undefined" ? path : `${location.origin}${path}`;
+}
+
+/**
+ * The stage QR matrix for the lobby (async; the `qrcode` encoder is lazy-imported host-only so it never
+ * weighs on the controller bundle path). Encodes the app's `/code/{code}` join URL into a row-major
+ * {@link QrMatrix} (`true` = dark module) that {@link QrBlock} renders as a crisp SVG. Resolves `null`
+ * on a phone, before a room is open, or if encoding fails.
  *
  * @returns The QR matrix for the room's join URL, or `null`.
  * @example
@@ -322,8 +344,19 @@ export function onLifecycle(fn: (event: RoomLifecycle) => void): () => void {
  * ```
  */
 export async function qr(): Promise<QrMatrix | null> {
-  if (role === "stage" && stageApp) return stageApp.stage.qr();
-  return null;
+  if (role !== "stage" || !descriptor) return null;
+  try {
+    const { create } = await import("qrcode");
+    const symbol = create(joinUrl(descriptor.code), { errorCorrectionLevel: "M" });
+    const { size } = symbol.modules;
+    const modules: boolean[] = [];
+    for (let row = 0; row < size; row += 1) {
+      for (let col = 0; col < size; col += 1) modules.push(symbol.modules.get(row, col) === 1);
+    }
+    return { size, modules };
+  } catch {
+    return null;
+  }
 }
 
 /**

@@ -142,7 +142,15 @@ function joinedScreen(
     return <PhoneLanguageVote s={s} now={state.now} onVote={handlers.onVote} />;
   }
   if (phase === "roundIntro") {
-    return <PhoneWaitingCard emoji="✨" title={`Round ${s.match.round}`} subtitle="Get ready…" />;
+    // Lead with the active player's avatar (the round's picker), so this beat reads like the other
+    // watcher cards (avatar + status) instead of a generic sparkle.
+    return (
+      <PhoneWaitingCard
+        emoji={active?.avatar ?? "🎯"}
+        title={`Round ${s.match.round}`}
+        subtitle="Get ready…"
+      />
+    );
   }
   if (phase === "categoryPick" || phase === "categoryReveal") {
     // During the reveal beat (phase="categoryReveal") the active player keeps the category list
@@ -177,10 +185,16 @@ function joinedScreen(
   }
   if (phase === "reveal") {
     const flash = flashFor(s);
-    return flash ? (
-      <RevealFlash correct={flash.correct} points={flash.points} />
-    ) : (
-      <PhoneWaitingCard emoji="👀" title="Revealing…" subtitle="Watch the TV" />
+    if (flash) return <RevealFlash correct={flash.correct} points={flash.points} />;
+    // Watcher view: keep the answerer's avatar (carried from "{name} is answering") so the reveal beat
+    // matches the other watcher cards instead of a skewed pair of eyes.
+    const answerer = findPlayer(s.players, s.question?.answeringPeer);
+    return (
+      <PhoneWaitingCard
+        emoji={answerer?.avatar ?? "🔎"}
+        title="Revealing…"
+        subtitle="Watch the TV"
+      />
     );
   }
   if (phase === "scoreboard") {

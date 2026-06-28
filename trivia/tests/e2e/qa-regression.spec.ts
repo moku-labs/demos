@@ -11,7 +11,7 @@ import { expect, test } from "@playwright/test";
 
 // ─── Finding R1: Missing `role="main"` landmark on TV stage ──────────────
 // Oracle: Accessibility-vs-rendered mismatch (WCAG 2.4.1 — bypass blocks via landmarks).
-// Evidence: `document.querySelector("main")` returned null on / and /controller/* routes.
+// Evidence: `document.querySelector("main")` returned null on / and /code/* routes.
 // After fix: both layouts carry `role="main"` on [data-layout].
 
 test.describe("R1 — role=main landmark present on TV stage", () => {
@@ -33,7 +33,7 @@ test.describe("R1 — role=main landmark present on TV stage", () => {
   });
 
   test("phone controller route has a main landmark", async ({ page }) => {
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-controller]", { timeout: 20_000 });
 
     const mainRole = await page.evaluate(() => {
@@ -57,7 +57,7 @@ test.describe("R1 — role=main landmark present on TV stage", () => {
 test.describe("R2 — join wizard nav button tap targets ≥44px", () => {
   test("[data-next] button is at least 44px tall on mobile viewport", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(300);
@@ -77,7 +77,7 @@ test.describe("R2 — join wizard nav button tap targets ≥44px", () => {
     page
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
     // Navigate to step 2 where [data-back] appears
     await page.locator("[data-name-input]").fill("Test");
@@ -100,7 +100,8 @@ test.describe("R2 — join wizard nav button tap targets ≥44px", () => {
 // ─── Finding R3: Mute button accessible state communicates toggle ──────────
 // Oracle: Accessibility-vs-rendered mismatch (WCAG 4.1.2 — name, role, value).
 // Evidence: initial run showed aria-label was null (no accessible name beyond emoji icon).
-// After fix: MuteButton has aria-label="Mute sound"/"Unmute sound".
+// After fix: each channel pill (Music/SFX) has aria-label "<channel> on — tap to mute" /
+// "<channel> muted — tap to unmute" (the first pill is Music).
 
 test.describe("R3 — mute button accessible state", () => {
   test.beforeEach(async ({ page }) => {
@@ -152,7 +153,7 @@ test.describe("R3 — mute button accessible state", () => {
 
 test.describe("R4 — join wizard disabled guard", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
   });
 
@@ -176,14 +177,14 @@ test.describe("R4 — join wizard disabled guard", () => {
 
 // ─── Finding R5: Bad room code shows graceful join wizard ──────────────────
 // Oracle: Implicit — no JS errors on a bad-code deep link; graceful degradation.
-// Evidence: /controller/BADCODE99 showed phase="join" + no JS errors.
+// Evidence: /code/BADCODE99 showed phase="join" + no JS errors.
 
 test.describe("R5 — bad room code graceful fallback", () => {
   test("unknown room code deep link shows join wizard without JS errors", async ({ page }) => {
     const jsErrors: string[] = [];
     page.on("pageerror", e => jsErrors.push(e.message));
 
-    await page.goto("/controller/BADCODE99");
+    await page.goto("/code/BADCODE99");
     await page.waitForSelector("[data-controller]", { timeout: 20_000 });
     await page.waitForTimeout(1500);
 
@@ -205,7 +206,7 @@ test.describe("R5 — bad room code graceful fallback", () => {
 
 test.describe("R6 — join wizard back navigation retains name", () => {
   test("going back to step 1 retains the entered name", async ({ page }) => {
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     await page.locator("[data-name-input]").fill("Alex");
@@ -233,7 +234,7 @@ test.describe("R6 — join wizard back navigation retains name", () => {
 test.describe("R7 — mobile overflow guard", () => {
   test("phone surface (390x844) has no horizontal overflow on join step 1", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     const overflow = await page.evaluate(() => ({

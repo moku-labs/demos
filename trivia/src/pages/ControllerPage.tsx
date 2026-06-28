@@ -10,7 +10,7 @@ import type { VNode } from "preact";
  * @returns The controller island host section.
  * @example
  * ```tsx
- * route("/controller/{code}").layout(ControllerLayout).render(() => <ControllerPage />);
+ * route("/code/{code}").layout(ControllerLayout).render(() => <ControllerPage />);
  * ```
  */
 export function ControllerPage(): VNode {

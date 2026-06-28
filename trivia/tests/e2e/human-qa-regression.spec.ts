@@ -25,7 +25,7 @@ import { expect, test } from "@playwright/test";
 
 test.describe("HQ1 — join wizard step headings use semantic heading elements", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
     await page.evaluate(() => document.fonts.ready);
   });
@@ -146,7 +146,7 @@ test.describe("HQ3 — double-click Next on step 2 must not skip step 3", () => 
   test("double-clicking Next on avatar step must land on color step, not bypass it", async ({
     page
   }) => {
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     // Advance to step 2 (avatar)

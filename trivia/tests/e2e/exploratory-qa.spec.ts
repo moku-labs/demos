@@ -57,7 +57,14 @@ const PHONE_PHASE: Record<PhonePhaseKey, string> = {
   answer: "question",
   answerLocked: "question",
   leaveModal: "question",
-  midJoin: "question"
+  midJoin: "question",
+  // Non-active player watcher screens
+  languageVoteWatcher: "languageVote",
+  roundIntroWatcher: "roundIntro",
+  categoryPickWatcher: "categoryPick",
+  questionWatcher: "question",
+  revealWatcher: "reveal",
+  left: "final"
 };
 
 async function gotoStage(page: Page, phase: StagePhaseKey): Promise<void> {
@@ -73,7 +80,7 @@ async function gotoStage(page: Page, phase: StagePhaseKey): Promise<void> {
 }
 
 async function gotoPhone(page: Page, phase: PhonePhaseKey): Promise<void> {
-  await page.goto(`/controller/TRIV1234?e2ephase=${phase}`);
+  await page.goto(`/code/TRIV1234?e2ephase=${phase}`);
   await page.waitForSelector(`[data-controller][data-phase='${PHONE_PHASE[phase]}']`, {
     timeout: 20_000
   });
@@ -224,7 +231,7 @@ test.describe("Charter B — OCD: double-tap answer buttons", () => {
     page
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     await page.locator("[data-name-input]").fill("Test");
@@ -249,7 +256,7 @@ test.describe("Charter B — OCD: double-tap answer buttons", () => {
     page
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     // Advance to step 2
@@ -309,7 +316,7 @@ test.describe("Charter C — Antisocial: name field edge inputs", () => {
     const errors: string[] = [];
     page.on("pageerror", e => errors.push(e.message));
 
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     const xssName = "<script>window.__XSS__=true</script>";
@@ -340,7 +347,7 @@ test.describe("Charter C — Antisocial: name field edge inputs", () => {
     const errors: string[] = [];
     page.on("pageerror", e => errors.push(e.message));
 
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     const emojiName = "🦊🐙🦄";
@@ -366,7 +373,7 @@ test.describe("Charter C — Antisocial: name field edge inputs", () => {
 
   // C3: Very long name (at limit 16 chars) — maxLength enforced by input attribute
   test("join wizard: name is capped at 16 chars via maxLength attribute", async ({ page }) => {
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     const maxLen = await page.locator("[data-name-input]").getAttribute("maxlength");
@@ -378,7 +385,7 @@ test.describe("Charter C — Antisocial: name field edge inputs", () => {
 
   // C4: Name with only whitespace — Next must remain disabled (name.trim().length == 0)
   test("join wizard: whitespace-only name keeps Next disabled", async ({ page }) => {
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     await page.locator("[data-name-input]").fill("   ");
@@ -398,7 +405,7 @@ test.describe("Charter D — Data: all colors taken edge case", () => {
   // (no default color available → first color is pre-selected even if taken)
   // Oracle: Saboteur/Data — the wizard must never reach an unrenderable state
   test("join wizard: color step still renders when a color is already taken", async ({ page }) => {
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     // Advance to step 3
@@ -432,7 +439,7 @@ test.describe("Charter D — Data: all colors taken edge case", () => {
     // In a real game, the first color (amber) is taken by Mochi.
     // In the fresh test URL (TESTCODE) no colors are taken — so we verify the
     // aria-label pattern for an available color (not taken).
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     await page.locator("[data-name-input]").fill("Test");
@@ -961,18 +968,15 @@ test.describe("Charter H — Rained-Out: leave modal + navigation cleanup", () =
   });
 });
 
-// ─── Charter I: Gap — phone phases without fixture coverage ──────────────────
-// Finding: the harness PhonePhaseKey does NOT include languageVote, roundIntro, or scoreboard.
-// These are real phases a joined player sees. The live two-context flow covers them only
-// when Hub DO / WebRTC is available (it skips otherwise).
-// These tests drive the real controller render via the two-context flow path, checking the
-// CORRECT rendering of each uncharted phone phase via structural assertions.
+// ─── Charter I: Gap — phone phases (live WebRTC belt-and-suspenders) ──────────────────
+// Note (2026-06-28): The harness PhonePhaseKey now INCLUDES languageVoteWatcher, roundIntroWatcher,
+// scoreboard, categoryPickWatcher, questionWatcher, revealWatcher, and left — so these phases have
+// deterministic fixture coverage in phone-screens.spec.ts.
 //
-// Oracle: FEW HICCUPPS (Purpose) + Invariants — a real player will hit these screens;
-// no regression test means a silent breakage can ship.
+// These live WebRTC flow tests remain as additional belt-and-suspenders coverage against
+// real room lifecycle. They skip gracefully when Hub DO / WebRTC is unavailable.
 //
-// These tests use the live WebRTC flow and skip gracefully when the Hub DO is unavailable.
-// They close the coverage gap identified in the charter pass.
+// Oracle: FEW HICCUPPS (Purpose) + Invariants — belt-and-suspenders live-path coverage.
 
 test.describe("Charter I — Gap: phone phases not in the fixture harness (live WebRTC)", () => {
   test.setTimeout(90_000);
@@ -1013,7 +1017,7 @@ test.describe("Charter I — Gap: phone phases not in the fixture harness (live 
 
       // Join phone — wrap in try/catch so a flaky Hub join skips rather than fails
       try {
-        await phone.goto(`/controller/${code}`);
+        await phone.goto(`/code/${code}`);
         await phone.waitForSelector("[data-controller][data-phase='join']", { timeout: 20_000 });
         const nameInput = phone.locator("[data-name-input]");
         if (await nameInput.count()) await nameInput.fill("QABot");
@@ -1098,7 +1102,7 @@ test.describe("Charter I — Gap: phone phases not in the fixture harness (live 
       }
 
       try {
-        await phone.goto(`/controller/${code}`);
+        await phone.goto(`/code/${code}`);
         await phone.waitForSelector("[data-controller][data-phase='join']", { timeout: 20_000 });
         const nameInput = phone.locator("[data-name-input]");
         if (await nameInput.count()) await nameInput.fill("QABot");

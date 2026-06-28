@@ -17,7 +17,7 @@ export type SavedIdentity = { token: string; profile: JoinProfile };
 /**
  * Build the per-room localStorage key for the saved identity.
  *
- * @param code - The room code (from `/controller/:code`).
+ * @param code - The room code (from `/code/:code`).
  * @returns The fully-qualified localStorage key.
  * @example
  * ```ts

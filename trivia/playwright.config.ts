@@ -52,6 +52,9 @@ const WEBKIT_MATCH_SPECS = [
 export default defineConfig({
   testDir: "./tests/e2e",
   outputDir: "./test-results",
+  // Bundle-freshness gate: block tests until the managed dev server serves the freshly-built client
+  // (closes the wrangler stale-bundle race). Skipped under PW_EXTERNAL_SERVER. See global-setup.ts.
+  globalSetup: "./tests/e2e/global-setup.ts",
   /**
    * Snapshot path uses {projectName} so each project gets its own golden directory suffix.
    * Renaming projects (chromium → tv-chromium) changes the suffix — all baselines regenerated.
@@ -186,7 +189,12 @@ export default defineConfig({
           // TRIVIA_E2E=1 makes the web build use the test-only client entry (tests/e2e/harness/spa-e2e),
           // which can render deterministic fixture phase screens via `/?e2ephase=…` (see src/app.ts).
           env: { TRIVIA_E2E: "1" },
-          reuseExistingServer: !process.env.CI,
+          // NEVER reuse an already-running server: a stale leftover (old client bundle) would be silently
+          // adopted, baking the OLD UI into baselines + functional assertions. Each run starts a fresh
+          // `bun run dev` (cold build); `global-setup.ts` then gates on the served bundle being fresh. To
+          // reuse your own dev server, run it yourself and pass PW_EXTERNAL_SERVER=1 (after verifying it
+          // serves the current bundle).
+          reuseExistingServer: false,
           timeout: 90_000,
           stdout: "pipe" as const,
           stderr: "pipe" as const

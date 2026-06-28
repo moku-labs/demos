@@ -50,7 +50,7 @@ test.describe("boot guard — no JS errors", () => {
     );
   });
 
-  test("controller (/controller/TESTCODE) boots without errors", async ({ page }) => {
+  test("controller (/code/TESTCODE) boots without errors", async ({ page }) => {
     const jsErrors: string[] = [];
     const consoleErrors: string[] = [];
 
@@ -61,7 +61,7 @@ test.describe("boot guard — no JS errors", () => {
       if (msg.type() === "error") consoleErrors.push(msg.text());
     });
 
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     // The SPA boots, the controller island hydrates, and renders [data-controller].
     // (The outer data-layout="stage" wrapper stays from SSR — the SPA swaps island content.)
     await page.waitForSelector("[data-controller]", { timeout: 20_000 });

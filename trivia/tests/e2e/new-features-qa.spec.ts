@@ -17,7 +17,7 @@ async function gotoStage(page: Page, phase: string): Promise<void> {
 }
 
 async function gotoPhone(page: Page, phase: string): Promise<void> {
-  await page.goto(`/controller/TRIV1234?e2ephase=${phase}`);
+  await page.goto(`/code/TRIV1234?e2ephase=${phase}`);
   await page.waitForSelector(`[data-controller]`, { timeout: 20_000 });
   await page.evaluate(() => document.fonts.ready);
 }
@@ -342,30 +342,33 @@ test.describe("NF-5 — Mute button position nudge (Supermodel + platform)", () 
   // The key invariant: the mute island's top style comes from CSS (not inline), and the
   // mute button is visually inside the viewport (not clipped at top edge).
 
-  test("mute island is present and visible on every TV phase (lobby)", async ({ page }) => {
+  test("both audio pills (Music + SFX) are present and visible on the lobby", async ({ page }) => {
     await gotoStage(page, "lobby");
 
     const muteIsland = page.locator("[data-island='mute']");
     await expect(muteIsland).toBeAttached();
 
-    const muteBtn = muteIsland.locator("[data-component='mute-button']");
-    await expect(muteBtn).toBeVisible();
+    // The split control renders two independent channel pills.
+    const pills = muteIsland.locator("[data-component='mute-button']");
+    await expect(pills).toHaveCount(2);
+    await expect(pills.nth(0)).toBeVisible();
+    await expect(pills.nth(1)).toBeVisible();
   });
 
-  test("mute island is present and visible on question screen", async ({ page }) => {
+  test("both audio pills are present and visible on the question screen", async ({ page }) => {
     await gotoStage(page, "question");
 
-    const muteIsland = page.locator("[data-island='mute']");
-    const muteBtn = muteIsland.locator("[data-component='mute-button']");
-    await expect(muteBtn).toBeVisible();
+    const pills = page.locator("[data-island='mute'] [data-component='mute-button']");
+    await expect(pills).toHaveCount(2);
+    await expect(pills.first()).toBeVisible();
   });
 
-  test("mute island is present and visible on scoreboard screen", async ({ page }) => {
+  test("both audio pills are present and visible on the scoreboard screen", async ({ page }) => {
     await gotoStage(page, "scoreboard");
 
-    const muteIsland = page.locator("[data-island='mute']");
-    const muteBtn = muteIsland.locator("[data-component='mute-button']");
-    await expect(muteBtn).toBeVisible();
+    const pills = page.locator("[data-island='mute'] [data-component='mute-button']");
+    await expect(pills).toHaveCount(2);
+    await expect(pills.first()).toBeVisible();
   });
 
   // Position check: the mute island's top must be a small non-negative value
@@ -396,10 +399,10 @@ test.describe("NF-5 — Mute button position nudge (Supermodel + platform)", () 
   // Platform: mute island must be ABOVE the top-bar content (z-index guard)
   // The mute island has z-index: 6; top-bar has z-index not set (z-index 5 on [data-region="top-bar"]).
   // Verify the mute button is not obscured by the top bar badge.
-  test("mute button is not obscured by the top bar badge", async ({ page }) => {
+  test("mute pills are not obscured by the top bar badge", async ({ page }) => {
     await gotoStage(page, "lobby");
 
-    const muteBtn = page.locator("[data-component='mute-button']");
+    const muteBtn = page.locator("[data-component='mute-button']").first();
     const badge = page.locator("[data-region='top-bar'] [data-badge]");
 
     const [muteBounds, badgeBounds] = await Promise.all([
@@ -421,15 +424,19 @@ test.describe("NF-5 — Mute button position nudge (Supermodel + platform)", () 
     ).toBe(false);
   });
 
-  // Invariant: mute button aria-label reflects state (WCAG 4.1.2)
-  test("mute button has correct aria-label in unmuted state", async ({ page }) => {
+  // Invariant: each channel pill names itself + its action in the aria-label (WCAG 4.1.2)
+  test("audio pills expose Music + SFX channel aria-labels in the default unmuted state", async ({
+    page
+  }) => {
     await gotoStage(page, "lobby");
-    const muteBtn = page.locator("[data-component='mute-button']");
-    const label = await muteBtn.getAttribute("aria-label");
-    // Initial state is unmuted → aria-label = "Mute sound"
-    expect(
-      label,
-      `Mute button aria-label must be "Mute sound" in the default unmuted state. Got: "${label}"`
-    ).toBe("Mute sound");
+    const labels = await page
+      .locator("[data-island='mute'] [data-component='mute-button']")
+      .evaluateAll(els => els.map(el => el.getAttribute("aria-label")));
+
+    // Default is unmuted → both read "<channel> on — tap to mute"; the set names both channels.
+    expect(labels, `Expected a Music + an SFX pill. Got: ${JSON.stringify(labels)}`).toEqual([
+      "Music on — tap to mute",
+      "SFX on — tap to mute"
+    ]);
   });
 });

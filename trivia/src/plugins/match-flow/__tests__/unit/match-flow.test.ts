@@ -41,7 +41,7 @@ function makeQuestionSlice(overrides: Partial<QuestionSlice> = {}): QuestionSlic
     options: ["A", "B", "C", "D"],
     answeringPeer: "p1",
     mode: "answer",
-    deadlineTs: Date.now() + 15_000,
+    deadlineTs: Date.now() + 25_000,
     ...overrides
   };
 }

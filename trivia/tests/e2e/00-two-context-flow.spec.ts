@@ -7,7 +7,7 @@
  *
  * Architecture:
  * - Context A: TV/stage — navigates to `/`, extracts the room code from the UI
- * - Context B: Phone — navigates to `/controller/{code}` and completes the join wizard
+ * - Context B: Phone — navigates to `/code/{code}` and completes the join wizard
  * - Both contexts: exercise the full match flow through all phases
  *
  * WebRTC note: Playwright's Chromium supports WebRTC. The Hub DO (workers-native SQLite) brokers
@@ -137,7 +137,7 @@ test.describe("two-context WebRTC flow", () => {
       }
 
       // --- Phone joins the room ---
-      await phonePage.goto(`/controller/${roomCode}`);
+      await phonePage.goto(`/code/${roomCode}`);
       // The SPA boots + controller island hydrates: wait for [data-controller] to appear.
       // (The outer data-layout wrapper stays as "stage" from SSR — SPA swaps island content.)
       await phonePage.waitForSelector("[data-controller]", { timeout: 20_000 });
@@ -234,7 +234,7 @@ test.describe("two-context WebRTC flow", () => {
       }
 
       // Phone joins
-      await phonePage.goto(`/controller/${roomCode}`);
+      await phonePage.goto(`/code/${roomCode}`);
       await phonePage.waitForSelector("[data-controller][data-phase='join']", { timeout: 20_000 });
 
       // Complete join wizard (3-step: name → avatar → colour → join)
@@ -317,7 +317,7 @@ test.describe("two-context WebRTC flow", () => {
       }
 
       // Phone joins + completes wizard
-      await phonePage.goto(`/controller/${roomCode}`);
+      await phonePage.goto(`/code/${roomCode}`);
       await phonePage.waitForSelector("[data-controller][data-phase='join']", { timeout: 20_000 });
 
       // Fill name input

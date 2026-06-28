@@ -240,7 +240,7 @@ test.describe("Charter C -- Join wizard edge cases", () => {
    */
   test("50-char name is capped at maxLength=16 by the input element", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     await page.locator("[data-name-input]").fill("A".repeat(50));
@@ -258,7 +258,7 @@ test.describe("Charter C -- Join wizard edge cases", () => {
    */
   test("back navigation from step 3 to step 1 retains the entered name", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     await page.locator("[data-name-input]").fill("BackTest");
@@ -291,7 +291,7 @@ test.describe("Charter C -- Join wizard edge cases", () => {
     page.on("pageerror", e => errors.push(e.message));
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     await page.locator("[data-name-input]").fill(`<>&"'hello`);
@@ -317,7 +317,7 @@ test.describe("Charter C -- Join wizard edge cases", () => {
    */
   test("mid-game join: midJoin fixture phase shows the rejection modal", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/controller/TRIV1234?e2ephase=midJoin");
+    await page.goto("/code/TRIV1234?e2ephase=midJoin");
     await page.waitForSelector("[data-controller][data-phase='question']", { timeout: 20_000 });
 
     const modal = page.locator("[data-component='mid-join-modal']");
@@ -340,7 +340,7 @@ test.describe("Charter D -- Reconnect UX and bad room code recovery", () => {
   test.setTimeout(30_000);
 
   /**
-   * Saboteur oracle: /controller/BADCODE123 must show the join wizard (not crash or freeze).
+   * Saboteur oracle: /code/BADCODE123 must show the join wizard (not crash or freeze).
    * The controller lifecycle tries to join, fails, and rolls back the optimistic state so the
    * user is returned to the wizard where they can rescan a QR or enter a valid code.
    * Oracle: Heuristic: Error Recovery (Nielsen 9).
@@ -350,7 +350,7 @@ test.describe("Charter D -- Reconnect UX and bad room code recovery", () => {
     page.on("pageerror", e => errors.push(e.message));
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/controller/BADCODE123");
+    await page.goto("/code/BADCODE123");
     await page.waitForTimeout(8000);
 
     const controllerEl = page.locator("[data-controller]");
@@ -446,7 +446,7 @@ test.describe("Charter E -- Keyboard and focus tour", () => {
    */
   test("phone join wizard: all controls are keyboard-focusable", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     // Step 1: name input + Next
@@ -517,7 +517,7 @@ test.describe("Charter E -- Keyboard and focus tour", () => {
    */
   test("Enter key on name input advances to step 2 (avatar)", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/controller/TESTCODE");
+    await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
     await page.locator("[data-name-input]").fill("EnterTest");

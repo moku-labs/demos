@@ -7,8 +7,15 @@
   :scope {
     position: absolute;
     bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
+    /* Centre with auto margins, NOT translateX(-50%): the `drop-in` keyframe animates `transform`
+       (translateY) and — with `both` fill, and under reduced-motion where the animation still resolves
+       to its end frame — it REPLACES the base transform, dropping the `translateX(-50%)` pull-back and
+       shifting the pill right by half its width. left:0/right:0 + width:fit-content + margin-inline:auto
+       centres it independently of `transform`, so the drop animation is free to own translateY. */
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    width: fit-content;
     z-index: 25;
     display: inline-flex;
     align-items: center;

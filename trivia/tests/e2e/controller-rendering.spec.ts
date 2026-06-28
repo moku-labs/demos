@@ -4,7 +4,7 @@
  * We verify the component structure, CSS loading, and layout for the join flow.
  *
  * The controller island catches join failures gracefully (leaves the wizard up), so navigating to
- * /controller/TESTCODE shows the join wizard without crashing.
+ * /code/TESTCODE shows the join wizard without crashing.
  *
  * DOM note: the SPA swaps island content (not the outer data-layout wrapper), so the outer div
  * keeps data-layout="stage" from the SSR shell. The controller island renders [data-controller]
@@ -17,7 +17,7 @@ const FAKE_CODE = "TESTCODE";
 
 test.describe("Phone controller — join wizard (pre-connection)", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(`/controller/${FAKE_CODE}`);
+    await page.goto(`/code/${FAKE_CODE}`);
     // The SPA boots, routes to the controller island, which hydrates and renders [data-controller].
     // We wait for the island to render — this also confirms SPA routing + island hydration worked.
     await page.waitForSelector("[data-controller]", { timeout: 20_000 });
@@ -61,7 +61,7 @@ test.describe("Phone controller — join wizard (pre-connection)", () => {
 
 test.describe("Phone controller — CSS loading (regression: redistribution)", () => {
   test("controller CSS is applied (not unstyled)", async ({ page }) => {
-    await page.goto(`/controller/${FAKE_CODE}`);
+    await page.goto(`/code/${FAKE_CODE}`);
     await page.waitForSelector("[data-controller]", { timeout: 20_000 });
     await page.evaluate(() => document.fonts.ready);
 
@@ -72,7 +72,7 @@ test.describe("Phone controller — CSS loading (regression: redistribution)", (
   });
 
   test("design tokens active on phone route", async ({ page }) => {
-    await page.goto(`/controller/${FAKE_CODE}`);
+    await page.goto(`/code/${FAKE_CODE}`);
     await page.waitForSelector("[data-controller]", { timeout: 20_000 });
     const tokenValue = await page.evaluate(() =>
       getComputedStyle(document.documentElement).getPropertyValue("--clay-lemon").trim()
@@ -83,7 +83,7 @@ test.describe("Phone controller — CSS loading (regression: redistribution)", (
 
 test.describe("Phone controller — visual baseline", () => {
   test("join wizard matches visual baseline", async ({ page }) => {
-    await page.goto(`/controller/${FAKE_CODE}`);
+    await page.goto(`/code/${FAKE_CODE}`);
     await page.waitForSelector("[data-controller]", { timeout: 20_000 });
     await page.evaluate(() => document.fonts.ready);
     await page.clock.setFixedTime(new Date("2026-01-01T12:00:00Z"));
@@ -106,7 +106,7 @@ async function settleForShot(page: import("@playwright/test").Page): Promise<voi
 
 test.describe("Phone controller — join wizard steps (A9 visual baselines)", () => {
   test("drives name → avatar → colour → You're-in and baselines each step", async ({ page }) => {
-    await page.goto(`/controller/${FAKE_CODE}`);
+    await page.goto(`/code/${FAKE_CODE}`);
     await page.waitForSelector("[data-controller][data-phase='join']", { timeout: 20_000 });
     await page.evaluate(() => document.fonts.ready);
 

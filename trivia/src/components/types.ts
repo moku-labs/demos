@@ -118,8 +118,26 @@ export type LanguageCardProps = {
   leading?: boolean;
 };
 
-/** MuteButton (TV top bar, §G) — toggles the (wired) audio mute. */
-export type MuteButtonProps = { muted: boolean; onToggle: () => void };
+/**
+ * MuteButton (TV top bar, §G) — one audio-channel toggle pill (Music or SFX). `on` is the channel-ENABLED
+ * state (so `!on` = muted, which tints the pill); `icon`/`label` name the channel.
+ */
+export type MuteButtonProps = {
+  /** Whether this channel is currently audible (drives the icon/label + muted tint). */
+  on: boolean;
+  /** The channel label, e.g. `"Music"` / `"SFX"`. */
+  label: string;
+  /** The glyph shown when the channel is on (a matching muted glyph is shown when off). */
+  icon: string;
+  /** Called when the pill is tapped. */
+  onToggle: () => void;
+};
+
+/** CodeEntry (`/code` no-code phone landing) — a join-by-code box that emits the typed room code. */
+export type CodeEntryProps = {
+  /** Emitted with the normalized (uppercase, alphanumeric) code when the player submits. */
+  onJoin: (code: string) => void;
+};
 
 /** Confetti (TV podium, F9) — N falling pieces in the clay accents (rendered only when active). */
 export type ConfettiProps = { pieces?: number };
