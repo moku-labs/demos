@@ -13,6 +13,7 @@ import type { CategoryButtonProps } from "./types";
  * @param props.category - The category to display (id + display name + emoji).
  * @param props.selected - When true, render the amber chosen highlight.
  * @param props.onPick - Fired once when the player taps the button.
+ * @param props.revealIndex - List position; staggers the entrance so categories reveal in sequence.
  * @returns The full-width category button element.
  * @example
  * ```tsx
@@ -20,13 +21,20 @@ import type { CategoryButtonProps } from "./types";
  * <CategoryButton category={animals} selected onPick={pick} />
  * ```
  */
-export function CategoryButton({ category, selected, onPick }: CategoryButtonProps): JSX.Element {
+export function CategoryButton({
+  category,
+  selected,
+  onPick,
+  revealIndex
+}: CategoryButtonProps): JSX.Element {
   return (
     <button
       type="button"
       data-component="category-button"
       data-selected={selected ? "true" : undefined}
       onClick={onPick}
+      // `--i` staggers the reveal animation (see CategoryButton.css); 0 when no index is supplied.
+      style={{ "--i": revealIndex ?? 0 }}
     >
       <span data-emoji aria-hidden="true">
         {category.emoji}

@@ -28,6 +28,7 @@ const CONTROLLER_PHASE: Record<PhonePhaseKey, string> = {
   reveal: "reveal",
   revealWrong: "reveal",
   waiting: "lobby",
+  scoreboard: "scoreboard",
   categoryPick: "categoryPick",
   // categoryReveal: active player sees the same category-pick list but with chosen button highlighted
   categoryReveal: "categoryReveal",
@@ -67,6 +68,18 @@ test.describe("Phone — waiting room (A10)", () => {
     // Pixel (p2) is not host — sees waiting card
     await expect(page.locator("[data-component='phone-waiting-card']")).toBeVisible();
     await expect(page.locator("[data-wait-hint]")).toBeVisible();
+  });
+});
+
+test.describe("Phone — round→score transition (A7)", () => {
+  test("scoreboard phase shows the 'Round done · next round' card with next difficulty pips", async ({
+    page
+  }) => {
+    await gotoPhone(page, "scoreboard");
+    await expect(page.locator("[data-component='phone-waiting-card']")).toBeVisible();
+    await expect(page.locator("[data-component='phone-waiting-card']")).toContainText("done");
+    // The next round's difficulty pips are shown in the card body.
+    await expect(page.locator("[data-component='difficulty-pips']")).toBeVisible();
   });
 });
 
@@ -201,6 +214,8 @@ test.describe("Phone — mid-join modal (E2)", () => {
 
 const PHONE_SCREENS: ReadonlyArray<{ phase: PhonePhaseKey; shot: string }> = [
   { phase: "waiting", shot: "phone-waiting.png" },
+  // Round→score transition card (every phone shows this during the interstitial scoreboard).
+  { phase: "scoreboard", shot: "phone-scoreboard.png" },
   { phase: "categoryPick", shot: "phone-category.png" },
   // categoryReveal beat: chosen button lit + others faded
   { phase: "categoryReveal", shot: "phone-category-reveal.png" },

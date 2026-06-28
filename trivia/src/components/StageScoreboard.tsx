@@ -46,6 +46,7 @@ export function StageScoreboard({ s }: StageScoreboardProps): JSX.Element {
               rank={entry.rank}
               player={player}
               total={entry.total}
+              delta={entry.delta}
               maxTotal={maxTotal}
               movedUpOver={overtaken}
             />

@@ -16,6 +16,11 @@
       border-color var(--dur-hover) ease,
       box-shadow var(--dur-hover) ease,
       opacity var(--dur-reveal) ease;
+    /* Staggered reveal: each button drops in 70ms after the one above it, so the category list
+       unfurls one after another when the picker opens (`--i` set inline per button). Reduced motion
+       collapses this (global rule in main.css) so the list simply appears. */
+    animation: drop-in var(--dur-entry) var(--spring) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
   }
 
   :scope:active {

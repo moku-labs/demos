@@ -64,17 +64,19 @@ export function PhoneCategory({ s, onPickCategory }: PhoneCategoryProps): JSX.El
         Your turn to pick, {self?.avatar} {self?.name}!
       </h2>
       <div data-category-list>
-        {TRIVIA.categories.map(category =>
+        {TRIVIA.categories.map((category, i) =>
           interactive ? (
             <CategoryButton
               key={category.id}
               category={category}
+              revealIndex={i}
               onPick={() => onPickCategory(category.id)}
             />
           ) : (
             <CategoryButton
               key={category.id}
               category={category}
+              revealIndex={i}
               selected={revealing && category.id === chosen}
             />
           )

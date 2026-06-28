@@ -193,6 +193,12 @@ test.describe("TV Stage — phase screens render (deterministic fixtures)", () =
       "Standings after Round 6"
     );
     await expect(page.locator("[data-component='scoreboard-tile']")).toHaveCount(5);
+    // The round gain is demonstrated by a "+N" badge on the tiles that scored this round (Mochi +200);
+    // tiles with no gain show none. (The score + bar also count up from the pre-round figure — animated.)
+    await expect(page.locator("[data-component='scoreboard-tile'] [data-gain]")).toHaveCount(1);
+    await expect(page.locator("[data-component='scoreboard-tile'] [data-gain]")).toContainText(
+      "+200"
+    );
   });
 
   test("final (A8): 3 podium blocks, confetti, also-rans, stat line", async ({ page }) => {
