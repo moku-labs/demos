@@ -8,7 +8,7 @@
  * stings, scoreboard, fanfare); each **phone** only reacts to *its own* moments (your-turn / your-steal
  * nudges + the reveal flash for the answerer). A cue is emitted only on the edge that warrants it, so the
  * stage's 250 ms re-render poll (identical snapshots) makes no spurious sound. (The "category chosen"
- * flourish has no shared-state beat in this build, so it fires on the phone's pick gesture, not here.)
+ * flourish fires on the TV when the `categoryReveal` beat begins — the F3 banner drop.)
  *
  * Each concern is a small builder returning its own cue list; `diffCues` concatenates the relevant ones
  * for the surface, so every function stays flat and individually testable.
@@ -311,6 +311,7 @@ function entryCues(
   if (stage && phase === "roundIntro") {
     return [{ kind: "sfx", id: "round.intro", opts: { rate: introRate(next.match.round) } }];
   }
+  if (stage && phase === "categoryReveal") return [{ kind: "sfx", id: "category.chosen" }];
   if (stage && phase === "question") return questionCues(next);
   if (phase === "reveal") return revealCues(next, stage, controller);
   if (stage && phase === "scoreboard") return scoreboardCues(next);

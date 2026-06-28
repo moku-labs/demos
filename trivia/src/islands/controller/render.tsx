@@ -66,9 +66,9 @@ function makeHandlers(ctx: ControllerContext, state: ControllerState): Controlle
       intent("language-vote", { lang });
     },
     onPickCategory: id => {
-      // No shared "category chosen" beat in this build, so the active player's pick is voiced here.
+      // The TV plays category.chosen on the categoryReveal beat; the phone pick is a light tap confirm.
       sound.unlock();
-      sound.play("category.chosen");
+      sound.play("ui.tap");
       intent("category-pick", { category: id as CategoryId });
     },
     onLock: slot => {

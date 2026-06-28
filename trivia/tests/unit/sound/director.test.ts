@@ -131,12 +131,20 @@ function revealFlash(
 }
 
 describe("bedFor", () => {
-  it("groups the eight phases into the three beds", () => {
+  it("groups the nine phases into the three beds", () => {
     expect(bedFor("lobby")).toBe("bed.lobby");
     expect(bedFor("languageVote")).toBe("bed.lobby");
     expect(bedFor("categoryPick")).toBe("bed.game");
+    expect(bedFor("categoryReveal")).toBe("bed.game");
     expect(bedFor("question")).toBe("bed.game");
     expect(bedFor("final")).toBe("bed.podium");
+  });
+});
+
+describe("diffCues — category reveal (stage)", () => {
+  it("sparkles category.chosen when the reveal beat begins", () => {
+    const cues = diffCues(st({ phase: "categoryPick" }), st({ phase: "categoryReveal" }), "stage");
+    expect(sfx(cues)).toContain("category.chosen");
   });
 });
 
