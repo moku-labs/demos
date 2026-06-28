@@ -26,6 +26,10 @@ const MATCH_PHASE: Record<StagePhaseKey, string> = {
   lobby: "lobby",
   languageVote: "languageVote",
   categoryPick: "categoryPick",
+  // categoryReveal: TV shows StageCategory with data-phase="categoryReveal"
+  categoryReveal: "categoryReveal",
+  // categoryLoading: picker open but bank still loading — renders the categoryPick screen
+  categoryLoading: "categoryPick",
   roundIntro: "roundIntro",
   // Question variants
   questionRu: "question",
@@ -101,6 +105,45 @@ test.describe("TV Stage — category pick (A3)", () => {
     // Active player chooser row uses data-chooser
     await expect(page.locator("[data-chooser]")).toBeVisible();
     await expect(page.locator("[data-who]")).toContainText("Mochi");
+  });
+});
+
+test.describe("TV Stage — category reveal beat (A3 → F3)", () => {
+  test("chosen card glows, others fade, F3 banner drops in, chooser row hidden", async ({
+    page
+  }) => {
+    await gotoStage(page, "categoryReveal");
+    const root = page.locator("[data-component='stage-category']");
+    await expect(root).toBeVisible();
+    // Root element marks the revealing state
+    await expect(root).toHaveAttribute("data-revealing", "true");
+    // Chooser row is hidden during the reveal beat (design A3)
+    await expect(page.locator("[data-chooser]")).not.toBeVisible();
+    // F3 banner: category name + emoji visible
+    const banner = page.locator("[data-component='category-banner']");
+    await expect(banner).toBeVisible();
+    await expect(banner.locator("[data-banner-name]")).toContainText("Outer Space");
+    // Chosen card has state="chosen"; all 5 others have state="dimmed"
+    await expect(page.locator("[data-component='category-card'][data-state='chosen']")).toHaveCount(
+      1
+    );
+    await expect(page.locator("[data-component='category-card'][data-state='dimmed']")).toHaveCount(
+      5
+    );
+  });
+});
+
+test.describe("TV Stage — category pick while the bank loads (A3 not-ready)", () => {
+  test("chooser shows a loading hint in place of the difficulty pips until ready", async ({
+    page
+  }) => {
+    await gotoStage(page, "categoryLoading");
+    await expect(page.locator("[data-component='stage-category']")).toBeVisible();
+    // The chooser row marks the bank-not-ready wait state and shows the loading hint.
+    await expect(page.locator("[data-chooser]")).toHaveAttribute("data-waiting", "true");
+    await expect(page.locator("[data-loading-hint]")).toContainText("Loading questions");
+    // The 6 cards still render (the grid is stable; only the chooser affordance changes).
+    await expect(page.locator("[data-component='category-card']")).toHaveCount(6);
   });
 });
 
@@ -279,6 +322,10 @@ const TV_SCREENS: ReadonlyArray<{ phase: StagePhaseKey; shot: string }> = [
   { phase: "lobby", shot: "tv-lobby-fixture.png" },
   { phase: "languageVote", shot: "tv-language.png" },
   { phase: "categoryPick", shot: "tv-category.png" },
+  // categoryReveal beat (A3 → F3): chosen card glow + banner
+  { phase: "categoryReveal", shot: "tv-category-reveal.png" },
+  // categoryLoading: bank-not-ready wait — chooser shows the "Loading questions…" line
+  { phase: "categoryLoading", shot: "tv-category-loading.png" },
   { phase: "roundIntro", shot: "tv-round-intro.png" },
   { phase: "question", shot: "tv-question.png" },
   { phase: "steal", shot: "tv-steal.png" },

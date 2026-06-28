@@ -287,7 +287,9 @@ test.describe("HQ5 — TV stage mute button keyboard accessibility guard", () =>
     ).not.toBe("none");
   });
 
-  test("mute button is the sole keyboard-focusable element on TV stage", async ({ page }) => {
+  test("only the mute toggle + lobby New-code reset are keyboard-focusable on TV stage", async ({
+    page
+  }) => {
     // Tab through the page and collect all focused elements
     const tabSequence: string[] = [];
     for (let i = 0; i < 6; i++) {
@@ -300,15 +302,15 @@ test.describe("HQ5 — TV stage mute button keyboard accessibility guard", () =>
       if (focused) tabSequence.push(focused);
     }
 
-    // On the TV stage, only the mute button should be keyboard-focusable.
-    // (TV is a shared display; the phone is the controller.)
+    // The TV is a shared display, so its keyboard surface is deliberately tiny: the mute toggle (B1)
+    // and the lobby "↻ New code" reset (aria-label "Generate a new room code") — both real, aria-labelled
+    // controls. Nothing else (cards, banners, tiles) should be a tab stop; the phone is the controller.
     const uniqueFocused = new Set(tabSequence);
-    // All tab stops must be the mute button
     for (const item of uniqueFocused) {
       expect(
         item,
-        "Unexpected keyboard-focusable element on TV stage — only the mute button is expected"
-      ).toMatch(/BUTTON.*Mute/i);
+        "Unexpected keyboard-focusable element on TV stage — only the mute toggle and the New-code reset are expected"
+      ).toMatch(/BUTTON:.*(mute|new room code)/i);
     }
   });
 });

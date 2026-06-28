@@ -381,8 +381,17 @@ test.describe("two-context WebRTC flow", () => {
             .locator("[data-component='phone-category'] button, [data-category-btn]")
             .first();
           if (await catBtn.count()) {
-            await catBtn.click();
-            // TV transitions to question phase
+            // The question bank loads asynchronously (real fetch), so reaching categoryPick can briefly
+            // precede bank-ready — an early pick then no-ops (questionBank.next → undefined → stays in
+            // categoryPick). Retry the tap until the host advances out of categoryPick, mirroring the
+            // integration harness's `bank.status === "ready"` gate (a real player likewise taps again).
+            await expect(async () => {
+              await catBtn.click();
+              const p = await tvPage.locator("[data-stage]").getAttribute("data-phase");
+              expect(p).not.toBe("categoryPick");
+            }).toPass({ timeout: 25_000, intervals: [400, 800, 1500, 2500] });
+            // The pick drives the ~1.3s categoryReveal beat (chosen card glow + F3 banner); the host
+            // clock then advances to the question.
             await tvPage.waitForSelector("[data-stage][data-phase='question']", {
               timeout: PHASE_TIMEOUT
             });

@@ -32,4 +32,23 @@
       grid-auto-rows: 1fr;
     }
   }
+
+  /* During the categoryReveal beat: non-selected buttons fade to match the TV's dimmed state. */
+  :scope[data-revealing="true"] [data-component="category-button"]:not([data-selected="true"]) {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  /* Bank still loading when the picker opened: dim the (inert, onPick-less) buttons and show the hint
+     below, so a tap is never silently dropped (the host resolves no question until the bank is ready). */
+  :scope[data-waiting="true"] [data-component="category-button"] {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  [data-category-hint] {
+    text-align: center;
+    color: var(--ink-dim);
+    animation: blink 1.6s ease-in-out infinite;
+  }
 }

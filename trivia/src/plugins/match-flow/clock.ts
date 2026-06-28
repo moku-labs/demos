@@ -20,6 +20,7 @@ import type { ReadSlice } from "./adapters";
 import { clearSliceCache, setSliceCache } from "./cache";
 import type { QuestionBankDeps, ScoringDeps } from "./handlers";
 import {
+  advanceFromCategoryReveal,
   advanceFromFinal,
   advanceFromReveal,
   advanceFromScoreboard,
@@ -76,6 +77,8 @@ function runTick(deps: ClockDeps): void {
 
   if (phase === "roundIntro" && deadlinePassed) {
     advanceRoundIntro(stage, match, players, round);
+  } else if (phase === "categoryReveal" && deadlinePassed) {
+    advanceFromCategoryReveal(stage, state, config.answerMs);
   } else if (phase === "question" && question) {
     resolveQuestionTimeout(
       { stage, config, state, questionBank, scoring, readSlice },

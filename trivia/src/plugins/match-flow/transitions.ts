@@ -25,6 +25,48 @@ import type {
 } from "./types";
 
 /**
+ * categoryReveal auto-advance: once the ~1.3 s reveal beat expires, publish the staged question (set
+ * its deadline), clear `chosenCategory`, and move to the `question` phase.
+ *
+ * The question was resolved by `questionBank.next()` at pick time and stored on `state.pendingQuestion`
+ * (question-bank is consume-once). We only set `deadlineTs` here so the answer window starts NOW, not
+ * at the pick moment.
+ *
+ * @param stage - The stage facade (mutate).
+ * @param state - The host-internal plugin state (reads + clears `pendingQuestion`).
+ * @param answerMs - The answer timer duration in ms.
+ * @example
+ * ```ts
+ * advanceFromCategoryReveal(stage, state, config.answerMs);
+ * ```
+ */
+export function advanceFromCategoryReveal(
+  stage: Pick<StageApi, "mutate">,
+  state: State,
+  answerMs: number
+): void {
+  const pending = state.pendingQuestion;
+  // eslint-disable-next-line unicorn/no-null -- clear the staged question
+  state.pendingQuestion = null;
+
+  if (pending) {
+    stage.mutate("question", () => ({
+      ...pending,
+      deadlineTs: Date.now() + answerMs
+    }));
+  }
+
+  stage.mutate("match", draft => ({
+    ...draft,
+    phase: "question" as Phase,
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell; no chosen category in question phase
+    chosenCategory: null,
+    // eslint-disable-next-line unicorn/no-null -- clear the phase deadline (question uses question.deadlineTs)
+    phaseDeadlineTs: null
+  }));
+}
+
+/**
  * roundIntro auto-advance: once the intro hold expires, move to categoryPick and set the round's
  * active player from the rotation.
  *
@@ -205,6 +247,8 @@ export function advanceFromFinal(
   scoring.reset();
   state.locked = false;
   state.tried = new Set();
+  // eslint-disable-next-line unicorn/no-null -- clear any staged pending question on game reset
+  state.pendingQuestion = null;
 
   stage.mutate("match", draft => ({
     ...draft,
@@ -214,7 +258,9 @@ export function advanceFromFinal(
     activePeer: null,
     paused: false,
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (no phase deadline in the lobby)
-    phaseDeadlineTs: null
+    phaseDeadlineTs: null,
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (no chosen category in lobby)
+    chosenCategory: null
   }));
 
   // Clear the post-question slices so a fresh game starts from a blank board.
