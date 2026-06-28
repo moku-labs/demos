@@ -19,6 +19,7 @@ import type { StageApi } from "@moku-labs/room";
 import type { ReadSlice } from "./adapters";
 import { clearSliceCache, setSliceCache } from "./cache";
 import type { QuestionBankDeps, ScoringDeps } from "./handlers";
+import { selectOffer } from "./offer";
 import {
   advanceFromFinal,
   advanceFromReveal,
@@ -75,7 +76,9 @@ function runTick(deps: ClockDeps): void {
   const deadlinePassed = phaseDeadlineTs !== null && now >= phaseDeadlineTs;
 
   if (phase === "roundIntro" && deadlinePassed) {
-    advanceRoundIntro(stage, match, players, round);
+    // Draw this round's random category offer (playable-first) from the live availability.
+    const offered = selectOffer(questionBank.availability(), config.offerCount);
+    advanceRoundIntro(stage, match, players, round, state, offered);
   } else if (phase === "question" && question) {
     resolveQuestionTimeout(
       { stage, config, state, questionBank, scoring, readSlice },

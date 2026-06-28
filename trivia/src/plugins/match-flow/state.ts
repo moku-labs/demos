@@ -12,12 +12,13 @@ import type { State } from "./types";
  * The `locked` flag prevents double-processing a single answer-lock intent.
  * Both are reset at the start of every new question via `clock.ts`/`machine.ts`.
  *
- * @returns A fresh `State` — empty `tried` Set, `locked: false`, empty `tokens` map, no `hostToken`.
+ * @returns A fresh `State` — empty `tried` Set, `locked: false`, empty `tokens` map, no `hostToken`,
+ *   empty `offered` list (filled at the first `roundIntro → categoryPick` transition).
  * @example
  * ```ts
  * createPlugin("matchFlow", { createState: createMatchFlowState });
  * ```
  */
 export function createMatchFlowState(): State {
-  return { tried: new Set(), locked: false, tokens: new Map(), hostToken: "" };
+  return { tried: new Set(), locked: false, tokens: new Map(), hostToken: "", offered: [] };
 }

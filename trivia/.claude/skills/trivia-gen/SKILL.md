@@ -35,16 +35,21 @@ and worked examples.
 |-----|---------|---------|
 | `lang` | `all` | `en`, `ru`, or `all` (both). Russian is **required** in the overall pool. |
 | `count` | `4` | Questions to author **per (category, tier)** bucket. The encoder floor is `--min 4`. |
-| `categories` | all 6 | Comma list from the fixed set below; otherwise every category. |
+| `categories` | all (20) | Comma list of ids from `TRIVIA.categories`; otherwise every category. |
 | `difficulty` | `mixed` | A single tier, or `mixed` (all three — the normal case). |
 
-Examples: `/trivia-gen` (full refresh) · `/trivia-gen lang=ru categories=space,music count=6` ·
-`/trivia-gen difficulty=hard` (top up the hard tier everywhere).
+Examples: `/trivia-gen` (full refresh — all 20) · `/trivia-gen lang=ru categories=space,music count=6` ·
+`/trivia-gen categories=geography,history,science,sports,video-games,art,books,tech,mythology,nature,human-body,inventions,ocean,cars`
+(author just the new categories) · `/trivia-gen difficulty=hard` (top up the hard tier everywhere).
 
 ## Fixed data contract (read from `src/config.ts`)
 
-- **Categories (6, ids):** `animals`, `space`, `movies-tv`, `food`, `strange`, `music`
-  (display names + emoji live in `TRIVIA.categories`).
+- **Categories (20, ids):** the full `TRIVIA.categories` pool (the single source of truth — read the ids +
+  display names + emoji straight from `src/config.ts`, do **not** hard-code them here). As of this writing:
+  `animals`, `space`, `movies-tv`, `food`, `strange`, `music`, `geography`, `history`, `science`, `sports`,
+  `video-games`, `art`, `books`, `tech`, `mythology`, `nature`, `human-body`, `inventions`, `ocean`, `cars`.
+  The picker offers a random `TRIVIA.offerCount` (6) of these each round, so **every** category needs a
+  full, fun bank — there are no "minor" categories.
 - **Languages (2):** `en`, `ru`. RU must be **native, idiomatic Russian** — author it RU-first, never a
   machine translation of the EN set. It may lean into locally-resonant topics.
 - **Tiers (3):** `easy` → `medium` → `hard`. Difficulty must come from the *question*, not trick wording.
@@ -55,10 +60,13 @@ Examples: `/trivia-gen` (full refresh) · `/trivia-gen lang=ru categories=space,
 
 ### Sizing
 
-Author **≥ `count` (default 4) questions per (category, tier)** — i.e. ≥ 12 per (category, language),
-≥ 72 per language, ≥ 144 total at the default. This guarantees a 12-round match always assembles and
-**does not repeat across replays** for a group (the no-repeat key is the per-question id, unioned across
-the group and persisted per-phone). More is better for variety; the floor is enforced by `--min`.
+Author **≥ `count` (default 4) questions per (category, tier)** — i.e. ≥ 12 per (category, language). For a
+full 20-category run that is ≥ 240 per language, ≥ 480 total at the default. This guarantees a 12-round
+match always assembles from any offered subset and **does not repeat across replays** for a group (the
+no-repeat key is the per-question id, unioned across the group and persisted per-phone). More is better for
+variety; the floor is enforced by `--min`. The game tolerates a category whose shard isn't generated yet
+(it's simply never offered), so you can fill the new categories in incremental `/trivia-gen categories=…`
+runs — but the bank is only "complete" once all 20 are authored in both languages.
 
 ## RAW question shape (what the author/review agents write)
 

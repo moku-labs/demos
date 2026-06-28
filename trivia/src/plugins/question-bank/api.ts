@@ -63,38 +63,54 @@ export function computeAvailability(state: State, config: Config): readonly Cate
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Fetch all `(lang, category)` shards of the `bank` collection and build the in-memory index.
+ * Fetch every `(lang, category)` shard of the `bank` collection and build the in-memory index.
  *
  * Reads each shard through the web `collection` provider (`loadCollectionShard(bankBaseUrl, "bank",
- * "{lang}/{category}")`), which throws on any HTTP error so the caller (the inline `load` wrapper in
- * `index.ts`) can write the `error` status to the `bank` slice. Mutates `state.index`/`state.lang` on
- * success.
+ * "{lang}/{category}")`). With the category pool at 20 (the picker offers a random subset each round) a
+ * category's shard may not be generated yet, so shards are fetched with `allSettled` and a missing/broken
+ * one is **skipped** (that category simply reports `exhausted` in `computeAvailability`, so it's never
+ * offered) rather than failing the whole load — the old all-or-nothing `Promise.all` turned a single 404
+ * into a dead game. The load still **throws** when *no* shard resolved (a wholesale failure, e.g. the bank
+ * isn't deployed) so the caller writes the `error` status to the `bank` slice. Mutates `state.index`/
+ * `state.lang` on success.
  *
  * @param state - The host-internal plugin state to mutate on success.
  * @param config - Plugin config (bankBaseUrl, categories).
  * @param lang - The resolved match language (`"en"` or `"ru"`).
- * @returns A promise that resolves when all shards are indexed.
+ * @returns A promise that resolves once the resolvable shards are indexed.
+ * @throws {Error} If every shard failed to load (no questions at all for this language).
  * @example
  * ```ts
  * await fetchAndIndexBank(ctx.state, ctx.config, "en");
  * ```
  */
 export async function fetchAndIndexBank(state: State, config: Config, lang: string): Promise<void> {
-  const shards = await Promise.all(
+  const results = await Promise.allSettled(
     config.categories.map(category =>
       loadCollectionShard<LoadedQuestion[]>(config.bankBaseUrl, "bank", `${lang}/${category}`)
     )
   );
 
-  // Build index: key = `${category}:${tier}` → LoadedQuestion[]
+  // Build index: key = `${category}:${tier}` → LoadedQuestion[]. Fulfilled shards are indexed; a rejected
+  // shard (not-yet-generated category, 404, parse error) is skipped — it surfaces as exhausted, not fatal.
   const index = new Map<string, LoadedQuestion[]>();
-  for (const questions of shards) {
-    for (const q of questions) {
+  let loaded = 0;
+  for (const result of results) {
+    if (result.status !== "fulfilled") continue;
+    loaded += 1;
+    for (const q of result.value) {
       const key = `${q.category}:${q.tier}`;
       const bucket = index.get(key) ?? [];
       bucket.push(q);
       index.set(key, bucket);
     }
+  }
+
+  // A wholesale failure (no shard resolved) is a real error — let the caller surface it on the bank slice.
+  if (loaded === 0) {
+    const firstError = results.find(r => r.status === "rejected");
+    const reason = firstError && firstError.status === "rejected" ? firstError.reason : undefined;
+    throw reason instanceof Error ? reason : new Error("Failed to load any question-bank shard");
   }
 
   // Mutate state atomically on success

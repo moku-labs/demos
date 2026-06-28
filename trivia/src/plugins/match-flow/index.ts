@@ -31,6 +31,7 @@ const defaultConfig: Config = {
   revealMs: TRIVIA.timers.revealMs,
   scoreboardMs: TRIVIA.timers.scoreboardMs,
   endCountdownMs: TRIVIA.timers.endCountdownMs,
+  offerCount: TRIVIA.offerCount,
   tickMs: 250
 };
 

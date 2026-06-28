@@ -1,10 +1,10 @@
 /**
  * @file StageCategory — the TV category pick screen (A3, spectator view): who's picking + the category
- * grid (exhausted categories dimmed). A pure presentational component fed the snapshot. Rendered by the
- * stage island's render layer for `phase === "categoryPick"`.
+ * grid (exhausted categories dimmed). A pure presentational component fed the snapshot. Renders this
+ * round's offered subset (`s.offer`) — a fresh random draw — not the full pool. Rendered by the stage
+ * island's render layer for `phase === "categoryPick"`.
  */
 import type { JSX } from "preact";
-import { TRIVIA } from "../config";
 import { ramp } from "../lib/difficulty";
 import type { TriviaState } from "../lib/types";
 import { findPlayer } from "../lib/view";
@@ -29,7 +29,6 @@ export type StageCategoryProps = {
  */
 export function StageCategory({ s }: StageCategoryProps): JSX.Element {
   const active = findPlayer(s.players, s.match.activePeer);
-  const exhausted = new Set(s.categories.filter(c => c.exhausted).map(c => c.id));
 
   return (
     <div data-component="stage-category" data-screen="category">
@@ -40,11 +39,11 @@ export function StageCategory({ s }: StageCategoryProps): JSX.Element {
         <DifficultyPips tier={ramp(s.match.round)} />
       </div>
       <div data-category-grid>
-        {TRIVIA.categories.map(category => (
+        {s.offer.map(category => (
           <CategoryCard
             key={category.id}
             category={category}
-            state={exhausted.has(category.id) ? "dimmed" : "idle"}
+            state={category.exhausted ? "dimmed" : "idle"}
             color={active?.color}
           />
         ))}

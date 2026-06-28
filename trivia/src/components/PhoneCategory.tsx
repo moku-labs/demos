@@ -1,9 +1,9 @@
 /**
  * @file PhoneCategory — the active player's phone category list (A11). Each tap sends a `category-pick`
- * intent (wired by the controller island). Rendered for the active player in the `categoryPick` phase.
+ * intent (wired by the controller island). Shows this round's offered subset (`s.offer`) — the same
+ * random draw the TV grid renders. Rendered for the active player in the `categoryPick` phase.
  */
 import type { JSX } from "preact";
-import { TRIVIA } from "../config";
 import type { TriviaState } from "../lib/types";
 import { findPlayer } from "../lib/view";
 import { CategoryButton } from "./CategoryButton";
@@ -34,7 +34,7 @@ export function PhoneCategory({ s, onPickCategory }: PhoneCategoryProps): JSX.El
         Your turn to pick, {self?.avatar} {self?.name}!
       </h2>
       <div data-category-list>
-        {TRIVIA.categories.map(category => (
+        {s.offer.map(category => (
           <CategoryButton
             key={category.id}
             category={category}

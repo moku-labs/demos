@@ -127,9 +127,10 @@ export type BankView = { status: BankStatus; lang: Lang | null; error: string | 
 export type CategoryAvailView = { id: CategoryId; name: string; emoji: string; exhausted: boolean };
 
 /**
- * The merged read of all nine synced slices the islands render — the bridge `snapshot()` return.
+ * The merged read of all ten synced slices the islands render — the bridge `snapshot()` return.
  * `self` is this device's own peer id (the phone's identity; `null` on the TV, which is a pure
- * shared display and never a player).
+ * shared display and never a player). `categories` is the full availability pool; `offer` is the
+ * current round's random subset the picker actually shows (a fresh draw each round).
  */
 export type TriviaState = {
   self: PeerId | null;
@@ -141,6 +142,7 @@ export type TriviaState = {
   scores: ScoreEntry[];
   bank: BankView;
   categories: CategoryAvailView[];
+  offer: CategoryAvailView[];
   languageVote: LanguageVoteView;
 };
 

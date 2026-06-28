@@ -6,8 +6,28 @@
 export type Lang = "en" | "ru";
 /** Difficulty tier (drives the ramp + bank sharding). */
 export type Tier = "easy" | "medium" | "hard";
-/** The six category ids the bank is sharded by. */
-export type CategoryId = "animals" | "space" | "movies-tv" | "food" | "strange" | "music";
+/** The twenty category ids the bank is sharded by (the picker offers a random `offerCount` each round). */
+export type CategoryId =
+  | "animals"
+  | "space"
+  | "movies-tv"
+  | "food"
+  | "strange"
+  | "music"
+  | "geography"
+  | "history"
+  | "science"
+  | "sports"
+  | "video-games"
+  | "art"
+  | "books"
+  | "tech"
+  | "mythology"
+  | "nature"
+  | "human-body"
+  | "inventions"
+  | "ocean"
+  | "cars";
 
 /** Game + identity constants mirrored from the design (spec/design-context.md §8). */
 export const TRIVIA = {
@@ -25,13 +45,29 @@ export const TRIVIA = {
   difficultyBands: { easy: [1, 4], medium: [5, 8], hard: [9, 12] },
   languages: ["en", "ru"],
   codeLength: 8,
+  /** How many categories the picker offers each round — a fresh random draw from the full pool below. */
+  offerCount: 6,
   categories: [
     { id: "animals", name: "Animals: Weird & Wonderful", emoji: "🦎" },
     { id: "space", name: "Outer Space", emoji: "🪐" },
     { id: "movies-tv", name: "Movies & TV", emoji: "🎬" },
     { id: "food", name: "Food & Drink", emoji: "🍜" },
     { id: "strange", name: "Strange but True", emoji: "🛸" },
-    { id: "music", name: "Music & Hits", emoji: "🎵" }
+    { id: "music", name: "Music & Hits", emoji: "🎵" },
+    { id: "geography", name: "World Geography", emoji: "🗺️" },
+    { id: "history", name: "History", emoji: "🏛️" },
+    { id: "science", name: "Science Lab", emoji: "🔬" },
+    { id: "sports", name: "Sports", emoji: "⚽" },
+    { id: "video-games", name: "Video Games", emoji: "🎮" },
+    { id: "art", name: "Art & Design", emoji: "🎨" },
+    { id: "books", name: "Books & Words", emoji: "📚" },
+    { id: "tech", name: "Tech & Gadgets", emoji: "💻" },
+    { id: "mythology", name: "Myths & Legends", emoji: "🐉" },
+    { id: "nature", name: "Nature & Plants", emoji: "🌿" },
+    { id: "human-body", name: "The Human Body", emoji: "🫀" },
+    { id: "inventions", name: "Big Ideas", emoji: "💡" },
+    { id: "ocean", name: "Under the Sea", emoji: "🌊" },
+    { id: "cars", name: "Cars & Speed", emoji: "🏎️" }
   ],
   answerSlots: [
     { letter: "A", shape: "▲", hex: "#E84040" },
