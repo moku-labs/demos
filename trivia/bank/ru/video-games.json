@@ -14,20 +14,6 @@
     "answerCheck": "06gcj1:2"
   },
   {
-    "id": "c2ae6b9609d6",
-    "category": "video-games",
-    "tier": "easy",
-    "type": "text",
-    "prompt": "Тетрис придумал советский программист Алексей Пажитнов. В каком году была создана игра?",
-    "options": [
-      "1982",
-      "1991",
-      "1978",
-      "1984"
-    ],
-    "answerCheck": "mxli:3"
-  },
-  {
     "id": "62d3a74dc1ea",
     "category": "video-games",
     "tier": "easy",
@@ -110,20 +96,6 @@
       "Nintendo Famicom (NES)"
     ],
     "answerCheck": "bzyn:3"
-  },
-  {
-    "id": "3f668d4a182b",
-    "category": "video-games",
-    "tier": "hard",
-    "type": "text",
-    "prompt": "Алексей Пажитнов долгие годы не получал роялти за Тетрис — права принадлежали советскому государству. В каком году он наконец основал The Tetris Company и получил контроль над игрой?",
-    "options": [
-      "2001",
-      "1996",
-      "1991",
-      "1994"
-    ],
-    "answerCheck": "uea4:1"
   },
   {
     "id": "0dd5ad4d9f01",
@@ -560,34 +532,6 @@
     "answerCheck": "dbywe:3"
   },
   {
-    "id": "df5ab87bad36",
-    "category": "video-games",
-    "tier": "medium",
-    "type": "text",
-    "prompt": "Серия игр Metro основана на книгах российского писателя. Кто автор романа «Метро 2033»?",
-    "options": [
-      "Ник Перумов",
-      "Сергей Лукьяненко",
-      "Дмитрий Глуховский",
-      "Виктор Пелевин"
-    ],
-    "answerCheck": "t336ex:0"
-  },
-  {
-    "id": "042312e69567",
-    "category": "video-games",
-    "tier": "medium",
-    "type": "text",
-    "prompt": "Шутер Atomic Heart 2023 года разворачивается в альтернативном СССР 1950-х. С какого торжественного события начинается катастрофа в сюжете?",
-    "options": [
-      "Полёт первого человека в космос",
-      "Открытие первой советской АЭС",
-      "Парад Победы",
-      "Запуск нейросети «Коллектив 2.0»"
-    ],
-    "answerCheck": "6fpgq:0"
-  },
-  {
     "id": "83cb2473bc2c",
     "category": "video-games",
     "tier": "medium",
@@ -614,20 +558,6 @@
       "CD Projekt Red"
     ],
     "answerCheck": "x8wf:3"
-  },
-  {
-    "id": "c35912e9efaf",
-    "category": "video-games",
-    "tier": "hard",
-    "type": "text",
-    "prompt": "Хардкорный шутер-«выживач» Escape from Tarkov сделан российской студией Battlestate Games. В вымышленном регионе с каким названием происходят события игры?",
-    "options": [
-      "Каспийск",
-      "Зеленоград",
-      "Припять",
-      "Норвинск"
-    ],
-    "answerCheck": "n9k1yd4:2"
   },
   {
     "id": "ac5b60b3f85d",

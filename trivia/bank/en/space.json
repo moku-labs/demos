@@ -490,20 +490,6 @@
     "answerCheck": "fgv1l7d:1"
   },
   {
-    "id": "6f646eff17a6",
-    "category": "space",
-    "tier": "easy",
-    "type": "text",
-    "prompt": "Which dog became one of the first animals to orbit the Earth, launched by the Soviet Union in 1957?",
-    "options": [
-      "Belka",
-      "Rex",
-      "Laika",
-      "Sputnik"
-    ],
-    "answerCheck": "oex:1"
-  },
-  {
     "id": "e3fdf949731d",
     "category": "space",
     "tier": "easy",

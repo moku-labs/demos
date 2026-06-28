@@ -476,20 +476,6 @@
     "answerCheck": "yufkj4:1"
   },
   {
-    "id": "4fa01722b419",
-    "category": "nature",
-    "tier": "easy",
-    "type": "text",
-    "prompt": "Какое дерево считается символом России и легко узнаётся по белой коре?",
-    "options": [
-      "Берёза",
-      "Ольха",
-      "Дуб",
-      "Клён"
-    ],
-    "answerCheck": "loweap:2"
-  },
-  {
     "id": "d71d67b2f7cd",
     "category": "nature",
     "tier": "easy",

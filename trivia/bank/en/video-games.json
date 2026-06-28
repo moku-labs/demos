@@ -322,20 +322,6 @@
     "answerCheck": "5v3ywt4:0"
   },
   {
-    "id": "45f6be053244",
-    "category": "video-games",
-    "tier": "medium",
-    "type": "text",
-    "prompt": "Tetris was created in 1984 by a programmer working in which country?",
-    "options": [
-      "Finland",
-      "Japan",
-      "United States",
-      "The Soviet Union"
-    ],
-    "answerCheck": "ae4n4:0"
-  },
-  {
     "id": "62e4955b930d",
     "category": "video-games",
     "tier": "medium",

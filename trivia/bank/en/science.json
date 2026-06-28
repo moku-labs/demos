@@ -602,20 +602,6 @@
     "answerCheck": "o756z:1"
   },
   {
-    "id": "72d786f5b411",
-    "category": "science",
-    "tier": "medium",
-    "type": "text",
-    "prompt": "Dmitri Mendeleev is credited with creating the first widely used version of what?",
-    "options": [
-      "The periodic table",
-      "The pH scale",
-      "The microscope",
-      "The metric system"
-    ],
-    "answerCheck": "jrgh:0"
-  },
-  {
     "id": "c7c9322ca908",
     "category": "science",
     "tier": "medium",

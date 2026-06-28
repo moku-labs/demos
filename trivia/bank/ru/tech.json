@@ -56,20 +56,6 @@
     "answerCheck": "ymty5:3"
   },
   {
-    "id": "7ed6c4661217",
-    "category": "tech",
-    "tier": "medium",
-    "type": "text",
-    "prompt": "В каком году был запущен первый в мире спутник — советский «Спутник-1»?",
-    "options": [
-      "1961",
-      "1957",
-      "1952",
-      "1969"
-    ],
-    "answerCheck": "7eml8ji:0"
-  },
-  {
     "id": "03a8968d3413",
     "category": "tech",
     "tier": "medium",

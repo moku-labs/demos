@@ -712,19 +712,5 @@
       "Repelling water completely"
     ],
     "answerCheck": "eo9c7b:0"
-  },
-  {
-    "id": "a3bcdf866577",
-    "category": "art",
-    "tier": "hard",
-    "type": "text",
-    "prompt": "The jewelled Fabergé eggs, masterpieces of decorative art, were originally created as Easter gifts for the rulers of which country?",
-    "options": [
-      "Russia",
-      "France",
-      "Britain",
-      "Austria"
-    ],
-    "answerCheck": "w67fv8x:3"
   }
 ]

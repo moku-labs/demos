@@ -364,20 +364,6 @@
     "answerCheck": "ridzc:0"
   },
   {
-    "id": "4203417b93f2",
-    "category": "books",
-    "tier": "hard",
-    "type": "text",
-    "prompt": "Which Russian author wrote the epic novel \"War and Peace\"?",
-    "options": [
-      "Fyodor Dostoevsky",
-      "Leo Tolstoy",
-      "Anton Chekhov",
-      "Ivan Turgenev"
-    ],
-    "answerCheck": "79c:0"
-  },
-  {
     "id": "46a5282d037d",
     "category": "books",
     "tier": "hard",

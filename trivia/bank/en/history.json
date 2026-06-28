@@ -392,20 +392,6 @@
     "answerCheck": "jzsfih:3"
   },
   {
-    "id": "32648b6d4ac6",
-    "category": "history",
-    "tier": "hard",
-    "type": "text",
-    "prompt": "Tsar Peter the Great of Russia tried to modernize his nobles by personally enforcing a tax on what fashionable feature?",
-    "options": [
-      "Fur coats",
-      "Beards",
-      "Gold jewelry",
-      "Wigs"
-    ],
-    "answerCheck": "jmcgl5w:0"
-  },
-  {
     "id": "d6030ef5a3ac",
     "category": "history",
     "tier": "hard",
@@ -600,20 +586,6 @@
       "The Mughal Empire"
     ],
     "answerCheck": "6r8g1:1"
-  },
-  {
-    "id": "0f2286ae17cc",
-    "category": "history",
-    "tier": "hard",
-    "type": "text",
-    "prompt": "Catherine the Great expanded Russia enormously, but she was not actually Russian by birth. Where was she born?",
-    "options": [
-      "France",
-      "Poland",
-      "Sweden",
-      "A German principality"
-    ],
-    "answerCheck": "zhfpo7:1"
   },
   {
     "id": "24af2dc8088f",

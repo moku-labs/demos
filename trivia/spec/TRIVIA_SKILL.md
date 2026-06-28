@@ -72,8 +72,31 @@ Aim for breadth. Rotate so a match feels varied. Starter buckets:
 
 - **English** is the primary language.
 - **Russian is required** — generate genuine Russian questions, not machine translations.
-  Cultural fit matters: a Russian-language set can lean into topics that resonate locally.
+  The `ru` set must be native and idiomatic, but it draws on **globally-shared** culture (and world-known
+  Ukraine) — **not** Russia-centric local topics. `ru` is the *language*, not a licence for Russia-subject
+  content. The content constraints below bind both languages equally.
 - Other languages are allowed; always tag each question with its language.
+
+## Content constraints
+
+Every question must be **widely known across the world** — recognizable to a curious adult anywhere, not
+only to one country's audience. Specifically:
+
+- **No Russia and no USSR — zero exceptions, even world-famous.** Never make a question whose subject or
+  correct answer is Russian culture/history/people/places/products or the Soviet state — not even
+  globally-canonical ones (Tolstoy, Tchaikovsky, Fabergé, Mendeleev, Gagarin, Sputnik, Laika, the tsars,
+  Russian folklore, the Russian alphabet, "Russia = largest country" — **all out**). Only tolerated: Russia
+  as one *wrong distractor*, and the plain Russian words `космонавт`/`спутник` for universal space science
+  that isn't about the Soviet programme.
+- **Include Ukraine** where the subject is *also* world-known, framed as Ukrainian where accurate (Chornobyl,
+  Kyiv/Kyivan Rus, borscht, the Klitschkos, Shevchenko, Korolov, Sikorsky, Malevich) — verify the attribution.
+- **Modern as well as classic** — span the eras; don't feel stuck in the 20th century. Mix timeless classics
+  with contemporary (last ~10–15 yr) film/TV, music, games, tech, science, and sport.
+- **No single-subject over-representation** — at most ~2 questions on any one named work/person/franchise per
+  category and language (Tetris was the cautionary example).
+
+> The built `/trivia-gen` skill turns these into enforced review lenses and ships a `prune-bank.ts` tool to
+> retire questions that breach them. See `.claude/skills/trivia-gen/SKILL.md` → **Content rules**.
 
 ## Question types
 
@@ -107,7 +130,10 @@ After generation, review agents check every question and reject/repair anything 
 - **Language quality** — natural, idiomatic (especially Russian).
 - **"Is it actually fun?"** — flag dull/generic questions for regeneration.
 - **Image questions**: URL loads, image is unambiguous, answer matches.
-- **No accidental duplicates** in meaning across the set.
+- **No accidental duplicates** in meaning across the set — including **topic over-representation** (more
+  than ~2 questions on one named subject), not just exact rewordings.
+- **Content constraints** (see above): globally-known only, no Russia (rare world-canon USSR aside),
+  world-known Ukraine included and correctly attributed, and a healthy share of modern content.
 
 > Agent: define the agent roles and the pass/fail loop in detail.
 

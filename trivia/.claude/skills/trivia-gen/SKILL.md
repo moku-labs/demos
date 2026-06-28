@@ -2,9 +2,11 @@
 name: trivia-gen
 description: >
   Generate validated, genuinely-fun EN+RU trivia questions for the Moku "Trivia" couch-multiplayer demo.
-  A multi-agent pipeline — generate (one author per language×category) → 4-lens review (facts /
-  single-answer / fun / language) → repair loop → deterministic encode — that writes the obfuscated bank
-  to bank/{lang}/{category}.json (the web `collection` source the build emits to dist/client/bank/**).
+  A multi-agent pipeline — generate (one author per language×category) → 5-lens review (facts /
+  single-answer / fun / language / content-rules) → repair loop → deterministic encode — that writes the
+  obfuscated bank to bank/{lang}/{category}.json (the web `collection` source the build emits to
+  dist/client/bank/**). Hard content rules: globally-known only, NO Russia or USSR at all (even world-famous
+  canon), include world-known Ukraine, modern as well as classic, and no single-subject over-representation.
   INVOKED ONLY via the /trivia-gen slash command; never run automatically and never write questions by hand.
 ---
 
@@ -29,8 +31,11 @@ and the encoder **merges**: every existing shard is kept byte-for-byte and only 
 the encoder drops exact duplicates by content-addressed id (`dedupeRaw`), so a question is never double-added
 and re-running is a clean no-op. A bare run therefore grows the bank (e.g. ~12 → ~22 per category/language).
 
-To **rebuild from scratch** instead (retire/replace questions), add `--replace` to the encode step — that is
-the only way an existing question leaves the bank.
+To **remove** specific questions (excluded subjects like Russia/Soviet content, over-represented topics like
+Tetris, or duplicates), prune them by id with [`prune-bank.ts`](./prune-bank.ts) — it deletes whole
+questions while keeping every survivor (and its answer obfuscation) **byte-for-byte**, and refuses to breach
+the per-tier floor. To **rebuild** a shard from scratch instead, add `--replace` to the encode step. Those
+two are the only sanctioned ways an existing question leaves the bank — **never hand-edit `bank/**`**.
 
 ## The one quality bar that matters
 
@@ -39,6 +44,57 @@ question is a failure. Favour a satisfying "huh, really?" payoff over rote recal
 mix the familiar with the delightfully obscure; make distractors plausible and sometimes funny. If a
 question could appear in any generic quiz, regenerate it. See `spec/TRIVIA_SKILL.md` for the full ethos
 and worked examples.
+
+## Content rules (hard constraints — every question must pass)
+
+Beyond "genuinely fun," every authored question must clear these five gates. The review pass (step 2)
+enforces them; a question that fails is rewritten or dropped, never shipped. They are also why the bank is
+periodically pruned (see [`prune-bank.ts`](./prune-bank.ts) in step 4).
+
+1. **Globally known — no niche/local references.** The subject must be recognizable to a curious adult
+   *anywhere in the world*, not just one country's audience. Favour globally-shared culture, science,
+   nature, geography, history, and sport. Reject anything whose answer only a single national audience would
+   know — if you'd have to grow up in one specific country to have a fair shot, cut it.
+
+2. **No Russia, no USSR — zero exceptions, even world-famous.** Never author a question whose subject or
+   correct answer is Russian culture, history, people, places, products, or the Soviet/USSR state — **not
+   even globally-canonical ones.** This is an **absolute exclusion**, not a "keep it rare" budget. Explicitly
+   **out, however world-famous:** Russian literature (Tolstoy, Dostoevsky, Pushkin, Chekhov, …), classical
+   music (Tchaikovsky, Stravinsky, Rimsky-Korsakov, …), Russian art and craft (Fabergé, matryoshka, Rublev,
+   the avant-garde), Mendeleev and Russian/Soviet inventors, the USSR space programme (Gagarin, Sputnik,
+   Laika, Mir, Soyuz, …), tsars and Russian history (Peter, Catherine, the Decembrists, 1812, …), Russian
+   folklore (Koschei, Ilya Muromets, the Firebird), the Russian language / alphabet itself, and
+   "Russia = largest country / most time zones." If a question only works because the player knows something
+   Russian or Soviet, cut it. **Only tolerated:** Russia as one *wrong distractor*; and the ordinary Russian
+   words `космонавт` (astronaut) and `спутник` (moon / satellite) used for **universal** space science that
+   is *not* about the Soviet programme (e.g. "which planet's largest moon is Titan?"). **Russian stays a
+   supported game language** — this bars Russia/USSR *content*, never the `ru` locale: author RU questions
+   about the wider world.
+
+3. **Include Ukraine — when also world-known.** Actively add Ukraine-specific questions whose subject is
+   *also* internationally recognized, framed as Ukrainian where accurate: Chornobyl (the 1986 disaster + the
+   "Chernobyl" series), Kyiv and Kyivan Rus, borscht (the UNESCO-listed Ukrainian dish), the Tryzub and
+   vyshyvanka, and world-famous Ukrainians — the Klitschko brothers (boxing), Andriy Shevchenko (football),
+   Serhii Korolov (chief rocket designer, b. Zhytomyr), Kazimir Malevich and Igor Sikorsky (b. Kyiv), Milla
+   Jovovich — several of them routinely *miscredited* to Russia or "the USSR"; reclaim them as Ukrainian
+   where the facts support it. The asymmetry is deliberate: **Ukraine = include (when world-known); Russia =
+   exclude entirely.** RU-language shards especially should carry this content. Verify the Ukrainian
+   attribution with the Facts lens — don't invent or assume it.
+
+4. **Modern, not just old — span the eras.** A shard must not feel stuck in the 20th century. Deliberately
+   mix timeless classics with **contemporary** culture from the last ~10–15 years: streaming-era films and
+   series, current musicians, recent video games, modern tech / apps / devices, recent science and space
+   missions, current sport, and 21st-century world events and figures. Rough calibration: for the
+   fast-moving categories (`movies-tv`, `music`, `video-games`, `tech`, `sports`) aim for **at least a
+   third** of newly-added questions to reference the recent decade. Keep every fact current and verifiable.
+
+5. **Don't over-represent one subject (dedup by topic, not just by prompt).** No single named work, person,
+   or franchise may dominate a shard. Before adding, scan the existing prompts (you already read them to
+   avoid duplicates) for the same entity; if it's already covered, only add a *genuinely distinct* angle —
+   otherwise choose a different subject. **Cap: ≤ 2 questions on any one specific subject per (category,
+   language).** Tetris is the cautionary tale: the bank once held seven near-identical Tetris/origin
+   questions and now keeps just two distinct *gameplay* ones. The encoder catches exact-prompt duplicates by
+   id; catching topic over-representation and rewordings is the author's and reviewer's job.
 
 ## Arguments (all optional)
 
@@ -66,7 +122,9 @@ from scratch (drop old questions), the encode step takes `--replace` — see ste
   The picker offers a random `TRIVIA.offerCount` (6) of these each round, so **every** category needs a
   full, fun bank — there are no "minor" categories.
 - **Languages (2):** `en`, `ru`. RU must be **native, idiomatic Russian** — author it RU-first, never a
-  machine translation of the EN set. It may lean into locally-resonant topics.
+  machine translation of the EN set. It draws on **globally-shared** culture (and world-known Ukraine), not
+  Russia-centric local topics — the **Content rules** above bind both languages equally. (`ru` is the
+  language; it is **not** a licence for Russia-subject content.)
 - **Tiers (3):** `easy` → `medium` → `hard`. Difficulty must come from the *question*, not trick wording.
   `easy` = most casual players get it; `hard` = rewarding for enthusiasts, still fair. A 12-round match
   ramps easy(1–4) → medium(5–8) → hard(9–12).
@@ -115,8 +173,10 @@ shuffles slots deterministically, and salts the correct slot).
 Spawn one author agent per requested `(lang, category)` (up to **40** for a full run — 20 categories × 2
 languages). Each authors `count` (default 10) **new** questions to `scratchpad/raw/{lang}/{category}.json` in
 the RAW shape above, spread across the tiers. Give every agent: the category id + display name + emoji, the
-language (RU-first for `ru`), the tier calibration, the "genuinely fun" bar, the exactly-4-options /
-one-correct / plausible-distractors rules, and the output path.
+language (RU-first for `ru`), the tier calibration, the "genuinely fun" bar, the **Content rules**
+(globally-known only · no Russia · include world-known Ukraine · modern as well as classic · no
+single-subject over-representation), the exactly-4-options / one-correct / plausible-distractors rules, and
+the output path.
 
 **Avoid duplicates (additive runs):** the agent MUST first read the category's **existing** prompts from
 `bank/{lang}/{category}.json` and author questions that are new *in meaning* — not a reworded version of one
@@ -124,18 +184,26 @@ already there. The encoder is an exact-prompt safety net (it silently drops a qu
 prompt already exists), but it cannot catch a paraphrase, so semantic novelty is the author's job. Pass the
 agent the list of existing prompts for its shard.
 
-### 2 — Review (fan-out: 4 lenses, one reviewer per category covering both languages)
+### 2 — Review (fan-out: 5 lenses, one reviewer per category covering both languages)
 
-Independent reviewers re-check every question against four lenses and rewrite or replace any that fail,
+Independent reviewers re-check every question against five lenses and rewrite or replace any that fail,
 emitting polished shards to `scratchpad/final/{lang}/{category}.json`:
 
-1. **Facts** — correct + current; verify dubious claims (WebSearch). Reject the unverifiable.
+1. **Facts** — correct + current; verify dubious claims (WebSearch), incl. any Ukrainian attribution.
+   Reject the unverifiable.
 2. **Single answer** — exactly one defensible correct option; no two-true-answers, no ambiguity.
 3. **Fun** — flag dull/generic/predictable questions for regeneration; ensure plausible, interesting distractors.
 4. **Language (+ image)** — natural, idiomatic phrasing (scrutinise RU especially); for any phase-2 image
    question, confirm the URL resolves and the picture unambiguously supports the answer.
+5. **Content rules** — enforce the five hard constraints above: drop anything not **globally known**; drop
+   **every** Russia-subject / Russia-answer / Russian-culture / USSR question with **no exception** (even
+   world-famous canon — Tolstoy, Tchaikovsky, Gagarin, Mendeleev all OUT); confirm any **Ukraine** content
+   is also world-known and correctly attributed; check the shard carries
+   enough **modern** (last ~10–15 yr) content, especially in the fast-moving categories; and flag
+   **single-subject over-representation** (> 2 questions on one named work/person/franchise per shard).
 
-Also dedupe by *meaning* within and across shards (the encoder dedupes only exact-prompt id collisions).
+Also dedupe by *meaning* within and across shards — including topic over-representation, not just exact
+rewordings (the encoder dedupes only exact-prompt id collisions).
 
 ### 3 — Repair loop
 
@@ -165,11 +233,26 @@ bun .claude/skills/trivia-gen/gen-bank.ts --categories geography,history,ocean -
 ```
 
 **Rebuild — `--replace`.** To rebuild a shard from its source alone (the destructive path — questions absent
-from the source are dropped), add `--replace`. This is the **only** way an existing question leaves the bank;
-use it to retire or fix questions, never for a routine top-up:
+from the source are dropped), add `--replace`. Use it to retire or fix many questions at once, never for a
+routine top-up:
 
 ```sh
 bun .claude/skills/trivia-gen/gen-bank.ts --categories animals --source scratchpad/final --out bank --min 4 --replace
+```
+
+**Remove — `prune-bank.ts`.** To retire a *handful* of specific questions (an excluded subject, an
+over-represented topic, an exact/near duplicate) without re-authoring the shard, prune them by id. Unlike
+`--replace` (which re-shuffles every kept slot from RAW), pruning deletes whole encoded questions and leaves
+every survivor — id, options order, and salted `answerCheck` — **byte-for-byte identical** (the diff is pure
+deletions), so the no-repeat history and `decode()` grading contract are preserved untouched. It fails
+loudly if any requested id is missing or if a removal would drop a `(category, tier)` bucket below `--min`
+(top that tier up via a normal `/trivia-gen` run first, then prune):
+
+```sh
+# structured: JSON { "en": { "video-games": ["45f6be053244"] }, "ru": { "cars": ["b16e20fc447c", …] } }
+bun .claude/skills/trivia-gen/prune-bank.ts --ids-file scratchpad/remove-ids.json --out bank --min 4
+# flat: remove globally-unique ids from whatever shard holds them
+bun .claude/skills/trivia-gen/prune-bank.ts --ids 18a96d53506c,45f6be053244 --out bank --min 4
 ```
 
 Unknown ids fail loudly (a typo can't silently skip a shard). Omit `--categories` for the whole pool. The

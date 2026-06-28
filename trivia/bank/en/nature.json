@@ -644,20 +644,6 @@
     "answerCheck": "rr5o5sx:0"
   },
   {
-    "id": "9768adc8e340",
-    "category": "nature",
-    "tier": "hard",
-    "type": "text",
-    "prompt": "Scientists revived a flowering plant from roughly 32,000-year-old seed tissue found buried by an Ice Age squirrel in Siberian permafrost. What kind of plant was it?",
-    "options": [
-      "A patch of wheat",
-      "An oak sapling",
-      "A wild rose",
-      "A small white-flowered campion"
-    ],
-    "answerCheck": "9rfhido:2"
-  },
-  {
     "id": "58e6de396a28",
     "category": "nature",
     "tier": "hard",

@@ -56,20 +56,6 @@
     "answerCheck": "gjbk:1"
   },
   {
-    "id": "f0fc6267e27f",
-    "category": "geography",
-    "tier": "medium",
-    "type": "text",
-    "prompt": "China and Russia are tied for a peculiar world record: which one?",
-    "options": [
-      "Longest coastline",
-      "Most UNESCO World Heritage Sites",
-      "Most land borders with other countries (14 each)",
-      "Largest number of time zones"
-    ],
-    "answerCheck": "9ewf8s:0"
-  },
-  {
     "id": "e1727a47080d",
     "category": "geography",
     "tier": "medium",
@@ -320,20 +306,6 @@
       "Kiribati"
     ],
     "answerCheck": "rkkp81:1"
-  },
-  {
-    "id": "60932cb121ec",
-    "category": "geography",
-    "tier": "medium",
-    "type": "text",
-    "prompt": "Russia covers more time zones than any other country. How many?",
-    "options": [
-      "7",
-      "11",
-      "5",
-      "15"
-    ],
-    "answerCheck": "a8wu2:2"
   },
   {
     "id": "0e2d387c4a5d",
@@ -628,20 +600,6 @@
       "Brisbane"
     ],
     "answerCheck": "8qm3r:2"
-  },
-  {
-    "id": "bc625dd04c9a",
-    "category": "geography",
-    "tier": "medium",
-    "type": "text",
-    "prompt": "Which sea has shrunk so dramatically — drained by Soviet-era irrigation — that ships now sit rusting on dry sand far from any water?",
-    "options": [
-      "The Aral Sea",
-      "The Caspian Sea",
-      "The Black Sea",
-      "The Sea of Azov"
-    ],
-    "answerCheck": "jzs:3"
   },
   {
     "id": "9b00b33076b8",
