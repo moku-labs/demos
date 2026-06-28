@@ -1,0 +1,170 @@
+[
+  {
+    "id": "a4a94e1c29cf",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What does 'USB' stand for?",
+    "options": [
+      "Universal Software Base",
+      "Unified System Bridge",
+      "Ultra Speed Buffer",
+      "Universal Serial Bus"
+    ],
+    "answerCheck": "g55xwp2:2"
+  },
+  {
+    "id": "659ca7430550",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which company makes the iPhone?",
+    "options": [
+      "Google",
+      "Apple",
+      "Sony",
+      "Samsung"
+    ],
+    "answerCheck": "bxpkah:3"
+  },
+  {
+    "id": "9e57ea9d2e5c",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What do you call the little spinning wheel that appears when your computer is loading?",
+    "options": [
+      "Thinking orb",
+      "Progress spinner",
+      "Buffer ball",
+      "Wait cursor"
+    ],
+    "answerCheck": "mai4lq:3"
+  },
+  {
+    "id": "e979e477c87f",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What does Wi-Fi actually stand for?",
+    "options": [
+      "Wireless Fidelity",
+      "Wide Frequency",
+      "Wire-Free Internet",
+      "It doesn't stand for anything"
+    ],
+    "answerCheck": "1d94:3"
+  },
+  {
+    "id": "075c005e83d8",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The 1984 Apple Macintosh was the first mass-market personal computer to ship with a mouse and GUI. Which much pricier Apple machine had actually beaten it to market — with a mouse — by a year?",
+    "options": [
+      "Apple Lisa",
+      "Apple Newton",
+      "Xerox Star",
+      "Apple II"
+    ],
+    "answerCheck": "hdfff:1"
+  },
+  {
+    "id": "b6f7085aaa28",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Bluetooth technology is named after a medieval Scandinavian king. Which one?",
+    "options": [
+      "Erik the Red",
+      "Ragnar Lothbrok",
+      "Canute the Great",
+      "Harald Bluetooth"
+    ],
+    "answerCheck": "hafv:3"
+  },
+  {
+    "id": "7b4b767f9e6c",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which organisation invented the World Wide Web — not the internet itself, but the web?",
+    "options": [
+      "IBM Research",
+      "Microsoft",
+      "CERN (Tim Berners-Lee)",
+      "ARPA / US Defence Dept."
+    ],
+    "answerCheck": "8whq:2"
+  },
+  {
+    "id": "2ec14c447dd0",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A QR code can store far more data than a traditional barcode. What is the maximum binary capacity of a standard Version-40 QR code?",
+    "options": [
+      "About 3,000 bytes",
+      "About 30,000 bytes",
+      "About 300 bytes",
+      "About 1,000 bytes"
+    ],
+    "answerCheck": "9r0:3"
+  },
+  {
+    "id": "d08be6d2dc1e",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The QWERTY keyboard layout was designed in the 1870s partly to solve a mechanical problem with early typewriters. What was that problem?",
+    "options": [
+      "Keys were too close and fingers kept slipping",
+      "The ribbon dried out from repeated strikes in one spot",
+      "Heavy keys needed balancing across both hands",
+      "Typebars jammed when adjacent keys were pressed fast"
+    ],
+    "answerCheck": "tsx:2"
+  },
+  {
+    "id": "15f594c7f4e1",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Moore's Law — the observation that transistor counts double roughly every two years — was first articulated in which decade?",
+    "options": [
+      "1960s",
+      "1980s",
+      "1950s",
+      "1970s"
+    ],
+    "answerCheck": "ij3rb:1"
+  },
+  {
+    "id": "ac97b1e6266f",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The JPEG image format gets its name from the group that created it. What does JPEG stand for?",
+    "options": [
+      "Java Picture Encoding Group",
+      "Joint Photographic Experts Group",
+      "Joint Pixel Encoding Group",
+      "Joint Picture Experts Group"
+    ],
+    "answerCheck": "nv9:0"
+  },
+  {
+    "id": "c2ab1e7e412f",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The infamous 'Y2K bug' concerned computers storing years as only two digits. Which year were most systems expected to roll over to '00' — and potentially interpret as 1900?",
+    "options": [
+      "2001",
+      "2000",
+      "1999",
+      "1998"
+    ],
+    "answerCheck": "xwpvbdy:0"
+  }
+]

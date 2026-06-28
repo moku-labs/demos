@@ -1,0 +1,170 @@
+[
+  {
+    "id": "44c055874470",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which ancient wonder was still standing in the medieval era and survives to this day?",
+    "options": [
+      "The Hanging Gardens of Babylon",
+      "The Colossus of Rhodes",
+      "The Lighthouse of Alexandria",
+      "The Great Pyramid of Giza"
+    ],
+    "answerCheck": "hhja:3"
+  },
+  {
+    "id": "24c1677d74aa",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Julius Caesar was famously assassinated on the 'Ides of March' — what date is that?",
+    "options": [
+      "March 15th",
+      "March 1st",
+      "March 7th",
+      "March 31st"
+    ],
+    "answerCheck": "nkt:3"
+  },
+  {
+    "id": "79f90042717e",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What did Romans use instead of toilet paper? (They shared one across a public bathroom.)",
+    "options": [
+      "Dried moss",
+      "A sponge on a stick",
+      "Corn husks",
+      "River stones"
+    ],
+    "answerCheck": "ndrp2mg:0"
+  },
+  {
+    "id": "0327a3a45751",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The Great Wall of China was primarily built to defend against which group?",
+    "options": [
+      "Mongol nomads",
+      "Japanese pirates",
+      "Tibetan monks",
+      "Persian armies"
+    ],
+    "answerCheck": "v1hc9:1"
+  },
+  {
+    "id": "091bb0665c92",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Napoleon was actually average height for his era (around 5'7\"). Why did people think he was tiny?",
+    "options": [
+      "He wore flat shoes while other officers wore heeled boots",
+      "British political cartoons exaggerated his size for propaganda",
+      "He always stood next to very tall bodyguards",
+      "His enemies bribed historians to record him as short"
+    ],
+    "answerCheck": "z14h:1"
+  },
+  {
+    "id": "15081ef30f3a",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Black Death killed roughly what fraction of Europe's population in the 14th century?",
+    "options": [
+      "2 in 3",
+      "1 in 10",
+      "1 in 20",
+      "1 in 3"
+    ],
+    "answerCheck": "y0r7wr2:2"
+  },
+  {
+    "id": "66ae3ecaee8f",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which US president was the first to appear on television — broadcasting from the 1939 World's Fair?",
+    "options": [
+      "Harry Truman",
+      "Dwight Eisenhower",
+      "Franklin D. Roosevelt",
+      "Herbert Hoover"
+    ],
+    "answerCheck": "o3v935m:1"
+  },
+  {
+    "id": "281e3507c038",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Ancient Egyptian pyramid builders weren't slaves — they were paid workers. What was a key part of their daily wage?",
+    "options": [
+      "Garlic and onions",
+      "Olive oil and dried fish",
+      "Barley beer rations",
+      "Linen cloth"
+    ],
+    "answerCheck": "s55d:2"
+  },
+  {
+    "id": "e5e55a347404",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Library of Alexandria declined over centuries rather than one dramatic fire. Which event is considered the earliest major blow to its holdings?",
+    "options": [
+      "An earthquake in 365 AD",
+      "Julius Caesar accidentally burned part of it during the Alexandrian War in 48 BC",
+      "The Arab conquest of Egypt in 642 AD",
+      "Emperor Theodosius ordering pagan temples closed in 391 AD"
+    ],
+    "answerCheck": "u5y:0"
+  },
+  {
+    "id": "275d80bb3010",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Byzantine Empire called itself 'Roman' until its fall in 1453. What did its citizens typically call themselves?",
+    "options": [
+      "Hellenes",
+      "Byzantines",
+      "Rhomaioi (Romans)",
+      "Anatolians"
+    ],
+    "answerCheck": "n1xhg:3"
+  },
+  {
+    "id": "f057bc8b3b45",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which 19th-century conflict is most often called 'the first modern war' for its use of railways, telegraphs, and trench warfare?",
+    "options": [
+      "The American Civil War",
+      "The Boer War",
+      "The Crimean War",
+      "The Franco-Prussian War"
+    ],
+    "answerCheck": "6yb:3"
+  },
+  {
+    "id": "e94f75059bc6",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Mongol Empire was the largest contiguous land empire in history. At its peak, roughly what share of the world's land did it cover?",
+    "options": [
+      "About 1 in 3",
+      "About 1 in 25",
+      "About 1 in 6",
+      "About 1 in 10"
+    ],
+    "answerCheck": "4yrwzx:0"
+  }
+]

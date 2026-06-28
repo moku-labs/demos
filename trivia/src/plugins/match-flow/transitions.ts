@@ -9,10 +9,12 @@
  * @see ./machine.ts — resolveAnswer (the steal machine the timeout transition feeds)
  */
 import type { StageApi } from "@moku-labs/room";
+import type { CategoryId } from "../../lib/types";
 import { buildAward, buildMutate, type ReadSlice } from "./adapters";
 import { makeIdleSteal } from "./cache";
 import type { QuestionBankDeps, ScoringDeps } from "./handlers";
 import { resolveAnswer, rotationPeer } from "./machine";
+import type { OfferItem } from "./offer";
 import type {
   Config,
   MatchSlice,
@@ -67,25 +69,45 @@ export function advanceFromCategoryReveal(
 }
 
 /**
- * roundIntro auto-advance: once the intro hold expires, move to categoryPick and set the round's
- * active player from the rotation.
+ * roundIntro auto-advance: once the intro hold expires, move to categoryPick, set the round's active
+ * player from the rotation, and publish this round's random category offer (the subset the picker shows).
+ *
+ * The `offered` subset (drawn by the clock from `questionBank.availability()`) is recorded on
+ * `state.offered` — the authoritative menu the `category-pick` intent validates against — and published
+ * to the `offer` slice so the TV grid + the active phone both render exactly those categories.
  *
  * @param stage - The stage facade (mutate).
  * @param match - The current match slice.
  * @param players - The current player entries.
  * @param round - The current round number.
+ * @param state - The host-internal plugin state (its `offered` list is set here).
+ * @param offered - This round's offered categories (id + name + emoji + exhausted).
  * @example
  * ```ts
- * advanceRoundIntro(stage, match, players, round);
+ * advanceRoundIntro(stage, match, players, round, state, selectOffer(availability, offerCount));
  * ```
  */
 export function advanceRoundIntro(
   stage: Pick<StageApi, "mutate">,
   match: MatchSlice,
   players: PlayersSlice["entries"],
-  round: number
+  round: number,
+  state: State,
+  offered: readonly OfferItem[]
 ): void {
   const activePeer = rotationPeer(players, round);
+
+  // Record the offered ids (the menu the category-pick intent enforces) + publish the subset for the UI.
+  state.offered = offered.map(category => category.id as CategoryId);
+  stage.mutate("offer", () => ({
+    items: offered.map(category => ({
+      id: category.id,
+      name: category.name,
+      emoji: category.emoji,
+      exhausted: category.exhausted
+    }))
+  }));
+
   stage.mutate("match", draft => ({
     ...draft,
     phase: "categoryPick" as Phase,

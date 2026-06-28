@@ -1,0 +1,170 @@
+[
+  {
+    "id": "10c93518616c",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What colour is a typical Ferrari?",
+    "options": [
+      "Yellow",
+      "Blue",
+      "Silver",
+      "Red"
+    ],
+    "answerCheck": "blv:2"
+  },
+  {
+    "id": "fc3818d81b0e",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which animal features on the Lamborghini logo?",
+    "options": [
+      "Lion",
+      "Eagle",
+      "Horse",
+      "Bull"
+    ],
+    "answerCheck": "a7c62:0"
+  },
+  {
+    "id": "22ead9bf1cff",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What does the 'GT' in a car name like 'Ferrari GT' stand for?",
+    "options": [
+      "Gas Turbine",
+      "Gear Transmission",
+      "Global Turbo",
+      "Grand Tourer"
+    ],
+    "answerCheck": "p1fyw:0"
+  },
+  {
+    "id": "3d4a3b62351a",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which country invented the modern motor car — the Benz Patent-Motorwagen of 1885?",
+    "options": [
+      "United States",
+      "France",
+      "Germany",
+      "United Kingdom"
+    ],
+    "answerCheck": "3pjai:3"
+  },
+  {
+    "id": "71acf39544c0",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Ford GT40 famously ended Ferrari's winning streak at Le Mans in 1966. How many consecutive years had Ferrari won before that?",
+    "options": [
+      "2",
+      "4",
+      "9",
+      "6"
+    ],
+    "answerCheck": "jqrav:0"
+  },
+  {
+    "id": "2354ccb07dff",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Porsche 911 switched from air-cooled to water-cooled engines with which generation, introduced in 1998?",
+    "options": [
+      "Type 996",
+      "Type 997",
+      "Type 991",
+      "Type 993"
+    ],
+    "answerCheck": "bggz7az:3"
+  },
+  {
+    "id": "13a1f2b85e88",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Windshield wipers were patented in 1903 by an inventor who watched a tram driver struggle in a sleet storm. Who was she?",
+    "options": [
+      "Ada Lovelace",
+      "Florence Parpart",
+      "Hedy Lamarr",
+      "Mary Anderson"
+    ],
+    "answerCheck": "dl0mk:0"
+  },
+  {
+    "id": "c432e2640459",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Ayrton Senna won three F1 World Championships — all with which team?",
+    "options": [
+      "Lotus",
+      "Williams",
+      "McLaren",
+      "Ferrari"
+    ],
+    "answerCheck": "9t3do:3"
+  },
+  {
+    "id": "134a615c611d",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Bugatti Veyron was the first production car to officially top 400 km/h. What made its engine layout so unusual?",
+    "options": [
+      "A supercharged flat-twelve derived from an F1 engine",
+      "A naturally-aspirated V12 with 48 valves",
+      "A twin-turbocharged straight-eight mounted transversely",
+      "A quad-turbocharged W16 producing 1,001 hp"
+    ],
+    "answerCheck": "9n3mnh5:2"
+  },
+  {
+    "id": "1377faa67c33",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The 1967 Le Mans victory by a Ford Mk IV was historic for a very specific reason. What was it?",
+    "options": [
+      "Only all-American victory in Le Mans history — American drivers, team, chassis, engine, and tyres",
+      "First car to complete more than 400 laps",
+      "First diesel-powered Le Mans winner",
+      "The winning car lapped every other competitor at least once"
+    ],
+    "answerCheck": "762i:0"
+  },
+  {
+    "id": "3a020a1f76b6",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In rally racing, what does the co-driver's pace note number '6' typically mean?",
+    "options": [
+      "A crest with a hidden landing",
+      "A hairpin — the tightest possible turn",
+      "A junction where roads cross",
+      "A very fast, nearly flat-out bend"
+    ],
+    "answerCheck": "3wauft:1"
+  },
+  {
+    "id": "cda6a9c002e8",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Citroën DS, launched in 1955, shocked the world with a braking system unlike anything else. What was it?",
+    "options": [
+      "A single central brake pedal controlling individual electric motors",
+      "Carbon-ceramic discs on all four wheels",
+      "A hydropneumatic system with inboard front disc brakes that also auto-levelled the car",
+      "Drum brakes cooled by water jets from an onboard tank"
+    ],
+    "answerCheck": "f4k30o:0"
+  }
+]

@@ -1,0 +1,170 @@
+[
+  {
+    "id": "6dac1e8fd714",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which company made the Game Boy handheld console?",
+    "options": [
+      "Sony",
+      "Atari",
+      "Sega",
+      "Nintendo"
+    ],
+    "answerCheck": "a8qt:3"
+  },
+  {
+    "id": "8e3a74ad8cee",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Pac-Man, what does Pac-Man eat to temporarily turn the ghosts blue and vulnerable?",
+    "options": [
+      "Power Pellets",
+      "Cherries",
+      "Stars",
+      "Bananas"
+    ],
+    "answerCheck": "qhf54zv:3"
+  },
+  {
+    "id": "66fa6f9d5543",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the name of the princess Mario is usually trying to rescue?",
+    "options": [
+      "Princess Daisy",
+      "Princess Zelda",
+      "Princess Rosalina",
+      "Princess Peach"
+    ],
+    "answerCheck": "5524zr:1"
+  },
+  {
+    "id": "c20dc3398de1",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these games features a character named Master Chief as its hero?",
+    "options": [
+      "Call of Duty",
+      "Halo",
+      "Gears of War",
+      "Doom"
+    ],
+    "answerCheck": "zee1:1"
+  },
+  {
+    "id": "93ec1859c0d2",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Sonic the Hedgehog was created as a mascot to rival Mario — but which Sega console did he debut on in 1991?",
+    "options": [
+      "Sega Dreamcast",
+      "Sega Saturn",
+      "Sega Game Gear",
+      "Sega Genesis (Mega Drive)"
+    ],
+    "answerCheck": "g1z35a:1"
+  },
+  {
+    "id": "4df42f0f4ffd",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The original Donkey Kong arcade game (1981) featured a hero named 'Jumpman'. What did he later become famous as?",
+    "options": [
+      "Yoshi",
+      "Mario",
+      "Link",
+      "Wario"
+    ],
+    "answerCheck": "h7y86:2"
+  },
+  {
+    "id": "6bee9f27ecaa",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which battle royale game drops exactly 100 players onto an island and popularised the phrase 'Winner Winner Chicken Dinner'?",
+    "options": [
+      "Apex Legends",
+      "Warzone",
+      "PUBG (PlayerUnknown's Battlegrounds)",
+      "Fortnite"
+    ],
+    "answerCheck": "3hkg6kn:1"
+  },
+  {
+    "id": "f9fff361d4a1",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The PlayStation 1 was originally developed in a partnership deal with which other company — before Nintendo pulled out at the last moment?",
+    "options": [
+      "Nintendo",
+      "Atari",
+      "Sega",
+      "Microsoft"
+    ],
+    "answerCheck": "40lv:0"
+  },
+  {
+    "id": "67647f9f1cea",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Donkey Kong was born because Miyamoto couldn't get the licence he originally wanted. Which cartoon franchise was the game originally going to be based on?",
+    "options": [
+      "Popeye",
+      "Looney Tunes",
+      "Tom and Jerry",
+      "Mighty Mouse"
+    ],
+    "answerCheck": "hhp7:0"
+  },
+  {
+    "id": "12871bb73755",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "What was the name of the most notorious flop of the 1983 video-game crash — an Atari 2600 cartridge so badly received that millions of unsold copies were reportedly buried in a New Mexico landfill?",
+    "options": [
+      "E.T. the Extra-Terrestrial",
+      "Defender",
+      "Pac-Man for Atari 2600",
+      "Space Invaders"
+    ],
+    "answerCheck": "bw8ws0m:3"
+  },
+  {
+    "id": "f0e37eb0feb2",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which studio developed the original BioShock (2007), set in the underwater city of Rapture? The studio was known by two different names over its lifetime.",
+    "options": [
+      "Arkane Studios",
+      "Irrational Games (released as 2K Boston)",
+      "Remedy Entertainment",
+      "Naughty Dog"
+    ],
+    "answerCheck": "ztbvkp0:0"
+  },
+  {
+    "id": "413331e84677",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Doom (1993) revolutionised the FPS genre and was infamously self-published by its developer after cutting ties with their previous publisher. What is that studio called?",
+    "options": [
+      "id Software",
+      "Apogee Software",
+      "Raven Software",
+      "3D Realms"
+    ],
+    "answerCheck": "g5n:3"
+  }
+]

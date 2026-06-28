@@ -5,6 +5,7 @@
  * authoritative.
  */
 import { intent, startController, subscribe } from "../../lib/room";
+import { startSoundDirector } from "../../lib/sound";
 import { loadIdentity } from "./profile";
 import type { ControllerContext } from "./types";
 
@@ -86,6 +87,10 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
 
   const ticker = setInterval(() => ctx.set({ now: Date.now() }), 250);
   ctx.cleanup(() => clearInterval(ticker));
+
+  // This phone's own sound director: reacts only to its moments (your-turn / your-steal nudges + the
+  // answerer's reveal flash + haptic). Gesture SFX (tap/lock/pick/join) fire directly from the handlers.
+  ctx.cleanup(startSoundDirector("controller"));
 
   try {
     await startController(code);

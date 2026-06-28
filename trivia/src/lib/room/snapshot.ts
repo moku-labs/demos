@@ -26,7 +26,7 @@ import type {
 /** Reads one namespace's raw cells from the active app's replica (or `undefined` before sync). */
 export type SliceReader = (ns: string) => Record<string, JsonValue> | undefined;
 
-/** The nine synced slice namespaces the bridge subscribes to + merges. */
+/** The ten synced slice namespaces the bridge subscribes to + merges. */
 export const SLICES = [
   "match",
   "players",
@@ -36,6 +36,7 @@ export const SLICES = [
   "scores",
   "bank",
   "categories",
+  "offer",
   "languageVote"
 ] as const;
 
@@ -134,6 +135,7 @@ export function emptyState(): TriviaState {
     scores: [],
     bank: defaultBank(),
     categories: [],
+    offer: [],
     languageVote: defaultLanguageVote()
   };
 }
@@ -162,6 +164,7 @@ export function mergeState(read: SliceReader, self: PeerId | null | undefined): 
   const scores = (read("scores")?.entries as unknown as ScoreEntry[] | undefined) ?? [];
   const categories =
     (read("categories")?.items as unknown as CategoryAvailView[] | undefined) ?? [];
+  const offer = (read("offer")?.items as unknown as CategoryAvailView[] | undefined) ?? [];
 
   const languageVote =
     (read("languageVote") as unknown as LanguageVoteView | undefined) ?? defaultLanguageVote();
@@ -176,6 +179,7 @@ export function mergeState(read: SliceReader, self: PeerId | null | undefined): 
     scores,
     bank: (read("bank") as unknown as BankView | undefined) ?? defaultBank(),
     categories,
+    offer,
     languageVote: { ...languageVote, options: (languageVote.options ?? []) as VoteOptionView[] }
   };
 }

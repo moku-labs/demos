@@ -33,6 +33,37 @@ function readFlag(name: string, fallback: string): string {
   return process.argv[index + 1] ?? fallback;
 }
 
+/**
+ * Resolve which categories to encode: the `--categories a,b,c` subset, or every category when the flag is
+ * absent. This makes the encoder **additive** — point it at only the new (or topped-up) categories and the
+ * other shards in `--out` are never read or rewritten. Unknown ids fail loudly so a typo can't silently
+ * skip a shard, and the result keeps `TRIVIA.categories` order (deduped) regardless of how the flag was
+ * ordered.
+ *
+ * @param flag - The raw `--categories` value (comma-separated ids, or "" when omitted).
+ * @param all - The full category pool from `TRIVIA.categories`.
+ * @returns The categories to encode (all of them when the flag is empty).
+ * @throws If any requested id is not a known category.
+ */
+function resolveCategories(flag: string, all: readonly CategoryId[]): CategoryId[] {
+  const requested = flag
+    .split(",")
+    .map(id => id.trim())
+    .filter(id => id.length > 0);
+  if (requested.length === 0) return [...all];
+
+  const known = new Set<string>(all);
+  const unknown = requested.filter(id => !known.has(id));
+  if (unknown.length > 0) {
+    throw new Error(
+      `[gen-bank] unknown categor${unknown.length === 1 ? "y" : "ies"}: ${unknown.join(", ")}. Valid: ${all.join(", ")}.`
+    );
+  }
+
+  // Keep config order; dedupe a repeated id.
+  return all.filter(id => requested.includes(id));
+}
+
 /** One row of the end-of-run summary table. */
 type ShardSummary = { lang: Lang; category: CategoryId; easy: number; medium: number; hard: number };
 
@@ -115,7 +146,14 @@ const outDir = readFlag("--out", "bank");
 const minPerBucket = Number.parseInt(readFlag("--min", "0"), 10);
 
 const languages = TRIVIA.languages as readonly Lang[];
-const categories = TRIVIA.categories.map(category => category.id);
+const allCategories = TRIVIA.categories.map(category => category.id);
+const categories = resolveCategories(readFlag("--categories", ""), allCategories);
+
+if (categories.length < allCategories.length) {
+  out(
+    `  additive run · encoding ${categories.length} of ${allCategories.length} categor${categories.length === 1 ? "y" : "ies"}: ${categories.join(", ")}`
+  );
+}
 
 const seenIds = new Map<string, string>();
 const summaries: ShardSummary[] = [];

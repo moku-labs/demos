@@ -1,0 +1,170 @@
+[
+  {
+    "id": "d69afa28deae",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which plant snaps shut to catch its prey using tiny trigger hairs — but only after the hairs are touched twice?",
+    "options": [
+      "Venus flytrap",
+      "Pitcher plant",
+      "Bladderwort",
+      "Sundew"
+    ],
+    "answerCheck": "l5ze:0"
+  },
+  {
+    "id": "b327aa2820cf",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The massive African baobab tree is famous for storing what inside its trunk?",
+    "options": [
+      "Water",
+      "Starch",
+      "Honey",
+      "Sap"
+    ],
+    "answerCheck": "2qrx:0"
+  },
+  {
+    "id": "a20dbb3adae3",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What do we call the underground fungal threads that connect tree roots in a forest, sharing nutrients between them?",
+    "options": [
+      "Root web",
+      "Mycorrhizal network",
+      "Spore grid",
+      "Lichen network"
+    ],
+    "answerCheck": "670n6:2"
+  },
+  {
+    "id": "49eb8dfc6437",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Rafflesia arnoldii holds the record for the world's largest individual flower. What does it smell like to attract pollinators?",
+    "options": [
+      "Wet soil",
+      "Rotting meat",
+      "Overripe bananas",
+      "Burnt wood"
+    ],
+    "answerCheck": "3njqna:3"
+  },
+  {
+    "id": "01efa64cea18",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Pando, a single organism in Utah that looks like a whole forest of 47,000 trees, is actually one clonal colony of which species?",
+    "options": [
+      "Coast redwood",
+      "Douglas fir",
+      "Silver birch",
+      "Quaking aspen"
+    ],
+    "answerCheck": "yda:2"
+  },
+  {
+    "id": "2781f98c2cb6",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The world's oldest known non-clonal living tree, Methuselah, is over 4,800 years old. What kind of tree is it?",
+    "options": [
+      "Bristlecone pine",
+      "Scots pine",
+      "Giant sequoia",
+      "Olive tree"
+    ],
+    "answerCheck": "kr3w6:1"
+  },
+  {
+    "id": "d0621c8aec1a",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Agave plants bloom exactly once in their lifetime, then die. How long do most species wait before flowering?",
+    "options": [
+      "1–3 years",
+      "10–30 years",
+      "50–80 years",
+      "About 100 years"
+    ],
+    "answerCheck": "mfn0x81:0"
+  },
+  {
+    "id": "8199281a1a1a",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which ecosystem stores the most carbon per hectare on Earth, locking away far more than an equivalent area of tropical rainforest?",
+    "options": [
+      "Temperate grassland",
+      "Boreal forest (taiga)",
+      "Tropical rainforest",
+      "Peat bog"
+    ],
+    "answerCheck": "t0pdeuu:2"
+  },
+  {
+    "id": "93346abf281b",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A single hectare of ancient peatland can lock away how many times more carbon than the same area of tropical rainforest?",
+    "options": [
+      "About 2 times as much",
+      "About 5 times as much",
+      "About 10 times as much",
+      "About 20 times as much"
+    ],
+    "answerCheck": "5x6i:2"
+  },
+  {
+    "id": "1ed1d17de126",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Pando aspen clone in Utah is estimated to be up to 80,000 years old. What is currently its biggest threat?",
+    "options": [
+      "Rising temperatures killing the root system",
+      "Deer and elk eating all the new saplings",
+      "Invasive bark beetles destroying the stems",
+      "Forest fires burning the underground rhizomes"
+    ],
+    "answerCheck": "g8ebe:2"
+  },
+  {
+    "id": "f2dc51a5ba48",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Welwitschia mirabilis, a plant found in the Namib Desert, typically has only two leaves for its entire life. How long can those leaves live?",
+    "options": [
+      "About 200 years",
+      "Up to 50 years",
+      "Up to 10 years",
+      "Over 1,000 years"
+    ],
+    "answerCheck": "gwfgx0w:2"
+  },
+  {
+    "id": "52882da84ded",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The corpse flower (Amorphophallus titanum) is technically the world's largest unbranched inflorescence, not a single flower. What triggers it to heat up — sometimes to near human body temperature — when it blooms?",
+    "options": [
+      "A burst of photosynthesis in the spathe",
+      "Friction from rapid cellular expansion",
+      "Oxidation of stored oils inside the spadix",
+      "Fermentation by bacteria living on the pollen"
+    ],
+    "answerCheck": "h6do8w:0"
+  }
+]
