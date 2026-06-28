@@ -35,6 +35,7 @@ const STAGE_PHASE: Record<StagePhaseKey, string> = {
   roundIntro: "roundIntro",
   questionRu: "question",
   questionFlag: "question",
+  questionLong: "question",
   revealWrongSteal: "reveal",
   revealTimeout: "reveal",
   revealStolen: "reveal",
@@ -56,6 +57,7 @@ const PHONE_PHASE: Record<PhonePhaseKey, string> = {
   categoryLoading: "categoryPick",
   answer: "question",
   answerLocked: "question",
+  stealAnswer: "question",
   leaveModal: "question",
   midJoin: "question",
   // Non-active player watcher screens
@@ -820,28 +822,31 @@ test.describe("Charter G — Invariants: answer button tap targets and accessibi
     }
   });
 
-  // G5: Invariant — the steal strip correctly names the steal peer (Pixel in fixture)
-  test("steal strip names the steal peer (Pixel) in steal fixture", async ({ page }) => {
+  // G5: Invariant — the open-steal strip (item 3) shows the missed player and the open-steal copy
+  test("open steal strip: names the missed player (Mochi), open-steal wording, 4 eligible avatars", async ({
+    page
+  }) => {
     await gotoStage(page, "steal");
     const strip = page.locator("[data-steal-strip]");
     await expect(strip).toBeVisible();
-    // The steal strip must mention the stealer by name ("Pixel")
-    await expect(strip).toContainText("Pixel");
-    // And indicate the steal mechanic ("steal")
+    // The strip names the active player who MISSED (Mochi/p1) — not a single next stealer
+    await expect(strip).toContainText("Mochi");
+    // Open-steal wording: "everyone can steal"
+    await expect(strip).toContainText("everyone can steal");
+    // And indicate the steal mechanic
     await expect(strip).toContainText("steal");
-    // The active answerer in steal mode is Pixel (p2), confirmed by the fixture
-    // Invariant: the strip and the question state agree on who is stealing
+    // 4 eligible avatars (p2/p3/p4/p5 — everyone except Mochi/p1)
+    await expect(strip.locator("[data-steal-avatar]")).toHaveCount(4);
+    // The active answerer chip names the player who PICKED the question (Mochi)
     const questionAnswerer = await page.evaluate(() => {
-      // The stage question renders data-turn-chip or similar with the answerer name
       const chip = document.querySelector("[data-chip-name]");
       return chip?.textContent ?? null;
     });
-    // In the steal fixture, the active answerer is "Pixel" (p2), so the chip should reflect this
     if (questionAnswerer !== null) {
       expect(
         questionAnswerer,
-        "The TurnChip must name the steal answerer (Pixel) consistently with the steal strip"
-      ).toContain("Pixel");
+        "The TurnChip must name the active question-answerer (Mochi) consistently with the steal strip"
+      ).toContain("Mochi");
     }
   });
 });

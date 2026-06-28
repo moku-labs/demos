@@ -27,6 +27,8 @@ export function createMatchFlowState(): State {
     hostToken: "",
     offered: [],
     // eslint-disable-next-line unicorn/no-null -- pendingQuestion is null until a category is chosen
-    pendingQuestion: null
+    pendingQuestion: null,
+    // eslint-disable-next-line unicorn/no-null -- no active pick until the active player locks one
+    activePick: null
   };
 }

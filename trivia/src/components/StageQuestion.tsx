@@ -15,6 +15,7 @@ import { Flag } from "./Flag";
 import { ScoreChip } from "./ScoreChip";
 import { TimerRing } from "./TimerRing";
 import { TurnChip } from "./TurnChip";
+import { useFitText } from "./use-fit-text";
 
 /** Props for the question screen. */
 export type StageQuestionProps = {
@@ -80,21 +81,24 @@ function revealCopy(
   const name = scorer?.name ?? answerer?.name ?? "Player";
   if (reveal.outcome === "correct") {
     return {
-      chip: `${name} — Correct! +${delta}`,
+      // TurnChip already renders [data-name]; the label is the STATUS only — no name prefix.
+      chip: `— Correct! +${delta}`,
       tone: "correct",
       line: `✅ ${reveal.answerText} — ${name} nailed it!`
     };
   }
   if (reveal.outcome === "stolen") {
     return {
-      chip: `${name} steals it! +${delta}`,
+      // TurnChip already renders [data-name]; the label is the STATUS only — no name prefix.
+      chip: `steals it! +${delta}`,
       tone: "correct",
       line: `✅ ${reveal.answerText} — ${name} stole the points!`
     };
   }
   if (reveal.outcome === "wrong") {
     return {
-      chip: `${answerer?.name ?? "Player"} — Wrong`,
+      // TurnChip already renders [data-name]; the label is the STATUS only — no name prefix.
+      chip: "— Wrong",
       tone: "wrong",
       line: `✅ The answer was ${reveal.answerText}`
     };
@@ -106,20 +110,28 @@ function revealCopy(
   };
 }
 
-/** F1 — the steal strip (slides in when a steal opens). */
+/** F1 — the OPEN steal strip: the active player missed, so everyone else may steal at once. */
 function StealStrip({ s, now }: { s: TriviaState; now: number }) {
   const active = findPlayer(s.players, s.match.activePeer);
-  const stealer = findPlayer(s.players, s.steal.stealPeer);
+  const eligible = s.steal.stealPeers
+    .map(id => findPlayer(s.players, id))
+    .filter((p): p is PlayerProfile => p !== undefined);
   const secs = secondsLeft(s.steal.deadlineTs, now);
   const stealPct = Math.max(0, Math.min(100, (secs / (TRIVIA.timers.stealMs / 1000)) * 100));
   return (
-    <div data-steal-strip>
+    // aria-live: a steal opening is a critical game-state change — announce it to screen readers (the
+    // strip only mounts when the steal is active), since the TV is otherwise silent (WCAG 4.1.3).
+    <div data-steal-strip role="status" aria-live="polite">
       <span data-steal-text>
-        → {active?.name ?? "Player"} missed — passing to {stealer?.avatar ?? "•"}{" "}
-        {stealer?.name ?? "next"} to steal
+        → {active?.name ?? "Player"} missed — everyone can steal! Tap fast ♪
       </span>
-      <span data-steal-chip style={{ "--player": stealer?.color ?? "#14b8a6" }}>
-        {stealer?.avatar ?? "•"} {stealer?.name ?? "next"} · {secs}s
+      <span data-steal-eligible>
+        {eligible.map(p => (
+          <span key={p.peerId} data-steal-avatar style={{ "--player": p.color }} title={p.name}>
+            {p.avatar}
+          </span>
+        ))}
+        <span data-steal-secs>{secs}s</span>
       </span>
       <span data-steal-timer-bar aria-hidden="true">
         <span data-steal-timer-fill style={{ width: `${stealPct}%` }} />
@@ -142,6 +154,10 @@ function StealStrip({ s, now }: { s: TriviaState; now: number }) {
  */
 export function StageQuestion({ s, now, revealing }: StageQuestionProps): JSX.Element {
   const question = s.question;
+  // Auto-fit the prompt to its box (declared before the early return to honour the rules of hooks).
+  const { boxReference, textReference } = useFitText<HTMLDivElement, HTMLParagraphElement>(
+    question?.prompt ?? ""
+  );
   if (!question) return <div data-component="stage-question" data-screen="question" />;
 
   const meta = categoryMeta(question.category);
@@ -184,7 +200,11 @@ export function StageQuestion({ s, now, revealing }: StageQuestionProps): JSX.El
             <Flag code={(question.imageUrl?.replace("flag:", "") as "us" | "ru" | "bd") ?? "bd"} />
           </div>
         )}
-        <p data-prompt>{question.prompt}</p>
+        <div data-prompt-fit ref={boxReference}>
+          <p data-prompt ref={textReference}>
+            {question.prompt}
+          </p>
+        </div>
         {copy && <p data-answer-line>{copy.line}</p>}
       </div>
 

@@ -264,7 +264,7 @@ describe("diffCues — scoreboard, steal, vote, pause, final", () => {
       st({
         phase: "question",
         question: question({ mode: "steal" }),
-        steal: { active: true, stealPeer: "p1", deadlineTs: 30_000 }
+        steal: { active: true, stealPeers: ["p1"], deadlineTs: 30_000 }
       }),
       "stage"
     );
@@ -279,7 +279,7 @@ describe("diffCues — scoreboard, steal, vote, pause, final", () => {
         phase: "question",
         self: "p1",
         question: question(),
-        steal: { active: true, stealPeer: "p1", deadlineTs: 30_000 }
+        steal: { active: true, stealPeers: ["p1"], deadlineTs: 30_000 }
       }),
       "controller"
     );

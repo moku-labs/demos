@@ -34,6 +34,7 @@ const MATCH_PHASE: Record<StagePhaseKey, string> = {
   // Question variants
   questionRu: "question",
   questionFlag: "question",
+  questionLong: "question",
   // Reveal variants
   revealWrongSteal: "reveal",
   revealTimeout: "reveal",
@@ -170,21 +171,36 @@ test.describe("TV Stage — phase screens render (deterministic fixtures)", () =
     await expect(page.locator("[data-prompt]")).toContainText("moons");
   });
 
-  test("steal (F1): the steal strip names the next player", async ({ page }) => {
+  test("steal (F1 open-steal): strip shows 'missed — everyone can steal!' + 4 eligible avatars + shared timer", async ({
+    page
+  }) => {
     await gotoStage(page, "steal");
     const strip = page.locator("[data-steal-strip]");
     await expect(strip).toBeVisible();
-    await expect(strip).toContainText("Pixel");
-    await expect(strip).toContainText("steal");
+    // Active player name (missed)
+    await expect(strip).toContainText("Mochi");
+    // Open-steal wording
+    await expect(strip).toContainText("everyone can steal");
+    // 4 eligible avatars (p2/p3/p4/p5 — everyone except the active player p1)
+    await expect(strip.locator("[data-steal-avatar]")).toHaveCount(4);
+    // Shared countdown timer
+    await expect(strip.locator("[data-steal-secs]")).toBeVisible();
+    // Eligible row container
+    await expect(strip.locator("[data-steal-eligible]")).toBeVisible();
   });
 
-  test("reveal (A6): correct tile tagged, answer line, score rollup", async ({ page }) => {
+  test("reveal (A6): correct tile tagged, answer line, score rollup; only scorer shows +N delta (item 2)", async ({
+    page
+  }) => {
     await gotoStage(page, "reveal");
     const correctTile = page.locator("[data-component='answer-tile'][data-state='correct']");
     await expect(correctTile).toHaveCount(1);
     await expect(correctTile.locator("[data-tag]")).toContainText("CORRECT");
     await expect(page.locator("[data-answer-line]")).toContainText("Saturn");
     await expect(page.locator("[data-score-rollup]")).toBeVisible();
+    // Item 2: only Mochi (p1, delta=200) shows a +N delta chip — all other players (delta=0) show none
+    await expect(page.locator("[data-component='score-chip'] [data-delta]")).toHaveCount(1);
+    await expect(page.locator("[data-component='score-chip'] [data-delta]")).toContainText("+200");
   });
 
   test("scoreboard (A7): titled standings, one tile per player", async ({ page }) => {
@@ -321,6 +337,86 @@ test.describe("TV Stage — overlay screens", () => {
   });
 });
 
+// ─── Item 1: question auto-fit (long prompt) ──────────────────────────────────────────
+
+test.describe("TV Stage — question auto-fit (item 1)", () => {
+  test("questionLong: prompt fits box, answer grid fully on-screen, fit hook wired and active", async ({
+    page
+  }) => {
+    await gotoStage(page, "questionLong");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    // Wait for the fit-text hook to settle (ResizeObserver + fonts.ready).
+    await page.waitForTimeout(400);
+
+    // 1a. Answer grid is fully visible (not clipped, bounding box within viewport)
+    const gridBox = await page.locator("[data-answer-grid]").boundingBox();
+    expect(gridBox).not.toBeNull();
+    const viewport = page.viewportSize();
+    expect(viewport).not.toBeNull();
+    // Grid must be fully within the viewport (safe access — asserts above guard these)
+    if (gridBox && viewport) {
+      expect(gridBox.y + gridBox.height).toBeLessThanOrEqual(viewport.height + 2);
+      expect(gridBox.y).toBeGreaterThanOrEqual(0);
+    }
+
+    // 1b. Prompt does not overflow its fit box (the hook scales it down as needed)
+    const overflow = await page.locator("[data-prompt-fit]").evaluate(el => {
+      return {
+        scrollH: el.scrollHeight,
+        clientH: el.clientHeight,
+        scrollW: el.scrollWidth,
+        clientW: el.clientWidth
+      };
+    });
+    // scrollHeight > clientHeight + 2 indicates vertical overflow
+    expect(overflow.scrollH).toBeLessThanOrEqual(overflow.clientH + 2);
+
+    // 1c. The fit hook sets an explicit inline font-size on [data-prompt] (the hook ran)
+    const inlineFontSize = await page.locator("[data-prompt]").evaluate(el => {
+      return (el as HTMLElement).style.fontSize;
+    });
+    expect(inlineFontSize).toMatch(/^\d+px$/);
+
+    // 1d. 4 answer tiles still visible
+    await expect(page.locator("[data-answer-grid] [data-component='answer-tile']")).toHaveCount(4);
+    // 1e. The [data-prompt-fit] wrapper exists
+    await expect(page.locator("[data-prompt-fit]")).toBeVisible();
+  });
+});
+
+// ─── Item 2: scoreboard bar-track equality ────────────────────────────────────────────
+
+test.describe("TV Stage — scoreboard bar tracks (item 2)", () => {
+  test("scoreboard: all [data-bar] tracks have equal width regardless of whether row has [data-gain]", async ({
+    page
+  }) => {
+    await gotoStage(page, "scoreboard");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.waitForTimeout(600); // let count-up settle
+
+    // Collect all [data-bar] widths — they must all be equal (same track; fill is the inner span)
+    const barWidths = await page
+      .locator("[data-component='scoreboard-tile'] [data-bar]")
+      .evaluateAll(bars => bars.map(b => (b as HTMLElement).getBoundingClientRect().width));
+    expect(barWidths.length).toBe(5);
+    const first = barWidths[0] ?? 0;
+    for (const w of barWidths) {
+      expect(Math.abs(w - first)).toBeLessThan(2); // sub-pixel tolerance
+    }
+  });
+
+  test("scoreboard: moved-up tile (Pixel overtaking Tofu) has [data-moved-up] attribute", async ({
+    page
+  }) => {
+    await gotoStage(page, "scoreboard");
+    // The fixture has Pixel (p2, total 1100) overtaking Tofu (p3, total 800)
+    // rank() re-sorts by total: p1=1, p2=2 (was 3), p3=3 (was 2) → p2 climbed 1
+    await expect(
+      page.locator("[data-component='scoreboard-tile'][data-moved-up='true']")
+    ).toHaveCount(1);
+  });
+});
+
 // ─── Visual baselines ─────────────────────────────────────────────────────────────────
 
 const TV_SCREENS: ReadonlyArray<{ phase: StagePhaseKey; shot: string }> = [
@@ -338,9 +434,11 @@ const TV_SCREENS: ReadonlyArray<{ phase: StagePhaseKey; shot: string }> = [
   { phase: "reveal", shot: "tv-reveal.png" },
   { phase: "scoreboard", shot: "tv-scoreboard.png" },
   { phase: "final", shot: "tv-podium.png" },
-  // Question variants (A4-RU, A5)
+  // Question variants (A4-RU, A5, long auto-fit)
   { phase: "questionRu", shot: "tv-question-ru.png" },
   { phase: "questionFlag", shot: "tv-question-flag.png" },
+  // Item 1: long prompt auto-fit — new baseline
+  { phase: "questionLong", shot: "tv-question-long.png" },
   // Reveal variants (09, 10, 11)
   { phase: "revealWrongSteal", shot: "tv-reveal-wrong-steal.png" },
   { phase: "revealTimeout", shot: "tv-reveal-timeout.png" },

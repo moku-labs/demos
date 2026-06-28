@@ -98,14 +98,33 @@ function makeHandlers(ctx: ControllerContext, state: ControllerState): Controlle
   };
 }
 
-/** Whether this phone should see the reveal flash, and with what payload. */
-function flashFor(s: TriviaState): { correct: boolean; points: number } | null {
+/**
+ * Whether this phone should see the reveal flash, and with what payload. In the OPEN steal, the
+ * original answerer is no longer the only participant: the WINNER is `reveal.scorerPeer` (correct
+ * flash), the active player who missed gets a wrong flash, and any stealer who locked an answer but
+ * didn't win also gets a wrong flash. Pure watchers (who never locked) see no flash.
+ *
+ * @param s - The merged snapshot.
+ * @param lockedQid - The question id this phone locked an answer for this round (`null` = never locked).
+ * @returns The flash payload, or `null` when this phone should not flash.
+ */
+function flashFor(
+  s: TriviaState,
+  lockedQid: string | null
+): { correct: boolean; points: number } | null {
   const self = s.self;
   if (self === null || !s.question) return null;
-  if (s.question.answeringPeer !== self) return null;
-  const correct = s.reveal.outcome === "correct" || s.reveal.outcome === "stolen";
-  const points = s.scores.find(e => e.peerId === self)?.delta ?? 0;
-  return { correct, points };
+
+  // The winner (active-correct or a successful stealer) → correct flash with their round points.
+  if (s.reveal.scorerPeer === self) {
+    return { correct: true, points: s.scores.find(e => e.peerId === self)?.delta ?? 0 };
+  }
+  // The original active answerer who missed → wrong flash.
+  if (s.question.answeringPeer === self) return { correct: false, points: 0 };
+  // A stealer who locked an answer this question but didn't win → wrong flash.
+  if (lockedQid !== null && lockedQid === s.question.id) return { correct: false, points: 0 };
+
+  return null;
 }
 
 /** Pick the joined phone's screen for the current phase + role. */
@@ -117,7 +136,15 @@ function joinedScreen(
   const { s } = state;
   const phase = s.match.phase;
   const isActive = s.match.activePeer === self.peerId;
-  const isAnswering = s.question?.answeringPeer === self.peerId;
+  const question = s.question;
+  // Who may tap an answer now: in answer mode only the active answerer; in an OPEN steal every eligible
+  // (non-active, not-yet-tried) stealer — so all of them get the grid at once, not one after another.
+  const canAnswer = question
+    ? question.mode === "steal"
+      ? s.steal.active && s.steal.stealPeers.includes(self.peerId)
+      : question.answeringPeer === self.peerId
+    : false;
+  const inOpenSteal = !!question && question.mode === "steal" && s.steal.active;
   const active = findPlayer(s.players, s.match.activePeer);
 
   if (phase === "lobby") {
@@ -167,15 +194,29 @@ function joinedScreen(
     );
   }
   if (phase === "question") {
-    return isAnswering ? (
-      <PhoneAnswer
-        s={s}
-        now={state.now}
-        lockedSlot={state.lockedSlot}
-        lockedQid={state.lockedQid}
-        onLock={handlers.onLock}
-      />
-    ) : (
+    if (canAnswer) {
+      return (
+        <PhoneAnswer
+          s={s}
+          now={state.now}
+          lockedSlot={state.lockedSlot}
+          lockedQid={state.lockedQid}
+          onLock={handlers.onLock}
+        />
+      );
+    }
+    // Open steal in progress, but this phone can't answer (the active player who missed, or a stealer
+    // who already tried) → a "steal in progress" watch card rather than the "X is answering" one.
+    if (inOpenSteal) {
+      return (
+        <PhoneWaitingCard
+          emoji="🔥"
+          title="Steal in progress!"
+          subtitle="Watch the TV — first wins ♪"
+        />
+      );
+    }
+    return (
       <PhoneWaitingCard
         emoji={findPlayer(s.players, s.question?.answeringPeer)?.avatar ?? "👀"}
         title={`${findPlayer(s.players, s.question?.answeringPeer)?.name ?? "Someone"} is answering`}
@@ -184,7 +225,7 @@ function joinedScreen(
     );
   }
   if (phase === "reveal") {
-    const flash = flashFor(s);
+    const flash = flashFor(s, state.lockedQid);
     if (flash) return <RevealFlash correct={flash.correct} points={flash.points} />;
     // Watcher view: keep the answerer's avatar (carried from "{name} is answering") so the reveal beat
     // matches the other watcher cards instead of a skewed pair of eyes.
@@ -265,7 +306,7 @@ export function render(state: Readonly<ControllerState>, ctx: ControllerContext)
     );
   }
 
-  const flash = s.match.phase === "reveal" ? flashFor(s) : null;
+  const flash = s.match.phase === "reveal" ? flashFor(s, state.lockedQid) : null;
   const phaseAttr = flash ? "reveal" : s.match.phase;
 
   return (

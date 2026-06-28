@@ -17,6 +17,12 @@ type StripState = { reconnecting: boolean };
 type StripContext = Spa.IslandContext<StripState>;
 
 /**
+ * Self-heal window: hide the strip this long after a network warning even if no `sync-ready` arrives, so
+ * a transient blip that recovered silently never leaves a stuck "reconnecting…" strip on screen.
+ */
+const SELF_HEAL_MS = 8000;
+
+/**
  * Build the initial state (not reconnecting).
  *
  * @returns The initial strip state.
@@ -54,17 +60,30 @@ function render(state: Readonly<StripState>): Spa.RenderResult {
  */
 function mount(ctx: StripContext): void {
   ctx.el.toggleAttribute("hidden", true);
+  let healTimer: ReturnType<typeof setTimeout> | undefined;
+
+  // eslint-disable-next-line jsdoc/require-jsdoc -- inline hide closure (clears the strip + heal timer)
+  const hide = (): void => {
+    if (healTimer !== undefined) clearTimeout(healTimer);
+    healTimer = undefined;
+    ctx.set({ reconnecting: false });
+    ctx.el.toggleAttribute("hidden", true);
+  };
+
   ctx.cleanup(
     onLifecycle(event => {
       if (event.kind === "network-warning") {
         ctx.set({ reconnecting: true });
         ctx.el.toggleAttribute("hidden", false);
+        // Arm (or re-arm) the self-heal timer so the strip can never stick if `sync-ready` never comes.
+        if (healTimer !== undefined) clearTimeout(healTimer);
+        healTimer = setTimeout(hide, SELF_HEAL_MS);
       } else if (event.kind === "sync-ready") {
-        ctx.set({ reconnecting: false });
-        ctx.el.toggleAttribute("hidden", true);
+        hide();
       }
     })
   );
+  ctx.cleanup(hide);
 }
 
 /** Transient network-warning strip island (a fixed top strip). */

@@ -82,9 +82,10 @@ export type StagePhaseKey =
   // Bank-not-ready beat: the picker opens before the question bank has loaded (loading hint shown).
   | "categoryLoading"
   | "roundIntro"
-  // Question variants (A4 Russian, A5 flag/image low-timer)
+  // Question variants (A4 Russian, A5 flag/image low-timer, long-prompt auto-fit)
   | "questionRu"
   | "questionFlag"
+  | "questionLong"
   // Reveal variants (wrong→steal, timeout→steal, stolen)
   | "revealWrongSteal"
   | "revealTimeout"
@@ -110,6 +111,8 @@ export type PhonePhaseKey =
   | "categoryLoading"
   | "answer"
   | "answerLocked"
+  // Open steal: a non-active eligible stealer sees the answer grid at the same time as the others.
+  | "stealAnswer"
   | "leaveModal"
   | "midJoin"
   // Non-active player watcher screens (user request: intermediate screens between rounds/actions)
@@ -140,6 +143,7 @@ const STAGE_PHASE_KEYS = new Set<StagePhaseKey>([
   "roundIntro",
   "questionRu",
   "questionFlag",
+  "questionLong",
   "revealWrongSteal",
   "revealTimeout",
   "revealStolen",
@@ -161,6 +165,7 @@ const PHONE_PHASE_KEYS = new Set<PhonePhaseKey>([
   "categoryLoading",
   "answer",
   "answerLocked",
+  "stealAnswer",
   "leaveModal",
   "midJoin",
   "languageVoteWatcher",
@@ -288,6 +293,23 @@ const QUESTION_RU: QuestionView = {
   deadlineTs: FIXED_NOW + 14_000
 };
 
+/**
+ * Very long text question — exercises the auto-fit prompt (use-fit-text): the font must scale DOWN to
+ * fit the hero box so the question never expands vertically or pushes the answer grid off-screen.
+ */
+const QUESTION_LONG: QuestionView = {
+  id: "q-long-demo",
+  category: "science",
+  tier: "hard",
+  type: "text",
+  prompt:
+    "According to the prevailing scientific consensus, which of these subatomic particles — confirmed at CERN's Large Hadron Collider in 2012 — gives other fundamental particles their mass via the field that bears its name?",
+  options: ["The Higgs boson", "The top quark", "The tau neutrino", "The W boson"],
+  answeringPeer: "p1",
+  mode: "answer",
+  deadlineTs: FIXED_NOW + 18_000
+};
+
 /** Image/flag question (A5): hero zone shows a CSS flag, coral low-time timer. */
 const QUESTION_FLAG: QuestionView = {
   id: "q-flag-demo",
@@ -367,7 +389,7 @@ function triviaState(
     players: PLAYERS,
     question: QUESTION,
     reveal: REVEAL_CORRECT,
-    steal: { active: false, stealPeer: null, deadlineTs: null },
+    steal: { active: false, stealPeers: [], deadlineTs: null },
     scores: SCORES,
     bank: { status: "ready", lang: "en", error: null },
     categories: CATEGORIES,
@@ -388,17 +410,18 @@ function triviaState(
  * @returns The harness stage state (a `StageState` + optional `overlay` key).
  */
 export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
-  // Steal sub-state: Mochi (p1) missed; the chance passes to Pixel (p2) under the steal timer.
+  // OPEN steal sub-state: Mochi (p1) missed, so EVERYONE else (p2–p5) may steal at once under one shared
+  // timer. `answeringPeer` stays "p1" (the active player who missed); the eligible set is `stealPeers`.
   if (phase === "steal") {
     return {
       s: triviaState("question", null, {
         question: {
           ...QUESTION,
-          answeringPeer: "p2",
+          answeringPeer: "p1",
           mode: "steal",
           deadlineTs: FIXED_NOW + 6_000
         },
-        steal: { active: true, stealPeer: "p2", deadlineTs: FIXED_NOW + 6_000 }
+        steal: { active: true, stealPeers: ["p2", "p3", "p4", "p5"], deadlineTs: FIXED_NOW + 6_000 }
       }),
       qr: null,
       code: "TRIV1234",
@@ -534,6 +557,18 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
     };
   }
 
+  if (phase === "questionLong") {
+    // Auto-fit proof: a very long prompt must scale down to fit the hero — the answer grid stays on
+    // screen and nothing overflows vertically (item 1).
+    return {
+      s: triviaState("question", null, { question: QUESTION_LONG }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
   // ── Reveal variants ──
 
   if (phase === "revealWrongSteal") {
@@ -541,7 +576,7 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
     return {
       s: triviaState("reveal", null, {
         reveal: REVEAL_WRONG_STEAL,
-        steal: { active: false, stealPeer: null, deadlineTs: null }
+        steal: { active: false, stealPeers: [], deadlineTs: null }
       }),
       qr: null,
       code: "TRIV1234",
@@ -555,7 +590,7 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
     return {
       s: triviaState("reveal", null, {
         reveal: REVEAL_TIMEOUT,
-        steal: { active: false, stealPeer: null, deadlineTs: null }
+        steal: { active: false, stealPeers: [], deadlineTs: null }
       }),
       qr: null,
       code: "TRIV1234",
@@ -571,7 +606,7 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
         reveal: REVEAL_STOLEN,
         // give Tofu a delta so the chip shows "+points"
         scores: SCORES.map(e => (e.peerId === "p3" ? { ...e, delta: 300 } : { ...e, delta: 0 })),
-        steal: { active: false, stealPeer: null, deadlineTs: null }
+        steal: { active: false, stealPeers: [], deadlineTs: null }
       }),
       qr: null,
       code: "TRIV1234",
@@ -668,7 +703,7 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
   return {
     s: triviaState(matchPhase, null, {
       reveal: phase === "reveal" ? REVEAL_CORRECT : REVEAL_WRONG,
-      steal: { active: false, stealPeer: null, deadlineTs: null }
+      steal: { active: false, stealPeers: [], deadlineTs: null }
     }),
     qr: null,
     code: "TRIV1234",
@@ -810,6 +845,29 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinedProfile: null,
       lockedSlot: 2,
       lockedQid: "q-demo",
+      leaving: false,
+      left: false
+    };
+  }
+
+  // open steal (item 3): Mochi (p1) missed → Pixel (p2), a non-active eligible stealer, gets the answer
+  // grid (the "Steal it — tap fast!" label), at the same time as p3/p4/p5 — not in sequence.
+  if (phase === "stealAnswer") {
+    return {
+      s: triviaState("question", "p2", {
+        question: {
+          ...QUESTION,
+          answeringPeer: "p1",
+          mode: "steal",
+          deadlineTs: FIXED_NOW + 6_000
+        },
+        steal: { active: true, stealPeers: ["p2", "p3", "p4", "p5"], deadlineTs: FIXED_NOW + 6_000 }
+      }),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      lockedSlot: null,
+      lockedQid: null,
       leaving: false,
       left: false
     };

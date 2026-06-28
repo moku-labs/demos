@@ -22,7 +22,8 @@ import { useCountUp } from "./use-count-up";
  * @param props.name - The player's display name.
  * @param props.color - The player's signature colour hex (drives the delta colour via `--player`).
  * @param props.total - The player's running score total (the count-up target).
- * @param props.delta - The points gained this round (rendered as `+N`; the count-up's head start).
+ * @param props.delta - The points gained this round (the count-up's head start; the `+N` badge is
+ *   shown only when `delta > 0`, so a player who scored nothing this round reads "Alex 200" — no `+0`).
  * @returns The score chip pill element.
  * @example
  * ```tsx
@@ -36,7 +37,7 @@ export function ScoreChip({ name, color, total, delta }: ScoreChipProps) {
     <div data-component="score-chip" style={{ "--player": color }}>
       <span data-name>{name}</span>
       <span data-total>{shown.toLocaleString()}</span>
-      <span data-delta>+{delta}</span>
+      {delta > 0 ? <span data-delta>+{delta}</span> : null}
     </div>
   );
 }

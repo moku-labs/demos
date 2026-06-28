@@ -44,8 +44,8 @@ export type SliceCache = {
  * ```
  */
 export function makeIdleSteal(): StealSlice {
-  // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cells (null, not undefined)
-  return { active: false, stealPeer: null, deadlineTs: null };
+  // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (deadlineTs null, not undefined)
+  return { active: false, stealPeers: [], deadlineTs: null };
 }
 
 /**

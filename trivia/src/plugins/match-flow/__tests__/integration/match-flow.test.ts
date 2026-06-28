@@ -566,7 +566,7 @@ describe("match-flow plugin integration", () => {
 
   // ─── host clock fires a timeout → steal ──────────────────────────────────
 
-  it("host clock fires the answer timeout → steal opens for the next player", {
+  it("host clock fires the answer timeout → open steal for the other players", {
     timeout: 15_000
   }, async () => {
     restoreFetch = mockFetch();
@@ -574,16 +574,18 @@ describe("match-flow plugin integration", () => {
     const { host, controllers } = await driveToQuestion(2, TIMEOUT_STEAL_TIMERS);
     const lead = controllers[0];
 
-    // answerMs is short → the authoritative host clock times Alice out → steal opens for Bob.
+    // answerMs is short → the authoritative host clock times Alice out → open steal for everyone else.
     await vi.waitFor(
       () => {
         expect(lead?.controller.read("steal")?.active).toBe(true);
       },
       { timeout: 6000 }
     );
-    expect(lead?.controller.read("steal")?.stealPeer).toBeTruthy();
+    expect(
+      (lead?.controller.read("steal")?.stealPeers as unknown[] | undefined)?.length
+    ).toBeGreaterThan(0);
 
-    // The republished question now targets the steal player in steal mode.
+    // The republished question is now in steal mode (open to all non-active players).
     await vi.waitFor(
       () => {
         expect(lead?.controller.read("question")?.mode).toBe("steal");
@@ -659,7 +661,9 @@ describe("match-flow plugin integration", () => {
       },
       { timeout: 10_000 }
     );
-    expect(bob?.controller.read("steal")?.stealPeer).toBeTruthy();
+    expect(
+      (bob?.controller.read("steal")?.stealPeers as unknown[] | undefined)?.length
+    ).toBeGreaterThan(0);
 
     await host.stop();
     await bob?.stop();

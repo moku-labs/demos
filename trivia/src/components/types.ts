@@ -87,6 +87,8 @@ export type ScoreChipProps = { name: string; color: string; total: number; delta
 /** ScoreboardTile (TV interstitial, §G) — rank · avatar · name · proportional bar · score. */
 export type ScoreboardTileProps = {
   rank: number;
+  /** The player's standing *before* this round — drives the F4 climb (overtake) slide animation. */
+  prevRank?: number | undefined;
   player: PlayerProfile;
   total: number;
   /** Points earned this round — drives the count-up head start and the "+N" round-gain badge. */

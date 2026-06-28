@@ -390,12 +390,15 @@ function stealCues(
 ): Cue[] {
   if (!previous) return [];
   const opened = stage && !previous.steal.active && next.steal.active;
+  // Open steal: nudge this phone when it BECOMES eligible (enters the stealPeers set) — covers both the
+  // initial open and a later re-grant, and never re-fires while it stays eligible across ticks.
+  const self = next.self;
   const grantedToSelf =
     controller &&
+    self !== null &&
     next.steal.active &&
-    next.steal.stealPeer !== null &&
-    next.steal.stealPeer === next.self &&
-    previous.steal.stealPeer !== next.self;
+    next.steal.stealPeers.includes(self) &&
+    !previous.steal.stealPeers.includes(self);
   return [
     ...(opened ? stealOpenCues(next) : []),
     ...(grantedToSelf

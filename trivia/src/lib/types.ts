@@ -105,8 +105,12 @@ export type RevealView = {
   answerText: string;
 };
 
-/** `steal` slice view — drives the steal strip (F1) + the phone steal grant. */
-export type StealView = { active: boolean; stealPeer: PeerId | null; deadlineTs: number | null };
+/**
+ * `steal` slice view — drives the OPEN steal strip (F1) + each phone's answer-grant. `stealPeers` is
+ * the set of players currently eligible to steal (everyone but the active player who hasn't yet missed
+ * this question); first correct wins, under one shared `deadlineTs`.
+ */
+export type StealView = { active: boolean; stealPeers: PeerId[]; deadlineTs: number | null };
 
 /** One language option in the live tally (the language + the peers currently voting for it). */
 export type VoteOptionView = { lang: Lang; voters: PeerId[] };

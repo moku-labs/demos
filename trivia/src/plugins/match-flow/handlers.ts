@@ -194,8 +194,8 @@ function readQuestion(sync: SyncReadDeps): QuestionSlice {
  */
 function readSteal(sync: SyncReadDeps): StealSlice {
   const raw = sync.read("steal");
-  // eslint-disable-next-line unicorn/no-null -- nullable slice cells default to null, not undefined
-  return (raw ?? { active: false, stealPeer: null, deadlineTs: null }) as unknown as StealSlice;
+  // eslint-disable-next-line unicorn/no-null -- nullable slice cell defaults to null, not undefined
+  return (raw ?? { active: false, stealPeers: [], deadlineTs: null }) as unknown as StealSlice;
 }
 
 /**
@@ -211,6 +211,20 @@ function readSteal(sync: SyncReadDeps): StealSlice {
 function readPlayers(sync: SyncReadDeps): PlayersSlice["entries"] {
   const raw = sync.read("players");
   return (raw?.entries as PlayersSlice["entries"]) ?? [];
+}
+
+/**
+ * Lift a lingering pause takeover (C2) — set `match.paused` back to `false` once connectivity recovers.
+ * A guarded no-op when not paused (so it never publishes a redundant sync frame).
+ *
+ * @param stage - The stage facade (mutate).
+ * @example
+ * ```ts
+ * clearPause(stage); // on room:sync-ready / a peer reconnecting
+ * ```
+ */
+function clearPause(stage: Pick<StageApi, "mutate">): void {
+  stage.mutate("match", draft => (draft.paused === true ? { ...draft, paused: false } : draft));
 }
 
 // ─── Hook map builder ─────────────────────────────────────────────────────────
@@ -240,18 +254,31 @@ export function createMatchFlowHandlers(deps: HookContextDeps) {
 
   return {
     /**
-     * A controller connected. In "lobby" we await its `join-profile` intent; mid-match the phone
-     * renders the mid-join modal (E2) off `match.phase`. Coarse UX only — no mutation needed here.
+     * A controller's DataChannel (re)opened. A brand-new lobby join is upserted by its `join-profile`
+     * intent (and a full re-join with a fresh peerId is re-bound there by token), so this hook handles
+     * the RECOVERY case: a TRANSPARENT reconnect (same peerId after a heartbeat drop) — re-mark that
+     * roster slot `connected` so the TV's D1 disconnect banner stops showing a player who is actually
+     * back. Any peer (re)connecting is also a recovery signal, so lift a lingering host-reconnect pause.
      *
-     * @param _ - Room event payload (unused — the `join-profile` intent upserts the player).
-     * @param _.peerId - The connected peer's id.
+     * @param payload - The room event payload.
+     * @param payload.peerId - The (re)connected peer's id.
      * @example
      * ```ts
      * hooks: () => ({ "room:peer-joined": ({ peerId }) => {} });
      * ```
      */
-    "room:peer-joined": (_: { peerId: PeerId }) => {
-      // Coarse UX: join-profile intent upserts the player; no mutation needed here.
+    "room:peer-joined": ({ peerId }: { peerId: PeerId }) => {
+      stage.mutate("players", draft => {
+        const entries = (draft.entries as PlayersSlice["entries"] | undefined) ?? [];
+        const slot = entries.find(entry => entry.peerId === peerId);
+        if (!slot || slot.connected) return draft;
+        return {
+          entries: entries.map(entry =>
+            entry.peerId === peerId ? { ...entry, connected: true } : entry
+          )
+        };
+      });
+      clearPause(stage);
     },
 
     /**
@@ -283,7 +310,8 @@ export function createMatchFlowHandlers(deps: HookContextDeps) {
 
     /**
      * The host tab is reloading; recovery is in flight. Set `match.paused = true` (pause overlay C2)
-     * until the host settles. Payload is `Record<string, never>` — no args consumed.
+     * until the host settles — then `room:sync-ready` / a peer reconnecting lifts it. Payload is
+     * `Record<string, never>` — no args consumed.
      *
      * @example
      * ```ts
@@ -295,20 +323,22 @@ export function createMatchFlowHandlers(deps: HookContextDeps) {
     },
 
     /**
-     * A network condition surfaced. Set `match.paused` so the stage renders the D3 reconnect strip;
-     * the reason is not persisted to a slice here.
+     * Sync recovered (the authoritative replica is good again) — lift any pause takeover raised by a
+     * host-reconnect, so the game does not stay frozen behind the C2 overlay after it has actually
+     * recovered (the prior code never cleared `paused`, which read as a stuck "reconnecting").
      *
-     * @param _ - The warning payload.
-     * @param _.reason - The network-warning reason code.
      * @example
      * ```ts
-     * hooks: () => ({ "room:network-warning": ({ reason }) => {} });
+     * hooks: () => ({ "room:sync-ready": () => {} });
      * ```
      */
-    "room:network-warning": (_: {
-      reason: "ice-failed" | "rendezvous-unreachable" | "channel-closed" | "room-evicted";
-    }) => {
-      stage.mutate("match", draft => ({ ...draft, paused: true }));
+    "room:sync-ready": () => {
+      clearPause(stage);
     }
+
+    // NOTE: `room:network-warning` is deliberately NOT handled here. A transient connectivity blip is
+    // surfaced by the lightweight D3 reconnect strip (via the room observer → onLifecycle), which
+    // self-heals on sync-ready / a short timeout. It no longer forces the full-screen C2 pause takeover
+    // — that over-pause was the main "shows reconnecting while actually playing" false positive.
   };
 }

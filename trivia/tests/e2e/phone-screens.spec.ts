@@ -39,6 +39,7 @@ const CONTROLLER_PHASE: Record<PhonePhaseKey, string> = {
   categoryLoading: "categoryPick",
   answer: "question",
   answerLocked: "question",
+  stealAnswer: "question",
   leaveModal: "question",
   midJoin: "question",
   // Non-active player watcher screens
@@ -138,6 +139,20 @@ test.describe("Phone — category pick while the bank loads (A11 not-ready)", ()
     );
     // The loading hint is shown.
     await expect(page.locator("[data-category-hint]")).toContainText("Loading questions");
+  });
+});
+
+test.describe("Phone — open steal (item 3): eligible stealer sees answer grid simultaneously", () => {
+  test("stealAnswer: Pixel (p2, eligible, non-active) sees the full answer grid with 'Steal it — tap fast!' label", async ({
+    page
+  }) => {
+    await gotoPhone(page, "stealAnswer");
+    // The phone-answer component must be visible — the eligible stealer gets the grid at the same time
+    await expect(page.locator("[data-component='phone-answer']")).toBeVisible();
+    // 4 answer buttons present
+    await expect(page.locator("[data-component='answer-button']")).toHaveCount(4);
+    // Label indicating this is a steal opportunity (data-phone-label in PhoneAnswer)
+    await expect(page.locator("[data-phone-label]")).toContainText("Steal it");
   });
 });
 
@@ -308,6 +323,8 @@ const PHONE_SCREENS: ReadonlyArray<{ phase: PhonePhaseKey; shot: string }> = [
   { phase: "categoryLoading", shot: "phone-category-loading.png" },
   { phase: "answer", shot: "phone-answer.png" },
   { phase: "answerLocked", shot: "phone-answer-locked.png" },
+  // Item 3: open steal — eligible stealer simultaneously gets the answer grid
+  { phase: "stealAnswer", shot: "phone-steal-answer.png" },
   { phase: "reveal", shot: "phone-reveal-flash.png" },
   { phase: "revealWrong", shot: "phone-reveal-wrong.png" },
   { phase: "final", shot: "phone-final.png" },

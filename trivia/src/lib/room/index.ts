@@ -20,6 +20,7 @@
 import type { JsonValue, QrMatrix, RoomDescriptor, Signaling } from "@moku-labs/room";
 import { hardNavigate } from "@moku-labs/web/browser";
 import type { EndStats } from "../../plugins/scoring/types";
+import { keepAwake } from "../keep-awake";
 import type { IntentName, IntentPayload, PeerId, TriviaState } from "../types";
 import { createControllerApp } from "./controller";
 import { emptyState, mergeState, SLICES } from "./snapshot";
@@ -174,6 +175,10 @@ async function bootStage(signaling?: Signaling): Promise<RoomDescriptor> {
   // Poll every 250 ms so the TV re-renders when intent handlers mutate slices locally
   // (sync.subscribe does not fire for the host's own stage.mutate calls).
   setInterval(notify, 250);
+  // Hold a screen wake lock so the TV never sleeps mid-match (an OS screensaver blanks the shared screen
+  // and can drop the WebRTC channels); re-acquire + re-render whenever the page returns to the foreground
+  // so the game recovers itself after a sleep/visibility loss instead of staying frozen.
+  keepAwake(notify);
   notify();
   return opened;
 }
@@ -198,7 +203,9 @@ async function bootController(code: string, signaling?: Signaling): Promise<void
   try {
     await app.controller.joinRoom(code);
     selfId = app.session.self().selfId;
-    app.controller.requestWakeLock().catch(() => false);
+    // Keep the phone awake too, and — unlike the framework's fire-and-forget request — re-acquire the
+    // lock and resync when the phone returns to the foreground (so a backgrounded phone recovers).
+    keepAwake(notify);
   } catch (error) {
     emitLifecycle({
       kind: "network-warning",

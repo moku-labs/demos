@@ -85,7 +85,7 @@ function defaultReveal(): RevealView {
  * ```
  */
 function defaultSteal(): StealView {
-  return { active: false, stealPeer: null, deadlineTs: null };
+  return { active: false, stealPeers: [], deadlineTs: null };
 }
 
 /**

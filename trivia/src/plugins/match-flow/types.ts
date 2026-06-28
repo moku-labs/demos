@@ -55,6 +55,12 @@ export type State = {
   offered: CategoryId[];
   /** The question resolved at pick-time, staged here for the reveal→question advance. */
   pendingQuestion: QuestionSlice | null;
+  /**
+   * The slot the ORIGINAL active player locked when they missed (or `null` if they timed out), kept so
+   * a no-winner open-steal terminal reveal still tags the active player's wrong pick on the TV grid —
+   * not whichever stealer happened to resolve the question last. Reset with `tried` each new question.
+   */
+  activePick: number | null;
 };
 
 /** `match` slice — phase routing, the active player, language, host, pause, and the phase deadline. */
@@ -96,5 +102,10 @@ export type RevealSlice = {
   answerText: string;
 };
 
-/** `steal` slice — the steal strip (F1) + the phone steal grant. */
-export type StealSlice = { active: boolean; stealPeer: PeerId | null; deadlineTs: number | null };
+/**
+ * `steal` slice — the OPEN steal: when the active player misses, EVERY other connected player who
+ * hasn't yet tried this question may answer simultaneously (first correct wins). `stealPeers` is the
+ * currently-eligible set (drives the TV steal strip F1 + each phone's answer-grant); it shrinks as
+ * stealers miss, and the shared `deadlineTs` is one window for everyone.
+ */
+export type StealSlice = { active: boolean; stealPeers: PeerId[]; deadlineTs: number | null };

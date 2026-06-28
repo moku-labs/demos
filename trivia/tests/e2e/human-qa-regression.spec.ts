@@ -1,6 +1,6 @@
 /**
  * @file Human-QA regression suite — durable tests for bugs and experience findings
- * confirmed during the comprehensive exploratory QA pass (2026-06-27).
+ * confirmed during the comprehensive exploratory QA pass (2026-06-27 and 2026-06-28).
  *
  * Each test pins a specific behavior that was found and verified; it discriminates
  * (goes red on the bug, stable as a guard on the fix) so findings can never silently
@@ -12,8 +12,9 @@
  *   - Charter 8/OCD: Double-click Next skips step 3
  *   - Charter 9: Visual baseline determinism (dynamic room code masking)
  *   - Charter 10: Join wizard step-skip guard
+ *   - HQ6 (2026-06-28): TurnChip name duplication on reveal outcomes
  */
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 // ─── Finding HQ1: Join wizard step headings are <strong>, not heading elements ──
 // Oracle: Accessibility-vs-rendered mismatch (WCAG 1.3.1 Info and Relationships;
@@ -312,5 +313,74 @@ test.describe("HQ5 — TV stage mute button keyboard accessibility guard", () =>
         "Unexpected keyboard-focusable element on TV stage — only the mute toggle and the New-code reset are expected"
       ).toMatch(/BUTTON:.*(mute|new room code)/i);
     }
+  });
+});
+
+// ─── Finding HQ6: TurnChip name duplication on reveal outcome screens ──────────
+// Oracle: Invariant / FEW HICCUPPS (Explainability): the meta-bar TurnChip on the TV
+//         reveal screen shows the player name in both [data-name] (the chip's own name span)
+//         AND embedded inside [data-label] (the revealCopy chip string), causing the
+//         name to appear twice: "🦊 Mochi Mochi — Correct! +200" and
+//         "🐙 Tofu Tofu steals it! +300".
+// Evidence:
+//   - revealStolen DOM: [data-name]="Tofu" [data-label]="Tofu steals it! +300"
+//     → rendered text: "🐙 Tofu Tofu steals it! +300"
+//   - reveal (correct) DOM: [data-name]="Mochi" [data-label]="Mochi — Correct! +200"
+//     → rendered text: "🦊 Mochi Mochi — Correct! +200"
+//   - Screenshot evidence: tv-reveal-tv-chromium-darwin.png (captured 2026-06-28)
+// Fix applied: revealCopy chip strings now contain the STATUS only (no name prefix);
+//   TurnChip [data-name] remains the sole name display.
+// Severity: P2 (visual quality — duplicated name on every correct/stolen reveal).
+
+test.describe("HQ6 — TurnChip reveal outcome chip label must NOT duplicate the player name", () => {
+  async function gotoStage(page: Page, phase: string) {
+    await page.goto(`/?e2ephase=${phase}`);
+    await page.waitForSelector("[data-stage]", { timeout: 15_000 });
+    await page.evaluate(() => document.fonts.ready);
+  }
+
+  test("reveal correct: chip label does NOT start with the player name", async ({ page }) => {
+    await gotoStage(page, "reveal");
+    const nameEl = await page.locator("[data-component='turn-chip'] [data-name]").textContent();
+    const labelEl = await page.locator("[data-component='turn-chip'] [data-label]").textContent();
+    // The label must NOT start with the same name that [data-name] shows
+    // (e.g. "— Correct! +200" is correct; "Mochi — Correct! +200" is the bug)
+    expect(
+      labelEl?.trim().startsWith(nameEl?.trim() ?? "__sentinel__"),
+      `Reveal chip label "${labelEl}" must not begin with player name "${nameEl}" — ` +
+        "TurnChip already renders the name in [data-name]; the label is the status only"
+    ).toBe(false);
+  });
+
+  test("revealStolen: chip label does NOT start with the stealer's name", async ({ page }) => {
+    await gotoStage(page, "revealStolen");
+    const nameEl = await page.locator("[data-component='turn-chip'] [data-name]").textContent();
+    const labelEl = await page.locator("[data-component='turn-chip'] [data-label]").textContent();
+    expect(
+      labelEl?.trim().startsWith(nameEl?.trim() ?? "__sentinel__"),
+      `RevealStolen chip label "${labelEl}" must not begin with stealer name "${nameEl}" — ` +
+        "TurnChip already renders the name in [data-name]"
+    ).toBe(false);
+  });
+
+  test("reveal wrong: chip label does NOT contain the player name as a prefix", async ({
+    page
+  }) => {
+    await gotoStage(page, "revealWrongSteal");
+    const nameEl = await page.locator("[data-component='turn-chip'] [data-name]").textContent();
+    const labelEl = await page.locator("[data-component='turn-chip'] [data-label]").textContent();
+    expect(
+      labelEl?.trim().startsWith(nameEl?.trim() ?? "__sentinel__"),
+      `RevealWrong chip label "${labelEl}" must not begin with player name "${nameEl}" — ` +
+        "TurnChip already renders the name in [data-name]"
+    ).toBe(false);
+  });
+
+  test("question (non-reveal): chip label is 'answering' — no duplication risk", async ({
+    page
+  }) => {
+    await gotoStage(page, "question");
+    const labelEl = await page.locator("[data-component='turn-chip'] [data-label]").textContent();
+    expect(labelEl?.trim(), "Question chip label must be 'answering'").toBe("answering");
   });
 });

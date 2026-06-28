@@ -32,26 +32,46 @@
     font-family: var(--font-display);
   }
 
+  /* The hero takes the space between the meta bar and the answer grid and CLIPS — it can never grow
+     and push the grid off-screen. The prompt inside is auto-fit-scaled (use-fit-text) to fit this box,
+     so a long question shrinks instead of overflowing; a short one stays at the max size. */
   [data-hero] {
-    flex: 1;
+    flex: 1 1 auto;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: var(--space-4);
     text-align: center;
-    min-height: 0;
+    overflow: hidden;
   }
 
   [data-hero-image] {
+    flex: 0 0 auto;
     filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.45));
   }
 
+  /* Bounded measuring box for the prompt — WIDE (most of the stage width) so the question area is
+     generous, but height-capped by flex so the fit hook scales the font to fit without vertical growth. */
+  [data-prompt-fit] {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    max-width: min(94%, 1200px);
+    margin-inline: auto;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
   [data-prompt] {
+    margin: 0;
     font-family: var(--font-display);
+    /* Initial size only — use-fit-text overrides font-size inline to fit [data-prompt-fit]. */
     font-size: var(--fs-prompt);
     line-height: 1.18;
-    max-width: 24ch;
+    max-width: 100%;
     text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
   }
 
@@ -70,7 +90,10 @@
     z-index: 3;
   }
 
+  /* The answer grid is pinned to the bottom of the body and never shrinks — the hero clips above it
+     so this row stays fully on-screen no matter how long the question is. */
   [data-answer-grid] {
+    flex: 0 0 auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-3);
@@ -100,11 +123,30 @@
     font-family: var(--font-display);
   }
 
-  [data-steal-chip] {
-    padding: 4px 14px;
+  /* The eligible-stealer avatars (everyone but the active player) + the shared countdown seconds. */
+  [data-steal-eligible] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  [data-steal-avatar] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    font-size: 22px;
+    line-height: 1;
     border-radius: var(--radius-pill);
     background: color-mix(in srgb, var(--player, var(--player-teal)) 26%, transparent);
-    border: 1px solid var(--player, var(--player-teal));
+    border: 2px solid var(--player, var(--player-teal));
+  }
+
+  [data-steal-secs] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    padding-left: var(--space-1);
     white-space: nowrap;
   }
 

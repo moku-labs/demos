@@ -44,6 +44,7 @@ export function StageScoreboard({ s }: StageScoreboardProps): JSX.Element {
             <ScoreboardTile
               key={entry.peerId}
               rank={entry.rank}
+              prevRank={entry.prevRank}
               player={player}
               total={entry.total}
               delta={entry.delta}

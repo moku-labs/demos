@@ -167,6 +167,8 @@ export function resolveQuestionTimeout(
     question,
     steal: steal ?? makeIdleSteal(),
     players,
+    // The window (answer or the shared steal) expired — attribute the timeout to the active player.
+    answerer: match.activePeer ?? question.answeringPeer,
     correct: false,
     pickedSlot: undefined,
     correctSlot,
@@ -238,6 +240,8 @@ export function advanceFromScoreboard(
   const activePeer = rotationPeer(players, nextRound);
   state.locked = false;
   state.tried = new Set();
+  // eslint-disable-next-line unicorn/no-null -- no active pick until the next active player locks one
+  state.activePick = null;
   stage.mutate("match", draft => ({
     ...draft,
     phase: "roundIntro" as Phase,
@@ -271,6 +275,8 @@ export function advanceFromFinal(
   state.tried = new Set();
   // eslint-disable-next-line unicorn/no-null -- clear any staged pending question on game reset
   state.pendingQuestion = null;
+  // eslint-disable-next-line unicorn/no-null -- no active pick on a fresh game
+  state.activePick = null;
 
   stage.mutate("match", draft => ({
     ...draft,
@@ -299,8 +305,7 @@ export function advanceFromFinal(
   }));
   stage.mutate("steal", () => ({
     active: false,
-    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
-    stealPeer: null,
+    stealPeers: [],
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
     deadlineTs: null
   }));

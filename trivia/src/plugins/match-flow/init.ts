@@ -76,8 +76,7 @@ function registerSlices(sync: SyncDeps): void {
 
   sync.registerSlice("steal", {
     active: false,
-    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
-    stealPeer: null,
+    stealPeers: [],
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
     deadlineTs: null
   });
@@ -154,9 +153,14 @@ function remapReconnectedPeer(
   stage.mutate("question", draft =>
     draft.answeringPeer === oldPeerId ? { ...draft, answeringPeer: newPeerId } : draft
   );
-  stage.mutate("steal", draft =>
-    draft.stealPeer === oldPeerId ? { ...draft, stealPeer: newPeerId } : draft
-  );
+  // The open steal lists every eligible stealer by peerId — re-key the reconnecting phone's entry so it
+  // keeps its steal grant across a reload (the framework mints a fresh peerId on rejoin).
+  stage.mutate("steal", draft => {
+    const peers = (draft.stealPeers as PeerId[] | undefined) ?? [];
+    return peers.includes(oldPeerId)
+      ? { ...draft, stealPeers: peers.map(id => (id === oldPeerId ? newPeerId : id)) }
+      : draft;
+  });
   // reveal.scorerPeer holds the answerer's id during the ~revealMs hold — re-key it too, else a
   // reconnect mid-reveal orphans the TV scorer chip (it can't find the seat by the stale id).
   stage.mutate("reveal", draft =>
@@ -351,10 +355,12 @@ export function initMatchFlow(
       // Category exhausted — stay in categoryPick (the island reads availability() for the D2 toast).
       if (!question) return draft;
 
-      // Reset the per-question lock + tried set; the active peer is "tried" immediately.
+      // Reset the per-question lock + tried set + active pick; the active peer is "tried" immediately.
       state.locked = false;
       state.tried = new Set();
       state.tried.add(meta.peerId);
+      // eslint-disable-next-line unicorn/no-null -- no active pick until the active player locks one
+      state.activePick = null;
 
       // Stage the resolved question on host State (question-bank is consume-once). The clock will
       // publish it and set deadlineTs when the categoryReveal beat expires. The category/tier/type
@@ -383,31 +389,41 @@ export function initMatchFlow(
     });
   });
 
-  // ── answer-lock: the current answerer locks a slot → run the steal machine ──
+  // ── answer-lock: the active answerer OR any eligible stealer locks a slot → run the steal machine ──
   intent.register("answer-lock", { fields: { slot: { type: "number" } }, additionalFields: false });
   intent.onIntent("answer-lock", (payload, meta) => {
     if (typeof payload !== "object" || payload === null) return;
     const slot = (payload as Record<string, unknown>).slot;
     if (typeof slot !== "number") return;
 
-    // Guards read the clock's slice cache (the live question carries fields the match draft lacks).
+    // `state.locked` means the question is RESOLVED (a winner or a terminal reveal) — drop late locks.
+    // It is host-synchronous, so the FIRST correct lock blocks every other racing lock this same tick.
     if (state.locked) return;
+
     const match = cachedMatch();
     const question = cachedQuestion();
     if (!question || !match) return;
     if (match.phase !== "question") return;
-    if (question.answeringPeer !== meta.peerId) return;
 
-    state.locked = true;
+    // Eligibility from host-SYNCHRONOUS state (the slice cache lags a tick): in answer mode only the
+    // active answerer may lock; in an open steal ANY connected non-active peer who hasn't tried yet may
+    // (the `tried` set is the live, race-free source of truth — the synced `stealPeers` is UI only).
+    const isActiveAnswerer = question.mode === "answer" && question.answeringPeer === meta.peerId;
+    const isEligibleStealer =
+      question.mode === "steal" &&
+      meta.peerId !== match.activePeer &&
+      !state.tried.has(meta.peerId);
+    if (!isActiveAnswerer && !isEligibleStealer) return;
 
     const { correctSlot, correct } = questionBank.grade(question.id, slot);
 
-    const stealOpened = resolveAnswer({
+    const stillOpen = resolveAnswer({
       state,
       match,
       question,
       steal: cachedSteal() ?? makeIdleSteal(),
       players: cachedPlayers() ?? [],
+      answerer: meta.peerId,
       correct,
       pickedSlot: slot,
       correctSlot,
@@ -417,10 +433,10 @@ export function initMatchFlow(
       stealMs: config.stealMs
     });
 
-    // A wrong lock that opens a steal keeps the question live for the next answerer — re-unlock so the
-    // stealer's lock (and the steal-timeout) aren't swallowed by the `state.locked` guard. Without this
-    // the match freezes in the steal sub-phase (the timeout path already does this; the lock path didn't).
-    if (stealOpened) state.locked = false;
+    // Resolved (a correct winner or the terminal reveal) → lock so duplicate/late locks are dropped.
+    // Steal still open → leave unlocked so the remaining eligible players keep racing (each gates
+    // itself out via the `tried` set as they miss).
+    state.locked = !stillOpen;
   });
 
   // ── play-again: any phone on the final card restarts (scores reset, language + seen kept) ──
@@ -434,6 +450,8 @@ export function initMatchFlow(
     state.tried = new Set();
     // eslint-disable-next-line unicorn/no-null -- clear any staged pending question on play-again
     state.pendingQuestion = null;
+    // eslint-disable-next-line unicorn/no-null -- no active pick until the active player locks one
+    state.activePick = null;
 
     const { language: lang, activePeer: previousActive } = match;
     const firstConnected = (cachedPlayers() ?? []).find(player => player.connected);
