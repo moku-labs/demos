@@ -446,5 +446,285 @@
       "A scythe"
     ],
     "answerCheck": "3d53:0"
+  },
+  {
+    "id": "27f84777f8a4",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which famous painting shows a young woman glancing over her shoulder, wearing a turban and a single large earring?",
+    "options": [
+      "Madame X",
+      "The Birth of Venus",
+      "Whistler's Mother",
+      "Girl with a Pearl Earring"
+    ],
+    "answerCheck": "h8p8:3"
+  },
+  {
+    "id": "ef29d9dc688e",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Michelangelo's enormous marble statue of a nude young man with a sling over his shoulder is known by which name?",
+    "options": [
+      "Apollo",
+      "Hercules",
+      "Goliath",
+      "David"
+    ],
+    "answerCheck": "woa:2"
+  },
+  {
+    "id": "acdc2f109566",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The ancient Greek statue of a goddess famous for having no arms is called the Venus de what?",
+    "options": [
+      "Venus de Milo",
+      "Venus de Roma",
+      "Venus de Atenas",
+      "Venus de Paris"
+    ],
+    "answerCheck": "fqu:3"
+  },
+  {
+    "id": "5ec26b43537e",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A Japanese woodblock print of a giant curling wave towering over boats, with Mount Fuji in the distance, is known as 'The Great Wave off' which place?",
+    "options": [
+      "Tokyo",
+      "Kanagawa",
+      "Osaka",
+      "Kyoto"
+    ],
+    "answerCheck": "la8m43h:0"
+  },
+  {
+    "id": "95dcad18ab6c",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the name of the wooden three-legged stand that holds a canvas upright while an artist paints?",
+    "options": [
+      "An easel",
+      "A lectern",
+      "A trestle",
+      "A plinth"
+    ],
+    "answerCheck": "eib:3"
+  },
+  {
+    "id": "640f18b5589e",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "On a standard graphite pencil, what does the 'B' stand for in grades like 2B and 6B?",
+    "options": [
+      "Brittle",
+      "Black",
+      "Bright",
+      "Bold"
+    ],
+    "answerCheck": "prkti:2"
+  },
+  {
+    "id": "3ea3d0b9c144",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Comic-strip-style paintings of crying women and explosions, made up of big printed-looking dots, are the trademark of which pop artist?",
+    "options": [
+      "Jean-Michel Basquiat",
+      "Keith Haring",
+      "Jeff Koons",
+      "Roy Lichtenstein"
+    ],
+    "answerCheck": "51j1:3"
+  },
+  {
+    "id": "fa95795636b3",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Rembrandt's huge group portrait of a militia company, long darkened by grime so people thought it was a night scene, is popularly called what?",
+    "options": [
+      "The Anatomy Lesson",
+      "The Dark Guard",
+      "The Company of Captains",
+      "The Night Watch"
+    ],
+    "answerCheck": "kks2nqn:2"
+  },
+  {
+    "id": "c3778c3bcfa1",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "René Magritte painted a realistic pipe under the words 'Ceci n'est pas une pipe' — 'This is not a pipe.' What was his point?",
+    "options": [
+      "The image is only a painting of a pipe, not a real one",
+      "He had quit smoking that year",
+      "It was a private joke about a friend",
+      "The pipe was painted by an assistant"
+    ],
+    "answerCheck": "f8p3xcv:3"
+  },
+  {
+    "id": "e42460a478b1",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Georges Seurat built his paintings entirely from tiny separate dots of colour that blend in the viewer's eye. What is this technique called?",
+    "options": [
+      "Pointillism",
+      "Chiaroscuro",
+      "Impasto",
+      "Sfumato"
+    ],
+    "answerCheck": "ldtx7:1"
+  },
+  {
+    "id": "16503be8ae5d",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Gustav Klimt's most famous painting, showing a couple embracing in a shimmering robe, is titled 'The Kiss'. Real flakes of which metal give it its glow?",
+    "options": [
+      "Silver",
+      "Gold",
+      "Bronze",
+      "Copper"
+    ],
+    "answerCheck": "b623pl6:0"
+  },
+  {
+    "id": "3ced857561ac",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Artists Christo and Jeanne-Claude were world-famous for doing what to landmarks and landscapes?",
+    "options": [
+      "Wrapping them in fabric",
+      "Filling them with sand",
+      "Lighting them with lasers",
+      "Painting them overnight"
+    ],
+    "answerCheck": "c2anva:2"
+  },
+  {
+    "id": "8dac77bdc836",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In painting terms, the white chalky primer brushed onto a canvas before painting — to seal it and give the paint something to grip — is called what?",
+    "options": [
+      "Mordant",
+      "Glaze",
+      "Gesso",
+      "Varnish"
+    ],
+    "answerCheck": "mcya:2"
+  },
+  {
+    "id": "50dea371d20a",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Leonardo da Vinci's drawing of a man with arms and legs spread inside both a circle and a square is known as what?",
+    "options": [
+      "The Golden Man",
+      "The Vitruvian Man",
+      "The Proportional Figure",
+      "The Anatomy Study"
+    ],
+    "answerCheck": "0oyed3:3"
+  },
+  {
+    "id": "b82ba251c360",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Bayeux Tapestry, nearly 70 metres long, is an embroidered strip depicting which historical event?",
+    "options": [
+      "The signing of Magna Carta",
+      "The coronation of Charlemagne",
+      "The Norman conquest of England in 1066",
+      "The Crusades"
+    ],
+    "answerCheck": "1akd:2"
+  },
+  {
+    "id": "32b66e594342",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In 1856 an 18-year-old chemist trying to make a malaria drug accidentally created the first synthetic dye, a vivid purple. What was the colour named?",
+    "options": [
+      "Heliotrope",
+      "Magenta",
+      "Mauve",
+      "Violet"
+    ],
+    "answerCheck": "5c02fm:0"
+  },
+  {
+    "id": "9a83fe73da32",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The 1990 theft from Boston's Isabella Stewart Gardner Museum remains the biggest art heist in history. To this day, what hangs where the stolen paintings were?",
+    "options": [
+      "The empty frames",
+      "Photographs of the missing works",
+      "Replicas painted by students",
+      "Black curtains over the gaps"
+    ],
+    "answerCheck": "6urv:0"
+  },
+  {
+    "id": "c0ac1aeb3fef",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Conceptual artist Sol LeWitt sold many of his wall drawings not as finished pieces but as what?",
+    "options": [
+      "Written instructions for others to execute on a wall",
+      "Digital files projected onto walls",
+      "Sealed boxes opened only after his death",
+      "Photographs of walls he had painted"
+    ],
+    "answerCheck": "z07j0:1"
+  },
+  {
+    "id": "827125819563",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Sculptor Anish Kapoor caused an art-world feud by buying exclusive artistic rights to Vantablack, a coating famous for what property?",
+    "options": [
+      "Changing colour with heat",
+      "Glowing in the dark",
+      "Absorbing almost all visible light",
+      "Repelling water completely"
+    ],
+    "answerCheck": "eo9c7b:0"
+  },
+  {
+    "id": "a3bcdf866577",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The jewelled Fabergé eggs, masterpieces of decorative art, were originally created as Easter gifts for the rulers of which country?",
+    "options": [
+      "Russia",
+      "France",
+      "Britain",
+      "Austria"
+    ],
+    "answerCheck": "w67fv8x:3"
   }
 ]

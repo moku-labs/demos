@@ -446,5 +446,285 @@
       "Impersonating other sea creatures like lionfish and sea snakes"
     ],
     "answerCheck": "hiphdf:1"
+  },
+  {
+    "id": "07ff38287691",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "If conditions get too hot and dry, some land snails can do something surprising for up to three years. What?",
+    "options": [
+      "Sing",
+      "Glow",
+      "Fly",
+      "Sleep"
+    ],
+    "answerCheck": "j0lf8d:1"
+  },
+  {
+    "id": "c8de888959e4",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What does a honeybee do to tell hivemates where to find good flowers?",
+    "options": [
+      "It changes colour",
+      "A loud buzz code",
+      "A waggle dance",
+      "It leaves a trail of wax"
+    ],
+    "answerCheck": "4de5v:3"
+  },
+  {
+    "id": "62b4d75b1602",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A shark's skeleton isn't made of bone at all. What is it made of?",
+    "options": [
+      "Pure calcium",
+      "Thick scales",
+      "Cartilage",
+      "Hardened muscle"
+    ],
+    "answerCheck": "0ux:1"
+  },
+  {
+    "id": "ce76caf08b28",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which sea creature is famous for changing both its colour and its skin texture in an instant?",
+    "options": [
+      "Sea urchin",
+      "Jellyfish",
+      "Clownfish",
+      "Cuttlefish"
+    ],
+    "answerCheck": "vu9jd:0"
+  },
+  {
+    "id": "13425ad7df9c",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A group of flamingos is delightfully called what?",
+    "options": [
+      "A parade",
+      "A flamboyance",
+      "A flutter",
+      "A blush"
+    ],
+    "answerCheck": "0d5i:1"
+  },
+  {
+    "id": "9b41ca033897",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Giraffes get by on remarkably little of what each day, sometimes under two hours?",
+    "options": [
+      "Walking",
+      "Sunlight",
+      "Water",
+      "Sleep"
+    ],
+    "answerCheck": "b062c:0"
+  },
+  {
+    "id": "0314d9dab71d",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What unusual feature makes a goat's eyes look strange up close?",
+    "options": [
+      "Pupils that glow",
+      "Rectangular pupils",
+      "No pupils at all",
+      "Star-shaped pupils"
+    ],
+    "answerCheck": "4x0eu2:3"
+  },
+  {
+    "id": "84129326bb57",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "How do reindeer eyes change between summer and winter to cope with the long Arctic darkness?",
+    "options": [
+      "They shift colour from gold to blue",
+      "They start to glow green",
+      "They double in size",
+      "They grow a second lens"
+    ],
+    "answerCheck": "xyv4:0"
+  },
+  {
+    "id": "34cf2fff02cf",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Owls can't move their eyes in their sockets at all, which is why they do what instead?",
+    "options": [
+      "Rotate their heads up to about 270 degrees",
+      "Blink one eye at a time",
+      "See only in black and white",
+      "Hunt purely by smell"
+    ],
+    "answerCheck": "424axy:2"
+  },
+  {
+    "id": "6b4d826c01d8",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Why do many tarantulas flick the hairs off their abdomen at attackers?",
+    "options": [
+      "The hairs are venomous darts",
+      "The hairs smell foul",
+      "The hairs irritate eyes and skin",
+      "The hairs glow to confuse predators"
+    ],
+    "answerCheck": "p0fenl5:1"
+  },
+  {
+    "id": "c4386c1dd043",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A male pufferfish in the genus Torquigener creates what to attract a mate?",
+    "options": [
+      "A nest of glowing shells",
+      "A trail of bubbles spelling shapes",
+      "Intricate circular patterns in the seabed sand",
+      "A pile of colourful stones"
+    ],
+    "answerCheck": "hjfvm:3"
+  },
+  {
+    "id": "90f65b1b30ab",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Vampire bats are famous for sharing food with hungry roost-mates. How do they share it?",
+    "options": [
+      "By leading them to a host",
+      "By carrying prey back",
+      "By trading insects",
+      "By regurgitating a blood meal"
+    ],
+    "answerCheck": "925gb3k:2"
+  },
+  {
+    "id": "205fff737775",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What quirk do the kangaroo and the emu share, said to be why they appear on Australia's coat of arms?",
+    "options": [
+      "Both walk sideways",
+      "Neither can turn left",
+      "Both hop on one leg",
+      "Neither can easily walk backwards"
+    ],
+    "answerCheck": "t1ocy:0"
+  },
+  {
+    "id": "8bca39102ef8",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Dolphins rest in an unusual way that lets them keep breathing and watch for danger. What is it?",
+    "options": [
+      "They float belly-up and hold their breath",
+      "They sleep in tight rotating circles",
+      "They sleep with one half of the brain at a time",
+      "They wedge into seafloor crevices"
+    ],
+    "answerCheck": "xxswl0:0"
+  },
+  {
+    "id": "e7cad0975b73",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Sea turtles and some other migrating animals are thought to navigate the open ocean by sensing what?",
+    "options": [
+      "Earth's magnetic field",
+      "Changes in water saltiness",
+      "The Moon's gravity",
+      "The taste of distant rivers"
+    ],
+    "answerCheck": "qp6ezvf:3"
+  },
+  {
+    "id": "56065e630f25",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The parasite Cymothoa exigua is the only known animal that destroys one of its host's organs and then takes its place. Which organ?",
+    "options": [
+      "A fish's gill",
+      "A fish's tongue",
+      "A fish's eye",
+      "A fish's heart"
+    ],
+    "answerCheck": "qqbde:2"
+  },
+  {
+    "id": "6be2d81b2af1",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Iberian ribbed newt has a startling defence: when grabbed, it pushes its own what through its skin to use as weapons?",
+    "options": [
+      "Ribs",
+      "Teeth",
+      "Spine bones",
+      "Claws"
+    ],
+    "answerCheck": "lqus75x:3"
+  },
+  {
+    "id": "6450fe290c2f",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "An alpine swift can do something for up to six months without ever stopping. What?",
+    "options": [
+      "Hold its breath underwater",
+      "Fly completely silently",
+      "Go without any food",
+      "Stay airborne, even sleeping in flight"
+    ],
+    "answerCheck": "njjlq:0"
+  },
+  {
+    "id": "213a996a1671",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The pompom or boxer crab defends itself in an unusual way. What does it carry in its claws?",
+    "options": [
+      "Bits of glowing coral",
+      "Stinging sea anemones",
+      "Poisonous sponges",
+      "Sharpened shells"
+    ],
+    "answerCheck": "aw887:2"
+  },
+  {
+    "id": "5c38090bba7b",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Female Surinam toads have a famously unsettling way of carrying their young until they emerge. Where do the babies develop?",
+    "options": [
+      "Wrapped around the mother's legs",
+      "Inside the mother's mouth",
+      "Embedded in pockets on the mother's back",
+      "Glued under the mother's chin"
+    ],
+    "answerCheck": "v429:2"
   }
 ]

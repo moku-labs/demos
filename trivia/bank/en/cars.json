@@ -446,5 +446,285 @@
       "The fastest-accelerating production sedan ever"
     ],
     "answerCheck": "0fjx:2"
+  },
+  {
+    "id": "855b85270ee4",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What do the grooves cut into a car tyre's tread mainly help with?",
+    "options": [
+      "Keeping the wheels perfectly round",
+      "Channelling water away to grip in the rain",
+      "Making the car go faster",
+      "Stopping the tyre from getting too hot"
+    ],
+    "answerCheck": "ewj:0"
+  },
+  {
+    "id": "f8e6ee7703ee",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What does a red traffic light tell drivers to do?",
+    "options": [
+      "Honk the horn",
+      "Turn around",
+      "Stop",
+      "Speed up"
+    ],
+    "answerCheck": "60gp2:3"
+  },
+  {
+    "id": "421991097cca",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which Italian carmaker is nicknamed 'The Prancing Horse'?",
+    "options": [
+      "Maserati",
+      "Fiat",
+      "Ferrari",
+      "Alfa Romeo"
+    ],
+    "answerCheck": "dx13rr2:1"
+  },
+  {
+    "id": "e25509bc8090",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What part of a car inflates in a fraction of a second to cushion you in a crash?",
+    "options": [
+      "The radiator",
+      "The airbag",
+      "The sunroof",
+      "The spare tyre"
+    ],
+    "answerCheck": "wp08:1"
+  },
+  {
+    "id": "c700816a9d46",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Germany is famous for a motorway network where parts have no general speed limit. What is it called?",
+    "options": [
+      "The Speedway",
+      "The Autobahn",
+      "The Talladega",
+      "The Velodrome"
+    ],
+    "answerCheck": "19yr5:2"
+  },
+  {
+    "id": "216f5979ca7c",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which electric car company, founded in 2003, is named after a famous inventor?",
+    "options": [
+      "Faraday Motors",
+      "Tesla",
+      "Volta Cars",
+      "Edison"
+    ],
+    "answerCheck": "5l3im:2"
+  },
+  {
+    "id": "66ae79e59a44",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the small figurine on the bonnet of a Rolls-Royce called?",
+    "options": [
+      "The Flying Goddess",
+      "The Spirit of Ecstasy",
+      "The Winged Victory",
+      "The Silver Lady's Crown"
+    ],
+    "answerCheck": "3po:0"
+  },
+  {
+    "id": "ec7edb4fc718",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The DeLorean DMC-12, made famous by 'Back to the Future', had one very unusual body feature. What was it?",
+    "options": [
+      "It was covered in solar panels",
+      "Its body was made entirely of cork",
+      "Its body panels were unpainted brushed stainless steel",
+      "It had no windows, only camera screens"
+    ],
+    "answerCheck": "6ij4a:3"
+  },
+  {
+    "id": "1b52a354592e",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Nürburgring's long, twisting old circuit in Germany earned a fearsome nickname from racing driver Jackie Stewart. What was it?",
+    "options": [
+      "The Devil's Staircase",
+      "The Green Hell",
+      "The Iron Snake",
+      "The Black Forest Maze"
+    ],
+    "answerCheck": "flpd:1"
+  },
+  {
+    "id": "ef06473d2760",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The higher the octane number on petrol, the more it resists what unwanted engine problem?",
+    "options": [
+      "Premature 'knocking' or self-ignition",
+      "Freezing in cold weather",
+      "Overheating of the tyres",
+      "Rusting of the fuel tank"
+    ],
+    "answerCheck": "a4s0dr:2"
+  },
+  {
+    "id": "aec3daf5b221",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Formula 1, what do drivers do during a 'box, box' radio call?",
+    "options": [
+      "Defend their position aggressively",
+      "Slow down for a safety car",
+      "Switch off the engine to save fuel",
+      "Come into the pits"
+    ],
+    "answerCheck": "mhitcz:1"
+  },
+  {
+    "id": "fa494b2b6334",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The reflective road studs that glow in car headlights at night are nicknamed 'cat's eyes'. What inspired their inventor, Percy Shaw?",
+    "options": [
+      "A lighthouse beam over the sea",
+      "A cat's eyes reflecting his headlights on a dark road",
+      "Stars reflected in a puddle",
+      "The glint of a coin in a gutter"
+    ],
+    "answerCheck": "te064r2:0"
+  },
+  {
+    "id": "4d055fa16391",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Toyota Prius, a pioneering mass-market hybrid, gets its name from a Latin word meaning what?",
+    "options": [
+      "Prior, or 'to go before'",
+      "Future",
+      "Quiet",
+      "Clean"
+    ],
+    "answerCheck": "70bsm:1"
+  },
+  {
+    "id": "e65256fe4b7d",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Drifting is a driving style where the car is deliberately made to do what?",
+    "options": [
+      "Reverse at high speed",
+      "Slide sideways with the rear wheels losing grip",
+      "Drive on two wheels",
+      "Coast with the engine off"
+    ],
+    "answerCheck": "rviwf0m:0"
+  },
+  {
+    "id": "d78dde35b1f4",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A car body style with a roof that folds or retracts so you can drive in the open air is called a what?",
+    "options": [
+      "A convertible",
+      "A hatchback",
+      "An estate",
+      "A coupé"
+    ],
+    "answerCheck": "e6sglzl:3"
+  },
+  {
+    "id": "935152a3bb8b",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Le Mans winners traditionally spray a magnum of which celebratory drink, a custom race driver Dan Gurney is credited with starting in 1967?",
+    "options": [
+      "Whisky",
+      "Beer",
+      "Cider",
+      "Champagne"
+    ],
+    "answerCheck": "vzuzod8:2"
+  },
+  {
+    "id": "86aeabb9b4ba",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Mercedes-Benz 300SL of the 1950s pioneered gullwing doors for a very practical reason. What was it?",
+    "options": [
+      "Its deep tubular racing chassis had high sides that left no room for normal doors",
+      "Designers wanted to copy a fighter jet canopy",
+      "Conventional hinges were banned by 1950s safety rules",
+      "The doors doubled as wings to add downforce"
+    ],
+    "answerCheck": "if0fj:1"
+  },
+  {
+    "id": "58a41edac670",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Top Fuel dragsters, the quickest accelerating race cars on Earth, don't run on petrol. What fuel do they burn?",
+    "options": [
+      "Liquid hydrogen",
+      "Nitromethane",
+      "Kerosene",
+      "Pure ethanol"
+    ],
+    "answerCheck": "sbbw:1"
+  },
+  {
+    "id": "a614aab2ae4d",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Subaru, Porsche, and the old VW Beetle all share a love of one particular engine layout. Which is it?",
+    "options": [
+      "A horizontally-opposed 'boxer' engine",
+      "An inline-six",
+      "A rotary engine",
+      "A V8"
+    ],
+    "answerCheck": "xkshlq:2"
+  },
+  {
+    "id": "6888aaa3266f",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Volkswagen Beetle was originally commissioned in 1930s Germany under what kind of name?",
+    "options": [
+      "The 'Autobahn Cruiser'",
+      "The 'Iron Horse'",
+      "The 'Berlin Special'",
+      "The 'People's Car', or Volkswagen"
+    ],
+    "answerCheck": "hl7:2"
   }
 ]

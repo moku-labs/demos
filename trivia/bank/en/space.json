@@ -446,5 +446,285 @@
       "A supernova"
     ],
     "answerCheck": "4fhyk:0"
+  },
+  {
+    "id": "16581408ccd3",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "There is no wind or rain on the Moon, so the Apollo astronauts' footprints will likely stay for how long?",
+    "options": [
+      "Millions of years",
+      "A few days",
+      "Until the next full moon",
+      "About one year"
+    ],
+    "answerCheck": "jo1w:0"
+  },
+  {
+    "id": "28d9f4f678bb",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "If you could find a bathtub big enough, which planet would float in water because it's so light for its size?",
+    "options": [
+      "Mars",
+      "Saturn",
+      "Mercury",
+      "Earth"
+    ],
+    "answerCheck": "7m25pwx:0"
+  },
+  {
+    "id": "a9b6a1df482f",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Whipping around Earth every 90 minutes, astronauts on the Space Station see roughly how many sunrises each day?",
+    "options": [
+      "Exactly one",
+      "None at all",
+      "About 16",
+      "About 100"
+    ],
+    "answerCheck": "fgv1l7d:1"
+  },
+  {
+    "id": "6f646eff17a6",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which dog became one of the first animals to orbit the Earth, launched by the Soviet Union in 1957?",
+    "options": [
+      "Belka",
+      "Rex",
+      "Laika",
+      "Sputnik"
+    ],
+    "answerCheck": "oex:1"
+  },
+  {
+    "id": "e3fdf949731d",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A 'shooting star' streaking across the night sky is actually what?",
+    "options": [
+      "A distant exploding star",
+      "A piece of the Sun breaking off",
+      "A satellite switching on its lights",
+      "A tiny bit of space dust burning up in our air"
+    ],
+    "answerCheck": "1kmryh:1"
+  },
+  {
+    "id": "bb671dab78fb",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Astronauts wear bulky white spacesuits mainly to do what?",
+    "options": [
+      "Look good on camera",
+      "Supply air and protect them from the deadly conditions of space",
+      "Keep their clothes clean",
+      "Help them float more easily"
+    ],
+    "answerCheck": "ngo9pe:3"
+  },
+  {
+    "id": "a7cdc598d27a",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The bright 'North Star' that sits almost directly above Earth's North Pole is also known as what?",
+    "options": [
+      "Sirius",
+      "Vega",
+      "Rigel",
+      "Polaris"
+    ],
+    "answerCheck": "0xvmhym:2"
+  },
+  {
+    "id": "bca275058918",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Venus is the hottest planet — its surface is hot enough to melt which metal?",
+    "options": [
+      "Tungsten",
+      "Steel",
+      "Lead",
+      "Titanium"
+    ],
+    "answerCheck": "63a:1"
+  },
+  {
+    "id": "fbd387d1ef1a",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In 2021 NASA flew the first powered aircraft on another world, a small helicopter named Ingenuity. Where did it fly?",
+    "options": [
+      "The Moon",
+      "Mars",
+      "Jupiter",
+      "Venus"
+    ],
+    "answerCheck": "pnwje:2"
+  },
+  {
+    "id": "1baf7b53cb36",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Pluto was reclassified from a planet to a 'dwarf planet' in 2006 largely because it does what?",
+    "options": [
+      "Is too cold to count",
+      "Has no moons of its own",
+      "Spins backwards",
+      "Hasn't cleared other objects out of its orbital path"
+    ],
+    "answerCheck": "7zu:2"
+  },
+  {
+    "id": "9d74852cedc9",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A light-year is a measure of what?",
+    "options": [
+      "Temperature",
+      "Brightness",
+      "Distance",
+      "Time"
+    ],
+    "answerCheck": "um4ekv2:1"
+  },
+  {
+    "id": "60b4a06055bc",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Mars has two small, lumpy moons. They are named Phobos and what?",
+    "options": [
+      "Charon",
+      "Deimos",
+      "Triton",
+      "Europa"
+    ],
+    "answerCheck": "uju:0"
+  },
+  {
+    "id": "1f9102fb9d7e",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Mercury has almost no atmosphere, so its temperature swings wildly. Roughly how big is the day-to-night difference?",
+    "options": [
+      "Close to 600°C",
+      "Almost none",
+      "Around 90°C",
+      "About 20°C"
+    ],
+    "answerCheck": "kf0fyze:3"
+  },
+  {
+    "id": "839cfc3df944",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "We only ever see one side of the Moon from Earth because the Moon does what?",
+    "options": [
+      "Stops spinning at night",
+      "Spins once for each trip around Earth",
+      "Only glows on one side",
+      "Is too far to see the back"
+    ],
+    "answerCheck": "dvl:0"
+  },
+  {
+    "id": "d45cb86f0c92",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Shimmering auroras (the Northern and Southern Lights) are caused by particles from the Sun striking what?",
+    "options": [
+      "The ozone layer melting",
+      "Moonlight reflecting off ice",
+      "Earth's atmosphere and magnetic field",
+      "Clouds of volcanic ash"
+    ],
+    "answerCheck": "uo8bk4:0"
+  },
+  {
+    "id": "cb8a393c621d",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Saturn's small moon Enceladus shoots towering geysers into space. What are these plumes mostly made of?",
+    "options": [
+      "Molten sulphur",
+      "Liquid methane",
+      "Water ice from a hidden ocean",
+      "Carbon dioxide snow"
+    ],
+    "answerCheck": "kkg:1"
+  },
+  {
+    "id": "655b614af391",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A neutron star is so dense that a single teaspoon of it would weigh roughly the same as what?",
+    "options": [
+      "A large building",
+      "A mountain",
+      "A blue whale",
+      "A loaded truck"
+    ],
+    "answerCheck": "e18e26s:0"
+  },
+  {
+    "id": "591cfe26b59d",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Apollo 13 mission became famous in 1970 because the crew had to do what?",
+    "options": [
+      "Repair the Hubble telescope",
+      "Abandon the Moon landing and survive a crippling explosion",
+      "Make the first ever Moon landing",
+      "Spend a year on the lunar surface"
+    ],
+    "answerCheck": "0dxy:1"
+  },
+  {
+    "id": "5229e0c29e4a",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The James Webb Space Telescope mostly observes in which kind of light, letting it peer through dust to the earliest galaxies?",
+    "options": [
+      "Visible light",
+      "X-ray",
+      "Infrared",
+      "Ultraviolet"
+    ],
+    "answerCheck": "igw83em:1"
+  },
+  {
+    "id": "223d1c074942",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Ganymede, a moon of Jupiter and the largest moon in the Solar System, is actually bigger than which planet?",
+    "options": [
+      "Neptune",
+      "Mars",
+      "Mercury",
+      "Earth"
+    ],
+    "answerCheck": "dz8okvy:1"
   }
 ]

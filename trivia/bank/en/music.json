@@ -446,5 +446,285 @@
       "Dire Straits"
     ],
     "answerCheck": "8lea:2"
+  },
+  {
+    "id": "51807c34f54a",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which boy band was formed on \"The X Factor\" in 2010 and launched Harry Styles and Zayn Malik?",
+    "options": [
+      "The Wanted",
+      "Backstreet Boys",
+      "One Direction",
+      "5 Seconds of Summer"
+    ],
+    "answerCheck": "yj2dp:3"
+  },
+  {
+    "id": "3cd1de1a3754",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which singer's 2011 album \"21\" was named after the age she was when she made it?",
+    "options": [
+      "Adele",
+      "Lady Gaga",
+      "Katy Perry",
+      "Rihanna"
+    ],
+    "answerCheck": "de3ag:1"
+  },
+  {
+    "id": "3bea4b3a625d",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In a rock band, which instrument typically holds down the low-end groove alongside the drums?",
+    "options": [
+      "Tambourine",
+      "Keyboard",
+      "Lead guitar",
+      "Bass guitar"
+    ],
+    "answerCheck": "gnff:3"
+  },
+  {
+    "id": "a02c05933a02",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which Korean artist's 2012 hit \"Gangnam Style\" was the first YouTube video to reach a billion views?",
+    "options": [
+      "EXO",
+      "BIGBANG",
+      "BTS",
+      "PSY"
+    ],
+    "answerCheck": "ihpbq3t:2"
+  },
+  {
+    "id": "41106d8a88e3",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What do you call a song sung by one person with no other voices joining in?",
+    "options": [
+      "A medley",
+      "A solo",
+      "A duet",
+      "A chorus"
+    ],
+    "answerCheck": "9vr8c:2"
+  },
+  {
+    "id": "a91d7e9c22d9",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which holiday song by Mariah Carey returns to the top of the charts almost every December?",
+    "options": [
+      "Jingle Bell Rock",
+      "Last Christmas",
+      "All I Want for Christmas Is You",
+      "Santa Tell Me"
+    ],
+    "answerCheck": "h7v:1"
+  },
+  {
+    "id": "be51151377c6",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In hip-hop, the two core vocal-and-turntable roles are the DJ and the what?",
+    "options": [
+      "Crooner",
+      "Roadie",
+      "MC",
+      "Producer"
+    ],
+    "answerCheck": "cjf:1"
+  },
+  {
+    "id": "4ba086fa7e2b",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The drum break sampled in countless hip-hop tracks, taken from The Winstons' 1969 song \"Amen, Brother,\" is universally known as the what?",
+    "options": [
+      "Apache break",
+      "Amen break",
+      "Funky Drummer",
+      "Think break"
+    ],
+    "answerCheck": "efzdn0:3"
+  },
+  {
+    "id": "719a50eaea12",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which 1983 Michael Jackson music video, over 13 minutes long, featured him transforming into a dancing zombie?",
+    "options": [
+      "Beat It",
+      "Smooth Criminal",
+      "Thriller",
+      "Bad"
+    ],
+    "answerCheck": "us0ukmb:1"
+  },
+  {
+    "id": "40f13261fa2d",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "New Order's 1983 synth classic \"Blue Monday\" holds the record as the best-selling record ever in which format?",
+    "options": [
+      "The cassette single",
+      "The CD single",
+      "The 8-track",
+      "The 12-inch single"
+    ],
+    "answerCheck": "9mza8:0"
+  },
+  {
+    "id": "d4c8f3d4edee",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which folk-pop instrument, a small four-stringed cousin of the guitar, took its modern form in 1880s Hawaii?",
+    "options": [
+      "Ukulele",
+      "Sitar",
+      "Banjo",
+      "Mandolin"
+    ],
+    "answerCheck": "53jpr:1"
+  },
+  {
+    "id": "cff66f3582a7",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Bob Dylan caused an uproar at the 1965 Newport Folk Festival by doing what on stage?",
+    "options": [
+      "Refusing to sing",
+      "Performing in disguise",
+      "Smashing his harmonica",
+      "Playing an electric guitar"
+    ],
+    "answerCheck": "a8xo:3"
+  },
+  {
+    "id": "dbc576237fbe",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which producer, dubbed the \"fifth Beatle,\" oversaw nearly all of the band's studio recordings?",
+    "options": [
+      "George Martin",
+      "Quincy Jones",
+      "Brian Epstein",
+      "Phil Spector"
+    ],
+    "answerCheck": "3x3yuxl:3"
+  },
+  {
+    "id": "9ab50e4aa0af",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Italian tempo marking \"presto\" instructs the musician to play how?",
+    "options": [
+      "At a walking pace",
+      "Very fast",
+      "Very slowly",
+      "Softly"
+    ],
+    "answerCheck": "xf64:1"
+  },
+  {
+    "id": "5a1389f36c50",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "John Cage's notorious 1952 composition \"4′33″\" instructs the performers to do what for its entire duration?",
+    "options": [
+      "Play a single sustained note",
+      "Not play their instruments",
+      "Improvise freely",
+      "Recite a poem"
+    ],
+    "answerCheck": "mxpki5:3"
+  },
+  {
+    "id": "241a25ddf214",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Brian Eno is credited with pioneering and naming which genre, exemplified by his 1978 album \"Music for Airports\"?",
+    "options": [
+      "Vaporwave",
+      "Shoegaze",
+      "Ambient music",
+      "Trip-hop"
+    ],
+    "answerCheck": "p6dncbq:1"
+  },
+  {
+    "id": "8800045ff4cf",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The 1985 charity single \"We Are the World\" was co-written by Michael Jackson and which other star?",
+    "options": [
+      "Bruce Springsteen",
+      "Billy Joel",
+      "Stevie Wonder",
+      "Lionel Richie"
+    ],
+    "answerCheck": "h4y:2"
+  },
+  {
+    "id": "485aaa3ef638",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Gibson's iconic Les Paul guitar is named after a real musician who helped pioneer what?",
+    "options": [
+      "The solid-body electric guitar",
+      "The double-neck guitar",
+      "The wah-wah pedal",
+      "Multi-track recording's first hit"
+    ],
+    "answerCheck": "h5wfo96:3"
+  },
+  {
+    "id": "5db198482e17",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which 1979 Sugarhill Gang track is widely credited as the first rap single to become a U.S. Top 40 hit?",
+    "options": [
+      "Walk This Way",
+      "Planet Rock",
+      "The Message",
+      "Rapper's Delight"
+    ],
+    "answerCheck": "7so37:0"
+  },
+  {
+    "id": "4e5d9112c846",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which German group, formed in 1970, is often called the godfathers of electronic and synth-pop music?",
+    "options": [
+      "Tangerine Dream",
+      "Kraftwerk",
+      "Can",
+      "Neu!"
+    ],
+    "answerCheck": "ifp:0"
   }
 ]

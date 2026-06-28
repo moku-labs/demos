@@ -446,5 +446,285 @@
       "A corrupted high-score table"
     ],
     "answerCheck": "eroh16:3"
+  },
+  {
+    "id": "eb844b13aa08",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Grand Theft Auto, what does the abbreviation 'GTA' stand for?",
+    "options": [
+      "Grand Theft Auto",
+      "Global Threat Agency",
+      "Great Tactical Assault",
+      "Gangster Turf Action"
+    ],
+    "answerCheck": "ypss4sj:3"
+  },
+  {
+    "id": "b365deae4bf2",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which long-running Nintendo series stars a pink, round creature who can swallow enemies to copy their powers?",
+    "options": [
+      "Pikmin",
+      "Yoshi",
+      "Bomberman",
+      "Kirby"
+    ],
+    "answerCheck": "ws2kxq:1"
+  },
+  {
+    "id": "38c28db5025f",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What colour is the iconic plumber Luigi's hat and overalls trim, distinguishing him from his red-clad brother Mario?",
+    "options": [
+      "Purple",
+      "Green",
+      "Yellow",
+      "Blue"
+    ],
+    "answerCheck": "jzphbei:0"
+  },
+  {
+    "id": "6a1fa4e1f347",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In The Sims, what is the gibberish made-up language the characters speak called?",
+    "options": [
+      "Plumbob",
+      "Simlish",
+      "Babble",
+      "Gnomish"
+    ],
+    "answerCheck": "mjo6:1"
+  },
+  {
+    "id": "a8a24eb80c2f",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which game franchise features plastic instrument controllers so you can strum along to rock songs?",
+    "options": [
+      "SingStar",
+      "Just Dance",
+      "Audiosurf",
+      "Guitar Hero"
+    ],
+    "answerCheck": "kiv:2"
+  },
+  {
+    "id": "cbba8684d4dd",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Animal Crossing, which money-grubbing raccoon runs the shop and charges you for your house?",
+    "options": [
+      "Mr. Resetti",
+      "Tom Nook",
+      "K.K. Slider",
+      "Blathers"
+    ],
+    "answerCheck": "fe6:0"
+  },
+  {
+    "id": "7a7ba3f8950e",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which Nintendo racing series has you flinging banana peels and blue shells at rival drivers?",
+    "options": [
+      "Gran Turismo",
+      "Burnout",
+      "Mario Kart",
+      "F-Zero"
+    ],
+    "answerCheck": "60d:1"
+  },
+  {
+    "id": "3ab911818c6e",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Nintendo's mascot Mario was reportedly named after a real person. Who?",
+    "options": [
+      "Shigeru Miyamoto's childhood friend",
+      "An Italian chef near the Kyoto office",
+      "A Nintendo company president",
+      "The warehouse landlord who rented to Nintendo"
+    ],
+    "answerCheck": "tvjfp:0"
+  },
+  {
+    "id": "a7c890c32ce3",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which 1998 game is frequently cited by critics and developers as one of the greatest ever made, starring Link and the Ocarina?",
+    "options": [
+      "Zelda: Majora's Mask",
+      "Zelda: A Link to the Past",
+      "Zelda: Wind Waker",
+      "Zelda: Ocarina of Time"
+    ],
+    "answerCheck": "s5et:3"
+  },
+  {
+    "id": "b8c88203f8d7",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Counter-Strike, planting and detonating the bomb at a bombsite is the objective for which side?",
+    "options": [
+      "Terrorists",
+      "Counter-Terrorists",
+      "Hostages",
+      "Spectators"
+    ],
+    "answerCheck": "9wb:3"
+  },
+  {
+    "id": "b4b557ac346f",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The first pair of Pokemon games launched in Japan in 1996 as Red and which other colour — the one swapped for Blue when the games came West?",
+    "options": [
+      "Yellow",
+      "Green",
+      "Gold",
+      "Blue"
+    ],
+    "answerCheck": "fl21k:2"
+  },
+  {
+    "id": "1c399551cb0d",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Dark Souls, what short, ominous message appears on screen each time your character is killed?",
+    "options": [
+      "YOU DIED",
+      "WASTED",
+      "DEFEATED",
+      "GAME OVER"
+    ],
+    "answerCheck": "wir0po:2"
+  },
+  {
+    "id": "0919a4bbc604",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which mascot platformer character, a purple dragon, was a flagship PlayStation series in the late 1990s?",
+    "options": [
+      "Gex",
+      "Rayman",
+      "Spyro",
+      "Crash Bandicoot"
+    ],
+    "answerCheck": "57p213:0"
+  },
+  {
+    "id": "b5fa4e7ed49e",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Hideo Kojima is the celebrated creator of which stealth-espionage series featuring Solid Snake?",
+    "options": [
+      "Splinter Cell",
+      "Metal Gear",
+      "Deus Ex",
+      "Hitman"
+    ],
+    "answerCheck": "2a6z:1"
+  },
+  {
+    "id": "b45be582b542",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Witcher games are based on a book series by an author from which country?",
+    "options": [
+      "Czech Republic",
+      "Poland",
+      "Sweden",
+      "Russia"
+    ],
+    "answerCheck": "wrcjv7n:0"
+  },
+  {
+    "id": "6a31963f4a46",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "According to its creator, the series Final Fantasy got its name because the first game was meant to be his what?",
+    "options": [
+      "First console title",
+      "Most expensive gamble",
+      "Fastest project ever",
+      "Final game before quitting the industry"
+    ],
+    "answerCheck": "w78:2"
+  },
+  {
+    "id": "7a555c3a2203",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In 1980, Atari secretly let programmer Warren Robinett hide his name inside the game Adventure. This is widely regarded as gaming's first what?",
+    "options": [
+      "Boss rush",
+      "Speedrun",
+      "Microtransaction",
+      "Easter egg"
+    ],
+    "answerCheck": "xgq:2"
+  },
+  {
+    "id": "4a9f799482b3",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The card game phenomenon Hearthstone is set in the universe of which other Blizzard franchise?",
+    "options": [
+      "StarCraft",
+      "Diablo",
+      "Warcraft",
+      "Overwatch"
+    ],
+    "answerCheck": "os2m:2"
+  },
+  {
+    "id": "0c7ba3807dff",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Shigeru Miyamoto has said the design of Pikmin was partly inspired by watching what in his own garden?",
+    "options": [
+      "Worms after rain",
+      "Ants carrying leaves",
+      "Bees in a hive",
+      "Birds building nests"
+    ],
+    "answerCheck": "ists:1"
+  },
+  {
+    "id": "c2b8379ccf10",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The indie hit Stardew Valley was famously developed almost entirely by a single person over about four years. Who?",
+    "options": [
+      "Edmund McMillen",
+      "Lucas Pope",
+      "Eric Barone (ConcernedApe)",
+      "Toby Fox"
+    ],
+    "answerCheck": "kl30it:0"
   }
 ]

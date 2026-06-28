@@ -446,5 +446,285 @@
       "A type of yeast only"
     ],
     "answerCheck": "sh2j:0"
+  },
+  {
+    "id": "46172f82672c",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Each ring you count in the cross-section of a tree trunk usually represents one what?",
+    "options": [
+      "Year of growth",
+      "Branch it grew",
+      "Drought it survived",
+      "Metre of height"
+    ],
+    "answerCheck": "xpgf:0"
+  },
+  {
+    "id": "c67a2d16004f",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the tallest type of tree alive on Earth today, with the record holders towering over 110 metres?",
+    "options": [
+      "Oak",
+      "Palm",
+      "Coast redwood",
+      "Eucalyptus"
+    ],
+    "answerCheck": "sr7aud:0"
+  },
+  {
+    "id": "725cc1ef5c83",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Bees and other insects are attracted to flowers mainly to collect nectar and what else?",
+    "options": [
+      "Sap",
+      "Bark",
+      "Chlorophyll",
+      "Pollen"
+    ],
+    "answerCheck": "p6f:2"
+  },
+  {
+    "id": "2d5ad935e70d",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A tomato is, botanically speaking, actually classified as which of these?",
+    "options": [
+      "A root",
+      "A vegetable",
+      "A grain",
+      "A fruit"
+    ],
+    "answerCheck": "fs8g:3"
+  },
+  {
+    "id": "1d3e41bccaab",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The spice cloves are actually the dried, unopened flower buds of a tropical tree. Most people assume they are which part of the plant?",
+    "options": [
+      "Roots",
+      "Bark",
+      "Seeds",
+      "Flower buds"
+    ],
+    "answerCheck": "mey4:3"
+  },
+  {
+    "id": "54d5fbf23ac6",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The small holes on the underside of a leaf that open and close to let gases in and out are called what?",
+    "options": [
+      "Stomata",
+      "Roots",
+      "Pores",
+      "Veins"
+    ],
+    "answerCheck": "dkfgwmg:3"
+  },
+  {
+    "id": "e9c3d74cb6b5",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Dried and ground from the berries of a climbing vine, which spice was once so prized that it was used as money to pay rent and ransoms?",
+    "options": [
+      "Mustard",
+      "Turmeric",
+      "Ginger",
+      "Black pepper"
+    ],
+    "answerCheck": "fa0:2"
+  },
+  {
+    "id": "59341939f549",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The coco de mer palm of the Seychelles produces the heaviest seed of any plant, weighing up to around 25 kilograms. What is it famous for resembling?",
+    "options": [
+      "A giant brain",
+      "A coiled snake",
+      "A clenched fist",
+      "A human pelvis or buttocks"
+    ],
+    "answerCheck": "97t:2"
+  },
+  {
+    "id": "2d28de282adf",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Some orchids fool male insects into mating with their flowers by mimicking the look and scent of what?",
+    "options": [
+      "A rival male's nest",
+      "A piece of rotting fruit",
+      "A drop of fresh water",
+      "A female insect"
+    ],
+    "answerCheck": "0d5s3hp:2"
+  },
+  {
+    "id": "948f5b54bb35",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The fierce burning heat of chilli peppers comes from a chemical called capsaicin. Which animals can happily eat the hottest chillies without feeling any burn?",
+    "options": [
+      "Birds",
+      "Frogs",
+      "Mice",
+      "Cats"
+    ],
+    "answerCheck": "1oa8:0"
+  },
+  {
+    "id": "ed8e80e2953a",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Saffron is the world's most expensive spice by weight largely because it is harvested by hand from which part of a crocus flower?",
+    "options": [
+      "The seeds",
+      "The roots",
+      "The petals",
+      "The thread-like stigmas"
+    ],
+    "answerCheck": "6k3f:3"
+  },
+  {
+    "id": "65a43958e714",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Pineapples take a surprisingly long time to grow and do not ripen further once picked. Roughly how long does a single pineapple take to mature on the plant?",
+    "options": [
+      "About 2 years",
+      "About 3 weeks",
+      "About 5 years",
+      "About 6 months"
+    ],
+    "answerCheck": "698vqok:3"
+  },
+  {
+    "id": "914143cb28e0",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The strangler fig has an unusual and rather sinister way of growing. How does it typically start life?",
+    "options": [
+      "Floating as a seed on a river",
+      "Buried deep underground by ants",
+      "Growing only inside caves",
+      "As a seed sprouting high up on another tree"
+    ],
+    "answerCheck": "p142:3"
+  },
+  {
+    "id": "6ec427f0d6e5",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The seeds of which common roadside plant cling to animal fur with tiny hooks — an idea that directly inspired the invention of Velcro?",
+    "options": [
+      "Dandelion",
+      "Burdock",
+      "Clover",
+      "Buttercup"
+    ],
+    "answerCheck": "rr5o5sx:0"
+  },
+  {
+    "id": "9768adc8e340",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Scientists revived a flowering plant from roughly 32,000-year-old seed tissue found buried by an Ice Age squirrel in Siberian permafrost. What kind of plant was it?",
+    "options": [
+      "A patch of wheat",
+      "An oak sapling",
+      "A wild rose",
+      "A small white-flowered campion"
+    ],
+    "answerCheck": "9rfhido:2"
+  },
+  {
+    "id": "58e6de396a28",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The 'humongous fungus' in Oregon's Malheur National Forest is one of the largest living organisms on Earth, sprawling across several square kilometres of forest floor. What type of organism is it?",
+    "options": [
+      "A network of truffles",
+      "A honey fungus (Armillaria)",
+      "A slime mould",
+      "A giant puffball"
+    ],
+    "answerCheck": "tepg6u:3"
+  },
+  {
+    "id": "f7277ef7b642",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Many plants in the cabbage and mustard family release a sharp, peppery bite only after their cells are crushed. This happens because crushing mixes a stored compound with an enzyme to make which pungent chemical?",
+    "options": [
+      "Mustard oil (isothiocyanate)",
+      "Capsaicin",
+      "Caffeine",
+      "Citric acid"
+    ],
+    "answerCheck": "5ekc274:3"
+  },
+  {
+    "id": "517cae400cdb",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Some species of bamboo are among the fastest-growing plants in the world. Under ideal conditions, how much can certain bamboo grow in a single day?",
+    "options": [
+      "Around 1 millimetre",
+      "Around 5 centimetres",
+      "Up to about 90 centimetres",
+      "About 3 metres"
+    ],
+    "answerCheck": "0al:1"
+  },
+  {
+    "id": "cb1395ba3f67",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The walnut and several other trees defend their turf by releasing a chemical that poisons the soil so rival plants can't grow nearby. What is this chemical warfare between plants called?",
+    "options": [
+      "Transpiration",
+      "Symbiosis",
+      "Photolysis",
+      "Allelopathy"
+    ],
+    "answerCheck": "94ya9zh:2"
+  },
+  {
+    "id": "236f79343873",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Resurrection plants like Selaginella can dry out almost completely, looking dead for years, then spring back to life within hours of getting water. Which sugar do many of them use to protect their cells while dehydrated?",
+    "options": [
+      "Trehalose",
+      "Fructose",
+      "Lactose",
+      "Sucrose"
+    ],
+    "answerCheck": "dry33r:2"
   }
 ]

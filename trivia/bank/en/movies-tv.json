@@ -446,5 +446,285 @@
       "The Gold Digger"
     ],
     "answerCheck": "kq3:3"
+  },
+  {
+    "id": "5c42d1e25cc8",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In the SpongeBob SquarePants theme song, who shouts \"Are you ready, kids?\" to start the call-and-response?",
+    "options": [
+      "A lifeguard",
+      "A pirate",
+      "A fisherman",
+      "A sea captain"
+    ],
+    "answerCheck": "s1f:0"
+  },
+  {
+    "id": "a42255cb4736",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In E.T. the Extra-Terrestrial, which candy does Elliott use as a trail to lure E.T. into his house?",
+    "options": [
+      "Reese's Pieces",
+      "M&M's",
+      "Skittles",
+      "Jelly beans"
+    ],
+    "answerCheck": "t2xp8:1"
+  },
+  {
+    "id": "80a877f3f1e9",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which streaming hit follows kids battling monsters from the 'Upside Down' in the town of Hawkins?",
+    "options": [
+      "Dark",
+      "Stranger Things",
+      "Wednesday",
+      "The Umbrella Academy"
+    ],
+    "answerCheck": "ltlv:1"
+  },
+  {
+    "id": "45badf51f4c0",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In the Ghostbusters theme, what line follows \"If there's something strange in your neighborhood\"?",
+    "options": [
+      "Who you gonna call?",
+      "How you gonna fight?",
+      "What you gonna do?",
+      "Where you gonna run?"
+    ],
+    "answerCheck": "o9lxl:1"
+  },
+  {
+    "id": "6ed709f5f7a0",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which sitcom about a Seattle radio psychiatrist was a spin-off of the bar comedy Cheers?",
+    "options": [
+      "Mad About You",
+      "Wings",
+      "Frasier",
+      "Becker"
+    ],
+    "answerCheck": "edvndut:1"
+  },
+  {
+    "id": "c6192d25d4c0",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Despicable Me, the Minions are obsessed with eating which yellow fruit?",
+    "options": [
+      "Pineapples",
+      "Mangoes",
+      "Bananas",
+      "Lemons"
+    ],
+    "answerCheck": "sr09jdk:1"
+  },
+  {
+    "id": "1d792a01322d",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the name of the upright-walking, talking family dog in the animated sitcom Family Guy?",
+    "options": [
+      "Snoopy",
+      "Scooby",
+      "Santa's Little Helper",
+      "Brian"
+    ],
+    "answerCheck": "06207cl:2"
+  },
+  {
+    "id": "9aeef7bee945",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In the Netflix smash Squid Game, hundreds of desperate contestants risk their lives competing in deadly versions of what?",
+    "options": [
+      "Reality-show challenges",
+      "Olympic sports",
+      "Casino card games",
+      "Children's playground games"
+    ],
+    "answerCheck": "3zq:2"
+  },
+  {
+    "id": "8901c07400eb",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which 1972 sitcom finale held the record for the most-watched single episode in U.S. TV history for decades?",
+    "options": [
+      "Seinfeld",
+      "M*A*S*H",
+      "Cheers",
+      "Friends"
+    ],
+    "answerCheck": "ok0:0"
+  },
+  {
+    "id": "46c274ab25ba",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Raiders of the Lost Ark, the scene where Indiana Jones simply shoots a sword-wielding attacker was improvised mainly because Harrison Ford was suffering from what?",
+    "options": [
+      "Food poisoning",
+      "Sunstroke",
+      "A sprained ankle",
+      "A broken wrist"
+    ],
+    "answerCheck": "f7ys4f1:3"
+  },
+  {
+    "id": "799317adf22d",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "As of today, which film holds the record for the highest worldwide box-office gross of all time?",
+    "options": [
+      "Titanic",
+      "Avatar",
+      "Avengers: Endgame",
+      "Star Wars: The Force Awakens"
+    ],
+    "answerCheck": "k89nbk:3"
+  },
+  {
+    "id": "d658515ccd84",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Humphrey Bogart's line \"Here's looking at you, kid\" comes from which classic film?",
+    "options": [
+      "Citizen Kane",
+      "Gone with the Wind",
+      "The Maltese Falcon",
+      "Casablanca"
+    ],
+    "answerCheck": "wy5:2"
+  },
+  {
+    "id": "ffb70e242a7d",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In The Mandalorian, the character widely nicknamed 'Baby Yoda' has the official name what?",
+    "options": [
+      "Din",
+      "Kuiil",
+      "Yoda Jr.",
+      "Grogu"
+    ],
+    "answerCheck": "7sa:2"
+  },
+  {
+    "id": "101bcd860865",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The glowing briefcase in Pulp Fiction is famous because the film does what with its contents?",
+    "options": [
+      "Never shows what is inside",
+      "Reveals it holds gold bars",
+      "Reveals it holds diamonds",
+      "Reveals it is empty"
+    ],
+    "answerCheck": "a9v8waz:3"
+  },
+  {
+    "id": "fc119ed80206",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In the Back to the Future films, the time machine is built from which make of car?",
+    "options": [
+      "Ford Mustang",
+      "Pontiac Firebird",
+      "DeLorean DMC-12",
+      "Chevrolet Corvette"
+    ],
+    "answerCheck": "k46m:2"
+  },
+  {
+    "id": "a8b20572a726",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The mechanical shark in Jaws broke down so often that Spielberg kept it largely off-screen. What nickname did the crew give the prop?",
+    "options": [
+      "Jaws",
+      "Moby",
+      "Bruce",
+      "Chomper"
+    ],
+    "answerCheck": "y222fun:1"
+  },
+  {
+    "id": "bcd699b8c75c",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The chestburster scene in Alien (1979) shocked the cast partly because the director hid the full effect from them. Who directed it?",
+    "options": [
+      "James Cameron",
+      "Ridley Scott",
+      "John Carpenter",
+      "David Cronenberg"
+    ],
+    "answerCheck": "19hi5u1:0"
+  },
+  {
+    "id": "3590e30b3324",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "James Earl Jones voiced Darth Vader, but which bodybuilder actually wore the suit and performed the role on set?",
+    "options": [
+      "Peter Mayhew",
+      "David Prowse",
+      "Bob Anderson",
+      "Kenny Baker"
+    ],
+    "answerCheck": "6xn:0"
+  },
+  {
+    "id": "21b41013821e",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which 1995 crime thriller's twist ending gave rise to the line \"And like that... he's gone\"?",
+    "options": [
+      "The Usual Suspects",
+      "Heat",
+      "Se7en",
+      "Fargo"
+    ],
+    "answerCheck": "u68hi2v:3"
+  },
+  {
+    "id": "04c59431361a",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Joe Pesci's tense \"Funny how? Like I'm a clown?\" scene in Goodfellas was famously what?",
+    "options": [
+      "Lifted word-for-word from the book",
+      "Dubbed in after filming",
+      "Improvised from a real-life encounter",
+      "Cut from the theatrical release"
+    ],
+    "answerCheck": "4zaec0:0"
   }
 ]

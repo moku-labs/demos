@@ -446,5 +446,285 @@
       "Stealing thunder from the storm gods"
     ],
     "answerCheck": "l8pxo:3"
+  },
+  {
+    "id": "8045ab65d118",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A mythical bird said to burst into flames and be reborn from its own ashes is known as the what?",
+    "options": [
+      "Roc",
+      "Harpy",
+      "Griffin",
+      "Phoenix"
+    ],
+    "answerCheck": "s3p:2"
+  },
+  {
+    "id": "5388fa8cfa6b",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Greek myth, a beautiful youth fell in love with his own reflection in a pool. What was his name?",
+    "options": [
+      "Adonis",
+      "Apollo",
+      "Narcissus",
+      "Hyacinth"
+    ],
+    "answerCheck": "tqzm36f:1"
+  },
+  {
+    "id": "9a54d39d2bd9",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which Titan of Greek myth was condemned to hold up the sky on his shoulders for eternity?",
+    "options": [
+      "Hyperion",
+      "Prometheus",
+      "Atlas",
+      "Cronus"
+    ],
+    "answerCheck": "cwy0ne:0"
+  },
+  {
+    "id": "36b6a63ddf87",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Greek myth, the many-headed Lernaean Hydra had a nasty trick. What happened when you cut off one of its heads?",
+    "options": [
+      "It burst into flames",
+      "Two heads grew back in its place",
+      "It turned to stone",
+      "It shrank a little each time"
+    ],
+    "answerCheck": "wtug11:3"
+  },
+  {
+    "id": "290750c83fd3",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A genie, or magical spirit, that grants wishes in Middle Eastern folklore is also known by what name?",
+    "options": [
+      "Naga",
+      "Golem",
+      "Sprite",
+      "Djinn"
+    ],
+    "answerCheck": "mj9wd:0"
+  },
+  {
+    "id": "e8c0f024a012",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Greek myth, what was the name of the three-headed dog that guarded the entrance to the underworld?",
+    "options": [
+      "Typhon",
+      "Argus",
+      "Cerberus",
+      "Orthrus"
+    ],
+    "answerCheck": "vwe0b:3"
+  },
+  {
+    "id": "d7aed2fb1cd5",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Roman and Greek gods often mirror each other. The Greek god Zeus is known by which name in Roman mythology?",
+    "options": [
+      "Jupiter",
+      "Neptune",
+      "Mars",
+      "Mercury"
+    ],
+    "answerCheck": "rgwqb8w:3"
+  },
+  {
+    "id": "293e393d6d38",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Greek myth, King Sisyphus was punished in the underworld by being forced to do what for all eternity?",
+    "options": [
+      "Be chained while a bird ate his liver",
+      "Pour water into a leaking jar",
+      "Roll a boulder uphill, only for it to roll back down",
+      "Reach for fruit that always pulled away"
+    ],
+    "answerCheck": "xf7z7z:0"
+  },
+  {
+    "id": "40790d14cb01",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "When Pandora opened the forbidden jar and released all the world's evils, what single thing was left inside?",
+    "options": [
+      "Wisdom",
+      "Time",
+      "Fire",
+      "Hope"
+    ],
+    "answerCheck": "z650:3"
+  },
+  {
+    "id": "2d5ec11f3cd1",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Norse mythology, what is the name of the prophesied final battle in which many of the gods are destined to die?",
+    "options": [
+      "Ragnarok",
+      "Valhalla",
+      "Gotterdammerung",
+      "Fimbulwinter"
+    ],
+    "answerCheck": "gyp3djq:3"
+  },
+  {
+    "id": "e77346084a7b",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Greek myth, the weaver Arachne challenged a goddess to a contest and was transformed into a spider. Which goddess did she offend?",
+    "options": [
+      "Hera",
+      "Athena",
+      "Aphrodite",
+      "Artemis"
+    ],
+    "answerCheck": "o2aafb1:0"
+  },
+  {
+    "id": "bb7da4455405",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In West African and Caribbean folklore, which trickster figure is usually depicted as a clever spider?",
+    "options": [
+      "Sundiata",
+      "Eshu",
+      "Anansi",
+      "Mami Wata"
+    ],
+    "answerCheck": "rhiuuqx:1"
+  },
+  {
+    "id": "69686f80ff70",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Norse mythology, the warrior maidens who chose which slain fighters would be brought to Valhalla were called what?",
+    "options": [
+      "Disir",
+      "Valkyries",
+      "Einherjar",
+      "Norns"
+    ],
+    "answerCheck": "85gs4:2"
+  },
+  {
+    "id": "56eb10996e2e",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Jewish folklore, a golem is a creature made of clay or mud that is brought to life by what means?",
+    "options": [
+      "Moonlight on water",
+      "The blood of its maker",
+      "Sacred words or letters",
+      "A bolt of lightning"
+    ],
+    "answerCheck": "ku3dnc:0"
+  },
+  {
+    "id": "1732a414ad70",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Japanese folklore, a kitsune is a magical fox said to grow extra tails with age and gain more power. How many tails does the most powerful kitsune have?",
+    "options": [
+      "Twelve",
+      "Seven",
+      "Nine",
+      "Three"
+    ],
+    "answerCheck": "k48:1"
+  },
+  {
+    "id": "fa3cc4e00e94",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Norse mythology, the goddess Idunn guarded apples that did what for the gods?",
+    "options": [
+      "Granted them the power of prophecy",
+      "Made them invisible to giants",
+      "Let them shapeshift at will",
+      "Kept them youthful"
+    ],
+    "answerCheck": "3hf:2"
+  },
+  {
+    "id": "7f1d35be7da7",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Egyptian belief, the heart of the dead was weighed against a single feather to judge the soul. The feather belonged to which goddess of truth?",
+    "options": [
+      "Ma'at",
+      "Sekhmet",
+      "Hathor",
+      "Nut"
+    ],
+    "answerCheck": "k5sxwuc:3"
+  },
+  {
+    "id": "1b38a98ade80",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Finnish mythology and the epic Kalevala, what is the Sampo, the mysterious object at the heart of the saga?",
+    "options": [
+      "A harp strung with a maiden's hair",
+      "A boat that sails on its own",
+      "A magical mill that produces wealth and grain",
+      "A sword that never dulls"
+    ],
+    "answerCheck": "jt8oy:3"
+  },
+  {
+    "id": "d1b82dc9500a",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Hindu mythology, the gods and demons jointly churned the cosmic ocean of milk in order to obtain what prize?",
+    "options": [
+      "A weapon to end all wars",
+      "Amrita, the nectar of immortality",
+      "The sun and the moon",
+      "The first human beings"
+    ],
+    "answerCheck": "xiec3n:3"
+  },
+  {
+    "id": "39944994cd68",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Babylonian creation myth, the storm god Marduk slays the primordial sea goddess Tiamat and forms the heavens and earth from what?",
+    "options": [
+      "A cloud of stardust he gathered",
+      "Her split body",
+      "Clay shaped by the other gods",
+      "The breath of the wind"
+    ],
+    "answerCheck": "wyrwd:2"
   }
 ]

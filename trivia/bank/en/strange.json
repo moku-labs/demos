@@ -446,5 +446,285 @@
       "Hold it in your hand"
     ],
     "answerCheck": "6l66x9:1"
+  },
+  {
+    "id": "e827eae823cb",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A hippo's skin oozes a reddish 'blood sweat' that isn't blood or sweat at all. What does it actually work as?",
+    "options": [
+      "Built-in sunscreen",
+      "Insect glue",
+      "A warning dye",
+      "A mating perfume"
+    ],
+    "answerCheck": "tcfb:0"
+  },
+  {
+    "id": "df89809620f8",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Cows are surprisingly social and studies show they can form a lasting close bond with a particular what?",
+    "options": [
+      "Specific cloud",
+      "Favourite fence post",
+      "Best-friend cow",
+      "Type of grass"
+    ],
+    "answerCheck": "3r4l3fq:1"
+  },
+  {
+    "id": "40dd2c350d2a",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Shine an ultraviolet 'black light' on a scorpion at night and it will surprisingly do what?",
+    "options": [
+      "Change colour to red",
+      "Glow blue-green",
+      "Turn invisible",
+      "Go completely still"
+    ],
+    "answerCheck": "5injqc2:0"
+  },
+  {
+    "id": "345500d9e708",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "If you could fold a single sheet of ordinary paper in half about 42 times, its thickness would roughly reach:",
+    "options": [
+      "The Moon",
+      "The clouds",
+      "The top of a tree",
+      "A tall building"
+    ],
+    "answerCheck": "2erct:1"
+  },
+  {
+    "id": "9c99072bc9a5",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A 'murmuration' is the breathtaking swirling cloud formed in the sky by thousands of which birds?",
+    "options": [
+      "Pigeons",
+      "Seagulls",
+      "Starlings",
+      "Swans"
+    ],
+    "answerCheck": "m131mpo:1"
+  },
+  {
+    "id": "1ae21d5c2db9",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Pinch your nose shut and you suddenly can't do which everyday thing? (Go on, try it now.)",
+    "options": [
+      "Blink",
+      "Swallow",
+      "Whistle",
+      "Hum a tune"
+    ],
+    "answerCheck": "g2oisx:1"
+  },
+  {
+    "id": "4b145963bd8c",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The little plastic or metal tube at the end of a shoelace has its own odd name. What is it?",
+    "options": [
+      "A toggle",
+      "A gusset",
+      "An aglet",
+      "A grommet"
+    ],
+    "answerCheck": "me203:3"
+  },
+  {
+    "id": "6f276b32f2cb",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "There is a giant zone between Hawaii and California where ocean debris collects, nicknamed the Great Pacific what?",
+    "options": [
+      "Whirlpool",
+      "Garbage Patch",
+      "Drain",
+      "Desert"
+    ],
+    "answerCheck": "ol3f1:2"
+  },
+  {
+    "id": "df78e9fe594f",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The U.S. state of Wyoming is home to a geyser so reliable it was nicknamed for being punctual. What's it called?",
+    "options": [
+      "Big Ben",
+      "Steady Eddie",
+      "The Clockwork",
+      "Old Faithful"
+    ],
+    "answerCheck": "dmwjnq:1"
+  },
+  {
+    "id": "01c8ebc934f2",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In 1919 a huge storage tank burst in Boston, flooding the streets with a deadly fast-moving wave of what?",
+    "options": [
+      "Beer",
+      "Crude oil",
+      "Cement",
+      "Molasses"
+    ],
+    "answerCheck": "oz1eg:0"
+  },
+  {
+    "id": "6fe36620b131",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In total darkness your eyes don't actually see pure black. The faint dark-grey you perceive even has a name:",
+    "options": [
+      "Umbra",
+      "Voidtone",
+      "Eigengrau",
+      "Noctis"
+    ],
+    "answerCheck": "jya:1"
+  },
+  {
+    "id": "2f8849ee2ede",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Astronauts coming back from spacewalks report that space has a distinct lingering smell, most often compared to:",
+    "options": [
+      "Fresh rain",
+      "Cut grass",
+      "Burnt steak or welding fumes",
+      "Vanilla"
+    ],
+    "answerCheck": "eos9v:3"
+  },
+  {
+    "id": "ee2996027138",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A 'baker's dozen' is 13, not 12. The custom is widely linked to medieval bakers wanting to avoid harsh penalties for doing what?",
+    "options": [
+      "Selling underweight bread",
+      "Working on Sundays",
+      "Using the wrong flour",
+      "Charging too much"
+    ],
+    "answerCheck": "kfnd8g:2"
+  },
+  {
+    "id": "d6bc50fa8d38",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Sea otters often hold hands, or 'raft', while they sleep. The main reason for this charming habit is to:",
+    "options": [
+      "Share body warmth",
+      "Show affection",
+      "Keep from drifting apart",
+      "Scare off predators"
+    ],
+    "answerCheck": "vh9uof:0"
+  },
+  {
+    "id": "5d99db2cc30d",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The kingdom of Bhutan officially measures its national progress not mainly by GDP but by Gross National what?",
+    "options": [
+      "Harmony",
+      "Wisdom",
+      "Beauty",
+      "Happiness"
+    ],
+    "answerCheck": "82z:2"
+  },
+  {
+    "id": "206448b122a4",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "For a decade, art dealer Forrest Fenn claimed to have hidden a real chest of gold and jewels somewhere in which region?",
+    "options": [
+      "The Great Lakes",
+      "The Mojave Desert",
+      "The Rocky Mountains",
+      "The Florida swamps"
+    ],
+    "answerCheck": "62cdwgm:1"
+  },
+  {
+    "id": "7da644dddddf",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Because the permafrost won't let bodies decompose, the Arctic town of Longyearbyen, Svalbard, has effectively banned what?",
+    "options": [
+      "Owning cats",
+      "Whistling at night",
+      "Cutting your hair",
+      "Being buried there"
+    ],
+    "answerCheck": "6u5:2"
+  },
+  {
+    "id": "56112e278804",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A patch of the Atlantic with no land coastline, bounded only by currents and famous for floating seaweed, is the:",
+    "options": [
+      "Sargasso Sea",
+      "Tasman Sea",
+      "Ross Sea",
+      "Coral Sea"
+    ],
+    "answerCheck": "kpirhd:2"
+  },
+  {
+    "id": "e5a87d9e8542",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In 1958 the U.S. Air Force accidentally dropped a nuclear bomb on a backyard in Mars Bluff, South Carolina. Crucially, the bomb:",
+    "options": [
+      "Was a harmless dummy",
+      "Failed to detonate at all",
+      "Landed in an empty field",
+      "Lacked its fissile core, so there was no atomic blast"
+    ],
+    "answerCheck": "dz2no5z:2"
+  },
+  {
+    "id": "f2b6c482aeaa",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The bizarre word 'defenestration' refers to the very specific act of throwing someone or something out of a:",
+    "options": [
+      "Moving vehicle",
+      "Window",
+      "Sinking ship",
+      "Royal court"
+    ],
+    "answerCheck": "ocpc0jz:0"
   }
 ]

@@ -446,5 +446,285 @@
       "The lymph network"
     ],
     "answerCheck": "mxc:3"
+  },
+  {
+    "id": "ef4e23a63374",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which is the largest single muscle in the human body?",
+    "options": [
+      "The gluteus maximus (buttock)",
+      "The heart",
+      "The tongue",
+      "The bicep"
+    ],
+    "answerCheck": "7nig5:1"
+  },
+  {
+    "id": "96b7de937500",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the bendy flap of cartilage that folds down to cover your windpipe when you swallow, so food goes the right way?",
+    "options": [
+      "The epiglottis",
+      "The tonsils",
+      "The larynx",
+      "The uvula"
+    ],
+    "answerCheck": "5k21v:1"
+  },
+  {
+    "id": "04b2af5c4334",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Roughly what percentage of the adult human body is made up of water?",
+    "options": [
+      "About 90%",
+      "About 60%",
+      "About 40%",
+      "About 20%"
+    ],
+    "answerCheck": "d7k8u:2"
+  },
+  {
+    "id": "54fbeafe57e4",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What carries instructions from your brain to your muscles, telling them when to move?",
+    "options": [
+      "Veins",
+      "Tendons",
+      "Nerves",
+      "Ligaments"
+    ],
+    "answerCheck": "xp3it:3"
+  },
+  {
+    "id": "c0bfd0b88df0",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which organs filter waste out of your blood and turn it into urine?",
+    "options": [
+      "The kidneys",
+      "The tonsils",
+      "The lungs",
+      "The gallbladder"
+    ],
+    "answerCheck": "y4b8:0"
+  },
+  {
+    "id": "faf29a50e2a3",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the watery liquid in your mouth called, which starts breaking down food before you even swallow?",
+    "options": [
+      "Bile",
+      "Mucus",
+      "Saliva",
+      "Plasma"
+    ],
+    "answerCheck": "vfe:1"
+  },
+  {
+    "id": "7687c5737dc8",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "When the doctor taps just below your kneecap and your leg kicks out by itself, what is this an example of?",
+    "options": [
+      "A reflex",
+      "A nervous tic",
+      "A muscle cramp",
+      "A pulse"
+    ],
+    "answerCheck": "hwj0:0"
+  },
+  {
+    "id": "091935296a85",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Even identical twins have different fingerprints. When do your fingerprint patterns actually form?",
+    "options": [
+      "Gradually throughout childhood",
+      "Before birth, in the womb",
+      "In the first year after birth",
+      "Only once you start using your hands"
+    ],
+    "answerCheck": "s0vrax:3"
+  },
+  {
+    "id": "a5753f051044",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "If you laid out all the blood vessels in one adult body end to end, roughly how far would they stretch?",
+    "options": [
+      "About 1,000 km (620 mi)",
+      "About 100,000 km (62,000 mi)",
+      "About 100 km (62 mi)",
+      "About 10 km (6 mi)"
+    ],
+    "answerCheck": "nchdn6:3"
+  },
+  {
+    "id": "1bae1cef1f0d",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "What is the largest single cell in the human body?",
+    "options": [
+      "A red blood cell",
+      "A muscle cell",
+      "The egg cell (ovum)",
+      "A nerve cell"
+    ],
+    "answerCheck": "snn:1"
+  },
+  {
+    "id": "3f840e884222",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What is the body's largest artery, carrying blood straight out of the heart?",
+    "options": [
+      "The pulmonary vein",
+      "The carotid artery",
+      "The femoral artery",
+      "The aorta"
+    ],
+    "answerCheck": "4q5n6q:1"
+  },
+  {
+    "id": "fc822fdb9065",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What actually triggers the urge to breathe — the thing your body is most desperate to get rid of?",
+    "options": [
+      "Tiredness in the lung muscles",
+      "Low oxygen in the blood",
+      "A buildup of carbon dioxide",
+      "A drop in body temperature"
+    ],
+    "answerCheck": "1ecsnp:0"
+  },
+  {
+    "id": "175e6d0dd1ef",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Where in the body is the cochlea, the tiny spiral-shaped structure that turns sound into nerve signals?",
+    "options": [
+      "In the inner ear",
+      "Behind the eye",
+      "At the base of the skull",
+      "In the throat"
+    ],
+    "answerCheck": "jz0dw5:2"
+  },
+  {
+    "id": "6f97d3fa2d0e",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "You are measurably taller at one point in the day than another. When are you at your tallest?",
+    "options": [
+      "Right after exercise",
+      "In the morning, just after waking",
+      "There is no daily change at all",
+      "In the evening, after a day upright"
+    ],
+    "answerCheck": "z9k6e:2"
+  },
+  {
+    "id": "faab5db69dbc",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which fluid, made by the liver and stored in the gallbladder, helps your body break down fatty foods?",
+    "options": [
+      "Adrenaline",
+      "Bile",
+      "Saliva",
+      "Insulin"
+    ],
+    "answerCheck": "xtgu:1"
+  },
+  {
+    "id": "7ca8da7b2448",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "If you uncoiled all the DNA from a single human cell, roughly how long would that thread be?",
+    "options": [
+      "About 2 millimetres",
+      "About 2 metres (6.5 ft)",
+      "About 2 centimetres",
+      "About 200 metres"
+    ],
+    "answerCheck": "f4x496:3"
+  },
+  {
+    "id": "9a27a3362137",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Doctors aren't fully sure why hiccups happen, but the hiccup itself is a sudden spasm of which muscle?",
+    "options": [
+      "The diaphragm",
+      "The tongue",
+      "The stomach wall",
+      "The heart"
+    ],
+    "answerCheck": "s3xdr40:3"
+  },
+  {
+    "id": "0972f4e163ee",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Red blood cells are unusual among human cells in a striking way. What do mature red blood cells lack?",
+    "options": [
+      "A cell membrane",
+      "Any colour",
+      "The ability to move",
+      "A nucleus"
+    ],
+    "answerCheck": "t2nf9xp:2"
+  },
+  {
+    "id": "ed908dfd7339",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The femur, your thigh bone, holds a couple of body records. Besides being the longest bone, what else is it?",
+    "options": [
+      "The fastest-growing bone in adults",
+      "The only bone that never breaks",
+      "The heaviest and strongest bone",
+      "The only bone with no marrow"
+    ],
+    "answerCheck": "69a9:2"
+  },
+  {
+    "id": "1dbeb2345b8f",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Adrenaline (epinephrine) floods your body in a fright. Which small glands, perched on top of your kidneys, release it?",
+    "options": [
+      "The thyroid glands",
+      "The adrenal glands",
+      "The lymph nodes",
+      "The salivary glands"
+    ],
+    "answerCheck": "jsu81z:3"
   }
 ]

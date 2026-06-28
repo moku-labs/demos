@@ -446,5 +446,285 @@
       "They may not display a sponsor's logo of any kind"
     ],
     "answerCheck": "ttyf:1"
+  },
+  {
+    "id": "8abd48ff3412",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In ten-pin bowling, what is the name for knocking down all ten pins with your very first ball of the frame?",
+    "options": [
+      "A strike",
+      "A turkey",
+      "A spare",
+      "A split"
+    ],
+    "answerCheck": "385:3"
+  },
+  {
+    "id": "51fd31c4dcc0",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these sports is played by hitting a small, hollow plastic ball back and forth across a low net on a table?",
+    "options": [
+      "Racquetball",
+      "Table tennis",
+      "Squash",
+      "Badminton"
+    ],
+    "answerCheck": "clm:0"
+  },
+  {
+    "id": "5654284c1ac7",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In ice hockey, what is the disc that players shoot at the goal called?",
+    "options": [
+      "A puck",
+      "A wafer",
+      "A slider",
+      "A bouncer"
+    ],
+    "answerCheck": "8df5y58:3"
+  },
+  {
+    "id": "afe95ba19bf8",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which famous horse race is run every year on the first Saturday in May and is nicknamed 'The Run for the Roses'?",
+    "options": [
+      "The Grand National",
+      "The Melbourne Cup",
+      "Royal Ascot",
+      "The Kentucky Derby"
+    ],
+    "answerCheck": "a02509:1"
+  },
+  {
+    "id": "674e56147906",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In which sport do teammates frantically sweep the ice with brooms to guide a heavy sliding stone toward a target?",
+    "options": [
+      "Bobsled",
+      "Luge",
+      "Curling",
+      "Speed skating"
+    ],
+    "answerCheck": "sxl3kd6:1"
+  },
+  {
+    "id": "55fe4e3275aa",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What colour belt traditionally signals an expert, the highest common rank, in martial arts like karate and judo?",
+    "options": [
+      "White",
+      "Black",
+      "Brown",
+      "Red"
+    ],
+    "answerCheck": "ybz:0"
+  },
+  {
+    "id": "9b67b176f7f0",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The Wimbledon tennis championships are traditionally associated with eating which summery snack?",
+    "options": [
+      "Strawberries and cream",
+      "Hot dogs",
+      "Popcorn",
+      "Fish and chips"
+    ],
+    "answerCheck": "nui:3"
+  },
+  {
+    "id": "a9ff3ec91e57",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Basketball legend Michael Jordan famously wore number 23. What sport did he briefly leave the NBA to play professionally in 1994?",
+    "options": [
+      "Soccer",
+      "Golf",
+      "Baseball",
+      "American football"
+    ],
+    "answerCheck": "aihc:2"
+  },
+  {
+    "id": "a5bc90929b09",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In golf, the word 'caddie' (the person who carries a player's clubs) is generally traced back to which language?",
+    "options": [
+      "Spanish",
+      "French",
+      "German",
+      "Italian"
+    ],
+    "answerCheck": "qmev2c1:0"
+  },
+  {
+    "id": "296aa8b9d1a8",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Why does a golf ball have dimples all over its surface?",
+    "options": [
+      "To make it easier to grip when teeing up",
+      "To stop it rolling away on the green",
+      "The dimples shape the airflow, cutting drag so the ball flies farther",
+      "Purely decorative, a tradition from old leather balls"
+    ],
+    "answerCheck": "zn31:2"
+  },
+  {
+    "id": "9e0d2549605b",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Harlem Globetrotters are world-famous for blending comedy and trick shots in which sport?",
+    "options": [
+      "Volleyball",
+      "Soccer",
+      "Basketball",
+      "Baseball"
+    ],
+    "answerCheck": "liwj:2"
+  },
+  {
+    "id": "f7c0f4a157b3",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In rowing, what is the name of the person who sits facing the rowers, steers the boat, and calls out the rhythm?",
+    "options": [
+      "The skipper",
+      "The stroke",
+      "The coxswain",
+      "The bowman"
+    ],
+    "answerCheck": "d0z:1"
+  },
+  {
+    "id": "74713852e78e",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In soccer, from which of these restarts can a player NEVER be caught offside?",
+    "options": [
+      "A goalkeeper's punt from open play",
+      "A through-pass from a teammate",
+      "A throw-in",
+      "A free kick into the box"
+    ],
+    "answerCheck": "7ahz:2"
+  },
+  {
+    "id": "39e1b6c31784",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Scoring three in a row, a 'hat-trick', is celebrated across many sports. In which sport did the term actually originate?",
+    "options": [
+      "Cricket",
+      "Field hockey",
+      "Soccer",
+      "Ice hockey"
+    ],
+    "answerCheck": "4hwj4:1"
+  },
+  {
+    "id": "3769c28a469e",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The original Olympic motto is three Latin words meaning 'Faster, Higher, Stronger'. What are those words?",
+    "options": [
+      "Veni, Vidi, Vici",
+      "Carpe Diem, Semper Fidelis",
+      "Citius, Altius, Fortius",
+      "Ad Astra Per Aspera"
+    ],
+    "answerCheck": "n4baj:3"
+  },
+  {
+    "id": "7b278d43a625",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In professional cycling, what is a 'domestique' expected to do?",
+    "options": [
+      "Manage the team car and supplies",
+      "Sacrifice personal results to support and protect the team's lead rider",
+      "Ride only the flat, sprint stages",
+      "Lead the race from start to finish"
+    ],
+    "answerCheck": "d2u7qo3:0"
+  },
+  {
+    "id": "db2394d15bde",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "When Nadia Comaneci scored the first-ever perfect 10 in Olympic gymnastics in 1976, the scoreboard displayed '1.00' instead. Why?",
+    "options": [
+      "Romanian scores were shown in a different format",
+      "The judges entered her score in the wrong column",
+      "It was wired to show only three digits — nobody thought a 10.00 was possible",
+      "A power surge corrupted the display"
+    ],
+    "answerCheck": "sj3fa:3"
+  },
+  {
+    "id": "4a9f2b655738",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Indianapolis 500 winner traditionally celebrates in victory lane by doing something unusual with a particular drink. What?",
+    "options": [
+      "Drinking a bottle of milk",
+      "Pouring champagne over the car",
+      "Sharing a cup of tea with the team",
+      "Smashing a glass of orange juice"
+    ],
+    "answerCheck": "dgpjj:1"
+  },
+  {
+    "id": "2d43d9092ad9",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In horse racing, what exactly is a 'colt'?",
+    "options": [
+      "A young male horse",
+      "A horse making its very first race",
+      "A young female horse",
+      "An old horse past its prime"
+    ],
+    "answerCheck": "tt1:3"
+  },
+  {
+    "id": "76b0b9dfb8b8",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The marathon running event takes its name from what?",
+    "options": [
+      "Marathon, the Greek town tied to a legendary messenger's run to Athens",
+      "A Greek word meaning 'great endurance'",
+      "The surname of the first Olympic marathon champion",
+      "An ancient unit of distance roughly 42 km long"
+    ],
+    "answerCheck": "qm1q83a:3"
   }
 ]

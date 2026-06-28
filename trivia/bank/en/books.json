@@ -446,5 +446,285 @@
       "Metal man"
     ],
     "answerCheck": "bbe3:2"
+  },
+  {
+    "id": "99d390bdb4c0",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Lewis Carroll's books, which young girl falls down a rabbit hole into Wonderland?",
+    "options": [
+      "Wendy",
+      "Dorothy",
+      "Gretel",
+      "Alice"
+    ],
+    "answerCheck": "ql5g:3"
+  },
+  {
+    "id": "bc0ec0178a60",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What do you call a made-up name an author uses instead of their real one?",
+    "options": [
+      "A nickname",
+      "A surname",
+      "A pen name",
+      "A codename"
+    ],
+    "answerCheck": "br0m:2"
+  },
+  {
+    "id": "61567fe3b98f",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which hungry insect eats its way through a week of food in Eric Carle's classic picture book?",
+    "options": [
+      "A greedy grasshopper",
+      "A busy little bee",
+      "A munching beetle",
+      "A very hungry caterpillar"
+    ],
+    "answerCheck": "py8:2"
+  },
+  {
+    "id": "ad2f8a09f927",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In the classic nursery rhyme, who sat on a wall, had a great fall, and could not be put back together?",
+    "options": [
+      "Old King Cole",
+      "Humpty Dumpty",
+      "Wee Willie Winkie",
+      "Jack Sprat"
+    ],
+    "answerCheck": "r5w4ig:3"
+  },
+  {
+    "id": "3257a3e4cbad",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Pinocchio, what part of the puppet's body grows longer whenever he tells a lie?",
+    "options": [
+      "His ears",
+      "His nose",
+      "His arms",
+      "His feet"
+    ],
+    "answerCheck": "byvg:1"
+  },
+  {
+    "id": "6bef136d8f3a",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A word that sounds like the noise it describes — such as 'buzz', 'sizzle', or 'boom' — is an example of what?",
+    "options": [
+      "Onomatopoeia",
+      "Alliteration",
+      "A metaphor",
+      "A simile"
+    ],
+    "answerCheck": "18fojp:2"
+  },
+  {
+    "id": "8798714820bb",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which two words, spelled the same backwards and forwards, are examples of a palindrome?",
+    "options": [
+      "happy and lucky",
+      "cat and dog",
+      "begin and start",
+      "level and racecar"
+    ],
+    "answerCheck": "1gc:2"
+  },
+  {
+    "id": "bbba71ea5ae4",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Bram Stoker's \"Dracula\" is told entirely through letters, diary entries, and newspaper clippings. What is this storytelling style called?",
+    "options": [
+      "An epistolary novel",
+      "A stream-of-consciousness novel",
+      "A frame narrative",
+      "A picaresque novel"
+    ],
+    "answerCheck": "t6l:3"
+  },
+  {
+    "id": "11dd1f65ad40",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Agatha Christie is one of the best-selling novelists of all time, but she also wrote romance novels under which pen name?",
+    "options": [
+      "Mary Westmacott",
+      "Currer Bell",
+      "Robert Galbraith",
+      "George Eliot"
+    ],
+    "answerCheck": "b170w1j:3"
+  },
+  {
+    "id": "49044d22f393",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The famous comma that comes before 'and' in a list — as in 'red, white, and blue' — is commonly named after which university?",
+    "options": [
+      "Harvard",
+      "Yale",
+      "Oxford",
+      "Cambridge"
+    ],
+    "answerCheck": "vperg:3"
+  },
+  {
+    "id": "10d1c6c6f361",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Many consider Cervantes' \"Don Quixote\" the first modern novel. What does the deluded hero famously mistake windmills for?",
+    "options": [
+      "Demons",
+      "Castles",
+      "Giants",
+      "Dragons"
+    ],
+    "answerCheck": "1ftmrc:0"
+  },
+  {
+    "id": "ff6a82c3140f",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The word \"serendipity\" was coined by writer Horace Walpole, inspired by a fairy tale about princes from 'Serendip' — an old name for which country?",
+    "options": [
+      "Egypt",
+      "Sri Lanka",
+      "Persia",
+      "India"
+    ],
+    "answerCheck": "3ypd:1"
+  },
+  {
+    "id": "0a80ca8851fd",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which of these is a real, recognised collective noun for a group of crows?",
+    "options": [
+      "A murder",
+      "A flutter",
+      "A shimmer",
+      "A gaggle"
+    ],
+    "answerCheck": "o3z3:0"
+  },
+  {
+    "id": "8cd4f61aa153",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Roald Dahl invented a whole vocabulary of nonsense words for his giant in \"The BFG\". What did the BFG call the fizzy drink whose bubbles go downwards?",
+    "options": [
+      "Whizzpopper",
+      "Snozzcumber",
+      "Frobscottle",
+      "Gobblefunk"
+    ],
+    "answerCheck": "saj7:2"
+  },
+  {
+    "id": "cbaaa0d8b2e9",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The novel \"Frankenstein\" carries a famous subtitle linking it to a figure from Greek myth who stole fire. What is that subtitle?",
+    "options": [
+      "The Modern Icarus",
+      "The Modern Prometheus",
+      "The New Pygmalion",
+      "A Gothic Tale"
+    ],
+    "answerCheck": "kvu08bl:0"
+  },
+  {
+    "id": "d282145bbb51",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "F. Scott Fitzgerald nearly published \"The Great Gatsby\" under a very different title. Which of these was one of his seriously considered choices?",
+    "options": [
+      "The Green Light",
+      "East of the Sound",
+      "Gold-Hatted Lover",
+      "Trimalchio in West Egg"
+    ],
+    "answerCheck": "tce:2"
+  },
+  {
+    "id": "18c354fe72bf",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The English words \"chortle\" and \"galumph\" were both invented by Lewis Carroll in a single nonsense poem. Which poem?",
+    "options": [
+      "The Lobster Quadrille",
+      "The Walrus and the Carpenter",
+      "The Hunting of the Snark",
+      "Jabberwocky"
+    ],
+    "answerCheck": "733:2"
+  },
+  {
+    "id": "e74b430e3437",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Samuel Richardson's 1740 novel \"Pamela\" was so popular it spawned mocking parodies — one of which grew into a famous novel of its own. Which author wrote that response, \"Shamela\"?",
+    "options": [
+      "Laurence Sterne",
+      "Daniel Defoe",
+      "Jonathan Swift",
+      "Henry Fielding"
+    ],
+    "answerCheck": "ssk:2"
+  },
+  {
+    "id": "cfb50e1b0692",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Brontë sisters first published under male-sounding pen names that kept their own initials. Which set of names did Charlotte, Emily, and Anne use?",
+    "options": [
+      "Cuthbert, Edgar, and Andrew Black",
+      "Charles, Edmund, and Alfred Brent",
+      "George, Edward, and Arthur Bell",
+      "Currer, Ellis, and Acton Bell"
+    ],
+    "answerCheck": "8t6z1:0"
+  },
+  {
+    "id": "30fad4eec55a",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The everyday word \"tantalize\" comes from the Greek myth of Tantalus, who was punished in the underworld in what specific way?",
+    "options": [
+      "Filling a leaking jar with water for eternity",
+      "Having his liver eaten daily by an eagle",
+      "Food and water staying just out of reach",
+      "Pushing a boulder forever up a hill"
+    ],
+    "answerCheck": "x7qx:2"
   }
 ]

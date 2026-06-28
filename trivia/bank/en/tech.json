@@ -446,5 +446,285 @@
       "Wood"
     ],
     "answerCheck": "07kqxu:1"
+  },
+  {
+    "id": "f577116dcdb7",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What does the 'cloud' usually refer to when companies say your photos are 'saved to the cloud'?",
+    "options": [
+      "A special weather-resistant hard drive",
+      "A backup chip inside your phone",
+      "Storage on remote servers over the internet",
+      "Your phone's built-in memory"
+    ],
+    "answerCheck": "a3cjh:3"
+  },
+  {
+    "id": "e5c6d8ff6aca",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the name of Amazon's voice assistant?",
+    "options": [
+      "Alexa",
+      "Cortana",
+      "Siri",
+      "Bixby"
+    ],
+    "answerCheck": "cmwy:0"
+  },
+  {
+    "id": "2eaa15908f19",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "On most phones, what does 'airplane mode' switch off?",
+    "options": [
+      "The battery saver",
+      "The camera and microphone",
+      "The screen and speakers",
+      "Wireless signals like cellular and Wi-Fi"
+    ],
+    "answerCheck": "xnq5l9e:2"
+  },
+  {
+    "id": "9ddf52770625",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which company makes the PlayStation game console?",
+    "options": [
+      "Sega",
+      "Sony",
+      "Microsoft",
+      "Nintendo"
+    ],
+    "answerCheck": "cvnx:1"
+  },
+  {
+    "id": "6ca0b633fd9e",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What does it mean to 'charge' a device wirelessly?",
+    "options": [
+      "It charges over your home Wi-Fi network",
+      "It runs on solar power only",
+      "It never needs charging at all",
+      "Power transfers through a pad without plugging a cable into the device"
+    ],
+    "answerCheck": "ia6:2"
+  },
+  {
+    "id": "807f46886c9b",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is a 'pixel'?",
+    "options": [
+      "A unit of internet speed",
+      "A type of computer virus",
+      "The brand of a famous keyboard",
+      "A tiny dot of colour that makes up a screen image"
+    ],
+    "answerCheck": "dyu:2"
+  },
+  {
+    "id": "5757cb1b4315",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these is a brand of graphics card popular with gamers?",
+    "options": [
+      "Verizon",
+      "Pixar",
+      "Adobe",
+      "Nvidia"
+    ],
+    "answerCheck": "2mp77uz:2"
+  },
+  {
+    "id": "196ce81dacde",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The floppy disk icon still used to mean 'Save' in many programs was based on which physical disk size?",
+    "options": [
+      "8-inch",
+      "5.25-inch",
+      "3.5-inch",
+      "12-inch"
+    ],
+    "answerCheck": "wpg1:2"
+  },
+  {
+    "id": "886bfdde21bd",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Apple had a little-known third co-founder who sold his 10% stake just days in, for about $800. Who was he?",
+    "options": [
+      "John Sculley",
+      "Ronald Wayne",
+      "Bill Fernandez",
+      "Mike Markkula"
+    ],
+    "answerCheck": "gb9yt59:0"
+  },
+  {
+    "id": "d391a2a1cfbc",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The first text message ever sent, in December 1992, read which festive word?",
+    "options": [
+      "'Merry Christmas'",
+      "'Hello'",
+      "'Cheers'",
+      "'Testing'"
+    ],
+    "answerCheck": "rzg:3"
+  },
+  {
+    "id": "166a0ed4bf09",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What did the 'i' in iMac and iPhone originally stand for, the meaning Steve Jobs gave at the 1998 iMac launch?",
+    "options": [
+      "Intelligent",
+      "Individual",
+      "Internet",
+      "Innovation"
+    ],
+    "answerCheck": "md07y7:0"
+  },
+  {
+    "id": "0d281a644fea",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A microwave oven and your Wi-Fi router can interfere because many home microwaves operate at roughly the same frequency. What is it?",
+    "options": [
+      "900 megahertz",
+      "60 gigahertz",
+      "2.4 gigahertz",
+      "5 gigahertz"
+    ],
+    "answerCheck": "4m9uz7z:1"
+  },
+  {
+    "id": "5183323b774a",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The company Garmin and the GPS in your phone both rely on a satellite system originally built and run by whom?",
+    "options": [
+      "The European Space Agency",
+      "NASA's civilian space program",
+      "The US military",
+      "A private company called GPS Inc."
+    ],
+    "answerCheck": "zpkm:2"
+  },
+  {
+    "id": "b39db1404ae9",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What does the 'SD' in an SD memory card stand for?",
+    "options": [
+      "Solid Drive",
+      "Secure Digital",
+      "Standard Disk",
+      "Storage Device"
+    ],
+    "answerCheck": "2mfl:1"
+  },
+  {
+    "id": "e1a9d2865ffa",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "IBM shipped the first computer hard drive in 1956. The whole unit was the size of two refrigerators and weighed over a ton, yet held only about how much data?",
+    "options": [
+      "50 gigabytes",
+      "5 megabytes",
+      "5 gigabytes",
+      "500 megabytes"
+    ],
+    "answerCheck": "2zfieji:0"
+  },
+  {
+    "id": "2388b837df15",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Hedy Lamarr, the Hollywood actress, co-patented a 1940s 'frequency-hopping' idea that helped lay groundwork for which modern technologies?",
+    "options": [
+      "OLED screens and e-ink",
+      "Lithium batteries",
+      "Wi-Fi and Bluetooth",
+      "Fibre-optic cable"
+    ],
+    "answerCheck": "xq8c:2"
+  },
+  {
+    "id": "c8d3e60d4b52",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Named after a Swiss computer scientist, which tongue-in-cheek 'law' states that software gets slower faster than hardware gets faster?",
+    "options": [
+      "Wirth's Law",
+      "Amdahl's Law",
+      "Metcalfe's Law",
+      "Conway's Law"
+    ],
+    "answerCheck": "5drnzj:2"
+  },
+  {
+    "id": "a87ec780a862",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The very first webcam, set up at the University of Cambridge in 1991, was pointed at what so people wouldn't waste a trip?",
+    "options": [
+      "The campus car park",
+      "The weather outside",
+      "A coffee pot",
+      "The main library doors"
+    ],
+    "answerCheck": "uiqr:2"
+  },
+  {
+    "id": "16824bc53a38",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "An early form of computer memory used in the 1950s literally wove tiny magnetic rings onto wires by hand. What was it called?",
+    "options": [
+      "Magnetic core memory",
+      "Flash memory",
+      "Drum memory",
+      "Bubble memory"
+    ],
+    "answerCheck": "tf0o:0"
+  },
+  {
+    "id": "6fc52b2b5e1b",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The standard CD was reportedly sized to hold about 74 minutes of audio, with a popular legend claiming it was chosen so a single disc could fit which entire piece of music?",
+    "options": [
+      "Vivaldi's 'Four Seasons'",
+      "Beethoven's Ninth Symphony",
+      "Handel's 'Messiah'",
+      "Bach's 'Goldberg Variations'"
+    ],
+    "answerCheck": "jqg5rp1:0"
   }
 ]

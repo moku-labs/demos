@@ -446,5 +446,285 @@
       "By a special wasp"
     ],
     "answerCheck": "bsko6:2"
+  },
+  {
+    "id": "7db10e2ab5f1",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Carbonated soft drinks get their fizz from bubbles of which dissolved gas?",
+    "options": [
+      "Hydrogen",
+      "Helium",
+      "Carbon dioxide",
+      "Oxygen"
+    ],
+    "answerCheck": "v9xk:2"
+  },
+  {
+    "id": "730bdda13042",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What two ingredients are whisked together to make a basic mayonnaise?",
+    "options": [
+      "Cream and sugar",
+      "Oil and egg yolk",
+      "Milk and flour",
+      "Water and cornstarch"
+    ],
+    "answerCheck": "cu9gie:3"
+  },
+  {
+    "id": "79ecf8e4e07d",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which leafy vegetable is the traditional base of a Caesar salad?",
+    "options": [
+      "Romaine lettuce",
+      "Spinach",
+      "Arugula",
+      "Kale"
+    ],
+    "answerCheck": "v75a:0"
+  },
+  {
+    "id": "3dca7a5e1518",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Popcorn pops because each kernel contains a tiny bit of trapped what?",
+    "options": [
+      "Oil",
+      "Water",
+      "Air",
+      "Sugar"
+    ],
+    "answerCheck": "9w5p:1"
+  },
+  {
+    "id": "528364a56165",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which raw fish dish is 'cooked' only by the acid in citrus juice?",
+    "options": [
+      "Tempura",
+      "Goulash",
+      "Risotto",
+      "Ceviche"
+    ],
+    "answerCheck": "w7lh:3"
+  },
+  {
+    "id": "b7ac935aa3ed",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Tofu is made by curdling the 'milk' pressed from which plant?",
+    "options": [
+      "Soybeans",
+      "Almonds",
+      "Coconut",
+      "Oats"
+    ],
+    "answerCheck": "2i3:3"
+  },
+  {
+    "id": "a160c4839ba1",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which crunchy green stalk is famously filled with peanut butter to make 'ants on a log'?",
+    "options": [
+      "Leek",
+      "Celery",
+      "Green bean",
+      "Asparagus"
+    ],
+    "answerCheck": "5g9br0u:0"
+  },
+  {
+    "id": "a4f7e2ab3ec4",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Despite the name, French fries are widely credited as originating in which country?",
+    "options": [
+      "Spain",
+      "Ireland",
+      "Belgium",
+      "The United States"
+    ],
+    "answerCheck": "vv9:1"
+  },
+  {
+    "id": "a8a51333fc1c",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Roquefort, the famous blue cheese aged in limestone caves, is made from the milk of which animal?",
+    "options": [
+      "Sheep",
+      "Water buffalo",
+      "Cow",
+      "Goat"
+    ],
+    "answerCheck": "qk329f:2"
+  },
+  {
+    "id": "60813ff8ba09",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which cut-up fruit turns brown when exposed to air because an enzyme reacts with oxygen?",
+    "options": [
+      "Watermelon",
+      "Apple",
+      "Orange",
+      "Grape"
+    ],
+    "answerCheck": "johd:1"
+  },
+  {
+    "id": "820ab161793e",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "When pasta is cooked 'al dente,' it should be what?",
+    "options": [
+      "Cooked without salt",
+      "Soft and mushy",
+      "Slightly burnt",
+      "Still firm to the bite"
+    ],
+    "answerCheck": "26t6sdh:2"
+  },
+  {
+    "id": "9c6e9ca443b5",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Genuine Parmigiano-Reggiano must be aged for a minimum of how long before it can be sold?",
+    "options": [
+      "One week",
+      "One month",
+      "12 months",
+      "10 years"
+    ],
+    "answerCheck": "e10:1"
+  },
+  {
+    "id": "b59e63b3cfe9",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The tang in sourdough bread and yogurt both come from which family of microbes?",
+    "options": [
+      "Viruses",
+      "Amoebas",
+      "Lactic acid bacteria",
+      "Algae"
+    ],
+    "answerCheck": "3ult3bm:1"
+  },
+  {
+    "id": "6667f1e2eb68",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A ripe banana speeds up the ripening of nearby fruit by giving off which gas?",
+    "options": [
+      "Carbon dioxide",
+      "Methane",
+      "Nitrogen",
+      "Ethylene"
+    ],
+    "answerCheck": "2a09b2p:2"
+  },
+  {
+    "id": "c17785d9ad4e",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The eye-watering sting of chopping onions comes from a gas that forms a mild acid on contact with your eyes. What is that compound?",
+    "options": [
+      "Ammonia",
+      "Syn-propanethial-S-oxide",
+      "Carbon monoxide",
+      "Methane"
+    ],
+    "answerCheck": "7u72x1z:0"
+  },
+  {
+    "id": "2bb7d09a555b",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Authentic mozzarella di bufala is made from the milk of which animal?",
+    "options": [
+      "Goat",
+      "Yak",
+      "Sheep",
+      "Water buffalo"
+    ],
+    "answerCheck": "xpis:3"
+  },
+  {
+    "id": "4aebe2d2378d",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Fresh pineapple and raw kiwi can stop gelatin from setting because they contain an enzyme that does what?",
+    "options": [
+      "Adds extra water",
+      "Neutralizes sugar",
+      "Releases carbon dioxide",
+      "Breaks down protein"
+    ],
+    "answerCheck": "ffozs:0"
+  },
+  {
+    "id": "573499eccc7b",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Italian dessert tiramisù gets a coffee kick from espresso-soaked ladyfingers. What does its name roughly mean?",
+    "options": [
+      "Cold cream",
+      "Sweet cloud",
+      "Little coffee",
+      "Pick me up"
+    ],
+    "answerCheck": "rihtu:0"
+  },
+  {
+    "id": "645b379b1fab",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Miracle fruit briefly rewires your taste so sour foods taste sweet, thanks to a protein named what?",
+    "options": [
+      "Casein",
+      "Gluten",
+      "Keratin",
+      "Miraculin"
+    ],
+    "answerCheck": "6490:3"
+  },
+  {
+    "id": "a0098dda3247",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Lobsters and shrimp turn red when cooked because heat releases which pigment from the protein caging it?",
+    "options": [
+      "Melanin",
+      "Astaxanthin",
+      "Chlorophyll",
+      "Beta-carotene"
+    ],
+    "answerCheck": "lirr:1"
   }
 ]

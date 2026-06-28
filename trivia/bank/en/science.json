@@ -446,5 +446,285 @@
       "About 90%"
     ],
     "answerCheck": "9i4z:1"
+  },
+  {
+    "id": "60e2d7b2cee7",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which gas makes up the largest share of the air we breathe?",
+    "options": [
+      "Oxygen",
+      "Argon",
+      "Nitrogen",
+      "Carbon dioxide"
+    ],
+    "answerCheck": "eq3zh:3"
+  },
+  {
+    "id": "8f61529b69b0",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What classic piece of lab glassware is shaped like a cone with a flat bottom and a narrow neck?",
+    "options": [
+      "Test tube",
+      "Pipette",
+      "Conical (Erlenmeyer) flask",
+      "Petri dish"
+    ],
+    "answerCheck": "sy3ibj:0"
+  },
+  {
+    "id": "6a356e82e1e0",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which metal is liquid at room temperature and once gave us the silvery thread in old thermometers?",
+    "options": [
+      "Aluminium",
+      "Mercury",
+      "Tin",
+      "Lead"
+    ],
+    "answerCheck": "94h:0"
+  },
+  {
+    "id": "0b9d92366532",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which scientist developed pasteurisation, the gentle heating that kills germs in milk?",
+    "options": [
+      "Joseph Lister",
+      "Robert Hooke",
+      "Gregor Mendel",
+      "Louis Pasteur"
+    ],
+    "answerCheck": "z6zncr:1"
+  },
+  {
+    "id": "8574cbe23585",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which scientist proposed the theory of evolution by natural selection in 'On the Origin of Species'?",
+    "options": [
+      "Louis Pasteur",
+      "Charles Darwin",
+      "Gregor Mendel",
+      "Carl Linnaeus"
+    ],
+    "answerCheck": "79jdl:2"
+  },
+  {
+    "id": "c1583d12af75",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Diamond and the graphite in your pencil are both made entirely of which single element?",
+    "options": [
+      "Sulfur",
+      "Carbon",
+      "Calcium",
+      "Silicon"
+    ],
+    "answerCheck": "a79a:1"
+  },
+  {
+    "id": "e0b29e062700",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "When white sunlight passes through a prism, it splits into a band of colours. What is that band called?",
+    "options": [
+      "A mirage",
+      "A halo",
+      "A spectrum",
+      "An aurora"
+    ],
+    "answerCheck": "t11atrw:1"
+  },
+  {
+    "id": "357e93d5762d",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Dry ice doesn't melt into a puddle — it goes straight from solid to gas. What is that process called?",
+    "options": [
+      "Fermentation",
+      "Evaporation",
+      "Condensation",
+      "Sublimation"
+    ],
+    "answerCheck": "i62k:3"
+  },
+  {
+    "id": "fb1c7d04e776",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Alexander Fleming famously discovered the first true antibiotic, penicillin, thanks to what happening in his lab?",
+    "options": [
+      "A test tube exploded",
+      "A mouse escaped its cage",
+      "A power cut warmed his cultures",
+      "A mould accidentally contaminated a bacteria dish"
+    ],
+    "answerCheck": "h2cfb:0"
+  },
+  {
+    "id": "4e270d4af34c",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The pitch of a passing ambulance siren drops as it speeds away from you. What is this effect called?",
+    "options": [
+      "The Doppler effect",
+      "The Coriolis effect",
+      "The greenhouse effect",
+      "The placebo effect"
+    ],
+    "answerCheck": "iwbx86:2"
+  },
+  {
+    "id": "c8f377431449",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Cornstarch mixed with water acts solid when hit but flows like liquid when left alone. Such a substance is called what?",
+    "options": [
+      "A non-Newtonian fluid",
+      "A eutectic mixture",
+      "A supercritical fluid",
+      "A colloidal gel"
+    ],
+    "answerCheck": "o756z:1"
+  },
+  {
+    "id": "72d786f5b411",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Dmitri Mendeleev is credited with creating the first widely used version of what?",
+    "options": [
+      "The periodic table",
+      "The pH scale",
+      "The microscope",
+      "The metric system"
+    ],
+    "answerCheck": "jrgh:0"
+  },
+  {
+    "id": "c7c9322ca908",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A substance that speeds up a chemical reaction without being used up itself is known as a what?",
+    "options": [
+      "Catalyst",
+      "Reagent",
+      "Solvent",
+      "Buffer"
+    ],
+    "answerCheck": "wkxsjt:2"
+  },
+  {
+    "id": "9659cd53b9e9",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Roughly how long does light from the Sun take to reach the Earth?",
+    "options": [
+      "About 8 seconds",
+      "Instantly",
+      "About 8 minutes",
+      "About 8 hours"
+    ],
+    "answerCheck": "576d:2"
+  },
+  {
+    "id": "9ca18f55491a",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Group 18 of the periodic table is famously unreactive. By what name are these elements like helium and neon known?",
+    "options": [
+      "Noble gases",
+      "Halogens",
+      "Alkali metals",
+      "Rare earths"
+    ],
+    "answerCheck": "ijktj:1"
+  },
+  {
+    "id": "c0a5c8c3a957",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "When matter meets its antimatter counterpart, what happens?",
+    "options": [
+      "They annihilate, releasing energy",
+      "They fuse into a heavier atom",
+      "They bounce off each other unchanged",
+      "They freeze instantly"
+    ],
+    "answerCheck": "md5t:0"
+  },
+  {
+    "id": "6a9891ed177c",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A cooled superconductor can make a magnet hover in mid-air. This dramatic levitation is named after which effect?",
+    "options": [
+      "The Faraday effect",
+      "The Zeeman effect",
+      "The Hall effect",
+      "The Meissner effect"
+    ],
+    "answerCheck": "swt:2"
+  },
+  {
+    "id": "55bd9bf85570",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Rosalind Franklin's 'Photo 51' was a crucial X-ray image that helped reveal the structure of what?",
+    "options": [
+      "The DNA double helix",
+      "A protein crystal",
+      "A virus capsid",
+      "The first transistor"
+    ],
+    "answerCheck": "nbi62l:2"
+  },
+  {
+    "id": "bf352486e09e",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Carbon-14 dating works because the isotope decays at a steady rate. About how long is its half-life?",
+    "options": [
+      "About 5,700 years",
+      "About 570,000 years",
+      "About 570 years",
+      "About 57,000 years"
+    ],
+    "answerCheck": "mlykie:2"
+  },
+  {
+    "id": "1a763973506a",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The cutting-edge 'gene scissors' tool that lets scientists precisely edit DNA is known by what name?",
+    "options": [
+      "PCR",
+      "ELISA",
+      "qPCR",
+      "CRISPR"
+    ],
+    "answerCheck": "w7y:2"
   }
 ]

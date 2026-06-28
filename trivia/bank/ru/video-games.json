@@ -446,5 +446,285 @@
       "Konami"
     ],
     "answerCheck": "1bp8tbb:1"
+  },
+  {
+    "id": "59eea0315ffe",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Какой зелёный гуманоид-антагонист крадётся к игроку в Minecraft и взрывается с характерным шипением, если подобраться к нему вплотную?",
+    "options": [
+      "Зомби",
+      "Скелет",
+      "Эндермен",
+      "Крипер"
+    ],
+    "answerCheck": "wsq1d6c:2"
+  },
+  {
+    "id": "75930b969686",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В мобильном хите Cut the Rope игрок кормит конфетами милое зелёное существо. Как его зовут?",
+    "options": [
+      "Кирби",
+      "Ам Ням",
+      "Свомпи",
+      "Гумба"
+    ],
+    "answerCheck": "vigssdj:0"
+  },
+  {
+    "id": "79f2eb9ac3d4",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Как называется популярный многопользовательский шутер про танки от белорусской студии Wargaming?",
+    "options": [
+      "Armored Warfare",
+      "Crossout",
+      "War Thunder",
+      "World of Tanks"
+    ],
+    "answerCheck": "hxxnsnj:2"
+  },
+  {
+    "id": "18e36c510bfa",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В Angry Birds игрок запускает птиц из рогатки. Против кого они воюют?",
+    "options": [
+      "Против котов",
+      "Против зелёных свиней",
+      "Против роботов",
+      "Против пингвинов"
+    ],
+    "answerCheck": "3a83:1"
+  },
+  {
+    "id": "087b871031eb",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В какой уютной фермерской игре герой получает в наследство от деда заброшенную ферму и обживается в городке Пеликан-Таун?",
+    "options": [
+      "Stardew Valley",
+      "Farming Simulator",
+      "Animal Crossing",
+      "Harvest Hero"
+    ],
+    "answerCheck": "b76gcb:2"
+  },
+  {
+    "id": "c6d1f34772c5",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Как зовут пухлого розового героя Nintendo, который умеет вдыхать врагов и копировать их способности?",
+    "options": [
+      "Метакнайт",
+      "Кирби",
+      "Тоад",
+      "Йоши"
+    ],
+    "answerCheck": "eqb0mtg:0"
+  },
+  {
+    "id": "d95057d60da6",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В королевской битве PUBG, с которой начался бум жанра, победителю матча показывают культовую фразу. Какую?",
+    "options": [
+      "Последний герой",
+      "Победа!",
+      "Победитель победитель, куриный ужин!",
+      "Ты выжил"
+    ],
+    "answerCheck": "ft0:1"
+  },
+  {
+    "id": "0055228364fe",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Серия постапокалиптических шутеров S.T.A.L.K.E.R. родом из украинской студии и вдохновлена Чернобылем. Как называется зловещая аномальная территория в центре её мира?",
+    "options": [
+      "Пустошь",
+      "Периметр",
+      "Зона",
+      "Сектор"
+    ],
+    "answerCheck": "dbywe:3"
+  },
+  {
+    "id": "df5ab87bad36",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Серия игр Metro основана на книгах российского писателя. Кто автор романа «Метро 2033»?",
+    "options": [
+      "Ник Перумов",
+      "Сергей Лукьяненко",
+      "Дмитрий Глуховский",
+      "Виктор Пелевин"
+    ],
+    "answerCheck": "t336ex:0"
+  },
+  {
+    "id": "042312e69567",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Шутер Atomic Heart 2023 года разворачивается в альтернативном СССР 1950-х. С какого торжественного события начинается катастрофа в сюжете?",
+    "options": [
+      "Полёт первого человека в космос",
+      "Открытие первой советской АЭС",
+      "Парад Победы",
+      "Запуск нейросети «Коллектив 2.0»"
+    ],
+    "answerCheck": "6fpgq:0"
+  },
+  {
+    "id": "83cb2473bc2c",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "В королевской битве Fortnite игроки постоянно возводят укрытия. Какой ресурс НЕ относится к трём базовым строительным материалам игры?",
+    "options": [
+      "Бетон",
+      "Дерево",
+      "Камень",
+      "Металл"
+    ],
+    "answerCheck": "abf:3"
+  },
+  {
+    "id": "f4a6d3339d73",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Какая студия создала экшен-RPG Cyberpunk 2077, в которой одну из главных ролей озвучил Киану Ривз?",
+    "options": [
+      "Bethesda",
+      "Ubisoft",
+      "Rockstar Games",
+      "CD Projekt Red"
+    ],
+    "answerCheck": "x8wf:3"
+  },
+  {
+    "id": "c35912e9efaf",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Хардкорный шутер-«выживач» Escape from Tarkov сделан российской студией Battlestate Games. В вымышленном регионе с каким названием происходят события игры?",
+    "options": [
+      "Каспийск",
+      "Зеленоград",
+      "Припять",
+      "Норвинск"
+    ],
+    "answerCheck": "n9k1yd4:2"
+  },
+  {
+    "id": "ac5b60b3f85d",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "В Counter-Strike друг другу противостоят два отряда — спецназ и террористы. Как сокращённо обозначают сторону спецназа?",
+    "options": [
+      "SWAT",
+      "CT",
+      "SAS",
+      "GIGN"
+    ],
+    "answerCheck": "7mhl:1"
+  },
+  {
+    "id": "d1aa7de25e5d",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Песочница Garry's Mod, породившая множество мемов и режимов, изначально была модификацией движка какой игры?",
+    "options": [
+      "Roblox",
+      "Doom",
+      "Half-Life 2",
+      "Minecraft"
+    ],
+    "answerCheck": "alm:1"
+  },
+  {
+    "id": "9620b5614382",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "В файтинге Mortal Kombat игроку дают добить поверженного противника. Какой командой ведущий объявляет, что настал этот момент?",
+    "options": [
+      "«Game Over!»",
+      "«Finish Him!»",
+      "«Knockout!»",
+      "«Brutality!»"
+    ],
+    "answerCheck": "zmn0j:2"
+  },
+  {
+    "id": "5ec148f00f79",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Головоломка The Witness знаменита сотнями панелей-лабиринтов, разбросанных по таинственному острову. Кто её создатель, прежде прославившийся игрой Braid?",
+    "options": [
+      "Лукас Поуп",
+      "Фумито Уэда",
+      "Эдмунд Макмиллен",
+      "Джонатан Блоу"
+    ],
+    "answerCheck": "ldlwts:1"
+  },
+  {
+    "id": "513d7b6970ff",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Инди-хит Undertale, который можно пройти целиком, не убив ни одного врага, почти полностью создал один человек. Как его зовут?",
+    "options": [
+      "Тоби Фокс",
+      "Эрик Бароне",
+      "Дэвид Кейдж",
+      "Маркус Перссон"
+    ],
+    "answerCheck": "anr:3"
+  },
+  {
+    "id": "c0f73e99468f",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Последняя консоль Sega — Dreamcast — отличалась от конкурентов того поколения тем, что прямо из коробки имела встроенный компонент для онлайна. Что это было?",
+    "options": [
+      "Камера для видеозвонков",
+      "Модем для выхода в интернет",
+      "Сенсорный экран на геймпаде",
+      "Жёсткий диск"
+    ],
+    "answerCheck": "ap2p:1"
+  },
+  {
+    "id": "d0e3b189ebd7",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Целый жанр MOBA вырос из любительской карты «Defense of the Ancients». Модификацией какой игры она изначально была?",
+    "options": [
+      "Warcraft III",
+      "StarCraft",
+      "Diablo II",
+      "Age of Empires II"
+    ],
+    "answerCheck": "3ypcc:1"
   }
 ]

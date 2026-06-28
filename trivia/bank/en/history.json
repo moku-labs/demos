@@ -446,5 +446,285 @@
       "The Olmecs"
     ],
     "answerCheck": "tcsy:1"
+  },
+  {
+    "id": "7f38e88b537e",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The ancient Olympic Games were held in honour of which Greek god?",
+    "options": [
+      "Apollo",
+      "Hercules",
+      "Poseidon",
+      "Zeus"
+    ],
+    "answerCheck": "sm4xvd:1"
+  },
+  {
+    "id": "424641918584",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which Roman city was buried and preserved when Mount Vesuvius erupted in 79 AD?",
+    "options": [
+      "Carthage",
+      "Ostia",
+      "Ravenna",
+      "Pompeii"
+    ],
+    "answerCheck": "0bp:2"
+  },
+  {
+    "id": "6f14c0962767",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "American colonists protested a tax by dumping crates of what into a harbour in 1773?",
+    "options": [
+      "Tea",
+      "Coffee",
+      "Sugar",
+      "Tobacco"
+    ],
+    "answerCheck": "es4:3"
+  },
+  {
+    "id": "7c1c04f7083d",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which explorer's crew completed the first voyage all the way around the world, though he himself died partway?",
+    "options": [
+      "Christopher Columbus",
+      "Marco Polo",
+      "Vasco da Gama",
+      "Ferdinand Magellan"
+    ],
+    "answerCheck": "2e5gxt:1"
+  },
+  {
+    "id": "588828530165",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The Great Sphinx of Giza is famously missing which feature?",
+    "options": [
+      "Its tail",
+      "One of its ears",
+      "Its nose",
+      "Its left front paw"
+    ],
+    "answerCheck": "5b3rx1:0"
+  },
+  {
+    "id": "2c3063334018",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "According to Roman legend, the city of Rome was founded by twin brothers raised by what animal?",
+    "options": [
+      "A wild boar",
+      "An eagle",
+      "A she-wolf",
+      "A lioness"
+    ],
+    "answerCheck": "pl4ok:3"
+  },
+  {
+    "id": "e0bee73e089e",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The famous tomb of which young Egyptian pharaoh was found almost intact in 1922?",
+    "options": [
+      "Tutankhamun",
+      "Akhenaten",
+      "Ramesses II",
+      "Thutmose III"
+    ],
+    "answerCheck": "f4hide2:3"
+  },
+  {
+    "id": "0950dcb2c4fd",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In 1630s Holland, a speculative bubble saw single bulbs of what flower trade for the price of a house?",
+    "options": [
+      "Lilies",
+      "Roses",
+      "Orchids",
+      "Tulips"
+    ],
+    "answerCheck": "lrxlnx:1"
+  },
+  {
+    "id": "0132d5e1e802",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "When the mummy of Ramesses II was flown to France in 1976 for restoration, what did officials issue so it could legally enter the country?",
+    "options": [
+      "A museum loan certificate",
+      "A diplomatic visa",
+      "A special cargo manifest",
+      "An Egyptian passport listing his occupation as 'King (deceased)'"
+    ],
+    "answerCheck": "tthh5m:1"
+  },
+  {
+    "id": "f17443012c1b",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Thirty Years' War was partly sparked in 1618 when angry officials threw imperial envoys out of a castle window in which event?",
+    "options": [
+      "The Diet of Worms",
+      "The Defenestration of Prague",
+      "The Siege of Magdeburg",
+      "The Sack of Vienna"
+    ],
+    "answerCheck": "8qlg:1"
+  },
+  {
+    "id": "8e2af7f57bde",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which empire conquered Constantinople in 1453, ending the Byzantine Empire?",
+    "options": [
+      "The Ottoman Empire",
+      "The Persian Empire",
+      "The Austro-Hungarian Empire",
+      "The Mughal Empire"
+    ],
+    "answerCheck": "6r8g1:1"
+  },
+  {
+    "id": "0f2286ae17cc",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Catherine the Great expanded Russia enormously, but she was not actually Russian by birth. Where was she born?",
+    "options": [
+      "France",
+      "Poland",
+      "Sweden",
+      "A German principality"
+    ],
+    "answerCheck": "zhfpo7:1"
+  },
+  {
+    "id": "24af2dc8088f",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Eruptions of Mount Tambora in 1815 caused such global cooling that 1816 became known as what?",
+    "options": [
+      "The Long Winter",
+      "The Great Frost",
+      "The Dark Year",
+      "The Year Without a Summer"
+    ],
+    "answerCheck": "pl37547:2"
+  },
+  {
+    "id": "3f9848639e78",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which gladiator led a major slave uprising against the Roman Republic around 73 BC?",
+    "options": [
+      "Commodus",
+      "Spartacus",
+      "Hannibal",
+      "Crassus"
+    ],
+    "answerCheck": "81k:0"
+  },
+  {
+    "id": "d3e4a9c03aa6",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Johannes Gutenberg's mid-1400s printing press is famous for mass-producing which book first?",
+    "options": [
+      "The Bible",
+      "A book of maps",
+      "Aesop's Fables",
+      "A Latin grammar"
+    ],
+    "answerCheck": "vj9pg:1"
+  },
+  {
+    "id": "5a9d32cfebd5",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In 1932, Australia deployed soldiers with machine guns against a destructive bird population in what became mockingly known as the 'Emu War'. Who is generally said to have won?",
+    "options": [
+      "It ended in a signed truce",
+      "The emus",
+      "The army, after three weeks",
+      "Neither — it was called off before any contact"
+    ],
+    "answerCheck": "9ea15j:3"
+  },
+  {
+    "id": "dd672ff47e1c",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A corroded bronze device recovered from a Roman-era shipwreck near Antikythera turned out to be an ancient analog computer for tracking what?",
+    "options": [
+      "Ocean tides",
+      "Astronomical positions and eclipses",
+      "Ship cargo weights",
+      "Musical pitches"
+    ],
+    "answerCheck": "jktm:1"
+  },
+  {
+    "id": "c51ad810d690",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Modern engineers have found that Roman concrete can heal its own cracks over time, thanks largely to its use of what ingredient?",
+    "options": [
+      "Volcanic ash and lime",
+      "Crushed seashells",
+      "Iron filings",
+      "Egg whites"
+    ],
+    "answerCheck": "ggdjl:1"
+  },
+  {
+    "id": "e7d8b39150eb",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "At the Battle of Cajamarca in 1532, a small band of Spanish conquistadors under Francisco Pizarro captured which ruler?",
+    "options": [
+      "Atahualpa of the Inca",
+      "Tupac Amaru",
+      "Montezuma II of the Aztecs",
+      "Cuauhtémoc"
+    ],
+    "answerCheck": "ov0:3"
+  },
+  {
+    "id": "aa4c8da54f12",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Genghis Khan unified the Mongol tribes, but 'Genghis Khan' was a title he was given. What was his birth name?",
+    "options": [
+      "Subutai",
+      "Ogedei",
+      "Kublai",
+      "Temujin"
+    ],
+    "answerCheck": "xyr:2"
   }
 ]

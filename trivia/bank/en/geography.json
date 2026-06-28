@@ -446,5 +446,285 @@
       "Eswatini"
     ],
     "answerCheck": "p7wlgad:2"
+  },
+  {
+    "id": "b1876e5b8a6d",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which South American country is famously long and thin, stretching over 4,000 km down the western (Pacific) edge of the continent?",
+    "options": [
+      "Peru",
+      "Chile",
+      "Bolivia",
+      "Argentina"
+    ],
+    "answerCheck": "alysi:2"
+  },
+  {
+    "id": "2abe0f6ce0fb",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The 'Big Ben' clock tower is a landmark of which capital city?",
+    "options": [
+      "Berlin",
+      "Dublin",
+      "Paris",
+      "London"
+    ],
+    "answerCheck": "36yss:0"
+  },
+  {
+    "id": "7f53173d8750",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which country is made up of more than 17,000 islands, including Java, Sumatra and Bali?",
+    "options": [
+      "Indonesia",
+      "Malaysia",
+      "The Philippines",
+      "Japan"
+    ],
+    "answerCheck": "fxqsyx1:3"
+  },
+  {
+    "id": "73257d7df710",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A 'fjord' — a long, narrow sea inlet carved by glaciers between steep cliffs — is a landscape most associated with which country?",
+    "options": [
+      "Egypt",
+      "Norway",
+      "Spain",
+      "Brazil"
+    ],
+    "answerCheck": "ord4qy:3"
+  },
+  {
+    "id": "d1b88848bc70",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which country's name comes from the Latin word for 'silver', inspired by the Río de la Plata — the 'River of Silver' — on its coast?",
+    "options": [
+      "Argentina",
+      "Venezuela",
+      "Colombia",
+      "Chile"
+    ],
+    "answerCheck": "069iy:1"
+  },
+  {
+    "id": "2a93639d1510",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The Great Barrier Reef, the world's largest coral reef system, lies off the coast of which country?",
+    "options": [
+      "Mexico",
+      "Indonesia",
+      "Thailand",
+      "Australia"
+    ],
+    "answerCheck": "jvpy:3"
+  },
+  {
+    "id": "1444e221b63f",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which mountain range forms a natural border between France and Spain?",
+    "options": [
+      "The Carpathians",
+      "The Alps",
+      "The Apennines",
+      "The Pyrenees"
+    ],
+    "answerCheck": "dvzigj:1"
+  },
+  {
+    "id": "60b93ae1a809",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Lake Titicaca, the highest large navigable lake in the world, sits on the border between Bolivia and which other country?",
+    "options": [
+      "Brazil",
+      "Peru",
+      "Ecuador",
+      "Chile"
+    ],
+    "answerCheck": "ycavyr:3"
+  },
+  {
+    "id": "40633a837229",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Caspian Sea is the world's largest enclosed body of water, yet countries around it argue over whether it's legally a 'sea' or a 'lake'. Why does the label matter so much?",
+    "options": [
+      "It determines whether ships need passports to cross it",
+      "Only a 'lake' can legally be fished",
+      "It decides how the oil and gas beneath it gets divided among bordering countries",
+      "A 'sea' would let the United Nations rename it"
+    ],
+    "answerCheck": "pawb:2"
+  },
+  {
+    "id": "a6dc56a52761",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which country has the only national flag that is not a rectangle or square — it's two stacked triangular pennants?",
+    "options": [
+      "Bhutan",
+      "Sri Lanka",
+      "Switzerland",
+      "Nepal"
+    ],
+    "answerCheck": "ilgr:3"
+  },
+  {
+    "id": "97c27dcda3e1",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The world's largest hot desert is the Sahara, but the world's largest desert overall is somewhere far colder. Which is it?",
+    "options": [
+      "The Gobi Desert",
+      "The Arabian Desert",
+      "Greenland's ice sheet",
+      "Antarctica"
+    ],
+    "answerCheck": "46f8k:0"
+  },
+  {
+    "id": "feae6147c67e",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Vatican City is the world's smallest country, but the second-smallest is a principality on the French Riviera famous for its casino and Grand Prix. Which is it?",
+    "options": [
+      "Monaco",
+      "Andorra",
+      "Liechtenstein",
+      "Luxembourg"
+    ],
+    "answerCheck": "bw9:3"
+  },
+  {
+    "id": "41fab5db9de5",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The capital of Australia is neither Sydney nor Melbourne. It's a purpose-built city chosen as a compromise between those two rivals. Name it.",
+    "options": [
+      "Perth",
+      "Canberra",
+      "Adelaide",
+      "Brisbane"
+    ],
+    "answerCheck": "8qm3r:2"
+  },
+  {
+    "id": "bc625dd04c9a",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which sea has shrunk so dramatically — drained by Soviet-era irrigation — that ships now sit rusting on dry sand far from any water?",
+    "options": [
+      "The Aral Sea",
+      "The Caspian Sea",
+      "The Black Sea",
+      "The Sea of Azov"
+    ],
+    "answerCheck": "jzs:3"
+  },
+  {
+    "id": "9b00b33076b8",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Büsingen am Hochrhein is a German town completely surrounded by Switzerland. What is the term for a piece of one country wholly enclosed within another?",
+    "options": [
+      "A protectorate",
+      "An isthmus",
+      "An enclave",
+      "A peninsula"
+    ],
+    "answerCheck": "azgm1t:0"
+  },
+  {
+    "id": "9acfd036565d",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Danube flows through more countries than any other river on Earth. How many does it pass through?",
+    "options": [
+      "Six",
+      "Fourteen",
+      "Ten",
+      "Four"
+    ],
+    "answerCheck": "tfz746j:1"
+  },
+  {
+    "id": "90af1329bc80",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Kingdom of Tonga sits just west of a line that makes it among the first places on Earth to greet each new day. What is that line called?",
+    "options": [
+      "The International Date Line",
+      "The Antarctic Circle",
+      "The Prime Meridian",
+      "The Tropic of Capricorn"
+    ],
+    "answerCheck": "6z32hbj:3"
+  },
+  {
+    "id": "1bd5b8d6b0a0",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which country's name literally translates as 'the lower lands', reflecting that much of it lies at or below sea level?",
+    "options": [
+      "Belgium",
+      "Estonia",
+      "Denmark",
+      "The Netherlands"
+    ],
+    "answerCheck": "robsk:0"
+  },
+  {
+    "id": "be29cad5c070",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Sudan, not Egypt, is the country with the most ancient pyramids in the world — over 200 of them. Who built these steep, narrow pyramids?",
+    "options": [
+      "The Kingdom of Kush",
+      "The Ottoman Empire",
+      "The Roman Empire",
+      "The Phoenicians"
+    ],
+    "answerCheck": "4z1oge:2"
+  },
+  {
+    "id": "87dd31a8f502",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "La Paz, Bolivia, sits so high in the Andes that it has an unusual natural advantage against fire. What is it?",
+    "options": [
+      "Snow on every rooftop smothers any blaze",
+      "Fires struggle to spread because the thin air holds less oxygen",
+      "The constant rain keeps the city perpetually damp",
+      "Its buildings are legally required to be stone"
+    ],
+    "answerCheck": "jefx:1"
   }
 ]

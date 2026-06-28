@@ -446,5 +446,285 @@
       "Counter-current exchange"
     ],
     "answerCheck": "b3sv:2"
+  },
+  {
+    "id": "8bcdd1abf82a",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these fish is widely considered the fastest swimmer in the ocean?",
+    "options": [
+      "Herring",
+      "Goldfish",
+      "Cod",
+      "Sailfish"
+    ],
+    "answerCheck": "yxpx:3"
+  },
+  {
+    "id": "64c60729f245",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Manatees and dugongs are gentle, slow-moving 'sea cows'. Which land animal is their closest living relative?",
+    "options": [
+      "The walrus",
+      "The elephant",
+      "The hippopotamus",
+      "The cow"
+    ],
+    "answerCheck": "ow7miz:3"
+  },
+  {
+    "id": "038fadd11319",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A live lobster pulled from the sea is usually a dark greenish-brown. What turns it bright red?",
+    "options": [
+      "Exposure to sunlight",
+      "Reaching old age",
+      "Being cooked",
+      "The breeding season"
+    ],
+    "answerCheck": "gi1:1"
+  },
+  {
+    "id": "aa5959c35749",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Roughly how salty is typical seawater — about how much salt is dissolved in it?",
+    "options": [
+      "About 3.5% salt",
+      "About 25% salt",
+      "About 50% salt",
+      "Less than 0.1% salt"
+    ],
+    "answerCheck": "8b1:3"
+  },
+  {
+    "id": "e3dd786b5d29",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these creatures is NOT actually a true jellyfish, despite its appearance?",
+    "options": [
+      "Portuguese man o' war",
+      "Lion's mane jelly",
+      "Box jelly",
+      "Moon jelly"
+    ],
+    "answerCheck": "5ly:3"
+  },
+  {
+    "id": "e1e406122751",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the hard, dome-shaped shell of a sea turtle called?",
+    "options": [
+      "A mantle",
+      "A hull",
+      "A husk",
+      "A carapace"
+    ],
+    "answerCheck": "09g0a:0"
+  },
+  {
+    "id": "3d075aca85f5",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Compared to in air, how does sound travel through ocean water?",
+    "options": [
+      "Much faster",
+      "Much slower",
+      "It can't travel underwater at all",
+      "About the same speed"
+    ],
+    "answerCheck": "aaxef:1"
+  },
+  {
+    "id": "bfee7a3aa019",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Parrotfish nibble algae off coral all day. A surprising amount of tropical white-sand beach is actually made of what they produce. What is it?",
+    "options": [
+      "Salt crystals from their gills",
+      "Their excrement — digested coral turned to sand",
+      "Dried seaweed they shred",
+      "Crushed seashells they grind up"
+    ],
+    "answerCheck": "yoq96oi:0"
+  },
+  {
+    "id": "153fc6b42f8c",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Most fish are cold-blooded, but a few are partly warm-blooded. Which of these keeps its body warmer than the surrounding water?",
+    "options": [
+      "Seahorse",
+      "Goldfish",
+      "Bluefin tuna",
+      "Eel"
+    ],
+    "answerCheck": "eoddw6:0"
+  },
+  {
+    "id": "6b47801f99bc",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The remora, or 'suckerfish', attaches itself to sharks and whales using a modified what?",
+    "options": [
+      "A ring of tiny tentacles",
+      "Glue secreted from its belly",
+      "A sticky tongue",
+      "A dorsal fin reshaped into a suction pad"
+    ],
+    "answerCheck": "34ek:3"
+  },
+  {
+    "id": "2ded41fd7394",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "How does a sea cucumber often defend itself when threatened?",
+    "options": [
+      "It releases a cloud of black ink",
+      "It curls into an armoured ball",
+      "It expels its own internal organs at the attacker",
+      "It delivers a powerful electric shock"
+    ],
+    "answerCheck": "vvvhwze:1"
+  },
+  {
+    "id": "795207d630dc",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The blue-ringed octopus is one of the most venomous animals in the sea. What do its bright blue rings signal?",
+    "options": [
+      "It is healthy and well-fed",
+      "It is camouflaging against coral",
+      "A warning that it's about to bite, and is deadly",
+      "It is ready to mate"
+    ],
+    "answerCheck": "eishc51:1"
+  },
+  {
+    "id": "b70fe0dd82b4",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Baleen whales like the humpback have no teeth. What is their baleen — the bristly filter they feed with — actually made of?",
+    "options": [
+      "Rows of tiny interlocking shells",
+      "Keratin, the same material as your fingernails",
+      "Thin plates of bone",
+      "Hardened cartilage"
+    ],
+    "answerCheck": "cawea:2"
+  },
+  {
+    "id": "2c5f6be42362",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Flying fish escape predators by gliding above the water on wing-like fins. A good glide can carry one for roughly how far?",
+    "options": [
+      "A few centimetres",
+      "About one metre",
+      "Hundreds of metres",
+      "Several kilometres without stopping"
+    ],
+    "answerCheck": "rckvr:3"
+  },
+  {
+    "id": "36daa3a41878",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "European eels make an epic journey to one mysterious place to spawn. Which body of water is it?",
+    "options": [
+      "The Black Sea",
+      "The Sargasso Sea",
+      "The Mediterranean Sea",
+      "The Caspian Sea"
+    ],
+    "answerCheck": "wpp:0"
+  },
+  {
+    "id": "89f47811153f",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Greenland shark is the longest-living vertebrate known. Individuals are estimated to live to roughly what age?",
+    "options": [
+      "Around 50 years",
+      "Around 400 years",
+      "Around 1,000 years",
+      "Around 120 years"
+    ],
+    "answerCheck": "nnw:0"
+  },
+  {
+    "id": "f4c1ff3ba3a9",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "One species of jellyfish, Turritopsis dohrnii, has earned the nickname 'the immortal jellyfish'. Why?",
+    "options": [
+      "It can revert from adult back to its juvenile polyp stage and start over",
+      "Its body never stops growing",
+      "It cannot be killed by any predator",
+      "It lives for exactly 200 years"
+    ],
+    "answerCheck": "huthwf:2"
+  },
+  {
+    "id": "aa6b6bc5fa3c",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "When a whale dies and sinks to the deep seafloor, the rich ecosystem that feeds on the carcass for years is known by what name?",
+    "options": [
+      "A benthic reef",
+      "A whale fall",
+      "A carrion drift",
+      "A deep bloom"
+    ],
+    "answerCheck": "61buz:2"
+  },
+  {
+    "id": "25ed18ae6dcc",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The deep-sea barreleye fish has a famously bizarre adaptation. What is it?",
+    "options": [
+      "It has a transparent, fluid-filled head you can see straight through",
+      "It has no mouth and absorbs food through its skin",
+      "It glows bright red to blend in",
+      "It can survive completely frozen"
+    ],
+    "answerCheck": "3ei34w:2"
+  },
+  {
+    "id": "ef57477be18a",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "When attacked, the hagfish produces a defence that can clog a predator's gills almost instantly. What is it?",
+    "options": [
+      "Vast amounts of thick, expanding slime",
+      "A burst of electricity",
+      "A jet of boiling water",
+      "A cloud of toxic gas"
+    ],
+    "answerCheck": "2pwi34:2"
   }
 ]

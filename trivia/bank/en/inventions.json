@@ -446,5 +446,285 @@
       "A garden irrigation system"
     ],
     "answerCheck": "svv:3"
+  },
+  {
+    "id": "6cc8b035d327",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Fed up with smudgy fountain pens, Hungarian journalist László Bíró perfected which everyday writing tool, now nicknamed after him in many countries?",
+    "options": [
+      "The ballpoint pen",
+      "The marker",
+      "The pencil",
+      "The fountain pen"
+    ],
+    "answerCheck": "5garq:1"
+  },
+  {
+    "id": "a4bbaba33648",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Elisha Otis didn't invent the elevator, but his 1850s demonstration made people trust it. What did his invention do?",
+    "options": [
+      "Stopped it from falling if the cable snapped",
+      "Made it move faster",
+      "Let it go underground",
+      "Made it run on electricity"
+    ],
+    "answerCheck": "xxzlv:1"
+  },
+  {
+    "id": "8fcc516508b5",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The humble zip fastener struggled for decades until the 1920s, when one product made it a hit. What was that breakthrough product?",
+    "options": [
+      "Sleeping bags",
+      "Rubber galoshes (overshoes)",
+      "Military uniforms",
+      "Leather wallets"
+    ],
+    "answerCheck": "gro:0"
+  },
+  {
+    "id": "a1c9f8f40896",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What did Wilhelm Röntgen accidentally discover in 1895, earning the very first Nobel Prize in Physics?",
+    "options": [
+      "Ultraviolet light",
+      "X-rays",
+      "Radio waves",
+      "Radioactivity"
+    ],
+    "answerCheck": "rtw:0"
+  },
+  {
+    "id": "d550f55d3dcd",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Bubble Wrap was invented in 1957 when two engineers tried to make a trendy product that totally flopped. What were they originally trying to sell?",
+    "options": [
+      "Inflatable furniture",
+      "Textured wallpaper",
+      "A see-through raincoat",
+      "Greenhouse insulation"
+    ],
+    "answerCheck": "0bn:0"
+  },
+  {
+    "id": "8a3da1058349",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Samuel Morse co-developed a code of dots and dashes for which communication technology?",
+    "options": [
+      "The telegraph",
+      "The radio",
+      "The telephone",
+      "The fax machine"
+    ],
+    "answerCheck": "7xl:3"
+  },
+  {
+    "id": "185d4a09ace3",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "When Clarence Birdseye revolutionised food in the 1920s, what was his big idea?",
+    "options": [
+      "Vacuum-sealing food in plastic",
+      "Flash-freezing food very quickly",
+      "Canning food in metal tins",
+      "Drying food into powder"
+    ],
+    "answerCheck": "qicuuy2:0"
+  },
+  {
+    "id": "48815b34d576",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Sylvan Goldman invented the shopping cart in 1937, but shoppers refused to use it at first. How did he get them to try it?",
+    "options": [
+      "He gave a cash discount to anyone who used one",
+      "He banned hand baskets from his stores",
+      "He made the first carts out of solid gold-coloured metal",
+      "He hired models to push carts around as if shopping"
+    ],
+    "answerCheck": "pnyyi:0"
+  },
+  {
+    "id": "5c4d6abd90de",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The first practical photographic process, the daguerreotype, captured an image onto a polished plate of which material?",
+    "options": [
+      "Copper",
+      "Silver-coated copper",
+      "Iron",
+      "Glass"
+    ],
+    "answerCheck": "ni30:1"
+  },
+  {
+    "id": "6f2bb1c929b4",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Josephine Cochrane invented a workable dishwasher in 1886 not to save labour, but for a very specific personal reason. What was it?",
+    "options": [
+      "Her well water was too cold for handwashing",
+      "She was tired of her servants chipping her fine china",
+      "She wanted to win a county fair prize",
+      "She had injured her hands and couldn't wash up"
+    ],
+    "answerCheck": "bzw:0"
+  },
+  {
+    "id": "c7d4842c70c2",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The parking meter, first installed in Oklahoma City in 1935, was invented partly to solve what problem for local businesses?",
+    "options": [
+      "Horses and cars sharing the same lanes",
+      "Workers hogging spaces all day so customers couldn't park",
+      "People parking on the wrong side of the road",
+      "Cars speeding past storefronts"
+    ],
+    "answerCheck": "7fd:0"
+  },
+  {
+    "id": "825bdfece090",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Chester Carlson invented the photocopier, melting sulphur on his kitchen stove to make the first copy in 1938. The process was named 'xerography' — from the Greek for what?",
+    "options": [
+      "'Light writing'",
+      "'Mirror image'",
+      "'Fast copy'",
+      "'Dry writing'"
+    ],
+    "answerCheck": "i8fral3:2"
+  },
+  {
+    "id": "5fe13174fde8",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Naval engineer Richard James got the idea for the Slinky in 1943 after knocking a tension spring off a shelf in his shipyard workshop. What did the spring do that amazed him?",
+    "options": [
+      "It coiled itself around a pencil",
+      "It 'stepped' end over end down to the floor and stood upright",
+      "It rolled across the floor like a hoop",
+      "It bounced back up onto the shelf"
+    ],
+    "answerCheck": "axmu:1"
+  },
+  {
+    "id": "b1ac1f6f1f6c",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Barbed wire, patented by Joseph Glidden in 1874, had such a huge effect on the American West that it earned what nickname?",
+    "options": [
+      "'Iron grass'",
+      "'The cowboy's curse'",
+      "'Prairie steel'",
+      "'The Devil's rope'"
+    ],
+    "answerCheck": "dtnp:3"
+  },
+  {
+    "id": "595aeaa171c2",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Earl Tupper's airtight Tupperware containers sold poorly in shops until Brownie Wise pioneered which sales method to save them?",
+    "options": [
+      "Selling them only in hardware stores",
+      "Home 'party' demonstrations hosted by saleswomen",
+      "Mail-order catalogues",
+      "Giving them away free with groceries"
+    ],
+    "answerCheck": "nbdf65:3"
+  },
+  {
+    "id": "414cbdedc06c",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The pop-up toaster, patented by Charles Strite in the early 1920s, was reportedly born out of his frustration at work. What kept happening?",
+    "options": [
+      "His army unit had no way to toast rations",
+      "His wife's toaster shocked her every morning",
+      "He couldn't afford bread that wasn't stale",
+      "The cafeteria at his factory kept serving burnt toast"
+    ],
+    "answerCheck": "2qf5b:0"
+  },
+  {
+    "id": "e2f86f754f46",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Earle Dickson invented the Band-Aid in 1920 while working as a cotton buyer at Johnson & Johnson. What prompted him?",
+    "options": [
+      "His own job left his hands constantly nicked by cotton bales",
+      "His factory kept losing workers to minor cuts",
+      "He was a volunteer medic with no supplies",
+      "His wife Josephine kept cutting herself while cooking"
+    ],
+    "answerCheck": "zp34g:0"
+  },
+  {
+    "id": "957ae4a6fa4f",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A cavity magnetron, the device that gave Allied radar its punch, was secretly carried to the United States in 1940 inside a black metal box during which mission?",
+    "options": [
+      "Operation Paperclip",
+      "The Lend-Lease handover",
+      "The Tizard Mission",
+      "The Manhattan Project exchange"
+    ],
+    "answerCheck": "vqrj:2"
+  },
+  {
+    "id": "abf037c00e20",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Patsy Sherman co-invented Scotchgard fabric protector at 3M after a lab assistant spilled a chemical and noticed what?",
+    "options": [
+      "It made a canvas shoe permanently stiff",
+      "It glowed faintly under UV light",
+      "It dissolved the rubber sole of the shoe",
+      "The spot it landed on repelled water and wouldn't stain"
+    ],
+    "answerCheck": "2qb5:3"
+  },
+  {
+    "id": "e06bb635983b",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Zenith's Flash-Matic of 1955 was the first wireless TV remote, firing a beam of light at sensors in the screen's corners. What embarrassing flaw did it have?",
+    "options": [
+      "Bright sunlight could change the channel all by itself",
+      "It had to be pointed at the ceiling to work",
+      "It only worked in total darkness",
+      "It drained a fresh battery in a single evening"
+    ],
+    "answerCheck": "xzihhx:2"
   }
 ]
