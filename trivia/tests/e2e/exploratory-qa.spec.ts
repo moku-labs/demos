@@ -50,6 +50,7 @@ const PHONE_PHASE: Record<PhonePhaseKey, string> = {
   reveal: "reveal",
   revealWrong: "reveal",
   waiting: "lobby",
+  scoreboard: "scoreboard",
   categoryPick: "categoryPick",
   categoryReveal: "categoryReveal",
   categoryLoading: "categoryPick",

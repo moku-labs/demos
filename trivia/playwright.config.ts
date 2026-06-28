@@ -24,7 +24,9 @@
  */
 import { defineConfig, devices } from "@playwright/test";
 
-const PORT = 8787;
+// Port is env-overridable (PW_PORT) so a run can avoid a port already held by another worktree's dev
+// server (parallel sessions); defaults to wrangler's 8787. The managed webServer inherits it via --port.
+const PORT = Number(process.env.PW_PORT) || 8787;
 const BASE_URL = `http://localhost:${PORT}`;
 
 /** Whether an external server is already running (skip webServer management). */
@@ -179,7 +181,7 @@ export default defineConfig({
     ? {}
     : {
         webServer: {
-          command: "bun run dev",
+          command: `bun run dev --port ${PORT}`,
           url: BASE_URL,
           // TRIVIA_E2E=1 makes the web build use the test-only client entry (tests/e2e/harness/spa-e2e),
           // which can render deterministic fixture phase screens via `/?e2ephase=…` (see src/app.ts).

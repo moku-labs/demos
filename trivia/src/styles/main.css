@@ -237,7 +237,8 @@
 
   [data-island="mute"] {
     position: fixed;
-    top: clamp(10px, 1.6vh, 18px);
+    /* Nudged 10px higher than the default top inset (design tweak) — floored at 0 so it never clips. */
+    top: max(0px, calc(clamp(10px, 1.6vh, 18px) - 10px));
     right: clamp(16px, 3vw, 40px);
     z-index: 6;
   }

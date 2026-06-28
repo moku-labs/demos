@@ -102,6 +102,8 @@ export type PhonePhaseKey =
   | "reveal"
   | "revealWrong"
   | "waiting"
+  // The round→score transition card every phone shows during the interstitial scoreboard phase.
+  | "scoreboard"
   | "categoryPick"
   | "categoryReveal"
   // Bank-not-ready beat: the active player's picker opens before the bank has loaded (buttons inert).
@@ -140,6 +142,7 @@ const PHONE_PHASE_KEYS = new Set<PhonePhaseKey>([
   "reveal",
   "revealWrong",
   "waiting",
+  "scoreboard",
   "categoryPick",
   "categoryReveal",
   "categoryLoading",
@@ -684,6 +687,21 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
   if (phase === "waiting") {
     return {
       s: triviaState("lobby", "p2"),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: false
+    };
+  }
+
+  // scoreboard (A7 phone): the round→score transition card every phone shows while the TV runs the
+  // interstitial standings — "Round N done · Next round soon" + the next round's difficulty pips.
+  if (phase === "scoreboard") {
+    return {
+      s: triviaState("scoreboard", "p2"),
       now: FIXED_NOW,
       code: "TRIV1234",
       joinedProfile: null,

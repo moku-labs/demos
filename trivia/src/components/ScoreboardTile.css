@@ -71,7 +71,25 @@
       var(--player, var(--clay-lemon))
     );
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    transition: width var(--dur-reveal) var(--spring);
+    /* The JS count-up drives `--fill` per frame (in lockstep with the score), so no CSS width
+       transition here — a transition would lag/overshoot each rAF step. Reduced motion → it snaps. */
+  }
+
+  /* "+N this round" badge — the round gain, inked in the player's colour, pulsing in beside the score. */
+  span[data-gain] {
+    flex: 0 0 auto;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 1;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    color: var(--player, var(--clay-lemon));
+    background: color-mix(in srgb, var(--player, var(--clay-lemon)) 16%, transparent);
+    border: 1px solid color-mix(in srgb, var(--player, var(--clay-lemon)) 42%, transparent);
+    text-shadow: 0 0 12px color-mix(in srgb, var(--player, var(--clay-lemon)) 50%, transparent);
+    white-space: nowrap;
+    animation: pop-in var(--dur-entry) var(--spring) both;
   }
 
   span[data-badge] {

@@ -89,6 +89,8 @@ export type ScoreboardTileProps = {
   rank: number;
   player: PlayerProfile;
   total: number;
+  /** Points earned this round — drives the count-up head start and the "+N" round-gain badge. */
+  delta: number;
   /** The leader's total (for the proportional bar width). */
   maxTotal: number;
   /** The name of the player just overtaken, for the "▲ overtook …" badge (F4). */
@@ -171,6 +173,8 @@ export type CategoryButtonProps = {
   category: CategoryMeta;
   selected?: boolean;
   onPick?: () => void;
+  /** Position in the list — staggers the entrance so the categories reveal one after another. */
+  revealIndex?: number | undefined;
 };
 
 /** ClayButton (§G) — the base interactive button shape, tone-coloured. */
