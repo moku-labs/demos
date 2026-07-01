@@ -93,6 +93,9 @@ function makeHandlers(ctx: ControllerContext, state: ControllerState): Controlle
     },
     onLeave: () => {
       sound.play("ui.back");
+      // Tell the host to drop our seat for good BEFORE we tear down our local view, so we never linger
+      // as a ghost tile in the next lobby (bug #5). Then show the "You left" card.
+      intent("leave-game", {});
       ctx.set({ leaving: false, left: true });
     }
   };
@@ -115,13 +118,18 @@ function flashFor(
   const self = s.self;
   if (self === null || !s.question) return null;
 
-  // The winner (active-correct or a successful stealer) → correct flash with their round points.
-  if (s.reveal.scorerPeer === self) {
-    return { correct: true, points: s.scores.find(e => e.peerId === self)?.delta ?? 0 };
-  }
+  const myDelta = s.scores.find(e => e.peerId === self)?.delta ?? 0;
+
+  // The primary scorer (active-correct or the FASTEST stealer) → correct flash with their round points.
+  if (s.reveal.scorerPeer === self) return { correct: true, points: myDelta };
+
+  // Any other stealer who took a crack: correct flash (they still scored, just not fastest) or wrong flash.
+  const mySteal = s.reveal.stealResults.find(result => result.peerId === self);
+  if (mySteal) return { correct: mySteal.correct, points: mySteal.correct ? myDelta : 0 };
+
   // The original active answerer who missed → wrong flash.
   if (s.question.answeringPeer === self) return { correct: false, points: 0 };
-  // A stealer who locked an answer this question but didn't win → wrong flash.
+  // A stealer who locked an answer this question but isn't in the results yet → wrong flash.
   if (lockedQid !== null && lockedQid === s.question.id) return { correct: false, points: 0 };
 
   return null;

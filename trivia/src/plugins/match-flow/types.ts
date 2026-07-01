@@ -23,6 +23,10 @@ export type Config = {
   rounds: number;
   answerMs: number;
   stealMs: number;
+  /** Pre-steal "get ready" lead-in (ms): the answer grid is shown DISABLED for this beat before it unlocks. */
+  stealLeadMs: number;
+  /** Open-steal speed reward tiers — factor on the steal value by lock-in order (fastest first). */
+  stealSpeedTiers: readonly number[];
   roundIntroMs: number;
   /** How long the category-chosen reveal beat holds before advancing to the question (ms). */
   categoryRevealMs: number;
@@ -34,6 +38,14 @@ export type Config = {
   offerCount: number;
   tickMs: number;
 };
+
+/**
+ * One player's answer in an open steal — their picked slot and whether it was correct — recorded in
+ * lock-in (speed) order. The host accumulates these during the steal window (`State.stealAnswers`) and
+ * publishes them to the reveal (`RevealSlice.stealResults`) so the TV can show every opponent's pick
+ * (right/wrong) by name and who was fastest (the first `correct` entry).
+ */
+export type StealResult = { peerId: PeerId; slot: number; correct: boolean };
 
 /**
  * Host-internal state — peers already tried on the current question + the per-question lock guard +
@@ -61,6 +73,12 @@ export type State = {
    * not whichever stealer happened to resolve the question last. Reset with `tried` each new question.
    */
   activePick: number | null;
+  /**
+   * The open steal's answers in lock-in (speed) order — the host-internal accumulator that backs BOTH
+   * the speed-scaled awards (fastest correct = full steal value, then 0.6/0.4/…) and the reveal's
+   * `stealResults` (every opponent's pick + right/wrong + who was fastest). Reset each new question.
+   */
+  stealAnswers: StealResult[];
 };
 
 /** `match` slice — phase routing, the active player, language, host, pause, and the phase deadline. */
@@ -100,12 +118,24 @@ export type RevealSlice = {
   outcome: Outcome;
   scorerPeer: PeerId | null;
   answerText: string;
+  /**
+   * The open steal's per-player results in speed order (empty for a non-steal reveal). Drives the TV's
+   * "who stole / who missed / who was fastest" panel and the per-slot name tags on the reveal grid.
+   */
+  stealResults: StealResult[];
 };
 
 /**
  * `steal` slice — the OPEN steal: when the active player misses, EVERY other connected player who
- * hasn't yet tried this question may answer simultaneously (first correct wins). `stealPeers` is the
- * currently-eligible set (drives the TV steal strip F1 + each phone's answer-grant); it shrinks as
- * stealers miss, and the shared `deadlineTs` is one window for everyone.
+ * hasn't yet tried this question may answer during ONE shared window (all correct answers score, faster
+ * earns more). `stealPeers` is the eligible set (drives the TV steal strip F1 + each phone's answer-grant).
+ * `armedTs` is when tapping unlocks (a brief "get ready" lead-in so no device taps before the others
+ * render); `answeredPeers` is who has locked so far (live progress — no picked slot leaks until reveal).
  */
-export type StealSlice = { active: boolean; stealPeers: PeerId[]; deadlineTs: number | null };
+export type StealSlice = {
+  active: boolean;
+  stealPeers: PeerId[];
+  deadlineTs: number | null;
+  armedTs: number | null;
+  answeredPeers: PeerId[];
+};

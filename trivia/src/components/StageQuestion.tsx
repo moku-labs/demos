@@ -1,12 +1,13 @@
 /**
  * @file StageQuestion — the TV question screen (A4/A5) and its in-place reveal (A6). A pure presentational
  * component fed the snapshot + the ticking `now` + a `revealing` flag; the same 2×2 grid resolves in place
- * at reveal (correct/wrong/dim) and a score rollup slides in. Rendered by the stage island's render layer
- * for `phase === "question"` (revealing=false) and `phase === "reveal"` (revealing=true).
+ * at reveal (correct/wrong/dim, tagged with WHO picked each option) and a score rollup slides in. After an
+ * open steal it also shows a per-opponent results strip (who was right/wrong, who was fastest). Rendered by
+ * the stage island's render layer for `phase === "question"` (revealing=false) and `phase === "reveal"`.
  */
 import type { JSX } from "preact";
 import { TRIVIA } from "../config";
-import { rank } from "../lib/leaderboard";
+import { standings } from "../lib/leaderboard";
 import type { PlayerProfile, QuestionView, RevealView, TriviaState } from "../lib/types";
 import { categoryMeta, findPlayer, secondsLeft, slotMeta } from "../lib/view";
 import { AnswerTile } from "./AnswerTile";
@@ -27,15 +28,40 @@ export type StageQuestionProps = {
   revealing: boolean;
 };
 
+/** One player's pick on the reveal grid (who chose which slot, and whether it was right). */
+type RevealPick = { peerId: string; slot: number; correct: boolean };
+
+/**
+ * Collect every player's pick for the reveal grid: the active player's own pick (unless they timed out)
+ * plus every open-steal answer. Drives the per-slot "who picked this" name tags.
+ *
+ * @param s - The merged snapshot.
+ * @returns The picks (active first, then stealers in speed order).
+ */
+function collectRevealPicks(s: TriviaState): RevealPick[] {
+  const picks: RevealPick[] = [];
+  const activePeer = s.question?.answeringPeer ?? null;
+  const { pickedSlot, correctSlot, stealResults } = s.reveal;
+  if (activePeer !== null && pickedSlot !== null && pickedSlot >= 0) {
+    picks.push({ peerId: activePeer, slot: pickedSlot, correct: pickedSlot === correctSlot });
+  }
+  for (const result of stealResults) {
+    picks.push({ peerId: result.peerId, slot: result.slot, correct: result.correct });
+  }
+  return picks;
+}
+
 /** The 2×2 answer grid, shared by the question + reveal screens (resolves in place at reveal). */
 function AnswerGrid({
   question,
   reveal,
-  answererName
+  picks,
+  players
 }: {
   question: QuestionView;
   reveal: RevealView | null;
-  answererName: string;
+  picks: RevealPick[];
+  players: PlayerProfile[];
 }) {
   return (
     <div data-answer-grid>
@@ -44,12 +70,20 @@ function AnswerGrid({
         let stateAttr: "idle" | "correct" | "dim" | "wrong" = "idle";
         let tag: string | undefined;
         if (reveal) {
+          const names = picks
+            .filter(pick => pick.slot === i)
+            .map(pick => findPlayer(players, pick.peerId)?.name)
+            .filter((name): name is string => Boolean(name));
+          const who = names.join(", ");
+          // Name the pickers on the correct tile ONLY in a multi-player open steal (so the solo-answer
+          // reveal keeps the clean "✓ CORRECT"); wrong tiles always name who picked them.
+          const isSteal = reveal.stealResults.length > 0;
           if (i === reveal.correctSlot) {
             stateAttr = "correct";
-            tag = "✓ CORRECT";
-          } else if (reveal.pickedSlot === i) {
+            tag = isSteal && who ? `✓ ${who}` : "✓ CORRECT";
+          } else if (names.length > 0) {
             stateAttr = "wrong";
-            tag = `✗ ${answererName}`;
+            tag = `✗ ${who}`;
           } else {
             stateAttr = "dim";
           }
@@ -88,11 +122,12 @@ function revealCopy(
     };
   }
   if (reveal.outcome === "stolen") {
+    const stealers = reveal.stealResults.filter(result => result.correct).length;
     return {
       // TurnChip already renders [data-name]; the label is the STATUS only — no name prefix.
-      chip: `steals it! +${delta}`,
+      chip: stealers > 1 ? `fastest steal! +${delta}` : `steals it! +${delta}`,
       tone: "correct",
-      line: `✅ ${reveal.answerText} — ${name} stole the points!`
+      line: `✅ ${reveal.answerText} — ${name} was fastest!`
     };
   }
   if (reveal.outcome === "wrong") {
@@ -110,31 +145,82 @@ function revealCopy(
   };
 }
 
+/**
+ * The open-steal results strip (reveal only): one chip per opponent who took a crack at the steal — their
+ * avatar + name + the letter they picked + a ✓/✗, with a ⚡ badge on the FIRST correct (the fastest).
+ */
+function StealResultsPanel({ s }: { s: TriviaState }) {
+  const results = s.reveal.stealResults;
+  const fastestIndex = results.findIndex(result => result.correct);
+  return (
+    <div data-steal-results role="status" aria-label="Steal results">
+      <span data-steal-results-title>⚡ Steal — who was fastest</span>
+      <div data-steal-results-list>
+        {results.map((result, index) => {
+          const player = findPlayer(s.players, result.peerId);
+          if (!player) return null;
+          const { letter } = slotMeta(result.slot);
+          return (
+            <span
+              key={result.peerId}
+              data-steal-result
+              data-correct={result.correct ? true : undefined}
+              style={{ "--player": player.color }}
+            >
+              {index === fastestIndex ? <span data-fastest>⚡</span> : null}
+              <span data-avatar aria-hidden="true">
+                {player.avatar}
+              </span>
+              <span data-name>{player.name}</span>
+              <span data-pick>{letter}</span>
+              <span data-mark>{result.correct ? "✓" : "✗"}</span>
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /** F1 — the OPEN steal strip: the active player missed, so everyone else may steal at once. */
 function StealStrip({ s, now }: { s: TriviaState; now: number }) {
   const active = findPlayer(s.players, s.match.activePeer);
+  const answered = new Set(s.steal.answeredPeers);
   const eligible = s.steal.stealPeers
     .map(id => findPlayer(s.players, id))
     .filter((p): p is PlayerProfile => p !== undefined);
+  // Lead-in gate: the grid on every phone is disabled until `armedTs`, so the strip counts that "get
+  // ready" beat down first, then flips to the live steal window (fairness — no device answers first).
+  const armedTs = s.steal.armedTs;
+  const arming = armedTs !== null && now < armedTs;
+  const leadSecs = armedTs !== null ? Math.max(0, Math.ceil((armedTs - now) / 1000)) : 0;
   const secs = secondsLeft(s.steal.deadlineTs, now);
   const stealPct = Math.max(0, Math.min(100, (secs / (TRIVIA.timers.stealMs / 1000)) * 100));
   return (
     // aria-live: a steal opening is a critical game-state change — announce it to screen readers (the
     // strip only mounts when the steal is active), since the TV is otherwise silent (WCAG 4.1.3).
-    <div data-steal-strip role="status" aria-live="polite">
+    <div data-steal-strip data-arming={arming ? true : undefined} role="status" aria-live="polite">
       <span data-steal-text>
-        → {active?.name ?? "Player"} missed — everyone can steal! Tap fast ♪
+        {arming
+          ? `→ ${active?.name ?? "Player"} missed — get ready to steal! ${leadSecs}`
+          : `→ Everyone steal — all correct score, fastest wins most! (${answered.size}/${eligible.length} in)`}
       </span>
       <span data-steal-eligible>
         {eligible.map(p => (
-          <span key={p.peerId} data-steal-avatar style={{ "--player": p.color }} title={p.name}>
+          <span
+            key={p.peerId}
+            data-steal-avatar
+            data-answered={answered.has(p.peerId) ? true : undefined}
+            style={{ "--player": p.color }}
+            title={p.name}
+          >
             {p.avatar}
           </span>
         ))}
-        <span data-steal-secs>{secs}s</span>
+        {!arming ? <span data-steal-secs>{secs}s</span> : null}
       </span>
       <span data-steal-timer-bar aria-hidden="true">
-        <span data-steal-timer-fill style={{ width: `${stealPct}%` }} />
+        <span data-steal-timer-fill style={{ width: `${arming ? 100 : stealPct}%` }} />
       </span>
     </div>
   );
@@ -142,8 +228,8 @@ function StealStrip({ s, now }: { s: TriviaState; now: number }) {
 
 /**
  * Render the TV question screen (and its in-place reveal): the meta bar (category + answerer/scorer chip),
- * the prompt hero, the timer ring (question only), the 2×2 answer grid, the steal strip, and the reveal
- * score rollup.
+ * the prompt hero, the timer ring (question only), the 2×2 answer grid (tagged with who picked what at
+ * reveal), the steal strip, the steal results panel, and the reveal score rollup.
  *
  * @param props - The question screen props.
  * @returns The question screen.
@@ -167,6 +253,8 @@ export function StageQuestion({ s, now, revealing }: StageQuestionProps): JSX.El
   const remainingMs = Math.max(0, question.deadlineTs - now);
   const scorerDelta = s.scores.find(e => e.peerId === s.reveal.scorerPeer)?.delta ?? 0;
   const copy = revealing ? revealCopy(s.reveal, scorer, answerer, scorerDelta) : null;
+  const picks = revealing ? collectRevealPicks(s) : [];
+  const hasStealResults = revealing && s.reveal.stealResults.length > 0;
 
   return (
     <div data-component="stage-question" data-screen="question">
@@ -217,14 +305,17 @@ export function StageQuestion({ s, now, revealing }: StageQuestionProps): JSX.El
       <AnswerGrid
         question={question}
         reveal={revealing ? s.reveal : null}
-        answererName={answerer?.name ?? ""}
+        picks={picks}
+        players={s.players}
       />
 
       {s.steal.active && !revealing && <StealStrip s={s} now={now} />}
 
+      {hasStealResults && <StealResultsPanel s={s} />}
+
       {revealing && (
         <div data-score-rollup role="status" aria-label="Score update">
-          {rank(s.scores).map(entry => {
+          {standings(s.players, s.scores).map(entry => {
             const player = findPlayer(s.players, entry.peerId);
             if (!player) return null;
             return (

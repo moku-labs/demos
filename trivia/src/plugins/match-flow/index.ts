@@ -27,6 +27,8 @@ const defaultConfig: Config = {
   rounds: TRIVIA.rounds,
   answerMs: TRIVIA.timers.answerMs,
   stealMs: TRIVIA.timers.stealMs,
+  stealLeadMs: TRIVIA.timers.stealLeadMs,
+  stealSpeedTiers: TRIVIA.stealSpeedTiers,
   roundIntroMs: TRIVIA.timers.roundIntroMs,
   categoryRevealMs: TRIVIA.timers.categoryRevealMs,
   revealMs: TRIVIA.timers.revealMs,

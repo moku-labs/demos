@@ -89,13 +89,15 @@ export type QuestionBankDeps = {
  * The `scoring` API subset consumed by match-flow (from `ctx.require(scoringPlugin)`).
  */
 export type ScoringDeps = {
-  /** Award points for an answer event. */
+  /** Award points for an answer event (optional steal speed `factor` scales the steal value). */
   award(
     peerId: PeerId,
-    opts: { correct: boolean; steal: boolean; tier: string; category: string }
+    opts: { correct: boolean; steal: boolean; tier: string; category: string; factor?: number }
   ): void;
   /** Reset all scores (play-again). */
   reset(): void;
+  /** Zero every player's round `delta` as a new question goes live (fixes stale "+N" on later reveals). */
+  clearDeltas(): void;
   /** Re-key a player's score + stats from a stale peerId to their reconnected peerId (phone reload). */
   rebindPeer(oldPeerId: PeerId, newPeerId: PeerId): void;
 };
@@ -194,8 +196,15 @@ function readQuestion(sync: SyncReadDeps): QuestionSlice {
  */
 function readSteal(sync: SyncReadDeps): StealSlice {
   const raw = sync.read("steal");
-  // eslint-disable-next-line unicorn/no-null -- nullable slice cell defaults to null, not undefined
-  return (raw ?? { active: false, stealPeers: [], deadlineTs: null }) as unknown as StealSlice;
+  return (raw ?? {
+    active: false,
+    stealPeers: [],
+    // eslint-disable-next-line unicorn/no-null -- nullable slice cell defaults to null, not undefined
+    deadlineTs: null,
+    // eslint-disable-next-line unicorn/no-null -- nullable slice cell defaults to null, not undefined
+    armedTs: null,
+    answeredPeers: []
+  }) as unknown as StealSlice;
 }
 
 /**
@@ -304,7 +313,9 @@ export function createMatchFlowHandlers(deps: HookContextDeps) {
         award: buildAward(scoring),
         grade: buildGrade(questionBank),
         revealMs: config.revealMs,
-        stealMs: config.stealMs
+        stealMs: config.stealMs,
+        stealLeadMs: config.stealLeadMs,
+        stealSpeedTiers: config.stealSpeedTiers
       });
     },
 

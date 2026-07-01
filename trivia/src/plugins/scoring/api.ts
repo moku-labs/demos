@@ -22,21 +22,26 @@ import type { Config, EndStats, PlayerStats, State } from "./types";
  * @param steal - Whether this is a steal opportunity.
  * @param tier - The question's difficulty tier.
  * @param config - The scoring config (basePoints + stealFraction).
+ * @param factor - Optional multiplier on the result (default 1) — the open-steal speed reward scales the
+ *   steal value by 1 / 0.6 / 0.4 / … for the fastest / 2nd / 3rd correct stealer.
  * @returns Integer points earned (0 for wrong answers).
  * @example
  * ```ts
  * computePoints(true, false, "easy", config); // 100
+ * computePoints(true, true, "medium", config, 0.6); // round(200 * 0.5 * 0.6) = 60
  * ```
  */
 function computePoints(
   correct: boolean,
   steal: boolean,
   tier: "easy" | "medium" | "hard",
-  config: Config
+  config: Config,
+  factor = 1
 ): number {
   if (!correct) return 0;
   const base = config.basePoints[tier];
-  return steal ? Math.round(base * config.stealFraction) : base;
+  const raw = steal ? base * config.stealFraction : base;
+  return Math.round(raw * factor);
 }
 
 /**
@@ -178,6 +183,7 @@ function recomputeRanks(entries: ScoreEntry[]): ScoreEntry[] {
  * @param opts.steal - Whether this is a steal opportunity.
  * @param opts.tier - The question's difficulty tier.
  * @param opts.category - The question's category.
+ * @param opts.factor - Optional multiplier on the points (default 1) — the steal speed reward.
  * @returns The updated `ScoreEntry[]` snapshot to publish.
  * @example
  * ```ts
@@ -195,9 +201,10 @@ export function computeAward(
     steal: boolean;
     tier: "easy" | "medium" | "hard";
     category: CategoryId;
+    factor?: number;
   }
 ): ScoreEntry[] {
-  const points = computePoints(opts.correct, opts.steal, opts.tier, config);
+  const points = computePoints(opts.correct, opts.steal, opts.tier, config, opts.factor);
 
   const stats = ensureStats(state, peerId);
   const existing = entries.get(peerId) ?? { peerId, total: 0, delta: 0, rank: 0, prevRank: 0 };
@@ -248,6 +255,32 @@ export function resetBoard(state: State, entries: Map<PeerId, ScoreEntry>): Scor
   for (const [peerId, entry] of entries.entries()) {
     const zeroed: ScoreEntry = { ...entry, total: 0, delta: 0, rank: 0, prevRank: 0 };
     entries.set(peerId, decorateWithStats(zeroed, state));
+  }
+  return [...entries.values()];
+}
+
+/**
+ * Zero every entry's round `delta` in place (leaving totals, ranks, and stats untouched) and return the
+ * updated snapshot for publishing. Called as each new question goes live so the reveal/scoreboard "+N"
+ * only ever reflects the question just resolved — never a stale gain a player earned rounds ago.
+ *
+ * Without this, `computeAward` only rewrites the awarded peer's `delta`; `recomputeRanks` copies every
+ * OTHER entry's `delta` forward unchanged, so a past scorer's "+N" persisted on every later reveal (the
+ * "Alex +200 for a player who scored nothing this round" bug).
+ *
+ * @param state - Host-internal stats Map (read for the re-stamped synced stat fields).
+ * @param entries - In-memory leaderboard mirror (mutated in place: every `delta` set to 0).
+ * @returns The delta-zeroed `ScoreEntry[]` snapshot to publish.
+ * @example
+ * ```ts
+ * const cleared = clearDeltas(state, entries);
+ * stage.mutate("scores", () => ({ entries: cleared }));
+ * ```
+ */
+export function clearDeltas(state: State, entries: Map<PeerId, ScoreEntry>): ScoreEntry[] {
+  for (const [peerId, entry] of entries.entries()) {
+    if (entry.delta === 0) continue;
+    entries.set(peerId, decorateWithStats({ ...entry, delta: 0 }, state));
   }
   return [...entries.values()];
 }

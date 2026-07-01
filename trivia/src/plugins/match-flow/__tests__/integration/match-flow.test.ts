@@ -19,6 +19,9 @@ import { matchFlowPlugin } from "../../index";
  * Short timer configs so the real timers fire within vi.waitFor windows.
  * The clock tickMs is 50 ms; all phase timers are also short.
  */
+/** A tiny steal lead-in + the speed tiers, spread into every test config so timings stay deterministic. */
+const STEAL_TUNING = { stealLeadMs: 20, stealSpeedTiers: [1, 0.6, 0.4, 0.2] };
+
 const SHORT_TIMERS = {
   matchFlow: {
     rounds: 12,
@@ -27,7 +30,8 @@ const SHORT_TIMERS = {
     roundIntroMs: 100,
     revealMs: 150,
     scoreboardMs: 100,
-    tickMs: 50
+    tickMs: 50,
+    ...STEAL_TUNING
   },
   language: { voteWindowMs: 100 }
 };
@@ -82,7 +86,8 @@ const TIMEOUT_STEAL_TIMERS = {
     roundIntroMs: 60,
     revealMs: 2000,
     scoreboardMs: 2000,
-    tickMs: 30
+    tickMs: 30,
+    ...STEAL_TUNING
   },
   language: { voteWindowMs: 80 }
 };
@@ -92,11 +97,15 @@ const STABLE_QUESTION_TIMERS = {
   matchFlow: {
     rounds: 12,
     answerMs: 5000,
-    stealMs: 3000,
+    // A long steal window so the OPEN steal stays observable (steal.active===true) even under full-suite
+    // CPU contention — resolution comes from the stealer's lock, not the window expiry, so this only
+    // widens the observation window, never slows the test.
+    stealMs: 8000,
     roundIntroMs: 60,
     revealMs: 2000,
     scoreboardMs: 2000,
-    tickMs: 30
+    tickMs: 30,
+    ...STEAL_TUNING
   },
   language: { voteWindowMs: 80 }
 };
@@ -114,7 +123,8 @@ const CORRECT_CYCLE_TIMERS = {
     roundIntroMs: 500,
     revealMs: 500,
     scoreboardMs: 500,
-    tickMs: 30
+    tickMs: 30,
+    ...STEAL_TUNING
   },
   language: { voteWindowMs: 80 }
 };
@@ -133,7 +143,8 @@ const SINGLE_ROUND_ENDGAME_TIMERS = {
     revealMs: 300,
     scoreboardMs: 300,
     endCountdownMs: 400,
-    tickMs: 30
+    tickMs: 30,
+    ...STEAL_TUNING
   },
   language: { voteWindowMs: 80 }
 };
@@ -600,7 +611,7 @@ describe("match-flow plugin integration", () => {
   // ─── active LOCKS a wrong answer → steal → stealer lock resolves (no freeze) ──
 
   it("active locks a wrong answer → steal opens → the stealer's lock resolves to reveal (no freeze)", {
-    timeout: 15_000
+    timeout: 25_000
   }, async () => {
     restoreFetch = mockFetch();
     // Long answer + steal windows so the MANUAL locks (not the clock timeouts) drive the flow — this is
@@ -614,17 +625,21 @@ describe("match-flow plugin integration", () => {
     // active answerer's lock is honoured (the other controller's is rejected on the answeringPeer guard).
     for (const c of controllers) c.controller.intent("answer-lock", { slot: 0 });
 
-    // The active player's wrong lock opens a steal targeting the other player.
+    // The active player's wrong lock opens a steal targeting the other player (with a brief lead-in).
+    // Generous timeout: under full-suite CPU contention the host→controller sync frame can lag, and the
+    // steal window (8 s) is what keeps `steal.active` observable — this is a "did it open" check, not a race.
     await vi.waitFor(
       () => {
         expect(lead?.controller.read("steal")?.active).toBe(true);
         expect(lead?.controller.read("question")?.mode).toBe("steal");
       },
-      { timeout: 4000 }
+      { timeout: 9000 }
     );
 
-    // The stealer now locks (also wrong). Before the fix `state.locked` was stuck true, so this lock was
-    // ignored and the match never left "question". With the fix all players are tried → terminal reveal.
+    // Wait out the (tiny) lead-in so the stealer's lock is honoured rather than dropped by the fair-start
+    // guard, then the stealer locks (also wrong). With every eligible player now tried, the open steal
+    // resolves to the terminal reveal — the match never freezes on the question screen.
+    await new Promise(resolve => setTimeout(resolve, 60));
     for (const c of controllers) c.controller.intent("answer-lock", { slot: 0 });
 
     await vi.waitFor(

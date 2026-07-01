@@ -143,6 +143,75 @@
     animation: slide-in-left var(--dur-reveal) var(--spring) both;
   }
 
+  /* Pre-steal "get ready" lead-in: amber tint until the grid unlocks (everyone taps at once). */
+  [data-steal-strip][data-arming] {
+    border-color: var(--player-amber, #f59e0b);
+    background: rgba(245, 158, 11, 0.14);
+  }
+
+  /* A stealer who has already locked their answer this window dims (kept visible; no pick leaked). */
+  [data-steal-avatar][data-answered] {
+    opacity: 0.4;
+  }
+
+  /* Open-steal reveal panel — one chip per opponent: avatar · name · picked letter · ✓/✗, ⚡ = fastest. */
+  [data-steal-results] {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    animation: slide-in-left var(--dur-reveal) var(--spring) both;
+  }
+
+  [data-steal-results-title] {
+    font-family: var(--font-display);
+    font-size: clamp(14px, 1.4vw, 18px);
+    opacity: 0.85;
+  }
+
+  [data-steal-results-list] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  [data-steal-result] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid color-mix(in srgb, var(--player, var(--border)) 55%, transparent);
+    background: color-mix(in srgb, var(--player, var(--surface)) 12%, transparent);
+    font-family: var(--font-display);
+  }
+
+  [data-steal-result] [data-name] {
+    color: var(--player, inherit);
+  }
+
+  [data-steal-result] [data-pick] {
+    font-weight: 700;
+    opacity: 0.8;
+  }
+
+  [data-steal-result][data-correct] [data-mark] {
+    color: var(--clay-mint, #2ecc71);
+  }
+
+  [data-steal-result]:not([data-correct]) [data-mark] {
+    color: var(--clay-coral, #ef4444);
+  }
+
+  [data-steal-result] [data-fastest] {
+    font-size: 18px;
+    line-height: 1;
+  }
+
   [data-steal-text] {
     font-family: var(--font-display);
   }

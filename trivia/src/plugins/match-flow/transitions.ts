@@ -37,19 +37,25 @@ import type {
  * @param stage - The stage facade (mutate).
  * @param state - The host-internal plugin state (reads + clears `pendingQuestion`).
  * @param answerMs - The answer timer duration in ms.
+ * @param scoring - The scoring API subset (`clearDeltas` — zeroes round deltas as the question goes live).
  * @example
  * ```ts
- * advanceFromCategoryReveal(stage, state, config.answerMs);
+ * advanceFromCategoryReveal(stage, state, config.answerMs, scoring);
  * ```
  */
 export function advanceFromCategoryReveal(
   stage: Pick<StageApi, "mutate">,
   state: State,
-  answerMs: number
+  answerMs: number,
+  scoring: Pick<ScoringDeps, "clearDeltas">
 ): void {
   const pending = state.pendingQuestion;
   // eslint-disable-next-line unicorn/no-null -- clear the staged question
   state.pendingQuestion = null;
+
+  // Zero every player's round delta as the new question goes live, so the reveal/scoreboard "+N" only
+  // ever reflects THIS question — fixing a past scorer's stale "+N" re-appearing on every later reveal.
+  scoring.clearDeltas();
 
   if (pending) {
     stage.mutate("question", () => ({
@@ -175,7 +181,9 @@ export function resolveQuestionTimeout(
     mutate: buildMutate(stage),
     award: buildAward(scoring),
     revealMs: config.revealMs,
-    stealMs: config.stealMs
+    stealMs: config.stealMs,
+    stealLeadMs: config.stealLeadMs,
+    stealSpeedTiers: config.stealSpeedTiers
   });
 
   // If a fresh steal opened, unlock so the next answerer can lock in.
@@ -242,6 +250,7 @@ export function advanceFromScoreboard(
   state.tried = new Set();
   // eslint-disable-next-line unicorn/no-null -- no active pick until the next active player locks one
   state.activePick = null;
+  state.stealAnswers = [];
   stage.mutate("match", draft => ({
     ...draft,
     phase: "roundIntro" as Phase,
@@ -277,6 +286,15 @@ export function advanceFromFinal(
   state.pendingQuestion = null;
   // eslint-disable-next-line unicorn/no-null -- no active pick on a fresh game
   state.activePick = null;
+  state.stealAnswers = [];
+
+  // Prune players who are no longer connected so a disconnected/departed player never lingers as a ghost
+  // tile in the fresh lobby (bug #5 safety net — a deliberate leave already drops the seat immediately).
+  stage.mutate("players", draft => {
+    const entries = (draft.entries as PlayersSlice["entries"] | undefined) ?? [];
+    const kept = entries.filter(entry => entry.connected);
+    return kept.length === entries.length ? draft : { entries: kept };
+  });
 
   stage.mutate("match", draft => ({
     ...draft,
@@ -307,7 +325,10 @@ export function advanceFromFinal(
     active: false,
     stealPeers: [],
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
-    deadlineTs: null
+    deadlineTs: null,
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
+    armedTs: null,
+    answeredPeers: []
   }));
   stage.mutate("reveal", () => ({
     correctSlot: 0,
@@ -316,6 +337,7 @@ export function advanceFromFinal(
     outcome: "wrong" as Outcome,
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
     scorerPeer: null,
-    answerText: ""
+    answerText: "",
+    stealResults: []
   }));
 }

@@ -1,7 +1,7 @@
 /**
  * @file Pure helper — rank/sort score entries (descending total, stable). No plugin context.
  */
-import type { ScoreEntry } from "./types";
+import type { PlayerProfile, ScoreEntry } from "./types";
 
 /**
  * Rank entries by total (desc), assigning a fresh 1-based `rank` by position and carrying each
@@ -28,4 +28,30 @@ export function rank(entries: readonly ScoreEntry[]): readonly ScoreEntry[] {
   return entries
     .toSorted((first, second) => second.total - first.total)
     .map((entry, index) => ({ ...entry, prevRank: entry.rank, rank: index + 1 }));
+}
+
+/**
+ * The full ranked standings for the TV scoreboard / reveal roll-up: every scored player PLUS every
+ * connected player who has not scored yet (seeded at 0), so a player who is in the game always appears
+ * on the board — never omitted just because they have no points yet (the "player missing from the score
+ * table" bug). A disconnected player with no score is left out (they are not in the game); a disconnected
+ * player who DID score stays visible (their row already exists).
+ *
+ * @param players - The current roster (connected flags + names).
+ * @param scores - The synced score entries (only players who have been awarded appear here).
+ * @returns The merged, ranked `ScoreEntry[]` covering every in-game player (highest total first).
+ * @example
+ * ```ts
+ * standings(players, scores); // includes a just-joined 0-point player at the bottom
+ * ```
+ */
+export function standings(
+  players: readonly PlayerProfile[],
+  scores: readonly ScoreEntry[]
+): readonly ScoreEntry[] {
+  const scored = new Set(scores.map(entry => entry.peerId));
+  const zeroRows: ScoreEntry[] = players
+    .filter(player => player.connected && !scored.has(player.peerId))
+    .map(player => ({ peerId: player.peerId, total: 0, delta: 0, rank: 0, prevRank: 0 }));
+  return rank([...scores, ...zeroRows]);
 }

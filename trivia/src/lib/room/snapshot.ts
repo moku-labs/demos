@@ -72,7 +72,14 @@ function defaultMatch(): MatchView {
  * ```
  */
 function defaultReveal(): RevealView {
-  return { correctSlot: 0, pickedSlot: null, outcome: "wrong", scorerPeer: null, answerText: "" };
+  return {
+    correctSlot: 0,
+    pickedSlot: null,
+    outcome: "wrong",
+    scorerPeer: null,
+    answerText: "",
+    stealResults: []
+  };
 }
 
 /**
@@ -85,7 +92,7 @@ function defaultReveal(): RevealView {
  * ```
  */
 function defaultSteal(): StealView {
-  return { active: false, stealPeers: [], deadlineTs: null };
+  return { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] };
 }
 
 /**
@@ -169,13 +176,18 @@ export function mergeState(read: SliceReader, self: PeerId | null | undefined): 
   const languageVote =
     (read("languageVote") as unknown as LanguageVoteView | undefined) ?? defaultLanguageVote();
 
+  const reveal = (read("reveal") as unknown as RevealView | undefined) ?? defaultReveal();
+  const steal = (read("steal") as unknown as StealView | undefined) ?? defaultSteal();
+
   return {
     self: self ?? null,
     match,
     players,
     question: liveQuestion,
-    reveal: (read("reveal") as unknown as RevealView | undefined) ?? defaultReveal(),
-    steal: (read("steal") as unknown as StealView | undefined) ?? defaultSteal(),
+    // Defensively default the array cells so a slice missing them (older replica / mid-migration) never
+    // crashes the reveal panel or steal strip on `.map`.
+    reveal: { ...reveal, stealResults: reveal.stealResults ?? [] },
+    steal: { ...steal, answeredPeers: steal.answeredPeers ?? [], armedTs: steal.armedTs ?? null },
     scores,
     bank: (read("bank") as unknown as BankView | undefined) ?? defaultBank(),
     categories,

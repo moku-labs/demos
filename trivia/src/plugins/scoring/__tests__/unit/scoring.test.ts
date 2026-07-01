@@ -1,6 +1,7 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 import type { CategoryId, PeerId, ScoreEntry, Tier } from "../../../../lib/types";
 import {
+  clearDeltas,
   computeAward,
   computeEndStats,
   computeLeaderboard,
@@ -34,7 +35,7 @@ const makeBoard = (config?: Partial<Config>) => {
 
   const award = (
     peerId: PeerId,
-    opts: { correct: boolean; steal: boolean; tier: Tier; category: CategoryId }
+    opts: { correct: boolean; steal: boolean; tier: Tier; category: CategoryId; factor?: number }
   ) => computeAward(state, entries, cfg, peerId, opts);
 
   return { state, entries, cfg, award };
@@ -387,6 +388,92 @@ describe("computeAward — running totals", () => {
     const entry = result.find(e => e.peerId === PEER_A);
     expect(entry?.delta).toBe(200); // last round only
     expect(entry?.total).toBe(300);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// computeAward — steal speed factor (open-steal reward tiers)
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("computeAward — steal speed factor", () => {
+  it("scales the steal value by the factor (fastest 1.0 → +100, slower 0.6 → +60 on medium)", () => {
+    const fast = makeBoard();
+    const full = fast.award(PEER_A, {
+      correct: true,
+      steal: true,
+      tier: "medium",
+      category: "food",
+      factor: 1
+    });
+    expect(full.find(e => e.peerId === PEER_A)?.delta).toBe(100); // round(200 * 0.5 * 1)
+
+    const slow = makeBoard();
+    const partial = slow.award(PEER_B, {
+      correct: true,
+      steal: true,
+      tier: "medium",
+      category: "food",
+      factor: 0.6
+    });
+    expect(partial.find(e => e.peerId === PEER_B)?.delta).toBe(60); // round(200 * 0.5 * 0.6)
+  });
+
+  it("defaults factor to 1 when omitted (full steal value)", () => {
+    const { award } = makeBoard();
+    const result = award(PEER_A, { correct: true, steal: true, tier: "medium", category: "food" });
+    expect(result.find(e => e.peerId === PEER_A)?.delta).toBe(100);
+  });
+
+  it("a zero factor still counts as a correct steal (streak/steals credited, 0 points)", () => {
+    const { state, award } = makeBoard();
+    award(PEER_A, { correct: true, steal: true, tier: "hard", category: "space", factor: 0 });
+    const entry = state.get(PEER_A);
+    expect(entry?.steals).toBe(1);
+    expect(entry?.curStreak).toBe(1);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// clearDeltas — per-question delta isolation (BUG #1: phantom "+N")
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("clearDeltas — per-question delta isolation", () => {
+  it("REPRODUCES the stale-delta bug, then proves clearDeltas fixes it", () => {
+    const { state, entries, award } = makeBoard();
+
+    // Round 1: A scores +200.
+    award(PEER_A, { correct: true, steal: false, tier: "medium", category: "animals" });
+    // Round 2: B scores. computeAward only rewrites B's delta; recomputeRanks copies A's delta forward —
+    // so A's entry STILL reads delta 200 even though A scored nothing this round. THIS is the phantom "+N".
+    const afterB = award(PEER_B, {
+      correct: true,
+      steal: false,
+      tier: "medium",
+      category: "space"
+    });
+    expect(afterB.find(e => e.peerId === PEER_A)?.delta).toBe(200); // ← the documented bug
+
+    // clearDeltas (called as each new question goes live) zeroes every delta WITHOUT touching totals/ranks.
+    const cleared = clearDeltas(state, entries);
+    expect(cleared.every(e => e.delta === 0)).toBe(true);
+    expect(cleared.find(e => e.peerId === PEER_A)?.total).toBe(200); // totals preserved
+    expect(cleared.find(e => e.peerId === PEER_B)?.total).toBe(200);
+
+    // Round 3: only B scores → only B shows "+N"; A stays at 0 (no phantom "+200" any more).
+    const afterC = award(PEER_B, { correct: true, steal: false, tier: "easy", category: "space" });
+    expect(afterC.find(e => e.peerId === PEER_A)?.delta).toBe(0);
+    expect(afterC.find(e => e.peerId === PEER_B)?.delta).toBe(100);
+  });
+
+  it("preserves totals + ranks and is idempotent", () => {
+    const { state, entries, award } = makeBoard();
+    award(PEER_A, { correct: true, steal: false, tier: "hard", category: "space" }); // A +300, rank 1
+    const cleared = clearDeltas(state, entries);
+    const a = cleared.find(e => e.peerId === PEER_A);
+    expect(a?.total).toBe(300);
+    expect(a?.rank).toBe(1);
+    expect(a?.delta).toBe(0);
+    expect(clearDeltas(state, entries).find(e => e.peerId === PEER_A)?.delta).toBe(0);
   });
 });
 

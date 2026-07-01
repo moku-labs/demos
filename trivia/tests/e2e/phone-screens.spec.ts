@@ -40,6 +40,7 @@ const CONTROLLER_PHASE: Record<PhonePhaseKey, string> = {
   answer: "question",
   answerLocked: "question",
   stealAnswer: "question",
+  stealLeadIn: "question",
   leaveModal: "question",
   midJoin: "question",
   // Non-active player watcher screens
@@ -153,6 +154,22 @@ test.describe("Phone — open steal (item 3): eligible stealer sees answer grid 
     await expect(page.locator("[data-component='answer-button']")).toHaveCount(4);
     // Label indicating this is a steal opportunity (data-phone-label in PhoneAnswer)
     await expect(page.locator("[data-phone-label]")).toContainText("Steal it");
+  });
+
+  test("stealLeadIn (item 3): during the lead-in the grid is rendered but DISABLED with a 'get ready' countdown", async ({
+    page
+  }) => {
+    await gotoPhone(page, "stealLeadIn");
+    // The grid renders on every eligible phone at the same time…
+    await expect(page.locator("[data-component='phone-answer']")).toBeVisible();
+    await expect(page.locator("[data-component='answer-button']")).toHaveCount(4);
+    // …but is marked arming and every button is disabled (dim) so no one can tap before the others.
+    await expect(page.locator("[data-component='phone-answer']")).toHaveAttribute(
+      "data-arming",
+      "true"
+    );
+    await expect(page.locator("[data-component='answer-button'][data-state='dim']")).toHaveCount(4);
+    await expect(page.locator("[data-phone-label]")).toContainText("Get ready to steal");
   });
 });
 
@@ -325,6 +342,8 @@ const PHONE_SCREENS: ReadonlyArray<{ phase: PhonePhaseKey; shot: string }> = [
   { phase: "answerLocked", shot: "phone-answer-locked.png" },
   // Item 3: open steal — eligible stealer simultaneously gets the answer grid
   { phase: "stealAnswer", shot: "phone-steal-answer.png" },
+  // Item 3: pre-steal lead-in — grid rendered but disabled with a "get ready" countdown
+  { phase: "stealLeadIn", shot: "phone-steal-lead-in.png" },
   { phase: "reveal", shot: "phone-reveal-flash.png" },
   { phase: "revealWrong", shot: "phone-reveal-wrong.png" },
   { phase: "final", shot: "phone-final.png" },

@@ -15,7 +15,14 @@
  */
 import { createPlugin, stagePlugin, syncPlugin } from "@moku-labs/room";
 import type { CategoryId, PeerId, ScoreEntry } from "../../lib/types";
-import { computeAward, computeEndStats, computeLeaderboard, rebindScore, resetBoard } from "./api";
+import {
+  clearDeltas,
+  computeAward,
+  computeEndStats,
+  computeLeaderboard,
+  rebindScore,
+  resetBoard
+} from "./api";
 import { createScoringState } from "./state";
 import type { Config } from "./types";
 
@@ -82,6 +89,7 @@ export const scoringPlugin = createPlugin("scoring", {
        * @param opts.steal - Whether this is a steal opportunity.
        * @param opts.tier - The question's difficulty tier.
        * @param opts.category - The question's category.
+       * @param opts.factor - Optional multiplier on the points (default 1) — the open-steal speed reward.
        * @example
        * ```ts
        * app.scoring.award(peerId, { correct: true, steal: false, tier: "medium", category: "animals" });
@@ -94,10 +102,25 @@ export const scoringPlugin = createPlugin("scoring", {
           steal: boolean;
           tier: "easy" | "medium" | "hard";
           category: CategoryId;
+          factor?: number;
         }
       ) => {
         const newEntries = computeAward(ctx.state, entries, ctx.config, peerId, opts);
         ctx.require(stagePlugin).mutate("scores", () => ({ entries: newEntries }));
+      },
+
+      /**
+       * Zero every player's round `delta` and re-publish the board as a new question goes live, so the
+       * reveal/scoreboard "+N" only ever reflects the question just resolved (fixes the stale-delta bug).
+       *
+       * @example
+       * ```ts
+       * app.scoring.clearDeltas(); // at the categoryReveal → question transition
+       * ```
+       */
+      clearDeltas: () => {
+        const cleared = clearDeltas(ctx.state, entries);
+        ctx.require(stagePlugin).mutate("scores", () => ({ entries: cleared }));
       },
 
       /**

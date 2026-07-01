@@ -96,6 +96,12 @@ export type QuestionView = {
   deadlineTs: number;
 };
 
+/**
+ * One player's open-steal answer (their picked slot + whether it was correct), in lock-in (speed) order.
+ * The fastest correct stealer is the first `correct` entry in the reveal's `stealResults` array.
+ */
+export type StealResult = { peerId: PeerId; slot: number; correct: boolean };
+
 /** `reveal` slice view — the revealed correct slot + outcome (read only in the reveal phase). */
 export type RevealView = {
   correctSlot: number;
@@ -103,14 +109,23 @@ export type RevealView = {
   outcome: Outcome;
   scorerPeer: PeerId | null;
   answerText: string;
+  /** Every stealer's pick + right/wrong in speed order (empty for a non-steal reveal). */
+  stealResults: StealResult[];
 };
 
 /**
- * `steal` slice view — drives the OPEN steal strip (F1) + each phone's answer-grant. `stealPeers` is
- * the set of players currently eligible to steal (everyone but the active player who hasn't yet missed
- * this question); first correct wins, under one shared `deadlineTs`.
+ * `steal` slice view — drives the OPEN steal strip (F1) + each phone's answer-grant. `stealPeers` is the
+ * eligible set (everyone but the active player, who missed); all answer during ONE shared window and
+ * every correct answer scores (faster earns more). `armedTs` is when tapping unlocks (a "get ready"
+ * lead-in so no device taps first); `answeredPeers` is who has already locked (live progress).
  */
-export type StealView = { active: boolean; stealPeers: PeerId[]; deadlineTs: number | null };
+export type StealView = {
+  active: boolean;
+  stealPeers: PeerId[];
+  deadlineTs: number | null;
+  armedTs: number | null;
+  answeredPeers: PeerId[];
+};
 
 /** One language option in the live tally (the language + the peers currently voting for it). */
 export type VoteOptionView = { lang: Lang; voters: PeerId[] };
@@ -163,7 +178,8 @@ export type IntentName =
   | "start-game"
   | "category-pick"
   | "answer-lock"
-  | "play-again";
+  | "play-again"
+  | "leave-game";
 
 /** Per-intent payloads, keyed by intent name (plain JSON — rides the Wire, never `emit`). */
 export type IntentPayload = {
@@ -179,6 +195,8 @@ export type IntentPayload = {
   "category-pick": { category: CategoryId };
   "answer-lock": { slot: number };
   "play-again": Record<string, never>;
+  /** Leave the game for good — the host drops this player's roster seat + token (no ghost in the next lobby). */
+  "leave-game": Record<string, never>;
 };
 
 // Re-export the shared aliases from their sources (this module is the single type leaf for the plugins).

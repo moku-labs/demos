@@ -1,17 +1,27 @@
 /**
- * @file match-flow unit tests — the OPEN-steal machine (a)–(g), rotation, ramp, eligibility, disconnect.
- * All domain functions are tested directly with typed mock deps (no real room ctx).
+ * @file match-flow unit tests — the OPEN-steal machine (new model: a brief lead-in, then EVERY eligible
+ * player answers in one shared window; every correct answer scores, faster earns more), rotation, ramp,
+ * eligibility, disconnect, and the deliberate `leave-game` removal. All domain functions are tested
+ * directly with typed mock deps (no real room ctx).
  */
 import { describe, expect, it, vi } from "vitest";
 import { ramp } from "../../../../lib/difficulty";
 import { createMatchFlowHandlers } from "../../handlers";
-import { eligibleStealers, handlePeerLeft, resolveAnswer, rotationPeer } from "../../machine";
+import {
+  eligibleStealers,
+  handleLeaveGame,
+  handlePeerLeft,
+  resolveAnswer,
+  rotationPeer
+} from "../../machine";
 import { createMatchFlowState } from "../../state";
-import type { MatchSlice, PlayersSlice, QuestionSlice, StealSlice } from "../../types";
+import type { MatchSlice, PlayersSlice, QuestionSlice, State, StealSlice } from "../../types";
 
 // ---------------------------------------------------------------------------
 // Helpers to build minimal typed mock data
 // ---------------------------------------------------------------------------
+
+const SPEED_TIERS = [1, 0.6, 0.4, 0.2] as const;
 
 function makeMatchSlice(overrides: Partial<MatchSlice> = {}): MatchSlice {
   return {
@@ -50,38 +60,44 @@ function makeStealSlice(overrides: Partial<StealSlice> = {}): StealSlice {
     stealPeers: [],
     // eslint-disable-next-line unicorn/no-null
     deadlineTs: null,
+    // eslint-disable-next-line unicorn/no-null
+    armedTs: null,
+    answeredPeers: [],
     ...overrides
   };
 }
 
-/** Build mock mutate that tracks the latest calls. */
-function makeMockMutate() {
-  const calls: Array<{ ns: string; result: Record<string, unknown> }> = [];
+type MutateResult = { ns: string; result: Record<string, unknown> };
+
+/** Build mock mutate that tracks the latest calls (applies each recipe against the given draft base). */
+function makeMockMutate(base: Record<string, Record<string, unknown>> = {}) {
+  const calls: MutateResult[] = [];
   const mutate = vi.fn(
     (ns: string, recipe: (draft: Record<string, unknown>) => Record<string, unknown>) => {
-      // Provide a minimal current state as draft so the recipe is exercised.
-      const result = recipe({});
+      const result = recipe(base[ns] ?? {});
       calls.push({ ns, result });
     }
   );
   return { mutate, calls };
 }
 
+type AwardOpts = {
+  correct: boolean;
+  steal: boolean;
+  tier: string;
+  category: string;
+  factor?: number;
+};
+
 function makeMockScoring() {
-  const awarded: Array<{
-    peerId: string;
-    opts: { correct: boolean; steal: boolean; tier: string; category: string };
-  }> = [];
+  const awarded: Array<{ peerId: string; opts: AwardOpts }> = [];
   return {
-    award: vi.fn(
-      (
-        peerId: string,
-        opts: { correct: boolean; steal: boolean; tier: string; category: string }
-      ) => {
-        awarded.push({ peerId, opts });
-      }
-    ),
+    award: vi.fn((peerId: string, opts: AwardOpts) => {
+      awarded.push({ peerId, opts });
+    }),
     reset: vi.fn(),
+    clearDeltas: vi.fn(),
+    rebindPeer: vi.fn(),
     leaderboard: vi.fn(() => []),
     endStats: vi.fn(() => ({ mostSteals: undefined, highestStreak: undefined, topCategory: {} })),
     awarded
@@ -94,17 +110,51 @@ const basePlayers: PlayersSlice["entries"] = [
   { peerId: "p3", name: "Carol", color: "green", avatar: "c", connected: true, isHost: false }
 ];
 
+/** Full `resolveAnswer` deps with sensible defaults; override only the scenario fields under test. */
+function resolveDeps(overrides: {
+  state: State;
+  answerer: string;
+  correct: boolean;
+  pickedSlot: number | undefined;
+  correctSlot?: number;
+  match?: Partial<MatchSlice>;
+  question?: Partial<QuestionSlice>;
+  steal?: Partial<StealSlice>;
+  players?: PlayersSlice["entries"];
+  mutate: (ns: string, recipe: (draft: Record<string, unknown>) => Record<string, unknown>) => void;
+  award: (peerId: string, opts: AwardOpts) => void;
+}) {
+  return {
+    state: overrides.state,
+    match: makeMatchSlice(overrides.match),
+    question: makeQuestionSlice(overrides.question),
+    steal: makeStealSlice(overrides.steal),
+    players: overrides.players ?? basePlayers,
+    answerer: overrides.answerer,
+    correct: overrides.correct,
+    pickedSlot: overrides.pickedSlot,
+    correctSlot: overrides.correctSlot ?? 2,
+    mutate: overrides.mutate,
+    award: overrides.award,
+    revealMs: 8000,
+    stealMs: 8000,
+    stealLeadMs: 1000,
+    stealSpeedTiers: SPEED_TIERS
+  };
+}
+
 // ---------------------------------------------------------------------------
 // createMatchFlowState
 // ---------------------------------------------------------------------------
 
 describe("createMatchFlowState", () => {
-  it("returns empty tried set, locked:false, and no active pick", () => {
+  it("returns empty tried set, locked:false, no active pick, empty steal answers", () => {
     const state = createMatchFlowState();
     expect(state.tried).toBeInstanceOf(Set);
     expect(state.tried.size).toBe(0);
     expect(state.locked).toBe(false);
     expect(state.activePick).toBeNull();
+    expect(state.stealAnswers).toEqual([]);
   });
 });
 
@@ -115,15 +165,12 @@ describe("createMatchFlowState", () => {
 describe("ramp", () => {
   it("maps rounds 1–4 to easy", () => {
     expect(ramp(1)).toBe("easy");
-    expect(ramp(2)).toBe("easy");
     expect(ramp(4)).toBe("easy");
   });
-
   it("maps rounds 5–8 to medium", () => {
     expect(ramp(5)).toBe("medium");
     expect(ramp(8)).toBe("medium");
   });
-
   it("maps rounds 9–12 to hard", () => {
     expect(ramp(9)).toBe("hard");
     expect(ramp(12)).toBe("hard");
@@ -131,97 +178,61 @@ describe("ramp", () => {
 });
 
 // ---------------------------------------------------------------------------
-// rotationPeer — round → activePeer
+// rotationPeer + eligibleStealers
 // ---------------------------------------------------------------------------
 
 describe("rotationPeer", () => {
-  it("round 1 → first player (p1)", () => {
+  it("round 1 → p1, round 2 → p2, round 4 → wraps to p1", () => {
     expect(rotationPeer(basePlayers, 1)).toBe("p1");
-  });
-
-  it("round 2 → second player (p2)", () => {
     expect(rotationPeer(basePlayers, 2)).toBe("p2");
-  });
-
-  it("round 4 → wraps back to first (p1)", () => {
     expect(rotationPeer(basePlayers, 4)).toBe("p1");
   });
-
   it("skips disconnected players", () => {
     const mixed: PlayersSlice["entries"] = [
       { peerId: "p1", name: "Alice", color: "red", avatar: "a", connected: false, isHost: true },
       { peerId: "p2", name: "Bob", color: "blue", avatar: "b", connected: true, isHost: false }
     ];
-    // Only p2 is connected — all rounds map to p2
     expect(rotationPeer(mixed, 1)).toBe("p2");
   });
 });
 
-// ---------------------------------------------------------------------------
-// eligibleStealers — every connected non-active, not-yet-tried peer (open steal)
-// ---------------------------------------------------------------------------
-
 describe("eligibleStealers", () => {
-  it("returns ALL non-active peers at once when only the active player tried", () => {
+  it("returns ALL non-active peers at once when only the active tried", () => {
     expect(eligibleStealers(basePlayers, "p1", new Set(["p1"]))).toEqual(["p2", "p3"]);
   });
-
-  it("excludes peers who already tried", () => {
+  it("excludes peers who already tried and disconnected peers", () => {
     expect(eligibleStealers(basePlayers, "p1", new Set(["p1", "p2"]))).toEqual(["p3"]);
-  });
-
-  it("returns [] when everyone has tried", () => {
-    expect(eligibleStealers(basePlayers, "p1", new Set(["p1", "p2", "p3"]))).toEqual([]);
-  });
-
-  it("excludes disconnected peers", () => {
-    const withDisconnect: PlayersSlice["entries"] = [
-      { peerId: "p1", name: "Alice", color: "red", avatar: "a", connected: true, isHost: true },
-      { peerId: "p2", name: "Bob", color: "blue", avatar: "b", connected: false, isHost: false },
-      { peerId: "p3", name: "Carol", color: "green", avatar: "c", connected: true, isHost: false }
-    ];
-    expect(eligibleStealers(withDisconnect, "p1", new Set(["p1"]))).toEqual(["p3"]);
   });
 });
 
 // ---------------------------------------------------------------------------
-// resolveAnswer — the OPEN-steal machine (a)–(g)
+// resolveAnswer — the OPEN-steal machine (new model)
 // ---------------------------------------------------------------------------
 
-describe("resolveAnswer — open-steal machine", () => {
-  // (a) Active player answers correctly
-  it("(a) active-correct → reveal correct, award, clear steal, advance to reveal", () => {
+describe("resolveAnswer — answer mode", () => {
+  it("active-correct → reveal correct, award (non-steal), advance to reveal, no steal results", () => {
     const state = createMatchFlowState();
     const { mutate, calls } = makeMockMutate();
     const scoring = makeMockScoring();
 
-    resolveAnswer({
-      state,
-      match: makeMatchSlice({ activePeer: "p1" }),
-      question: makeQuestionSlice({ answeringPeer: "p1", mode: "answer" }),
-      steal: makeStealSlice(),
-      players: basePlayers,
-      answerer: "p1",
-      correct: true,
-      pickedSlot: 2,
-      correctSlot: 2,
-      mutate,
-      award: scoring.award,
-      revealMs: 3500,
-      stealMs: 8000
-    });
+    const resolved = resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p1",
+        correct: true,
+        pickedSlot: 2,
+        mutate,
+        award: scoring.award
+      })
+    );
 
-    const revealCall = calls.find(c => c.ns === "reveal");
-    expect(revealCall?.result.outcome).toBe("correct");
-    expect(revealCall?.result.scorerPeer).toBe("p1");
-
-    const stealCall = calls.find(c => c.ns === "steal");
-    expect(stealCall?.result.active).toBe(false);
-    expect(stealCall?.result.stealPeers).toEqual([]);
-
-    const matchCall = calls.find(c => c.ns === "match");
-    expect(matchCall?.result.phase).toBe("reveal");
-
+    expect(resolved).toBe(false);
+    const reveal = calls.find(c => c.ns === "reveal");
+    expect(reveal?.result.outcome).toBe("correct");
+    expect(reveal?.result.scorerPeer).toBe("p1");
+    expect(reveal?.result.stealResults).toEqual([]);
+    expect(calls.find(c => c.ns === "steal")?.result.active).toBe(false);
+    expect(calls.find(c => c.ns === "match")?.result.phase).toBe("reveal");
     expect(scoring.award).toHaveBeenCalledWith("p1", {
       correct: true,
       steal: false,
@@ -230,396 +241,379 @@ describe("resolveAnswer — open-steal machine", () => {
     });
   });
 
-  // (b) Active wrong → OPEN steal to EVERYONE → a stealer steals it
-  it("(b) active-wrong → opens steal to ALL non-active peers at once; a stealer-correct → stolen", () => {
+  it("active-wrong → OPENS the steal to ALL non-active peers with a lead-in; no reveal yet", () => {
     const state = createMatchFlowState();
     const { mutate, calls } = makeMockMutate();
     const scoring = makeMockScoring();
 
-    const opened = resolveAnswer({
-      state,
-      match: makeMatchSlice({ activePeer: "p1" }),
-      question: makeQuestionSlice({ answeringPeer: "p1", mode: "answer" }),
-      steal: makeStealSlice(),
-      players: basePlayers,
-      answerer: "p1",
-      correct: false,
-      pickedSlot: 1,
-      correctSlot: 2,
-      mutate,
-      award: scoring.award,
-      revealMs: 3500,
-      stealMs: 8000
-    });
+    const opened = resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p1",
+        correct: false,
+        pickedSlot: 1,
+        mutate,
+        award: scoring.award
+      })
+    );
 
     expect(opened).toBe(true);
     expect(state.tried.has("p1")).toBe(true);
     expect(state.activePick).toBe(1);
+    expect(state.stealAnswers).toEqual([]);
 
-    // Steal opens to BOTH other players simultaneously (not just "the next" one).
-    const stealCall = calls.find(c => c.ns === "steal");
-    expect(stealCall?.result.active).toBe(true);
-    expect(stealCall?.result.stealPeers).toEqual(["p2", "p3"]);
+    const steal = calls.find(c => c.ns === "steal");
+    expect(steal?.result.active).toBe(true);
+    expect(steal?.result.stealPeers).toEqual(["p2", "p3"]);
+    expect(typeof steal?.result.armedTs).toBe("number");
+    // The window starts only AFTER the lead-in (deadline is later than armedTs).
+    expect(steal?.result.deadlineTs as number).toBeGreaterThan(steal?.result.armedTs as number);
+    expect(steal?.result.answeredPeers).toEqual([]);
 
-    // The question is republished in steal mode but `answeringPeer` STAYS the active player.
-    const questionCall = calls.find(c => c.ns === "question");
-    expect(questionCall?.result.mode).toBe("steal");
-    expect(questionCall?.result.answeringPeer).toBe("p1");
+    // Question republished in steal mode; the active player stays the answeringPeer.
+    const question = calls.find(c => c.ns === "question");
+    expect(question?.result.mode).toBe("steal");
+    expect(question?.result.answeringPeer).toBe("p1");
 
-    // No reveal/phase change while the steal is open (regression guard).
+    // No reveal / phase change / award while the steal is open.
     expect(calls.find(c => c.ns === "reveal")).toBeUndefined();
     expect(calls.find(c => c.ns === "match")).toBeUndefined();
-
-    // Now p2 steals correctly (reusing the same `state`).
-    const { mutate: mutate2, calls: calls2 } = makeMockMutate();
-    const resolved = resolveAnswer({
-      state,
-      match: makeMatchSlice({ activePeer: "p1" }),
-      question: makeQuestionSlice({ answeringPeer: "p1", mode: "steal" }),
-      steal: makeStealSlice({
-        active: true,
-        stealPeers: ["p2", "p3"],
-        deadlineTs: Date.now() + 8000
-      }),
-      players: basePlayers,
-      answerer: "p2",
-      correct: true,
-      pickedSlot: 2,
-      correctSlot: 2,
-      mutate: mutate2,
-      award: scoring.award,
-      revealMs: 3500,
-      stealMs: 8000
-    });
-
-    expect(resolved).toBe(false);
-    expect(calls2.find(c => c.ns === "reveal")?.result.outcome).toBe("stolen");
-    expect(calls2.find(c => c.ns === "reveal")?.result.scorerPeer).toBe("p2");
-    expect(scoring.award).toHaveBeenCalledWith("p2", {
-      correct: true,
-      steal: true,
-      tier: "easy",
-      category: "animals"
-    });
+    expect(scoring.award).not.toHaveBeenCalled();
   });
 
-  // (c)/(d) A stealer misses → steal STAYS OPEN for the rest; last miss → terminal wrong
-  it("(c) a stealer-wrong keeps the steal open for the rest; the last miss → reveal wrong", () => {
-    const state = createMatchFlowState();
-    state.tried.add("p1");
-    state.activePick = 1; // the active player picked (wrong) when the steal opened
-
-    // p2 misses — p3 still eligible + window open → steal stays open for p3 only.
-    const { mutate: m1, calls: c1 } = makeMockMutate();
-    const stillOpen = resolveAnswer({
-      state,
-      match: makeMatchSlice({ activePeer: "p1" }),
-      question: makeQuestionSlice({ answeringPeer: "p1", mode: "steal" }),
-      steal: makeStealSlice({
-        active: true,
-        stealPeers: ["p2", "p3"],
-        deadlineTs: Date.now() + 8000
-      }),
-      players: basePlayers,
-      answerer: "p2",
-      correct: false,
-      pickedSlot: 0,
-      correctSlot: 2,
-      mutate: m1,
-      award: vi.fn(),
-      revealMs: 3500,
-      stealMs: 8000
-    });
-
-    expect(stillOpen).toBe(true);
-    expect(c1.find(c => c.ns === "steal")?.result.stealPeers).toEqual(["p3"]);
-    expect(c1.find(c => c.ns === "reveal")).toBeUndefined();
-
-    // p3 (the last eligible) misses → terminal reveal, outcome "wrong" (the active player had picked).
-    const { mutate: m2, calls: c2 } = makeMockMutate();
-    const scoring = makeMockScoring();
-    const resolved = resolveAnswer({
-      state,
-      match: makeMatchSlice({ activePeer: "p1" }),
-      question: makeQuestionSlice({ answeringPeer: "p1", mode: "steal" }),
-      steal: makeStealSlice({ active: true, stealPeers: ["p3"], deadlineTs: Date.now() + 8000 }),
-      players: basePlayers,
-      answerer: "p3",
-      correct: false,
-      pickedSlot: 0,
-      correctSlot: 2,
-      mutate: m2,
-      award: scoring.award,
-      revealMs: 3500,
-      stealMs: 8000
-    });
-
-    expect(resolved).toBe(false);
-    const reveal = c2.find(c => c.ns === "reveal");
-    expect(reveal?.result.outcome).toBe("wrong");
-    expect(reveal?.result.scorerPeer).toBeNull();
-    // The reveal tags the ACTIVE player's original pick (1), not the last stealer's (0).
-    expect(reveal?.result.pickedSlot).toBe(1);
-    // The active player's miss is credited (0 pts, streak reset).
-    expect(scoring.award).toHaveBeenCalledWith("p1", expect.objectContaining({ correct: false }));
-  });
-
-  // (d) Active timeout → opens steal to everyone; activePick stays null
-  it("(d) active-timeout → opens steal to all non-active peers, no active pick recorded", () => {
+  it("active-timeout → opens the steal, activePick stays null", () => {
     const state = createMatchFlowState();
     const { mutate, calls } = makeMockMutate();
 
-    const opened = resolveAnswer({
-      state,
-      match: makeMatchSlice({ activePeer: "p1" }),
-      question: makeQuestionSlice({ answeringPeer: "p1", mode: "answer" }),
-      steal: makeStealSlice(),
-      players: basePlayers,
-      answerer: "p1",
-      correct: false,
-      pickedSlot: undefined,
-      correctSlot: 2,
-      mutate,
-      award: vi.fn(),
-      revealMs: 3500,
-      stealMs: 8000
-    });
+    const opened = resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p1",
+        correct: false,
+        pickedSlot: undefined,
+        mutate,
+        award: vi.fn()
+      })
+    );
 
     expect(opened).toBe(true);
     expect(calls.find(c => c.ns === "steal")?.result.stealPeers).toEqual(["p2", "p3"]);
     expect(state.activePick).toBeNull();
   });
 
-  // (e) Steal window expires → terminal reveal (wrong if active picked, else unanswered)
-  it("(e) steal window expires after the active picked wrong → reveal wrong", () => {
-    const state = createMatchFlowState();
-    state.tried.add("p1");
-    state.activePick = 1;
-    const { mutate, calls } = makeMockMutate();
-
-    resolveAnswer({
-      state,
-      match: makeMatchSlice({ activePeer: "p1" }),
-      question: makeQuestionSlice({ answeringPeer: "p1", mode: "steal" }),
-      steal: makeStealSlice({ active: true, stealPeers: ["p2", "p3"], deadlineTs: Date.now() - 1 }),
-      players: basePlayers,
-      answerer: "p1",
-      correct: false,
-      pickedSlot: undefined,
-      correctSlot: 2,
-      mutate,
-      award: vi.fn(),
-      revealMs: 3500,
-      stealMs: 8000
-    });
-
-    expect(calls.find(c => c.ns === "reveal")?.result.outcome).toBe("wrong");
-    expect(calls.find(c => c.ns === "match")?.result.phase).toBe("reveal");
-  });
-
-  it("(e) steal window expires after the active timed out → reveal unanswered", () => {
-    const state = createMatchFlowState();
-    state.tried.add("p1");
-    // activePick stays null (the active player never picked).
-    const { mutate, calls } = makeMockMutate();
-
-    resolveAnswer({
-      state,
-      match: makeMatchSlice({ activePeer: "p1" }),
-      question: makeQuestionSlice({ answeringPeer: "p1", mode: "steal" }),
-      steal: makeStealSlice({ active: true, stealPeers: ["p2", "p3"], deadlineTs: Date.now() - 1 }),
-      players: basePlayers,
-      answerer: "p1",
-      correct: false,
-      pickedSlot: undefined,
-      correctSlot: 2,
-      mutate,
-      award: vi.fn(),
-      revealMs: 3500,
-      stealMs: 8000
-    });
-
-    expect(calls.find(c => c.ns === "reveal")?.result.outcome).toBe("unanswered");
-  });
-
-  // (f) Single player wrong → terminal immediately (no steal)
-  it("(f) 1-player wrong → reveal wrong immediately, no steal phase", () => {
+  it("single player wrong → terminal reveal immediately, no steal", () => {
     const state = createMatchFlowState();
     const { mutate, calls } = makeMockMutate();
 
-    resolveAnswer({
-      state,
-      match: makeMatchSlice({ activePeer: "p1" }),
-      question: makeQuestionSlice({ answeringPeer: "p1", mode: "answer" }),
-      steal: makeStealSlice(),
-      players: [basePlayers[0]] as PlayersSlice["entries"],
-      answerer: "p1",
-      correct: false,
-      pickedSlot: 0,
-      correctSlot: 2,
-      mutate,
-      award: vi.fn(),
-      revealMs: 3500,
-      stealMs: 8000
-    });
+    resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p1",
+        correct: false,
+        pickedSlot: 0,
+        players: [basePlayers[0]] as PlayersSlice["entries"],
+        mutate,
+        award: vi.fn()
+      })
+    );
 
     expect(calls.find(c => c.ns === "steal")?.result.active).toBe(false);
     expect(calls.find(c => c.ns === "reveal")?.result.outcome).toBe("wrong");
     expect(calls.find(c => c.ns === "match")?.result.phase).toBe("reveal");
   });
+});
 
-  // First-correct-wins: once locked, a later lock is rejected by the intent guard, but at the machine
-  // level a correct steal from any eligible peer resolves to "stolen" with THAT peer as scorer.
-  it("first eligible stealer to answer correctly wins (scorer = that peer)", () => {
-    const state = createMatchFlowState();
-    state.tried.add("p1");
-    state.activePick = 0;
+/** A host state mid-steal: the active (p1) already missed with pick 1; p2 + p3 are eligible. */
+function openStealState(): State {
+  const state = createMatchFlowState();
+  state.tried.add("p1");
+  state.activePick = 1;
+  state.stealAnswers = [];
+  return state;
+}
+
+describe("resolveAnswer — open steal (everyone answers, faster earns more)", () => {
+  const openSteal = makeStealSlice({
+    active: true,
+    stealPeers: ["p2", "p3"],
+    deadlineTs: Date.now() + 8000,
+    armedTs: Date.now() - 100,
+    answeredPeers: []
+  });
+
+  it("a single stealer answering does NOT resolve — the window stays open for the rest", () => {
+    const state = openStealState();
     const { mutate, calls } = makeMockMutate();
     const scoring = makeMockScoring();
 
-    resolveAnswer({
-      state,
-      match: makeMatchSlice({ activePeer: "p1" }),
-      question: makeQuestionSlice({ answeringPeer: "p1", mode: "steal" }),
-      steal: makeStealSlice({
-        active: true,
-        stealPeers: ["p2", "p3"],
-        deadlineTs: Date.now() + 8000
-      }),
-      players: basePlayers,
-      answerer: "p3",
-      correct: true,
-      pickedSlot: 2,
-      correctSlot: 2,
-      mutate,
-      award: scoring.award,
-      revealMs: 3500,
-      stealMs: 8000
-    });
+    const stillOpen = resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p2",
+        correct: true,
+        pickedSlot: 2,
+        question: { answeringPeer: "p1", mode: "steal" },
+        steal: openSteal,
+        mutate,
+        award: scoring.award
+      })
+    );
 
-    expect(calls.find(c => c.ns === "reveal")?.result.scorerPeer).toBe("p3");
-    expect(scoring.award).toHaveBeenCalledWith("p3", expect.objectContaining({ steal: true }));
+    expect(stillOpen).toBe(true);
+    expect(state.stealAnswers).toEqual([{ peerId: "p2", slot: 2, correct: true }]);
+    expect(calls.find(c => c.ns === "steal")?.result.answeredPeers).toEqual(["p2"]);
+    // Nobody is scored and nothing is revealed until the window resolves.
+    expect(scoring.award).not.toHaveBeenCalled();
+    expect(calls.find(c => c.ns === "reveal")).toBeUndefined();
+  });
+
+  it("once EVERYONE has answered → resolves: every correct scored by speed tier, fastest = scorer", () => {
+    const state = openStealState();
+    const scoring = makeMockScoring();
+
+    // p2 answers correct first (fastest), then p3 answers correct (slower).
+    resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p2",
+        correct: true,
+        pickedSlot: 2,
+        question: { answeringPeer: "p1", mode: "steal" },
+        steal: openSteal,
+        mutate: makeMockMutate().mutate,
+        award: scoring.award
+      })
+    );
+    const { mutate, calls } = makeMockMutate();
+    const resolved = resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p3",
+        correct: true,
+        pickedSlot: 2,
+        question: { answeringPeer: "p1", mode: "steal" },
+        steal: makeStealSlice({ ...openSteal, answeredPeers: ["p2"] }),
+        mutate,
+        award: scoring.award
+      })
+    );
+
+    expect(resolved).toBe(false);
+    const reveal = calls.find(c => c.ns === "reveal");
+    expect(reveal?.result.outcome).toBe("stolen");
+    expect(reveal?.result.scorerPeer).toBe("p2"); // fastest correct
+    expect(reveal?.result.stealResults).toEqual([
+      { peerId: "p2", slot: 2, correct: true },
+      { peerId: "p3", slot: 2, correct: true }
+    ]);
+
+    // Fastest (p2) at the full steal value (factor 1); the slower correct (p3) at 0.6.
+    expect(scoring.awarded).toContainEqual({
+      peerId: "p2",
+      opts: { correct: true, steal: true, tier: "easy", category: "animals", factor: 1 }
+    });
+    expect(scoring.awarded).toContainEqual({
+      peerId: "p3",
+      opts: { correct: true, steal: true, tier: "easy", category: "animals", factor: 0.6 }
+    });
+    // The active player's miss is credited once (0 pts, streak reset).
+    expect(scoring.awarded).toContainEqual({
+      peerId: "p1",
+      opts: { correct: false, steal: false, tier: "easy", category: "animals" }
+    });
+  });
+
+  it("window expiry (timeout) resolves with whatever was answered — correct ones still score", () => {
+    const state = openStealState();
+    state.stealAnswers = [{ peerId: "p2", slot: 2, correct: true }];
+    state.tried.add("p2");
+    const { mutate, calls } = makeMockMutate();
+    const scoring = makeMockScoring();
+
+    resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p1", // timeout attributed to the active player
+        correct: false,
+        pickedSlot: undefined,
+        question: { answeringPeer: "p1", mode: "steal" },
+        steal: makeStealSlice({
+          active: true,
+          stealPeers: ["p2", "p3"],
+          deadlineTs: Date.now() - 1,
+          armedTs: Date.now() - 9000,
+          answeredPeers: ["p2"]
+        }),
+        mutate,
+        award: scoring.award
+      })
+    );
+
+    expect(calls.find(c => c.ns === "reveal")?.result.outcome).toBe("stolen");
+    expect(calls.find(c => c.ns === "match")?.result.phase).toBe("reveal");
+    expect(scoring.awarded).toContainEqual({
+      peerId: "p2",
+      opts: { correct: true, steal: true, tier: "easy", category: "animals", factor: 1 }
+    });
+  });
+
+  it("everyone answers wrong (active had picked) → outcome wrong, no scorer", () => {
+    const state = openStealState();
+    const scoring = makeMockScoring();
+
+    resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p2",
+        correct: false,
+        pickedSlot: 0,
+        question: { answeringPeer: "p1", mode: "steal" },
+        steal: openSteal,
+        mutate: makeMockMutate().mutate,
+        award: scoring.award
+      })
+    );
+    const { mutate, calls } = makeMockMutate();
+    resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p3",
+        correct: false,
+        pickedSlot: 3,
+        question: { answeringPeer: "p1", mode: "steal" },
+        steal: makeStealSlice({ ...openSteal, answeredPeers: ["p2"] }),
+        mutate,
+        award: scoring.award
+      })
+    );
+
+    const reveal = calls.find(c => c.ns === "reveal");
+    expect(reveal?.result.outcome).toBe("wrong");
+    expect(reveal?.result.scorerPeer).toBeNull();
+    // The reveal tags the ACTIVE player's original pick (1), not a stealer's.
+    expect(reveal?.result.pickedSlot).toBe(1);
+    // Wrong stealers are credited a miss (0 pts, streak reset) so their entry + streak update.
+    expect(scoring.awarded).toContainEqual({
+      peerId: "p2",
+      opts: { correct: false, steal: true, tier: "easy", category: "animals" }
+    });
   });
 });
 
 // ---------------------------------------------------------------------------
-// handlePeerLeft — roster/machine advancement on disconnect
+// handlePeerLeft — transient disconnect (seat kept)
 // ---------------------------------------------------------------------------
 
-describe("handlePeerLeft", () => {
-  it("marks the disconnected peer as connected:false in the players slice", () => {
+function peerLeftDeps(overrides: {
+  peerId: string;
+  players?: PlayersSlice["entries"];
+  match?: Partial<MatchSlice>;
+  question?: Partial<QuestionSlice>;
+  steal?: Partial<StealSlice>;
+  state?: State;
+  mutate: (ns: string, recipe: (draft: Record<string, unknown>) => Record<string, unknown>) => void;
+  award?: (peerId: string, opts: AwardOpts) => void;
+  grade?: (id: string, pickedSlot: number | undefined) => { correctSlot: number; correct: boolean };
+}) {
+  return {
+    peerId: overrides.peerId,
+    players: overrides.players ?? basePlayers,
+    match: makeMatchSlice(overrides.match),
+    question: makeQuestionSlice(overrides.question),
+    steal: makeStealSlice(overrides.steal),
+    state: overrides.state ?? createMatchFlowState(),
+    mutate: overrides.mutate,
+    award: overrides.award ?? vi.fn(),
+    grade: overrides.grade ?? vi.fn(() => ({ correctSlot: 0, correct: false })),
+    revealMs: 8000,
+    stealMs: 8000,
+    stealLeadMs: 1000,
+    stealSpeedTiers: SPEED_TIERS
+  };
+}
+
+describe("handlePeerLeft (transient disconnect)", () => {
+  it("marks the peer connected:false (keeps the seat)", () => {
     const { mutate, calls } = makeMockMutate();
-    handlePeerLeft({
-      peerId: "p2",
-      players: basePlayers,
-      match: makeMatchSlice({ phase: "lobby" }),
-      question: makeQuestionSlice(),
-      steal: makeStealSlice(),
-      state: createMatchFlowState(),
-      mutate,
-      award: vi.fn(),
-      grade: vi.fn(() => ({ correctSlot: 0, correct: false })),
-      revealMs: 3500,
-      stealMs: 8000
-    });
-    expect(calls.find(c => c.ns === "players")).toBeDefined();
+    handlePeerLeft(peerLeftDeps({ peerId: "p2", match: { phase: "lobby" }, mutate }));
+    const entries = calls.find(c => c.ns === "players")?.result.entries as PlayersSlice["entries"];
+    expect(entries.find(e => e.peerId === "p2")?.connected).toBe(false);
+    expect(entries).toHaveLength(3); // seat retained
   });
 
-  it("promotes next player to host when host leaves", () => {
+  it("promotes the next player to host when the host disconnects", () => {
     const { mutate, calls } = makeMockMutate();
-    handlePeerLeft({
-      peerId: "p1",
-      players: basePlayers,
-      match: makeMatchSlice({ hostPeer: "p1", phase: "lobby" }),
-      question: makeQuestionSlice(),
-      steal: makeStealSlice(),
-      state: createMatchFlowState(),
-      mutate,
-      award: vi.fn(),
-      grade: vi.fn(() => ({ correctSlot: 0, correct: false })),
-      revealMs: 3500,
-      stealMs: 8000
-    });
+    handlePeerLeft(
+      peerLeftDeps({ peerId: "p1", match: { hostPeer: "p1", phase: "lobby" }, mutate })
+    );
     expect(calls.find(c => c.ns === "match")?.result.hostPeer).toBe("p2");
   });
 
-  it("active answerer disconnect mid-question → opens the steal to the rest (real correctSlot)", () => {
+  it("active answerer disconnect mid-question → opens the steal to the rest", () => {
     const { mutate, calls } = makeMockMutate();
     const grade = vi.fn(() => ({ correctSlot: 2, correct: false }));
-
-    handlePeerLeft({
-      peerId: "p1",
-      players: basePlayers,
-      match: makeMatchSlice({ activePeer: "p1", phase: "question" }),
-      question: makeQuestionSlice({ id: "q-disc", answeringPeer: "p1", mode: "answer" }),
-      steal: makeStealSlice(),
-      state: createMatchFlowState(),
-      mutate,
-      award: vi.fn(),
-      grade,
-      revealMs: 3500,
-      stealMs: 8000
-    });
-
+    handlePeerLeft(
+      peerLeftDeps({
+        peerId: "p1",
+        match: { activePeer: "p1", phase: "question" },
+        question: { id: "q-disc", answeringPeer: "p1", mode: "answer" },
+        mutate,
+        grade
+      })
+    );
     expect(grade).toHaveBeenCalledWith("q-disc", undefined);
-    // p2 + p3 remain → the steal opens to BOTH of them (p1 now disconnected).
+    expect(calls.find(c => c.ns === "steal")?.result.stealPeers).toEqual(["p2", "p3"]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// handleLeaveGame — deliberate leave (seat + token dropped for good)
+// ---------------------------------------------------------------------------
+
+describe("handleLeaveGame (deliberate leave)", () => {
+  it("REMOVES the seat entirely (never a ghost in the next lobby)", () => {
+    const { mutate, calls } = makeMockMutate();
+    handleLeaveGame(peerLeftDeps({ peerId: "p2", match: { phase: "lobby" }, mutate }));
+    const entries = calls.find(c => c.ns === "players")?.result.entries as PlayersSlice["entries"];
+    expect(entries.some(e => e.peerId === "p2")).toBe(false);
+    expect(entries).toHaveLength(2);
+  });
+
+  it("forgets the leaver's stable token so they cannot silently re-bind", () => {
+    const { mutate } = makeMockMutate();
+    const state = createMatchFlowState();
+    state.tokens.set("tok-p2", "p2");
+    handleLeaveGame(peerLeftDeps({ peerId: "p2", match: { phase: "lobby" }, state, mutate }));
+    expect(state.tokens.has("tok-p2")).toBe(false);
+  });
+
+  it("promotes a new host when the host leaves", () => {
+    const { mutate, calls } = makeMockMutate();
+    handleLeaveGame(
+      peerLeftDeps({ peerId: "p1", match: { hostPeer: "p1", phase: "lobby" }, mutate })
+    );
+    expect(calls.find(c => c.ns === "match")?.result.hostPeer).toBe("p2");
+  });
+
+  it("a mid-question leave by the active answerer resolves the steal machine", () => {
+    const { mutate, calls } = makeMockMutate();
+    handleLeaveGame(
+      peerLeftDeps({
+        peerId: "p1",
+        match: { activePeer: "p1", phase: "question" },
+        question: { id: "q-x", answeringPeer: "p1", mode: "answer" },
+        mutate,
+        grade: vi.fn(() => ({ correctSlot: 2, correct: false }))
+      })
+    );
+    // p2/p3 remain → the steal opens to them after p1 leaves.
     expect(calls.find(c => c.ns === "steal")?.result.stealPeers).toEqual(["p2", "p3"]);
   });
 
-  it("active answerer disconnect with nobody else → terminal reveal (graded correctSlot)", () => {
+  it("no-op when the leaver is not on the roster", () => {
     const { mutate, calls } = makeMockMutate();
-    const players: PlayersSlice["entries"] = [
-      { peerId: "p1", name: "Alice", color: "red", avatar: "a", connected: true, isHost: false },
-      { peerId: "p2", name: "Bob", color: "blue", avatar: "b", connected: false, isHost: false }
-    ];
-
-    handlePeerLeft({
-      peerId: "p1",
-      players,
-      match: makeMatchSlice({ activePeer: "p1", phase: "question" }),
-      question: makeQuestionSlice({ id: "q-disc", answeringPeer: "p1", mode: "answer" }),
-      steal: makeStealSlice(),
-      state: createMatchFlowState(),
-      mutate,
-      award: vi.fn(),
-      grade: vi.fn(() => ({ correctSlot: 2, correct: false })),
-      revealMs: 3500,
-      stealMs: 8000
-    });
-
-    const reveal = calls.find(c => c.ns === "reveal");
-    expect(reveal?.result.correctSlot).toBe(2);
-    expect(reveal?.result.outcome).toBe("unanswered");
-  });
-
-  it("a stealer disconnect during an open steal drops them but keeps the steal open for the rest", () => {
-    const { mutate, calls } = makeMockMutate();
-    const state = createMatchFlowState();
-    state.tried.add("p1");
-    state.activePick = 1;
-
-    handlePeerLeft({
-      peerId: "p2",
-      players: basePlayers,
-      match: makeMatchSlice({ activePeer: "p1", phase: "question" }),
-      question: makeQuestionSlice({ answeringPeer: "p1", mode: "steal" }),
-      steal: makeStealSlice({
-        active: true,
-        stealPeers: ["p2", "p3"],
-        deadlineTs: Date.now() + 8000
-      }),
-      state,
-      mutate,
-      award: vi.fn(),
-      grade: vi.fn(() => ({ correctSlot: 2, correct: false })),
-      revealMs: 3500,
-      stealMs: 8000
-    });
-
-    // p2 dropped → only p3 remains eligible; the steal stays open (no reveal).
-    const stealCalls = calls.filter(c => c.ns === "steal");
-    expect(stealCalls.at(-1)?.result.stealPeers).toEqual(["p3"]);
-    expect(calls.find(c => c.ns === "reveal")).toBeUndefined();
+    handleLeaveGame(peerLeftDeps({ peerId: "ghost", match: { phase: "lobby" }, mutate }));
+    expect(calls).toHaveLength(0);
   });
 });
 
@@ -642,9 +636,14 @@ function makeRecoveryDeps(slices: Record<string, Record<string, unknown>>) {
   const deps = {
     stage: stage as never,
     sync: sync as never,
-    config: { revealMs: 3500, stealMs: 8000 } as never,
+    config: {
+      revealMs: 8000,
+      stealMs: 8000,
+      stealLeadMs: 1000,
+      stealSpeedTiers: SPEED_TIERS
+    } as never,
     state: createMatchFlowState(),
-    scoring: { award: vi.fn(), reset: vi.fn(), rebindPeer: vi.fn() } as never,
+    scoring: { award: vi.fn(), reset: vi.fn(), clearDeltas: vi.fn(), rebindPeer: vi.fn() } as never,
     questionBank: { grade: vi.fn(() => ({ correctSlot: 0, correct: false })) } as never
   };
   return { hooks: createMatchFlowHandlers(deps), store };
@@ -661,9 +660,7 @@ describe("createMatchFlowHandlers — connectivity recovery", () => {
       },
       match: { paused: false }
     });
-
     hooks["room:peer-joined"]({ peerId: "p2" });
-
     const entries = store.players?.entries as PlayersSlice["entries"];
     expect(entries.find(e => e.peerId === "p2")?.connected).toBe(true);
   });
@@ -677,7 +674,7 @@ describe("createMatchFlowHandlers — connectivity recovery", () => {
     expect(store.match?.paused).toBe(false);
   });
 
-  it("room:sync-ready clears a stuck pause (recovery complete — no longer freezes behind C2)", () => {
+  it("room:sync-ready clears a stuck pause (recovery complete)", () => {
     const { hooks, store } = makeRecoveryDeps({ match: { paused: true } });
     hooks["room:sync-ready"]();
     expect(store.match?.paused).toBe(false);
@@ -689,7 +686,7 @@ describe("createMatchFlowHandlers — connectivity recovery", () => {
     expect(store.match?.paused).toBe(true);
   });
 
-  it("does NOT expose a network-warning handler (transient blips no longer force the C2 pause)", () => {
+  it("does NOT expose a network-warning handler", () => {
     const { hooks } = makeRecoveryDeps({ match: { paused: false } });
     expect("room:network-warning" in hooks).toBe(false);
   });

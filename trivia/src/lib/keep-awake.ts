@@ -26,6 +26,12 @@ type WakeLockLike = { request: (type: "screen") => Promise<WakeLockSentinelLike>
 let sentinel: WakeLockSentinelLike | undefined;
 /** Guard so the visibility listener is wired at most once per tab. */
 let wired = false;
+/**
+ * How often (ms) to re-assert the wake lock while the page is visible. Some browsers/TVs release the
+ * sentinel on their own idle timeout even with the page foregrounded — exactly when a screensaver would
+ * otherwise engage mid-game — so a periodic re-acquire (a no-op while the lock is held) heals that.
+ */
+const RE_ACQUIRE_MS = 15_000;
 
 /**
  * Read the `navigator.wakeLock` surface, or `undefined` where unavailable.
@@ -91,4 +97,11 @@ export function keepAwake(onVisible?: () => void): void {
     void acquire();
     onVisible?.();
   });
+
+  // Belt-and-suspenders: re-assert the lock on a timer while the page is visible, so a browser/TV that
+  // quietly drops the sentinel (idle timeout, without a visibility change) never lets the screensaver in
+  // mid-game. `acquire()` short-circuits when the lock is still held, so this is cheap.
+  setInterval(() => {
+    if (document.visibilityState === "visible") void acquire();
+  }, RE_ACQUIRE_MS);
 }

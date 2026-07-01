@@ -20,8 +20,12 @@ import type { StagePhaseKey } from "./harness/fixtures";
 const MATCH_PHASE: Record<StagePhaseKey, string> = {
   question: "question",
   steal: "question",
+  // Pre-steal lead-in renders the question screen (steal strip in its "get ready" state)
+  stealLeadIn: "question",
   reveal: "reveal",
   scoreboard: "scoreboard",
+  // Scoreboard with a not-yet-scored connected player still on the board
+  scoreboardZero: "scoreboard",
   final: "final",
   lobby: "lobby",
   languageVote: "languageVote",
@@ -171,22 +175,58 @@ test.describe("TV Stage — phase screens render (deterministic fixtures)", () =
     await expect(page.locator("[data-prompt]")).toContainText("moons");
   });
 
-  test("steal (F1 open-steal): strip shows 'missed — everyone can steal!' + 4 eligible avatars + shared timer", async ({
+  test("steal (F1 open-steal): armed strip shows 'everyone steal', 4 eligible avatars, answered progress + shared timer", async ({
     page
   }) => {
     await gotoStage(page, "steal");
     const strip = page.locator("[data-steal-strip]");
     await expect(strip).toBeVisible();
-    // Active player name (missed)
-    await expect(strip).toContainText("Mochi");
-    // Open-steal wording
-    await expect(strip).toContainText("everyone can steal");
-    // 4 eligible avatars (p2/p3/p4/p5 — everyone except the active player p1)
+    // Armed (lead-in over): not in the "get ready" state.
+    await expect(strip).not.toHaveAttribute("data-arming", "true");
+    // New open-steal wording — every correct answer scores, fastest earns most.
+    await expect(strip).toContainText("Everyone steal");
+    await expect(strip).toContainText("fastest wins most");
+    // Live answered progress (fixture: p3 has answered → "1/4 in").
+    await expect(strip).toContainText("1/4");
+    // 4 eligible avatars (p2/p3/p4/p5 — everyone except the active player p1); the answered one dims.
     await expect(strip.locator("[data-steal-avatar]")).toHaveCount(4);
-    // Shared countdown timer
+    await expect(strip.locator("[data-steal-avatar][data-answered]")).toHaveCount(1);
+    // Shared countdown timer + eligible row container
     await expect(strip.locator("[data-steal-secs]")).toBeVisible();
-    // Eligible row container
     await expect(strip.locator("[data-steal-eligible]")).toBeVisible();
+  });
+
+  test("steal lead-in (item 3): 'get ready to steal' countdown, arming flag set, no answered avatars yet", async ({
+    page
+  }) => {
+    await gotoStage(page, "stealLeadIn");
+    const strip = page.locator("[data-steal-strip]");
+    await expect(strip).toBeVisible();
+    // During the lead-in the strip marks the arming state and shows the "get ready" copy.
+    await expect(strip).toHaveAttribute("data-arming", "true");
+    await expect(strip).toContainText("get ready to steal");
+    await expect(strip).toContainText("Mochi"); // the active player who missed
+    // No one has answered during the lead-in (nobody can tap yet).
+    await expect(strip.locator("[data-steal-avatar][data-answered]")).toHaveCount(0);
+  });
+
+  test("steal reveal (item 3): per-opponent results panel — ✓/✗ by name, ⚡ fastest badge, named answer tiles", async ({
+    page
+  }) => {
+    await gotoStage(page, "revealStolen");
+    // The steal-results panel lists every opponent who tried (fixture: Tofu ✓, Pixel ✓, Biscuit ✗).
+    const panel = page.locator("[data-steal-results]");
+    await expect(panel).toBeVisible();
+    await expect(panel.locator("[data-steal-result]")).toHaveCount(3);
+    // Two correct, one wrong.
+    await expect(panel.locator("[data-steal-result][data-correct]")).toHaveCount(2);
+    // Exactly one ⚡ fastest badge, on the first correct stealer (Tofu).
+    await expect(panel.locator("[data-fastest]")).toHaveCount(1);
+    // The reveal grid tags the correct tile with the winners' names (multi-player steal).
+    const correct = page.locator("[data-component='answer-tile'][data-state='correct'] [data-tag]");
+    await expect(correct).toContainText("Tofu");
+    // Both correct stealers show their (speed-scaled) round gain in the rollup (+100 fastest, +60 slower).
+    await expect(page.locator("[data-component='score-chip'] [data-delta]")).toHaveCount(2);
   });
 
   test("reveal (A6): correct tile tagged, answer line, score rollup; only scorer shows +N delta (item 2)", async ({
@@ -215,6 +255,19 @@ test.describe("TV Stage — phase screens render (deterministic fixtures)", () =
     await expect(page.locator("[data-component='scoreboard-tile'] [data-gain]")).toContainText(
       "+200"
     );
+  });
+
+  test("scoreboard zero-score (item 2): a connected player who has not scored yet still appears at 0", async ({
+    page
+  }) => {
+    await gotoStage(page, "scoreboardZero");
+    // Fixture: Sprout (p5) is connected but has NO score row — they must still show on the board (5 tiles).
+    await expect(page.locator("[data-component='scoreboard-tile']")).toHaveCount(5);
+    const sprout = page.locator("[data-component='scoreboard-tile']").filter({ hasText: "Sprout" });
+    await expect(sprout).toBeVisible();
+    await expect(sprout.locator("[data-score]")).toHaveText("0");
+    // A never-scored player shows no "+N" gain badge.
+    await expect(sprout.locator("[data-gain]")).toHaveCount(0);
   });
 
   test("final (A8): 3 podium blocks, confetti, also-rans, stat line", async ({ page }) => {
@@ -463,8 +516,12 @@ const TV_SCREENS: ReadonlyArray<{ phase: StagePhaseKey; shot: string }> = [
   { phase: "roundIntro", shot: "tv-round-intro.png" },
   { phase: "question", shot: "tv-question.png" },
   { phase: "steal", shot: "tv-steal.png" },
+  // Item 3: pre-steal "get ready" lead-in (armed shortly) — new baseline
+  { phase: "stealLeadIn", shot: "tv-steal-lead-in.png" },
   { phase: "reveal", shot: "tv-reveal.png" },
   { phase: "scoreboard", shot: "tv-scoreboard.png" },
+  // Item 2: a connected player with no score still on the board — new baseline
+  { phase: "scoreboardZero", shot: "tv-scoreboard-zero.png" },
   { phase: "final", shot: "tv-podium.png" },
   // Question variants (A4-RU, A5, long auto-fit)
   { phase: "questionRu", shot: "tv-question-ru.png" },

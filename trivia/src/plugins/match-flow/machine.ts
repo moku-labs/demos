@@ -31,10 +31,10 @@ type MutateFunction = (
   recipe: (draft: Record<string, unknown>) => Record<string, unknown>
 ) => void;
 
-/** Typed award shape — mirrors `ScoringApi["award"]`. */
+/** Typed award shape — mirrors `ScoringApi["award"]` (with the optional steal speed `factor`). */
 type AwardFunction = (
   peerId: PeerId,
-  opts: { correct: boolean; steal: boolean; tier: Tier; category: CategoryId }
+  opts: { correct: boolean; steal: boolean; tier: Tier; category: CategoryId; factor?: number }
 ) => void;
 
 /**
@@ -69,8 +69,12 @@ export type ResolveAnswerDeps = {
   award: AwardFunction;
   /** Hold after reveal before scoreboard (ms). */
   revealMs: number;
-  /** Steal timer window (ms). */
+  /** Steal timer window (ms) — the shared answer window AFTER the lead-in. */
   stealMs: number;
+  /** Pre-steal "get ready" lead-in (ms) — the grid is shown disabled for this beat before it unlocks. */
+  stealLeadMs: number;
+  /** Speed reward tiers (factor on the steal value by lock-in order, fastest first). */
+  stealSpeedTiers: readonly number[];
 };
 
 /** Deps for `handlePeerLeft`. */
@@ -100,6 +104,10 @@ export type PeerLeftDeps = {
   revealMs: number;
   /** Steal timer window (ms). */
   stealMs: number;
+  /** Pre-steal "get ready" lead-in (ms). */
+  stealLeadMs: number;
+  /** Speed reward tiers (factor on the steal value by lock-in order, fastest first). */
+  stealSpeedTiers: readonly number[];
 };
 
 // ─── Rotation helper ────────────────────────────────────────────────────────────
@@ -149,7 +157,7 @@ export function eligibleStealers(
 // ─── Steal machine ────────────────────────────────────────────────────────────
 
 /**
- * An idle (closed) steal slice value — no eligible stealers, no deadline.
+ * An idle (closed) steal slice value — no eligible stealers, no deadline, no lead-in.
  *
  * @returns A closed steal slice.
  * @example
@@ -158,8 +166,68 @@ export function eligibleStealers(
  * ```
  */
 function closedSteal(): StealSlice {
-  // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (deadlineTs null, not undefined)
-  return { active: false, stealPeers: [], deadlineTs: null };
+  return {
+    active: false,
+    stealPeers: [],
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (deadlineTs null, not undefined)
+    deadlineTs: null,
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (armedTs null, not undefined)
+    armedTs: null,
+    answeredPeers: []
+  };
+}
+
+/**
+ * Resolve an open steal (or a single-player miss) to the terminal reveal: award every correct stealer by
+ * speed (the fastest earns the full steal value, then 0.6 / 0.4 / … per the tiers), reset each wrong
+ * stealer's streak, credit the active player's miss once, then publish the reveal (outcome + who was
+ * fastest + every opponent's pick) and hand off to the `reveal` phase.
+ *
+ * @param deps - The `resolveAnswer` deps (state/question/scoring/mutate + timers + tiers).
+ * @param activePeer - The round's active player (whose miss opened the steal).
+ * @example
+ * ```ts
+ * resolveTerminalReveal(deps, activePeer);
+ * ```
+ */
+function resolveTerminalReveal(deps: ResolveAnswerDeps, activePeer: PeerId): void {
+  const { state, question, correctSlot, mutate, award, revealMs, stealSpeedTiers } = deps;
+  const { category, tier } = question;
+  const answerText = question.options[correctSlot] ?? "";
+
+  // Award each steal answer: correct ones scaled by their speed rank, wrong ones reset the streak.
+  let correctRank = 0;
+  // eslint-disable-next-line unicorn/no-null -- the reveal scorer cell is null until a correct stealer wins
+  let fastest: PeerId | null = null;
+  for (const answer of state.stealAnswers) {
+    if (answer.correct) {
+      const factor = stealSpeedTiers[Math.min(correctRank, stealSpeedTiers.length - 1)] ?? 1;
+      award(answer.peerId, { correct: true, steal: true, tier, category, factor });
+      fastest ??= answer.peerId;
+      correctRank += 1;
+    } else {
+      award(answer.peerId, { correct: false, steal: true, tier, category });
+    }
+  }
+
+  // Credit the active player's miss (0 pts, streak reset) — once, on the terminal reveal.
+  award(activePeer, { correct: false, steal: false, tier, category });
+
+  const stole = fastest !== null;
+  const activePicked = state.activePick !== null;
+  let outcome: Outcome = "stolen";
+  if (!stole) outcome = activePicked ? "wrong" : "unanswered";
+
+  mutate("reveal", () => ({
+    correctSlot,
+    pickedSlot: state.activePick,
+    outcome,
+    scorerPeer: fastest,
+    answerText,
+    stealResults: state.stealAnswers.map(answer => ({ ...answer }))
+  }));
+  mutate("steal", () => closedSteal());
+  mutate("match", draft => ({ ...draft, phase: "reveal", phaseDeadlineTs: Date.now() + revealMs }));
 }
 
 /**
@@ -196,59 +264,53 @@ export function resolveAnswer(deps: ResolveAnswerDeps): boolean {
     mutate,
     award,
     revealMs,
-    stealMs
+    stealMs,
+    stealLeadMs
   } = deps;
 
   const { category, tier } = question;
   const activePeer = match.activePeer ?? question.answeringPeer;
   const inStealMode = question.mode === "steal";
   const answerText = question.options[correctSlot] ?? "";
-
-  // ── Correct → the winner takes it ───────────────────────────────────────────
-  if (correct) {
-    const isSteal = inStealMode || answerer !== activePeer;
-    const outcome: Outcome = isSteal ? "stolen" : "correct";
-
-    mutate("reveal", () => ({
-      correctSlot,
-      // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
-      pickedSlot: pickedSlot ?? null,
-      outcome,
-      scorerPeer: answerer,
-      answerText
-    }));
-    mutate("steal", () => closedSteal());
-    mutate("match", draft => ({
-      ...draft,
-      phase: "reveal",
-      phaseDeadlineTs: Date.now() + revealMs
-    }));
-
-    award(answerer, { correct: true, steal: isSteal, tier, category });
-    return false;
-  }
-
-  // ── Wrong / timeout ─────────────────────────────────────────────────────────
-  state.tried.add(answerer);
   const isTimeout = pickedSlot === undefined;
 
-  // Remember the ORIGINAL active player's pick so a no-winner terminal reveal tags the right tile.
-  // eslint-disable-next-line unicorn/no-null -- null = the active player timed out (no pick)
-  if (!inStealMode) state.activePick = pickedSlot ?? null;
+  // ── Answer mode (the active player) ─────────────────────────────────────────
+  if (!inStealMode) {
+    // Active player nailed it → immediate reveal, no steal.
+    if (correct) {
+      mutate("reveal", () => ({
+        correctSlot,
+        pickedSlot: pickedSlot ?? correctSlot,
+        outcome: "correct" as Outcome,
+        scorerPeer: answerer,
+        answerText,
+        stealResults: []
+      }));
+      mutate("steal", () => closedSteal());
+      mutate("match", draft => ({
+        ...draft,
+        phase: "reveal",
+        phaseDeadlineTs: Date.now() + revealMs
+      }));
+      award(answerer, { correct: true, steal: false, tier, category });
+      return false;
+    }
 
-  const eligible = eligibleStealers(players, activePeer, state.tried);
-  // Answer mode → open a FRESH window. Steal mode → only stay open if the shared window has time left
-  // (an `undefined` pickedSlot here is the window-expiry timeout, which must end the steal).
-  const windowOpen = inStealMode
-    ? !isTimeout && steal.deadlineTs !== null && Date.now() < steal.deadlineTs
-    : true;
+    // Active player missed. Remember their pick (or null on timeout) for the terminal reveal tag.
+    state.tried.add(answerer);
+    // eslint-disable-next-line unicorn/no-null -- null = the active player timed out (no pick)
+    state.activePick = pickedSlot ?? null;
 
-  if (eligible.length > 0 && windowOpen) {
-    const deadline =
-      inStealMode && steal.deadlineTs !== null ? steal.deadlineTs : Date.now() + stealMs;
+    const eligible = eligibleStealers(players, activePeer, state.tried);
 
-    // On first open, republish the question in steal mode so phones read `mode`/`deadlineTs`.
-    if (!inStealMode) {
+    // Others present → OPEN the steal: publish the grid in steal mode with a "get ready" lead-in, then
+    // one shared window. Everyone answers; the terminal resolution (below) scores them by speed.
+    if (eligible.length > 0) {
+      state.stealAnswers = [];
+      const now = Date.now();
+      const armedTs = now + stealLeadMs;
+      const deadline = armedTs + stealMs;
+
       mutate("question", () => ({
         id: question.id,
         category,
@@ -261,27 +323,41 @@ export function resolveAnswer(deps: ResolveAnswerDeps): boolean {
         mode: "steal",
         deadlineTs: deadline
       }));
+      mutate("steal", () => ({
+        active: true,
+        stealPeers: eligible,
+        deadlineTs: deadline,
+        armedTs,
+        answeredPeers: []
+      }));
+      return true;
     }
-    mutate("steal", () => ({ active: true, stealPeers: eligible, deadlineTs: deadline }));
-    return true;
+
+    // Single player (no one to steal) → terminal reveal now.
+    resolveTerminalReveal(deps, activePeer);
+    return false;
   }
 
-  // ── Terminal reveal (no winner) ──────────────────────────────────────────────
-  const outcome: Outcome = state.activePick === null ? "unanswered" : "wrong";
+  // ── Steal mode ──────────────────────────────────────────────────────────────
+  // A stealer locked a real slot → record it (speed order) and keep the window open until everyone has
+  // answered (or it expires). A dropped stealer (STEAL_DROP_PICK) just forfeits their slot.
+  if (!isTimeout && pickedSlot !== STEAL_DROP_PICK) {
+    state.tried.add(answerer);
+    state.stealAnswers.push({ peerId: answerer, slot: pickedSlot, correct });
+    mutate("steal", draft => ({
+      ...draft,
+      answeredPeers: [...((draft.answeredPeers as PeerId[] | undefined) ?? []), answerer]
+    }));
+  } else if (pickedSlot === STEAL_DROP_PICK) {
+    state.tried.add(answerer);
+  }
 
-  mutate("reveal", () => ({
-    correctSlot,
-    pickedSlot: state.activePick,
-    outcome,
-    // eslint-disable-next-line unicorn/no-null -- no scorer on a missed question
-    scorerPeer: null,
-    answerText
-  }));
-  mutate("steal", () => closedSteal());
-  mutate("match", draft => ({ ...draft, phase: "reveal", phaseDeadlineTs: Date.now() + revealMs }));
+  // Still open while any eligible stealer has neither answered nor dropped, AND the window hasn't expired.
+  const allResolved = steal.stealPeers.every(peer => state.tried.has(peer));
+  if (!isTimeout && !allResolved) return true;
 
-  // Credit the active player's miss (0 pts, streak reset) — once, on the terminal reveal.
-  award(activePeer, { correct: false, steal: false, tier, category });
+  // Window expired or everyone answered → terminal reveal (scores every correct stealer by speed).
+  resolveTerminalReveal(deps, activePeer);
   return false;
 }
 
@@ -300,9 +376,94 @@ export function resolveAnswer(deps: ResolveAnswerDeps): boolean {
  * ```
  */
 export function handlePeerLeft(deps: PeerLeftDeps): void {
+  const { peerId, players, mutate } = deps;
+
+  const isHost = players.find(p => p.peerId === peerId)?.isHost ?? false;
+
+  // Mark the departing peer as disconnected (they keep their seat + score for a possible reconnect).
+  const updatedPlayers = players.map(p => (p.peerId === peerId ? { ...p, connected: false } : p));
+  mutate("players", () => ({ entries: updatedPlayers }));
+
+  if (isHost) promoteHost(deps, updatedPlayers);
+  resolveDepartureMidQuestion(deps, updatedPlayers);
+}
+
+/**
+ * Handle a deliberate `leave-game` intent: REMOVE the player's roster seat + stable token entirely (so
+ * they never resurface — e.g. as a ghost tile in the next lobby after a restart), promote a new host if
+ * they held it, and keep the steal machine consistent if they left mid-question (same paths as a drop).
+ *
+ * The difference from {@link handlePeerLeft}: a leave is permanent (seat + token dropped), where a
+ * transient `peer-left` only marks the seat disconnected so a reload can reclaim it.
+ *
+ * @param deps - Typed deps from the caller (the leaving peer's id + current slices + scoring/mutate).
+ * @example
+ * ```ts
+ * handleLeaveGame({ peerId, players, match, question, steal, state, mutate, award, grade, revealMs, stealMs, ... });
+ * ```
+ */
+export function handleLeaveGame(deps: PeerLeftDeps): void {
+  const { peerId, players, state, mutate } = deps;
+
+  const wasHost = players.find(p => p.peerId === peerId)?.isHost ?? false;
+  if (!players.some(p => p.peerId === peerId)) return;
+
+  // Drop the seat entirely + forget the stable token, so a later lobby (or restart) never shows them.
+  const remaining = players.filter(p => p.peerId !== peerId);
+  mutate("players", () => ({ entries: remaining }));
+  for (const [token, pid] of state.tokens) {
+    if (pid === peerId) state.tokens.delete(token);
+  }
+
+  if (wasHost) promoteHost(deps, remaining);
+  resolveDepartureMidQuestion(deps, remaining);
+}
+
+/**
+ * Promote the first still-present connected player to host (and re-key `state.hostToken` to them) when
+ * the host departs. Shared by the disconnect + leave paths.
+ *
+ * @param deps - The peer-left/leave deps (for `mutate` + `state`).
+ * @param roster - The roster AFTER the departure (disconnected-marked or filtered).
+ * @example
+ * ```ts
+ * promoteHost(deps, updatedPlayers);
+ * ```
+ */
+function promoteHost(deps: PeerLeftDeps, roster: PlayersSlice["entries"]): void {
+  const { peerId, state, mutate } = deps;
+  const nextHost = roster.find(p => p.connected && p.peerId !== peerId);
+  if (!nextHost) return;
+
+  mutate("players", () => ({
+    entries: roster.map(p => ({ ...p, isHost: p.peerId === nextHost.peerId }))
+  }));
+  mutate("match", draft => ({ ...draft, hostPeer: nextHost.peerId }));
+  // Move host identity to the promoted player's TOKEN so a later reconnect stays consistent.
+  for (const [token, pid] of state.tokens) {
+    if (pid === nextHost.peerId) {
+      state.hostToken = token;
+      break;
+    }
+  }
+}
+
+/**
+ * Keep the steal machine consistent when a player departs mid-question: the active answerer leaving runs
+ * the timeout path (opens the steal for the rest); an eligible stealer leaving forfeits their slot
+ * (`STEAL_DROP_PICK` — the window stays open, or resolves if they were the last one). No-op outside the
+ * `question` phase. Shared by the disconnect + leave paths.
+ *
+ * @param deps - The peer-left/leave deps.
+ * @param roster - The roster AFTER the departure (used for stealer eligibility).
+ * @example
+ * ```ts
+ * resolveDepartureMidQuestion(deps, updatedPlayers);
+ * ```
+ */
+function resolveDepartureMidQuestion(deps: PeerLeftDeps, roster: PlayersSlice["entries"]): void {
   const {
     peerId,
-    players,
     match,
     question,
     steal,
@@ -311,85 +472,37 @@ export function handlePeerLeft(deps: PeerLeftDeps): void {
     award,
     grade,
     revealMs,
-    stealMs
+    stealMs,
+    stealLeadMs,
+    stealSpeedTiers
   } = deps;
 
-  const isHost = players.find(p => p.peerId === peerId)?.isHost ?? false;
-
-  // Mark the departing peer as disconnected
-  const updatedPlayers = players.map(p => (p.peerId === peerId ? { ...p, connected: false } : p));
-
-  mutate("players", () => ({ entries: updatedPlayers }));
-
-  // Promote next connected player to host if the host left
-  if (isHost) {
-    const nextHost = updatedPlayers.find(p => p.connected && p.peerId !== peerId);
-    if (nextHost) {
-      const promotedPlayers = updatedPlayers.map(p => ({
-        ...p,
-        isHost: p.peerId === nextHost.peerId
-      }));
-      mutate("players", () => ({ entries: promotedPlayers }));
-      mutate("match", draft => ({ ...draft, hostPeer: nextHost.peerId }));
-      // Move host identity to the promoted player's TOKEN so a later reconnect stays consistent (and
-      // the original host, if they ever return, comes back as a regular player — deterministic).
-      for (const [token, pid] of state.tokens) {
-        if (pid === nextHost.peerId) {
-          state.hostToken = token;
-          break;
-        }
-      }
-    }
-  }
-
-  // Only mid-question departures touch the steal machine.
   if (match.phase !== "question") return;
-
   const inStealMode = question.mode === "steal";
 
-  // The active answerer dropped mid-answer → resolve as a timeout (opens the steal for the rest). Grade
-  // for the AUTHORITATIVE correct slot so the reveal shows the right answer.
-  if (!inStealMode && question.answeringPeer === peerId) {
-    // eslint-disable-next-line unicorn/no-useless-undefined -- explicit timeout: no slot was picked
-    const { correctSlot } = grade(question.id, undefined);
-    resolveAnswer({
-      state,
-      match,
-      question,
-      steal,
-      players: updatedPlayers,
-      answerer: peerId,
-      correct: false,
-      pickedSlot: undefined,
-      correctSlot,
-      mutate,
-      award,
-      revealMs,
-      stealMs
-    });
-    return;
-  }
+  const departed =
+    (!inStealMode && question.answeringPeer === peerId) ||
+    (inStealMode && steal.active && peerId !== match.activePeer && !state.tried.has(peerId));
+  if (!departed) return;
 
-  // A stealer dropped during an open steal → drop them from eligibility (window stays open for the
-  // rest; if they were the last eligible peer, this terminally resolves the question). Routed through
-  // `resolveAnswer` as a non-timeout miss (the `STEAL_DROP_PICK` sentinel keeps the window alive).
-  if (inStealMode && steal.active && peerId !== match.activePeer && !state.tried.has(peerId)) {
-    // eslint-disable-next-line unicorn/no-useless-undefined -- grade only needs the correct slot
-    const { correctSlot } = grade(question.id, undefined);
-    resolveAnswer({
-      state,
-      match,
-      question,
-      steal,
-      players: updatedPlayers,
-      answerer: peerId,
-      correct: false,
-      pickedSlot: STEAL_DROP_PICK,
-      correctSlot,
-      mutate,
-      award,
-      revealMs,
-      stealMs
-    });
-  }
+  // eslint-disable-next-line unicorn/no-useless-undefined -- grade only needs the authoritative correct slot
+  const { correctSlot } = grade(question.id, undefined);
+  resolveAnswer({
+    state,
+    match,
+    question,
+    steal,
+    players: roster,
+    answerer: peerId,
+    // Active answerer left → timeout (opens the steal). Stealer left → forfeit their slot (window lives).
+    correct: false,
+    pickedSlot: inStealMode ? STEAL_DROP_PICK : undefined,
+    correctSlot,
+    mutate,
+    award,
+    revealMs,
+    stealMs,
+    stealLeadMs,
+    stealSpeedTiers
+  });
 }

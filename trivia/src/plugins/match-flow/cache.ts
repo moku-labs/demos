@@ -44,8 +44,40 @@ export type SliceCache = {
  * ```
  */
 export function makeIdleSteal(): StealSlice {
-  // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (deadlineTs null, not undefined)
-  return { active: false, stealPeers: [], deadlineTs: null };
+  return {
+    active: false,
+    stealPeers: [],
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (deadlineTs null, not undefined)
+    deadlineTs: null,
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (armedTs null, not undefined)
+    armedTs: null,
+    answeredPeers: []
+  };
+}
+
+/**
+ * Build a blank (no live question) `question` slice — the fallback the `leave-game` intent passes to the
+ * steal machine when a player leaves outside the question phase (the mid-question path no-ops there, so
+ * this value is never actually read; it only satisfies the required-field dep shape).
+ *
+ * @returns A blank question slice.
+ * @example
+ * ```ts
+ * question: cachedQuestion() ?? makeBlankQuestion();
+ * ```
+ */
+export function makeBlankQuestion(): QuestionSlice {
+  return {
+    id: "",
+    category: "" as QuestionSlice["category"],
+    tier: "" as QuestionSlice["tier"],
+    type: "text",
+    prompt: "",
+    options: [],
+    answeringPeer: "",
+    mode: "answer",
+    deadlineTs: 0
+  };
 }
 
 /**

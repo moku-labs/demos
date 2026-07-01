@@ -29,6 +29,7 @@ export function createMatchFlowState(): State {
     // eslint-disable-next-line unicorn/no-null -- pendingQuestion is null until a category is chosen
     pendingQuestion: null,
     // eslint-disable-next-line unicorn/no-null -- no active pick until the active player locks one
-    activePick: null
+    activePick: null,
+    stealAnswers: []
   };
 }

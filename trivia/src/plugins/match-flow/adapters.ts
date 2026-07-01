@@ -37,7 +37,7 @@ export type MachineMutate = (
 /** The steal machine's award signature (`resolveAnswer`'s `award` field). */
 export type MachineAward = (
   peerId: PeerId,
-  opts: { correct: boolean; steal: boolean; tier: string; category: string }
+  opts: { correct: boolean; steal: boolean; tier: string; category: string; factor?: number }
 ) => void;
 
 /** The grade signature (`handlePeerLeft`'s `grade` field). */

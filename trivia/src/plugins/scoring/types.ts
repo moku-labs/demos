@@ -38,9 +38,25 @@ export type EndStats = {
 export type Api = {
   award(
     peerId: PeerId,
-    opts: { correct: boolean; steal: boolean; tier: Tier; category: CategoryId }
+    opts: {
+      correct: boolean;
+      steal: boolean;
+      tier: Tier;
+      category: CategoryId;
+      /**
+       * Optional multiplier on the computed points (default 1). Drives the open-steal speed reward:
+       * the fastest correct stealer awards at `factor = 1` (full steal value), slower ones at 0.6/0.4/…
+       */
+      factor?: number;
+    }
   ): void;
   reset(): void;
+  /**
+   * Zero every player's round `delta` (and re-publish `scores`) WITHOUT touching totals/ranks. Called
+   * as each new question goes live so the reveal/scoreboard "+N" only ever reflects THIS question —
+   * fixing the stale-delta bug where a past round's scorer kept flashing "+N" every later reveal.
+   */
+  clearDeltas(): void;
   /** Re-key a player's score + stats from a stale peerId to their reconnected peerId (phone reload). */
   rebindPeer(oldPeerId: PeerId, newPeerId: PeerId): void;
   leaderboard(): readonly ScoreEntry[];

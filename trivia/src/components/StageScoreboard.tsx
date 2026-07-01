@@ -4,7 +4,7 @@
  * `phase === "scoreboard"`.
  */
 import type { JSX } from "preact";
-import { rank } from "../lib/leaderboard";
+import { standings } from "../lib/leaderboard";
 import type { TriviaState } from "../lib/types";
 import { findPlayer } from "../lib/view";
 import { ScoreboardTile } from "./ScoreboardTile";
@@ -26,7 +26,9 @@ export type StageScoreboardProps = {
  * ```
  */
 export function StageScoreboard({ s }: StageScoreboardProps): JSX.Element {
-  const ranked = rank(s.scores);
+  // Merge the roster into the board so a connected player who has not scored yet still appears (never
+  // silently dropped from the standings), and rank the union.
+  const ranked = standings(s.players, s.scores);
   const maxTotal = Math.max(1, ...ranked.map(e => e.total));
 
   return (

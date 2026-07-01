@@ -24,8 +24,10 @@ import type { PhonePhaseKey, StagePhaseKey } from "./harness/fixtures";
 const STAGE_PHASE: Record<StagePhaseKey, string> = {
   question: "question",
   steal: "question",
+  stealLeadIn: "question",
   reveal: "reveal",
   scoreboard: "scoreboard",
+  scoreboardZero: "scoreboard",
   final: "final",
   lobby: "lobby",
   languageVote: "languageVote",
@@ -58,6 +60,7 @@ const PHONE_PHASE: Record<PhonePhaseKey, string> = {
   answer: "question",
   answerLocked: "question",
   stealAnswer: "question",
+  stealLeadIn: "question",
   leaveModal: "question",
   midJoin: "question",
   // Non-active player watcher screens

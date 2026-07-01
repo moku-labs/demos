@@ -72,8 +72,12 @@ export const FIXED_NOW = Date.parse("2026-01-01T12:00:00Z");
 export type StagePhaseKey =
   | "question"
   | "steal"
+  // Pre-steal lead-in: the grid is armed shortly (armedTs in the future) — "get ready to steal" countdown.
+  | "stealLeadIn"
   | "reveal"
   | "scoreboard"
+  // Scoreboard where a connected player has NOT scored yet — they must still appear (at 0).
+  | "scoreboardZero"
   | "final"
   | "lobby"
   | "languageVote"
@@ -113,6 +117,8 @@ export type PhonePhaseKey =
   | "answerLocked"
   // Open steal: a non-active eligible stealer sees the answer grid at the same time as the others.
   | "stealAnswer"
+  // Open steal lead-in: the grid is rendered but DISABLED with a "get ready" countdown (fair start).
+  | "stealLeadIn"
   | "leaveModal"
   | "midJoin"
   // Non-active player watcher screens (user request: intermediate screens between rounds/actions)
@@ -132,8 +138,10 @@ export type PhonePhaseKey =
 const STAGE_PHASE_KEYS = new Set<StagePhaseKey>([
   "question",
   "steal",
+  "stealLeadIn",
   "reveal",
   "scoreboard",
+  "scoreboardZero",
   "final",
   "lobby",
   "languageVote",
@@ -166,6 +174,7 @@ const PHONE_PHASE_KEYS = new Set<PhonePhaseKey>([
   "answer",
   "answerLocked",
   "stealAnswer",
+  "stealLeadIn",
   "leaveModal",
   "midJoin",
   "languageVoteWatcher",
@@ -269,7 +278,8 @@ const REVEAL_CORRECT: RevealView = {
   pickedSlot: 2,
   outcome: "correct",
   scorerPeer: "p1",
-  answerText: "Saturn"
+  answerText: "Saturn",
+  stealResults: []
 };
 
 const REVEAL_WRONG: RevealView = {
@@ -277,7 +287,8 @@ const REVEAL_WRONG: RevealView = {
   pickedSlot: 0,
   outcome: "wrong",
   scorerPeer: null,
-  answerText: "Saturn"
+  answerText: "Saturn",
+  stealResults: []
 };
 
 /** Russian-language question (A4-RU): Cyrillic prompt + options. */
@@ -331,7 +342,8 @@ const REVEAL_WRONG_STEAL: RevealView = {
   pickedSlot: 0,
   outcome: "wrong",
   scorerPeer: null,
-  answerText: "Saturn"
+  answerText: "Saturn",
+  stealResults: []
 };
 
 /** Reveal: timed out (no answer picked → outcome="timeout"). */
@@ -340,17 +352,29 @@ const REVEAL_TIMEOUT: RevealView = {
   pickedSlot: -1,
   outcome: "timeout",
   scorerPeer: null,
-  answerText: "Saturn"
+  answerText: "Saturn",
+  stealResults: []
 };
 
-/** Reveal: Tofu (p3) steals and gets the points (outcome="stolen", scorerPeer="p3"). */
+/**
+ * Reveal: an OPEN steal — Tofu (p3) was fastest correct, Pixel (p2) also correct (slower), Biscuit (p4)
+ * missed. Drives the steal-results panel (⚡ fastest badge, ✓/✗ per opponent) + the per-slot name tags.
+ */
 const REVEAL_STOLEN: RevealView = {
   correctSlot: 2,
-  pickedSlot: 2,
+  pickedSlot: 1, // Mochi (the active player) picked wrong before the steal opened
   outcome: "stolen",
   scorerPeer: "p3",
-  answerText: "Saturn"
+  answerText: "Saturn",
+  stealResults: [
+    { peerId: "p3", slot: 2, correct: true },
+    { peerId: "p2", slot: 2, correct: true },
+    { peerId: "p4", slot: 0, correct: false }
+  ]
 };
+
+/** This-round deltas for the open-steal reveal (fastest p3 +100, slower correct p2 +60, rest 0). */
+const STEAL_DELTAS: Record<string, number> = { p3: 100, p2: 60 };
 
 /** End-of-match call-out stats for the podium stat line (host-read; only present at `final`). */
 export const END_STATS: EndStats = {
@@ -389,7 +413,7 @@ function triviaState(
     players: PLAYERS,
     question: QUESTION,
     reveal: REVEAL_CORRECT,
-    steal: { active: false, stealPeers: [], deadlineTs: null },
+    steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] },
     scores: SCORES,
     bank: { status: "ready", lang: "en", error: null },
     categories: CATEGORIES,
@@ -421,7 +445,54 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
           mode: "steal",
           deadlineTs: FIXED_NOW + 6_000
         },
-        steal: { active: true, stealPeers: ["p2", "p3", "p4", "p5"], deadlineTs: FIXED_NOW + 6_000 }
+        steal: {
+          active: true,
+          stealPeers: ["p2", "p3", "p4", "p5"],
+          deadlineTs: FIXED_NOW + 6_000,
+          // Already armed (lead-in over): the grid is tappable and the window is running.
+          armedTs: FIXED_NOW - 100,
+          answeredPeers: ["p3"]
+        }
+      }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
+  // Pre-steal lead-in: the steal is open but `armedTs` is in the FUTURE, so the strip shows the "get
+  // ready to steal" countdown and (on the phone) the grid is disabled until it unlocks (fair start).
+  if (phase === "stealLeadIn") {
+    return {
+      s: triviaState("question", null, {
+        question: {
+          ...QUESTION,
+          answeringPeer: "p1",
+          mode: "steal",
+          deadlineTs: FIXED_NOW + 8_800
+        },
+        steal: {
+          active: true,
+          stealPeers: ["p2", "p3", "p4", "p5"],
+          deadlineTs: FIXED_NOW + 8_800,
+          armedTs: FIXED_NOW + 800,
+          answeredPeers: []
+        }
+      }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
+  // Scoreboard where Sprout (p5) is connected but has NOT scored yet (no `scores` row) — they must
+  // still appear on the board at 0 (item #2), rather than being silently dropped.
+  if (phase === "scoreboardZero") {
+    return {
+      s: triviaState("scoreboard", null, {
+        scores: SCORES.filter(e => e.peerId !== "p5").map(e => ({ ...e, delta: 0 }))
       }),
       qr: null,
       code: "TRIV1234",
@@ -576,7 +647,7 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
     return {
       s: triviaState("reveal", null, {
         reveal: REVEAL_WRONG_STEAL,
-        steal: { active: false, stealPeers: [], deadlineTs: null }
+        steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] }
       }),
       qr: null,
       code: "TRIV1234",
@@ -590,7 +661,7 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
     return {
       s: triviaState("reveal", null, {
         reveal: REVEAL_TIMEOUT,
-        steal: { active: false, stealPeers: [], deadlineTs: null }
+        steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] }
       }),
       qr: null,
       code: "TRIV1234",
@@ -600,13 +671,14 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
   }
 
   if (phase === "revealStolen") {
-    // 11: Tofu (p3) steals — chip shows "Tofu steals it! +delta", answer line "Tofu stole the points!"
+    // 11: OPEN steal reveal — Tofu (p3) fastest correct (+100), Pixel (p2) also correct but slower (+60),
+    // Biscuit (p4) missed. The steal-results panel shows ⚡ fastest + ✓/✗; the rollup shows both gains.
     return {
       s: triviaState("reveal", null, {
         reveal: REVEAL_STOLEN,
-        // give Tofu a delta so the chip shows "+points"
-        scores: SCORES.map(e => (e.peerId === "p3" ? { ...e, delta: 300 } : { ...e, delta: 0 })),
-        steal: { active: false, stealPeers: [], deadlineTs: null }
+        // p3 fastest correct (+100), p2 slower correct (+60), everyone else 0 this round.
+        scores: SCORES.map(e => ({ ...e, delta: STEAL_DELTAS[e.peerId] ?? 0 })),
+        steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] }
       }),
       qr: null,
       code: "TRIV1234",
@@ -703,7 +775,7 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
   return {
     s: triviaState(matchPhase, null, {
       reveal: phase === "reveal" ? REVEAL_CORRECT : REVEAL_WRONG,
-      steal: { active: false, stealPeers: [], deadlineTs: null }
+      steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] }
     }),
     qr: null,
     code: "TRIV1234",
@@ -861,7 +933,43 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
           mode: "steal",
           deadlineTs: FIXED_NOW + 6_000
         },
-        steal: { active: true, stealPeers: ["p2", "p3", "p4", "p5"], deadlineTs: FIXED_NOW + 6_000 }
+        steal: {
+          active: true,
+          stealPeers: ["p2", "p3", "p4", "p5"],
+          deadlineTs: FIXED_NOW + 6_000,
+          // Already armed (lead-in over): the grid is tappable and the window is running.
+          armedTs: FIXED_NOW - 100,
+          answeredPeers: ["p3"]
+        }
+      }),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: false
+    };
+  }
+
+  // open steal lead-in: Pixel (p2) is eligible but the grid is DISABLED (armedTs in the future) with a
+  // "Get ready to steal…" countdown — so no device (the host's included) can tap before the others.
+  if (phase === "stealLeadIn") {
+    return {
+      s: triviaState("question", "p2", {
+        question: {
+          ...QUESTION,
+          answeringPeer: "p1",
+          mode: "steal",
+          deadlineTs: FIXED_NOW + 8_800
+        },
+        steal: {
+          active: true,
+          stealPeers: ["p2", "p3", "p4", "p5"],
+          deadlineTs: FIXED_NOW + 8_800,
+          armedTs: FIXED_NOW + 800,
+          answeredPeers: []
+        }
       }),
       now: FIXED_NOW,
       code: "TRIV1234",

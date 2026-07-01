@@ -46,18 +46,36 @@ export function PhoneAnswer({
   if (!question) return <PhoneWaitingCard emoji="⏳" title="Get ready…" />;
 
   const locked = lockedQid === question.id ? lockedSlot : null;
-  const totalMs = question.mode === "steal" ? TRIVIA.timers.stealMs : TRIVIA.timers.answerMs;
+  const isSteal = question.mode === "steal";
+  // Pre-steal lead-in: the grid renders on EVERY eligible phone at the same time but stays disabled until
+  // `armedTs`, so no device (the host's included) can tap before the others have rendered. It unlocks for
+  // everyone together, then speed decides the reward.
+  const armedTs = s.steal.armedTs;
+  const arming = isSteal && armedTs !== null && now < armedTs;
+  const leadSecs = armedTs !== null ? Math.max(0, Math.ceil((armedTs - now) / 1000)) : 0;
+  const totalMs = isSteal ? TRIVIA.timers.stealMs : TRIVIA.timers.answerMs;
   const pct = Math.max(0, Math.min(100, ((question.deadlineTs - now) / totalMs) * 100));
 
+  const label = arming
+    ? `Get ready to steal… ${leadSecs}`
+    : isSteal
+      ? "Steal it — tap fast!"
+      : "Tap your answer";
+
   return (
-    <div data-component="phone-answer" data-screen="answer">
-      <span data-phone-label>
-        {question.mode === "steal" ? "Steal it — tap fast!" : "Tap your answer"}
-      </span>
+    <div data-component="phone-answer" data-screen="answer" data-arming={arming ? true : undefined}>
+      <span data-phone-label>{label}</span>
       <div data-answer-grid-phone>
         {question.options.map((_text, i) => {
           const { letter, shape, hex } = slotMeta(i);
-          const stateAttr = locked === null ? "idle" : locked === i ? "locked" : "dim";
+          // During the lead-in every tile is disabled (dim); after it unlocks, normal idle/locked/dim.
+          const stateAttr = arming
+            ? "dim"
+            : locked === null
+              ? "idle"
+              : locked === i
+                ? "locked"
+                : "dim";
           return (
             <AnswerButton
               key={letter}
@@ -66,7 +84,7 @@ export function PhoneAnswer({
               shape={shape}
               hex={hex}
               state={stateAttr}
-              onPick={locked === null ? () => onLock(i) : undefined}
+              onPick={!arming && locked === null ? () => onLock(i) : undefined}
             />
           );
         })}

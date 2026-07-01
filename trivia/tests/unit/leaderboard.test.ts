@@ -1,10 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { rank } from "../../src/lib/leaderboard";
-import type { ScoreEntry } from "../../src/lib/types";
+import { rank, standings } from "../../src/lib/leaderboard";
+import type { PlayerProfile, ScoreEntry } from "../../src/lib/types";
 
 /** Build a score entry with sensible defaults for the field under test. */
 function entry(peerId: string, total: number, prevRank: number): ScoreEntry {
   return { peerId, total, delta: 0, rank: prevRank, prevRank };
+}
+
+/** Build a connected player profile. */
+function player(peerId: string, connected = true): PlayerProfile {
+  return { peerId, name: peerId, color: "#fff", avatar: "🙂", connected, isHost: false };
 }
 
 describe("leaderboard.rank", () => {
@@ -32,5 +37,39 @@ describe("leaderboard.rank", () => {
 
   it("handles an empty board", () => {
     expect(rank([])).toEqual([]);
+  });
+});
+
+describe("leaderboard.standings — every in-game player appears (bug #2)", () => {
+  it("includes a connected player who has NOT scored yet (seeded at 0), never dropping them", () => {
+    const players = [player("a"), player("b"), player("c")];
+    // Only a + b have score rows; c is connected but never awarded.
+    const scores = [entry("a", 300, 1), entry("b", 100, 2)];
+    const board = standings(players, scores);
+    expect(board.map(e => e.peerId)).toEqual(["a", "b", "c"]);
+    const c = board.find(e => e.peerId === "c");
+    expect(c?.total).toBe(0);
+    expect(c?.delta).toBe(0);
+    expect(c?.rank).toBe(3);
+  });
+
+  it("does not add a DISCONNECTED player who never scored", () => {
+    const players = [player("a"), player("gone", false)];
+    const board = standings(players, [entry("a", 100, 1)]);
+    expect(board.some(e => e.peerId === "gone")).toBe(false);
+  });
+
+  it("keeps a disconnected player who DID score (their row already exists)", () => {
+    const players = [player("a"), player("left", false)];
+    const board = standings(players, [entry("a", 100, 1), entry("left", 200, 2)]);
+    expect(board.find(e => e.peerId === "left")?.total).toBe(200);
+    expect(board[0]?.peerId).toBe("left"); // 200 > 100 → ranked first
+  });
+
+  it("ranks the merged union by total (zero-score players sink to the bottom)", () => {
+    const players = [player("a"), player("b"), player("c")];
+    const board = standings(players, [entry("b", 500, 1)]);
+    expect(board.map(e => e.peerId)).toEqual(["b", "a", "c"]);
+    expect(board.map(e => e.rank)).toEqual([1, 2, 3]); // position-based (rank() does not fold ties)
   });
 });

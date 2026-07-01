@@ -23,6 +23,9 @@ const LEGACY_KEY = "trivia.muted";
 const SFX_LEVEL = 0.85;
 const MUSIC_LEVEL = 0.5;
 
+/** Music crossfade duration (ms) — a bed switch fades the old out and the new in over this window. */
+const MUSIC_FADE_MS = 700;
+
 /** Lazily-built audio graph (created on first sound / unlock, never at import). */
 type Graph = { ac: AudioContext; master: GainNode; sfx: GainNode; musicBus: GainNode };
 
@@ -31,8 +34,14 @@ let sfxMuted: boolean | undefined;
 let musicMuted: boolean | undefined;
 let gestureBound = false;
 
-/** The bed currently looping, and the bed we *want* looping (to ignore stale async loads). */
-let currentBed: { id: MusicId; src: AudioBufferSourceNode } | undefined;
+/** A live music bed's playback source + its own fade gain node (between the source and the music bus). */
+type BedHandle = { src: AudioBufferSourceNode; gain: GainNode };
+
+/**
+ * The bed currently looping (its own gain node carries the fade envelope), and the bed we *want* looping
+ * (to ignore stale async loads).
+ */
+let currentBed: (BedHandle & { id: MusicId }) | undefined;
 let desiredBed: MusicId | undefined;
 
 /**
@@ -334,28 +343,42 @@ function setMusicGain(intensity: number): void {
 }
 
 /**
- * Stop + disconnect the looping bed.
+ * Fade one bed's own gain node down to 0 over the crossfade window, then stop + disconnect it (via
+ * `onended`). Click-free and non-blocking — used both when switching beds and on `stopMusic`.
  *
+ * @param bed - The bed to fade out and tear down.
+ * @param ac - The audio context (for scheduling on its clock).
  * @example
  * ```ts
- * stopBed();
+ * fadeOutBed(currentBed, graph.ac);
  * ```
  */
-function stopBed(): void {
-  if (!currentBed) return;
+function fadeOutBed(bed: BedHandle, ac: AudioContext): void {
+  const now = ac.currentTime;
+  const end = now + MUSIC_FADE_MS / 1000;
   try {
-    currentBed.src.stop();
+    bed.gain.gain.cancelScheduledValues(now);
+    bed.gain.gain.setValueAtTime(bed.gain.gain.value, now);
+    bed.gain.gain.linearRampToValueAtTime(0, end);
+    bed.src.stop(end + 0.02);
   } catch {
     // Already stopped — ignore.
   }
-  currentBed.src.disconnect();
-  currentBed = undefined;
+  bed.src.addEventListener("ended", () => {
+    try {
+      bed.src.disconnect();
+      bed.gain.disconnect();
+    } catch {
+      // Already disconnected — ignore.
+    }
+  });
 }
 
 /**
- * Start or switch the looping music bed (no-op when muted). Idempotent for the same id (only the
- * intensity gain updates). The bed loads asynchronously; a stale load that finishes after another switch
- * is discarded. TV-only by construction — the director never emits music cues on the phone surface.
+ * Start or switch the looping music bed (no-op when muted), crossfading softly between beds: the new bed
+ * fades IN from silence while the old one fades OUT over {@link MUSIC_FADE_MS}, so a phase change never
+ * cuts the music abruptly. Idempotent for the same id (only the intensity gain updates). The bed loads
+ * asynchronously; a stale load that finishes after another switch is discarded. TV-only by construction.
  *
  * @param id - The bed to loop.
  * @param intensity - 0–1 loudness/tempo drive.
@@ -377,20 +400,34 @@ export function music(id: MusicId, intensity: number): void {
   loadBuffer(g.ac, id, musicUrl(id))
     .then(buffer => {
       if (!buffer || desiredBed !== id || !graph) return;
-      stopBed();
-      const source = graph.ac.createBufferSource();
+      const { ac, musicBus } = graph;
+
+      // Fade the outgoing bed out (non-blocking); it stops + disconnects itself when the ramp completes.
+      if (currentBed) fadeOutBed(currentBed, ac);
+
+      // Fade the incoming bed in from silence through its own gain node (between source and the bus).
+      const gain = ac.createGain();
+      gain.gain.value = 0;
+      gain.connect(musicBus);
+
+      const source = ac.createBufferSource();
       source.buffer = buffer;
       source.loop = true;
       source.playbackRate.value = 1 + Math.max(0, Math.min(intensity, 1)) * 0.04;
-      source.connect(graph.musicBus);
+      source.connect(gain);
       source.start();
-      currentBed = { id, src: source };
+
+      const now = ac.currentTime;
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(1, now + MUSIC_FADE_MS / 1000);
+
+      currentBed = { id, src: source, gain };
     })
     .catch(() => {});
 }
 
 /**
- * Stop the music bed.
+ * Stop the music bed with a soft fade-out (rather than a hard cut).
  *
  * @example
  * ```ts
@@ -399,7 +436,8 @@ export function music(id: MusicId, intensity: number): void {
  */
 export function stopMusic(): void {
   desiredBed = undefined;
-  stopBed();
+  if (currentBed && graph) fadeOutBed(currentBed, graph.ac);
+  currentBed = undefined;
 }
 
 /**

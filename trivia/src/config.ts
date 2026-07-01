@@ -36,14 +36,30 @@ export const TRIVIA = {
   timers: {
     answerMs: 25_000,
     stealMs: 8000,
+    /**
+     * Pre-steal "get ready" lead-in (ms): when a steal opens, every eligible phone shows the answer
+     * grid DISABLED for this beat and unlocks together, so no device (e.g. the host's) can tap before
+     * the others have rendered. The shared steal window (`stealMs`) starts once this lead-in expires.
+     */
+    stealLeadMs: 1000,
     voteWindowMs: 5000,
     roundIntroMs: 2000,
     /** Category-chosen reveal beat: chosen card glows + F3 banner before question (A11: ~1.3 s). */
     categoryRevealMs: 1300,
-    revealMs: 3500,
+    /**
+     * Reveal hold (ms) before advancing to the scoreboard. Long enough to read the outcome AND, after
+     * an open steal, every opponent's pick (right/wrong) and who was fastest (design feedback: ~8 s).
+     */
+    revealMs: 8000,
     scoreboardMs: 3000,
     endCountdownMs: 15_000
   },
+  /**
+   * Open-steal speed reward tiers — the fastest correct stealer earns the full steal value, then 60 %,
+   * 40 %, 20 % for each slower correct stealer (by lock-in order). Beyond the list the last tier holds.
+   * Every correct steal still scores; speed only scales it (design decision: fixed 100/60/40/20 %).
+   */
+  stealSpeedTiers: [1, 0.6, 0.4, 0.2],
   difficultyBands: { easy: [1, 4], medium: [5, 8], hard: [9, 12] },
   languages: ["en", "ru"],
   codeLength: 8,

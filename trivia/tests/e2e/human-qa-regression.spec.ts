@@ -332,15 +332,16 @@ test.describe("HQ5 — TV stage mute button keyboard accessibility guard", () =>
 //   TurnChip [data-name] remains the sole name display.
 // Severity: P2 (visual quality — duplicated name on every correct/stolen reveal).
 
-test.describe("HQ6 — TurnChip reveal outcome chip label must NOT duplicate the player name", () => {
-  async function gotoStage(page: Page, phase: string) {
-    await page.goto(`/?e2ephase=${phase}`);
-    await page.waitForSelector("[data-stage]", { timeout: 15_000 });
-    await page.evaluate(() => document.fonts.ready);
-  }
+/** Navigate to a fixture stage phase and wait for the stage + fonts to settle. */
+async function gotoStageHq6(page: Page, phase: string): Promise<void> {
+  await page.goto(`/?e2ephase=${phase}`);
+  await page.waitForSelector("[data-stage]", { timeout: 15_000 });
+  await page.evaluate(() => document.fonts.ready);
+}
 
+test.describe("HQ6 — TurnChip reveal outcome chip label must NOT duplicate the player name", () => {
   test("reveal correct: chip label does NOT start with the player name", async ({ page }) => {
-    await gotoStage(page, "reveal");
+    await gotoStageHq6(page, "reveal");
     const nameEl = await page.locator("[data-component='turn-chip'] [data-name]").textContent();
     const labelEl = await page.locator("[data-component='turn-chip'] [data-label]").textContent();
     // The label must NOT start with the same name that [data-name] shows
@@ -353,7 +354,7 @@ test.describe("HQ6 — TurnChip reveal outcome chip label must NOT duplicate the
   });
 
   test("revealStolen: chip label does NOT start with the stealer's name", async ({ page }) => {
-    await gotoStage(page, "revealStolen");
+    await gotoStageHq6(page, "revealStolen");
     const nameEl = await page.locator("[data-component='turn-chip'] [data-name]").textContent();
     const labelEl = await page.locator("[data-component='turn-chip'] [data-label]").textContent();
     expect(
@@ -366,7 +367,7 @@ test.describe("HQ6 — TurnChip reveal outcome chip label must NOT duplicate the
   test("reveal wrong: chip label does NOT contain the player name as a prefix", async ({
     page
   }) => {
-    await gotoStage(page, "revealWrongSteal");
+    await gotoStageHq6(page, "revealWrongSteal");
     const nameEl = await page.locator("[data-component='turn-chip'] [data-name]").textContent();
     const labelEl = await page.locator("[data-component='turn-chip'] [data-label]").textContent();
     expect(
@@ -379,7 +380,7 @@ test.describe("HQ6 — TurnChip reveal outcome chip label must NOT duplicate the
   test("question (non-reveal): chip label is 'answering' — no duplication risk", async ({
     page
   }) => {
-    await gotoStage(page, "question");
+    await gotoStageHq6(page, "question");
     const labelEl = await page.locator("[data-component='turn-chip'] [data-label]").textContent();
     expect(labelEl?.trim(), "Question chip label must be 'answering'").toBe("answering");
   });

@@ -13,10 +13,17 @@ import type { CategoryId, Tier } from "../../config";
 import { TRIVIA } from "../../config";
 import { ramp } from "../../lib/difficulty";
 import type { Lang } from "../../lib/types";
-import { buildAward, buildMutate, type ReadSlice } from "./adapters";
-import { cachedMatch, cachedPlayers, cachedQuestion, cachedSteal, makeIdleSteal } from "./cache";
+import { buildAward, buildGrade, buildMutate, type ReadSlice } from "./adapters";
+import {
+  cachedMatch,
+  cachedPlayers,
+  cachedQuestion,
+  cachedSteal,
+  makeBlankQuestion,
+  makeIdleSteal
+} from "./cache";
 import type { IntentDeps, LanguageDeps, QuestionBankDeps, ScoringDeps, SyncDeps } from "./handlers";
-import { resolveAnswer } from "./machine";
+import { handleLeaveGame, resolveAnswer } from "./machine";
 import type { Config, MatchSlice, Phase, PlayersSlice, State } from "./types";
 
 // ─── Slice registration ─────────────────────────────────────────────────────────
@@ -71,14 +78,18 @@ function registerSlices(sync: SyncDeps): void {
     outcome: "wrong",
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
     scorerPeer: null,
-    answerText: ""
+    answerText: "",
+    stealResults: []
   });
 
   sync.registerSlice("steal", {
     active: false,
     stealPeers: [],
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
-    deadlineTs: null
+    deadlineTs: null,
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
+    armedTs: null,
+    answeredPeers: []
   });
 
   // `offer` — the current round's random category subset the picker shows (set each roundIntro → categoryPick).
@@ -355,12 +366,15 @@ export function initMatchFlow(
       // Category exhausted — stay in categoryPick (the island reads availability() for the D2 toast).
       if (!question) return draft;
 
-      // Reset the per-question lock + tried set + active pick; the active peer is "tried" immediately.
+      // Reset the per-question lock + tried set + active pick + steal answers; the active peer is
+      // "tried" immediately. (The round deltas are zeroed at the categoryReveal → question transition,
+      // `advanceFromCategoryReveal`, so the reveal/scoreboard "+N" is always scoped to THIS question.)
       state.locked = false;
       state.tried = new Set();
       state.tried.add(meta.peerId);
       // eslint-disable-next-line unicorn/no-null -- no active pick until the active player locks one
       state.activePick = null;
+      state.stealAnswers = [];
 
       // Stage the resolved question on host State (question-bank is consume-once). The clock will
       // publish it and set deadlineTs when the categoryReveal beat expires. The category/tier/type
@@ -415,13 +429,20 @@ export function initMatchFlow(
       !state.tried.has(meta.peerId);
     if (!isActiveAnswerer && !isEligibleStealer) return;
 
+    const steal = cachedSteal() ?? makeIdleSteal();
+
+    // Enforce the steal lead-in host-side: a tap that lands before the "get ready" beat unlocks is
+    // dropped, so no device (the host's included) can answer before the others have rendered the grid.
+    // The UI also disables the grid during the lead-in — this is the authoritative backstop.
+    if (isEligibleStealer && steal.armedTs !== null && Date.now() < steal.armedTs) return;
+
     const { correctSlot, correct } = questionBank.grade(question.id, slot);
 
     const stillOpen = resolveAnswer({
       state,
       match,
       question,
-      steal: cachedSteal() ?? makeIdleSteal(),
+      steal,
       players: cachedPlayers() ?? [],
       answerer: meta.peerId,
       correct,
@@ -430,13 +451,42 @@ export function initMatchFlow(
       mutate: buildMutate(stage),
       award: buildAward(scoring),
       revealMs: config.revealMs,
-      stealMs: config.stealMs
+      stealMs: config.stealMs,
+      stealLeadMs: config.stealLeadMs,
+      stealSpeedTiers: config.stealSpeedTiers
     });
 
     // Resolved (a correct winner or the terminal reveal) → lock so duplicate/late locks are dropped.
     // Steal still open → leave unlocked so the remaining eligible players keep racing (each gates
     // itself out via the `tried` set as they miss).
     state.locked = !stillOpen;
+  });
+
+  // ── leave-game: a phone leaves for good → drop its seat + token so it never resurfaces (E1 / bug #5) ──
+  // Unlike a transient disconnect (which keeps the seat for a reload), a deliberate leave is permanent:
+  // the roster row + stable token are removed, host is re-promoted if needed, and a mid-question leave
+  // resolves the steal machine (same as a drop). Works in any phase.
+  intent.register("leave-game", { fields: {}, additionalFields: false });
+  intent.onIntent("leave-game", (_payload, meta) => {
+    const match = cachedMatch();
+    if (!match) return;
+    handleLeaveGame({
+      peerId: meta.peerId,
+      players: cachedPlayers() ?? [],
+      match,
+      question: cachedQuestion() ?? makeBlankQuestion(),
+      steal: cachedSteal() ?? makeIdleSteal(),
+      state,
+      mutate: buildMutate(stage),
+      award: buildAward(scoring),
+      grade: buildGrade(questionBank),
+      revealMs: config.revealMs,
+      stealMs: config.stealMs,
+      stealLeadMs: config.stealLeadMs,
+      stealSpeedTiers: config.stealSpeedTiers
+    });
+    // Re-assert host authority from the token (covers the leaver-was-host promotion staying consistent).
+    normalizeHost(stage, state);
   });
 
   // ── play-again: any phone on the final card restarts (scores reset, language + seen kept) ──
@@ -452,9 +502,17 @@ export function initMatchFlow(
     state.pendingQuestion = null;
     // eslint-disable-next-line unicorn/no-null -- no active pick until the active player locks one
     state.activePick = null;
+    state.stealAnswers = [];
 
     const { language: lang, activePeer: previousActive } = match;
     const firstConnected = (cachedPlayers() ?? []).find(player => player.connected);
+
+    // Prune disconnected/departed players so a fresh game never carries a ghost seat (bug #5 safety net).
+    stage.mutate("players", draft => {
+      const entries = (draft.entries as PlayersSlice["entries"] | undefined) ?? [];
+      const kept = entries.filter(entry => entry.connected);
+      return kept.length === entries.length ? draft : { entries: kept };
+    });
 
     stage.mutate("match", draft => ({
       ...draft,

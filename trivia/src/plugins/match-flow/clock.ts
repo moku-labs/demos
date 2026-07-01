@@ -81,7 +81,7 @@ function runTick(deps: ClockDeps): void {
     const offered = selectOffer(questionBank.availability(), config.offerCount);
     advanceRoundIntro(stage, match, players, round, state, offered);
   } else if (phase === "categoryReveal" && deadlinePassed) {
-    advanceFromCategoryReveal(stage, state, config.answerMs);
+    advanceFromCategoryReveal(stage, state, config.answerMs, scoring);
   } else if (phase === "question" && question) {
     resolveQuestionTimeout(
       { stage, config, state, questionBank, scoring, readSlice },
