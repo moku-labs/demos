@@ -1,19 +1,19 @@
 /**
  * @file StageQuestion — the TV question screen (A4/A5) and its in-place reveal (A6). A pure presentational
  * component fed the snapshot + the ticking `now` + a `revealing` flag; the same 2×2 grid resolves in place
- * at reveal (correct/wrong/dim, tagged with WHO picked each option) and a score rollup slides in. After an
- * open steal it also shows a per-opponent results strip (who was right/wrong, who was fastest). Rendered by
- * the stage island's render layer for `phase === "question"` (revealing=false) and `phase === "reveal"`.
+ * at reveal (correct/wrong/dim, tagged with WHO picked each option) and ONE combined reveal panel (item 1)
+ * shows who answered what, their answer time, points gained, and who was fastest — replacing the separate
+ * steal-results strip + score rollup that used to stack independently. Rendered by the stage island's
+ * render layer for `phase === "question"` (revealing=false) and `phase === "reveal"`.
  */
 import type { JSX } from "preact";
 import { TRIVIA } from "../config";
-import { standings } from "../lib/leaderboard";
 import type { PlayerProfile, QuestionView, RevealView, TriviaState } from "../lib/types";
 import { categoryMeta, findPlayer, secondsLeft, slotMeta } from "../lib/view";
 import { AnswerTile } from "./AnswerTile";
 import { DifficultyPips } from "./DifficultyPips";
 import { Flag } from "./Flag";
-import { ScoreChip } from "./ScoreChip";
+import { RevealPanel } from "./RevealPanel";
 import { TimerRing } from "./TimerRing";
 import { TurnChip } from "./TurnChip";
 import { useFitText } from "./use-fit-text";
@@ -145,43 +145,6 @@ function revealCopy(
   };
 }
 
-/**
- * The open-steal results strip (reveal only): one chip per opponent who took a crack at the steal — their
- * avatar + name + the letter they picked + a ✓/✗, with a ⚡ badge on the FIRST correct (the fastest).
- */
-function StealResultsPanel({ s }: { s: TriviaState }) {
-  const results = s.reveal.stealResults;
-  const fastestIndex = results.findIndex(result => result.correct);
-  return (
-    <div data-steal-results role="status" aria-label="Steal results">
-      <span data-steal-results-title>⚡ Steal — who was fastest</span>
-      <div data-steal-results-list>
-        {results.map((result, index) => {
-          const player = findPlayer(s.players, result.peerId);
-          if (!player) return null;
-          const { letter } = slotMeta(result.slot);
-          return (
-            <span
-              key={result.peerId}
-              data-steal-result
-              data-correct={result.correct ? true : undefined}
-              style={{ "--player": player.color }}
-            >
-              {index === fastestIndex ? <span data-fastest>⚡</span> : null}
-              <span data-avatar aria-hidden="true">
-                {player.avatar}
-              </span>
-              <span data-name>{player.name}</span>
-              <span data-pick>{letter}</span>
-              <span data-mark>{result.correct ? "✓" : "✗"}</span>
-            </span>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 /** F1 — the OPEN steal strip: the active player missed, so everyone else may steal at once. */
 function StealStrip({ s, now }: { s: TriviaState; now: number }) {
   const active = findPlayer(s.players, s.match.activePeer);
@@ -229,7 +192,8 @@ function StealStrip({ s, now }: { s: TriviaState; now: number }) {
 /**
  * Render the TV question screen (and its in-place reveal): the meta bar (category + answerer/scorer chip),
  * the prompt hero, the timer ring (question only), the 2×2 answer grid (tagged with who picked what at
- * reveal), the steal strip, the steal results panel, and the reveal score rollup.
+ * reveal), the steal strip, and ONE combined reveal panel (item 1 — who answered what, answer times,
+ * points, and who was fastest).
  *
  * @param props - The question screen props.
  * @returns The question screen.
@@ -254,7 +218,6 @@ export function StageQuestion({ s, now, revealing }: StageQuestionProps): JSX.El
   const scorerDelta = s.scores.find(e => e.peerId === s.reveal.scorerPeer)?.delta ?? 0;
   const copy = revealing ? revealCopy(s.reveal, scorer, answerer, scorerDelta) : null;
   const picks = revealing ? collectRevealPicks(s) : [];
-  const hasStealResults = revealing && s.reveal.stealResults.length > 0;
 
   return (
     <div data-component="stage-question" data-screen="question">
@@ -311,25 +274,7 @@ export function StageQuestion({ s, now, revealing }: StageQuestionProps): JSX.El
 
       {s.steal.active && !revealing && <StealStrip s={s} now={now} />}
 
-      {hasStealResults && <StealResultsPanel s={s} />}
-
-      {revealing && (
-        <div data-score-rollup role="status" aria-label="Score update">
-          {standings(s.players, s.scores).map(entry => {
-            const player = findPlayer(s.players, entry.peerId);
-            if (!player) return null;
-            return (
-              <ScoreChip
-                key={entry.peerId}
-                name={player.name}
-                color={player.color}
-                total={entry.total}
-                delta={entry.delta}
-              />
-            );
-          })}
-        </div>
-      )}
+      {revealing && <RevealPanel s={s} />}
     </div>
   );
 }

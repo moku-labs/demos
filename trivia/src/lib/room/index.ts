@@ -392,6 +392,28 @@ export function resetRoom(): void {
 }
 
 /**
+ * Retry a phone's connection after it drops for good (item 4 — connectivity audit): a true full-page
+ * reload of the current `/code/:code` URL. Reconnect UX gap: `startController`'s boot promise is
+ * memoized (idempotent by design — repeat calls from `spa.tsx`/`onMount` must be no-ops), so once a
+ * join attempt has settled (resolved OR rejected) there is no in-place "try again" — the module
+ * singleton has to re-initialise. `hardNavigate(location.href)` is the same true-reload primitive
+ * `resetRoom` uses (see its docs for why a plain `location.reload()` doesn't work under the SPA's
+ * Navigation API interceptor); re-running `onMount` re-triggers the optimistic-reconnect path (the
+ * phone's persisted `{token, profile}` re-claims its seat, so a retry after a real drop is seamless,
+ * not a fresh join). Wired to the phone connection-lost banner's Retry button.
+ *
+ * No-op when there is no DOM (headless/tests).
+ *
+ * @example
+ * ```tsx
+ * <button onClick={retryConnection}>Retry</button>
+ * ```
+ */
+export function retryConnection(): void {
+  if (typeof location !== "undefined") hardNavigate(location.href);
+}
+
+/**
  * The host-internal end-of-match stats (most steals, highest streak, top category) for the A8 podium
  * call-out. Only the TV (stage) is the host, so this resolves `null` on a phone. Not synced — the host
  * reads its own `scoring` plugin directly.

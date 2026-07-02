@@ -43,6 +43,9 @@ const MATCH_PHASE: Record<StagePhaseKey, string> = {
   revealWrongSteal: "reveal",
   revealTimeout: "reveal",
   revealStolen: "reveal",
+  // Item 1 hard layout cases: the combined reveal panel over a long/image question
+  revealLong: "reveal",
+  revealFlag: "reveal",
   // Overlay phases — base phase is the underlying screen
   pauseOverlay: "question",
   disconnectBanner: "lobby",
@@ -210,26 +213,43 @@ test.describe("TV Stage — phase screens render (deterministic fixtures)", () =
     await expect(strip.locator("[data-steal-avatar][data-answered]")).toHaveCount(0);
   });
 
-  test("steal reveal (item 3): per-opponent results panel — ✓/✗ by name, ⚡ fastest badge, named answer tiles", async ({
+  test("steal reveal (item 1 combined panel): winner row + others row — times, ⚡ fastest, ✓/✗, points, named answer tiles", async ({
     page
   }) => {
     await gotoStage(page, "revealStolen");
-    // The steal-results panel lists every opponent who tried (fixture: Tofu ✓, Pixel ✓, Biscuit ✗).
-    const panel = page.locator("[data-steal-results]");
+    const panel = page.locator("[data-component='reveal-panel']");
     await expect(panel).toBeVisible();
-    await expect(panel.locator("[data-steal-result]")).toHaveCount(3);
-    // Two correct, one wrong.
-    await expect(panel.locator("[data-steal-result][data-correct]")).toHaveCount(2);
-    // Exactly one ⚡ fastest badge, on the first correct stealer (Tofu).
-    await expect(panel.locator("[data-fastest]")).toHaveCount(1);
-    // The reveal grid tags the correct tile with the winners' names (multi-player steal).
+    // Winner row: Tofu (p3), fastest correct stealer — name, answer time, ⚡ badge, points.
+    const winnerRow = panel.locator("[data-winner-row]");
+    await expect(winnerRow).toBeVisible();
+    await expect(winnerRow).toContainText("Tofu");
+    await expect(winnerRow.locator("[data-fastest-badge]")).toBeVisible();
+    await expect(winnerRow.locator("[data-time]")).toContainText("9.2s");
+    await expect(winnerRow.locator("[data-points]")).toContainText("+100");
+    // Other participants (Pixel ✓ slower, Biscuit ✗) each show their own time, on the SAME line
+    // in the SAME pill style as the winner (user refinement — one horizontal slot, uniform pills).
+    const others = panel.locator("[data-other]");
+    await expect(others).toHaveCount(2);
+    await expect(others.filter({ hasText: "Pixel" })).toHaveCount(1);
+    await expect(others.filter({ hasText: "Pixel" }).locator("[data-time]")).toContainText("14.7s");
+    await expect(others.filter({ hasText: "Pixel" }).locator("[data-points]")).toContainText("+60");
+    await expect(others.filter({ hasText: "Biscuit" })).toHaveCount(1);
+    await expect(others.filter({ hasText: "Biscuit" }).locator("[data-time]")).toContainText(
+      "6.4s"
+    );
+    await expect(others.filter({ hasText: "Biscuit" }).locator("[data-points]")).toHaveCount(0);
+    // Same horizontal line, same pill style (user refinement): the winner pill and the other pills
+    // share one row (same y) at one uniform height — no big-vs-small stacking.
+    const winnerBox = await winnerRow.boundingBox();
+    const otherBox = await others.first().boundingBox();
+    expect(Math.abs((winnerBox?.y ?? 0) - (otherBox?.y ?? 999))).toBeLessThan(2);
+    expect(Math.abs((winnerBox?.height ?? 0) - (otherBox?.height ?? 999))).toBeLessThan(2);
+    // The reveal grid still tags the correct tile with the winner's name (multi-player steal).
     const correct = page.locator("[data-component='answer-tile'][data-state='correct'] [data-tag]");
     await expect(correct).toContainText("Tofu");
-    // Both correct stealers show their (speed-scaled) round gain in the rollup (+100 fastest, +60 slower).
-    await expect(page.locator("[data-component='score-chip'] [data-delta]")).toHaveCount(2);
   });
 
-  test("reveal (A6): correct tile tagged, answer line, score rollup; only scorer shows +N delta (item 2)", async ({
+  test("reveal (A6): correct tile tagged, answer line, combined panel shows the winner's points — no time on a direct answer (item 1/2)", async ({
     page
   }) => {
     await gotoStage(page, "reveal");
@@ -237,10 +257,17 @@ test.describe("TV Stage — phase screens render (deterministic fixtures)", () =
     await expect(correctTile).toHaveCount(1);
     await expect(correctTile.locator("[data-tag]")).toContainText("CORRECT");
     await expect(page.locator("[data-answer-line]")).toContainText("Saturn");
-    await expect(page.locator("[data-score-rollup]")).toBeVisible();
-    // Item 2: only Mochi (p1, delta=200) shows a +N delta chip — all other players (delta=0) show none
-    await expect(page.locator("[data-component='score-chip'] [data-delta]")).toHaveCount(1);
-    await expect(page.locator("[data-component='score-chip'] [data-delta]")).toContainText("+200");
+    // Item 1: the combined reveal panel replaces the old separate score-rollup — a single winner row
+    // (no steal happened) with the scorer's name + points gained. NO answer time (user refinement):
+    // times are a steal-speed comparison only; a regular direct answer never shows one.
+    const panel = page.locator("[data-component='reveal-panel']");
+    await expect(panel).toBeVisible();
+    const winnerRow = panel.locator("[data-winner-row]");
+    await expect(winnerRow).toContainText("Mochi");
+    await expect(winnerRow.locator("[data-time]")).toHaveCount(0);
+    await expect(winnerRow.locator("[data-points]")).toContainText("+200");
+    // No other participants on the no-steal fast path — the winner pill stands alone.
+    await expect(panel.locator("[data-other]")).toHaveCount(0);
   });
 
   test("scoreboard (A7): titled standings, one tile per player", async ({ page }) => {
@@ -361,12 +388,12 @@ test.describe("TV Stage — reveal variants (A6)", () => {
 
   test("reveal stolen (11): stolen outcome — chip names the stealer", async ({ page }) => {
     await gotoStage(page, "revealStolen");
-    // Score rollup present; correct tile tagged
+    // Combined reveal panel present (item 1); correct tile tagged
     await expect(page.locator("[data-component='answer-tile'][data-state='correct']")).toHaveCount(
       1
     );
     await expect(page.locator("[data-answer-line]")).toContainText("Tofu");
-    await expect(page.locator("[data-score-rollup]")).toBeVisible();
+    await expect(page.locator("[data-component='reveal-panel']")).toBeVisible();
   });
 });
 
@@ -469,6 +496,69 @@ test.describe("TV Stage — question auto-fit (item 1)", () => {
   });
 });
 
+// ─── Item 1: combined reveal panel over the HARD layout cases ────────────────────────
+
+test.describe("TV Stage — combined reveal panel over hard layout cases (item 1)", () => {
+  test("revealLong: the panel does not overlap the question hero or the answer grid, and the prompt stays legible", async ({
+    page
+  }) => {
+    await gotoStage(page, "revealLong");
+    await settleForShot(page);
+
+    const hero = await page.locator("[data-hero]").boundingBox();
+    const grid = await page.locator("[data-answer-grid]").boundingBox();
+    const panel = await page.locator("[data-component='reveal-panel']").boundingBox();
+    expect(hero, "hero must render").not.toBeNull();
+    expect(grid).not.toBeNull();
+    expect(panel, "the combined reveal panel must render").not.toBeNull();
+
+    if (hero && grid && panel) {
+      // The panel sits BELOW the answer grid — no vertical overlap with the grid above it.
+      expect(panel.y, "panel must sit below the answer grid").toBeGreaterThanOrEqual(
+        grid.y + grid.height - 1
+      );
+      // The panel never overlaps the hero (question text) above it either.
+      expect(panel.y).toBeGreaterThanOrEqual(hero.y + hero.height - 1);
+    }
+
+    // The prompt still fits its box with no overflow (the auto-fit hook + the panel's fixed compact
+    // size coexist without fighting over space).
+    const overflow = await page.locator("[data-prompt-fit]").evaluate(el => ({
+      scrollH: el.scrollHeight,
+      clientH: el.clientHeight
+    }));
+    expect(overflow.scrollH).toBeLessThanOrEqual(overflow.clientH + 2);
+
+    // The panel itself stays compact — it must never grow into a "wall of chips" per the design
+    // requirement (winner row + a short others row only, well under half the viewport height).
+    const viewport = page.viewportSize();
+    expect(viewport).not.toBeNull();
+    if (panel && viewport) {
+      expect(panel.height).toBeLessThan(viewport.height * 0.25);
+    }
+  });
+
+  test("revealFlag: the panel sits below the image without overlapping or shrinking it", async ({
+    page
+  }) => {
+    await gotoStage(page, "revealFlag");
+    await settleForShot(page);
+
+    const flag = await page.locator("[data-hero-image] [data-component='flag']").boundingBox();
+    const panel = await page.locator("[data-component='reveal-panel']").boundingBox();
+    expect(flag, "flag image must render").not.toBeNull();
+    expect(panel).not.toBeNull();
+
+    if (flag && panel) {
+      // The image stays a clear, normal size (not shrunk to a thumbnail) — same guard as the A5
+      // question-screen regression test, now proven WITH the reveal panel also on screen.
+      expect(flag.height, "flag must stay a clear, normal size").toBeGreaterThan(90);
+      // No vertical overlap between the image and the panel below it.
+      expect(panel.y).toBeGreaterThanOrEqual(flag.y + flag.height - 1);
+    }
+  });
+});
+
 // ─── Item 2: scoreboard bar-track equality ────────────────────────────────────────────
 
 test.describe("TV Stage — scoreboard bar tracks (item 2)", () => {
@@ -502,6 +592,52 @@ test.describe("TV Stage — scoreboard bar tracks (item 2)", () => {
   });
 });
 
+// ─── Item 3: scoreboard choreography — delta-first, THEN the FLIP reorder ─────────────
+// Real (non-reduced) motion, deterministic via the `data-choreography` state hook and the
+// overtaking tile's live `transform` — proves the SEQUENCE, not just the end state.
+
+test.describe("TV Stage — scoreboard overtake choreography (item 3)", () => {
+  test("delta chip + count-up show BEFORE the FLIP reorder starts (sequenced, not simultaneous)", async ({
+    page
+  }) => {
+    // Real motion — this test proves the live sequencing, not the settled end-state.
+    await gotoStage(page, "scoreboard");
+    const root = page.locator("[data-component='stage-scoreboard']");
+    const mover = page.locator("[data-component='scoreboard-tile'][data-moved-up='true']");
+
+    // Phase 1 — "delta": the round-gain badge is visible immediately, and the mover is still held
+    // at its PRE-round offset (a non-zero translateY — it has not reordered onto the final row yet).
+    await expect(root).toHaveAttribute("data-choreography", "delta");
+    await expect(page.locator("[data-component='scoreboard-tile'] [data-gain]")).toHaveCount(1);
+    const preReorderTransform = await mover.evaluate(el => (el as HTMLElement).style.transform);
+    expect(preReorderTransform).toMatch(/translateY\((?!0px\)).+\)/);
+
+    // Phase 2 — "reorder": once the delta beat's hold elapses, the root flips to "reorder" and the
+    // mover's transform is actively animating toward rest (still mid-flight, not yet 0).
+    await expect(root).toHaveAttribute("data-choreography", "reorder", { timeout: 3000 });
+    await expect(mover).toHaveCSS("transition-property", "transform");
+
+    // Phase 3 — "settled": the FLIP transition completes and the whole choreography rests.
+    await expect(root).toHaveAttribute("data-choreography", "settled", { timeout: 2000 });
+    await expect
+      .poll(async () => mover.evaluate(el => (el as HTMLElement).style.transform), {
+        timeout: 2000
+      })
+      .toBe("translateY(0px)");
+  });
+
+  test("reduced motion collapses straight to the settled choreography (no staggering)", async ({
+    page
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await gotoStage(page, "scoreboard");
+    await expect(page.locator("[data-component='stage-scoreboard']")).toHaveAttribute(
+      "data-choreography",
+      "settled"
+    );
+  });
+});
+
 // ─── Visual baselines ─────────────────────────────────────────────────────────────────
 
 const TV_SCREENS: ReadonlyArray<{ phase: StagePhaseKey; shot: string }> = [
@@ -532,6 +668,9 @@ const TV_SCREENS: ReadonlyArray<{ phase: StagePhaseKey; shot: string }> = [
   { phase: "revealWrongSteal", shot: "tv-reveal-wrong-steal.png" },
   { phase: "revealTimeout", shot: "tv-reveal-timeout.png" },
   { phase: "revealStolen", shot: "tv-reveal-stolen.png" },
+  // Item 1 hard layout cases: the combined reveal panel over a long/image question
+  { phase: "revealLong", shot: "tv-reveal-long.png" },
+  { phase: "revealFlag", shot: "tv-reveal-flag.png" },
   // Overlay screens (C2, D1–D4)
   { phase: "pauseOverlay", shot: "tv-overlay-pause.png" },
   { phase: "disconnectBanner", shot: "tv-overlay-disconnect.png" },

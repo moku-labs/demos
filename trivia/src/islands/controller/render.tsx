@@ -13,6 +13,7 @@ import { LeaveModal } from "../../components/LeaveModal";
 import { MidJoinModal } from "../../components/MidJoinModal";
 import { PhoneAnswer } from "../../components/PhoneAnswer";
 import { PhoneCategory } from "../../components/PhoneCategory";
+import { PhoneConnectionBanner } from "../../components/PhoneConnectionBanner";
 import { PhoneFinal } from "../../components/PhoneFinal";
 import { PhoneLanguageVote } from "../../components/PhoneLanguageVote";
 import { PhoneWaitingCard } from "../../components/PhoneWaitingCard";
@@ -20,10 +21,10 @@ import { RevealFlash } from "../../components/RevealFlash";
 import type { JoinProfile } from "../../components/types";
 import { TRIVIA } from "../../config";
 import { ramp } from "../../lib/difficulty";
-import { intent } from "../../lib/room";
+import { intent, retryConnection } from "../../lib/room";
 import { sound } from "../../lib/sound";
 import type { CategoryId, Lang, PlayerProfile, TriviaState } from "../../lib/types";
-import { findPlayer } from "../../lib/view";
+import { connectedPlayerCount, findPlayer } from "../../lib/view";
 import { rememberIdentity } from "./profile";
 import type { ControllerContext, ControllerState } from "./types";
 
@@ -253,7 +254,9 @@ function joinedScreen(
         title={`Round ${s.match.round} done`}
         subtitle="Next round soon ♪"
       >
-        <DifficultyPips tier={ramp(s.match.round + 1)} />
+        <DifficultyPips
+          tier={ramp(s.match.round + 1, connectedPlayerCount(s.players), s.match.totalRounds)}
+        />
       </PhoneWaitingCard>
     );
   }
@@ -280,11 +283,21 @@ export function render(state: Readonly<ControllerState>, ctx: ControllerContext)
   const handlers = makeHandlers(ctx, state);
   const { s } = state;
   const self = findPlayer(s.players, s.self);
+  // Item 4 (connectivity audit): the phone's own connection-lost/reconnecting banner overlays
+  // WHATEVER screen it lost the link on — never a silent stale screen. Rendered on every branch below.
+  const connectionBanner =
+    state.connection === "ok" ? null : (
+      <PhoneConnectionBanner
+        retrying={state.connection === "reconnecting"}
+        onRetry={retryConnection}
+      />
+    );
 
   if (state.left) {
     return (
       <div data-controller data-phase="final">
         <PhoneWaitingCard emoji="👋" title="You left the game" subtitle="Thanks for playing!" />
+        {connectionBanner}
       </div>
     );
   }
@@ -295,6 +308,7 @@ export function render(state: Readonly<ControllerState>, ctx: ControllerContext)
       return (
         <div data-controller data-phase={s.match.phase}>
           <MidJoinModal onDismiss={handlers.onStay} />
+          {connectionBanner}
         </div>
       );
     }
@@ -310,6 +324,7 @@ export function render(state: Readonly<ControllerState>, ctx: ControllerContext)
           joinedColor={state.joinedProfile?.color}
           onJoin={handlers.onJoin}
         />
+        {connectionBanner}
       </div>
     );
   }
@@ -325,6 +340,7 @@ export function render(state: Readonly<ControllerState>, ctx: ControllerContext)
     >
       {joinedScreen(state, self, handlers)}
       {state.leaving && <LeaveModal onStay={handlers.onStay} onLeave={handlers.onLeave} />}
+      {connectionBanner}
     </div>
   );
 }

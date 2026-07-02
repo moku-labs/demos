@@ -1,16 +1,24 @@
 /**
  * @file controller island — onMount: join the room from the deep-link code, wire the snapshot
- * subscription (persisting each shown question id), the countdown ticker, and seed the host's no-repeat
- * union with this phone's history. DOM glue only — the phone reads slices + sends intents; the host is
- * authoritative.
+ * subscription (persisting each shown question id), the countdown ticker, the phone's OWN connectivity
+ * banner (item 4 — connectivity audit), and seed the host's no-repeat union with this phone's history.
+ * DOM glue only — the phone reads slices + sends intents; the host is authoritative.
  */
-import { intent, startController, subscribe } from "../../lib/room";
+import { intent, onLifecycle, startController, subscribe } from "../../lib/room";
 import { startSoundDirector } from "../../lib/sound";
 import { loadIdentity } from "./profile";
 import type { ControllerContext } from "./types";
 
 /** localStorage key for this device's cross-match no-repeat question history. */
 const SEEN_KEY = "trivia.seen";
+
+/**
+ * How long the phone's connectivity banner stays in the "reconnecting…" spinner state before
+ * escalating to "connection lost" (Retry button) if no `sync-ready` has arrived. Mirrors the TV
+ * reconnect strip's self-heal window (D3) — a transient blip recovers silently well before this;
+ * escalating past it means the drop is real and the player needs a manual nudge.
+ */
+const CONNECTION_LOST_MS = 8000;
 
 /**
  * Read the `|`-delimited seen-question ids from localStorage (empty string when unavailable).
@@ -93,6 +101,37 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
   // This phone's own sound director: reacts only to its moments (your-turn / your-steal nudges + the
   // answerer's reveal flash + haptic). Gesture SFX (tap/lock/pick/join) fire directly from the handlers.
   ctx.cleanup(startSoundDirector("controller"));
+
+  // This phone's OWN connectivity banner (item 4 — connectivity audit): a `network-warning` (a
+  // dropped transport) shows the "Reconnecting…" spinner; if no `sync-ready` arrives within
+  // CONNECTION_LOST_MS the banner escalates to "Connection lost" with a manual Retry — a dropped phone
+  // NEVER sits silently on a stale screen. `sync-ready` clears the banner (any peer reconnecting also
+  // proves the link is alive). ARMED ONLY AFTER the first `sync-ready`: transient warnings are common
+  // while a join is still negotiating, and the blocking "lost" takeover must never cover the join
+  // wizard (which owns its own pre-join failure/retry UX) — a real regression the lobby-new-code e2e
+  // caught: the card swallowed the wizard and the phone could never join the fresh room.
+  let everSynced = false;
+  let lostTimer: ReturnType<typeof setTimeout> | undefined;
+  // eslint-disable-next-line jsdoc/require-jsdoc -- inline clear-timer helper (used by both branches below)
+  const clearLostTimer = (): void => {
+    if (lostTimer !== undefined) clearTimeout(lostTimer);
+    lostTimer = undefined;
+  };
+  ctx.cleanup(
+    onLifecycle(event => {
+      if (event.kind === "network-warning") {
+        if (!everSynced) return; // pre-join: never block the wizard with connectivity UI
+        ctx.set({ connection: "reconnecting" });
+        clearLostTimer();
+        lostTimer = setTimeout(() => ctx.set({ connection: "lost" }), CONNECTION_LOST_MS);
+      } else if (event.kind === "sync-ready" || event.kind === "peer-joined") {
+        if (event.kind === "sync-ready") everSynced = true;
+        clearLostTimer();
+        ctx.set({ connection: "ok" });
+      }
+    })
+  );
+  ctx.cleanup(clearLostTimer);
 
   try {
     await startController(code);

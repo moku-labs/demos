@@ -2,7 +2,10 @@
  * @file Exploratory QA — five new features (2026-06-28)
  *
  * Charters:
- *   NF-1 (FedEx) — Reveal score chip count-up: settled value = total; from = total - delta
+ *   NF-1 (FedEx) — Reveal panel winner row (item 1 combined reveal UI, 2026-07-02 redesign):
+ *     name present, points delta correct. Originally guarded the standalone `score-chip` count-up
+ *     (removed — the score rollup was folded into the combined `reveal-panel`'s winner row, which
+ *     renders its points statically, no animation, so these invariants simplified accordingly).
  *   NF-2 (FedEx) — TV scoreboard round-gain: +N badge present; settled score = total
  *   NF-3 (Supermodel/OCD) — Phone category stagger animation honours reduced-motion
  *   NF-4 (FedEx) — Phone scoreboard transition card: round done + difficulty pips
@@ -22,56 +25,55 @@ async function gotoPhone(page: Page, phase: string): Promise<void> {
   await page.evaluate(() => document.fonts.ready);
 }
 
-// ─── NF-1: Reveal score chip count-up ─────────────────────────────────────────
+// ─── NF-1: Reveal panel winner row (combined reveal UI, item 1) ───────────────
 
-test.describe("NF-1 — Reveal score chip count-up (FedEx + invariant)", () => {
-  // Invariant: with reduced-motion, [data-total] must show the FINAL total immediately
-  // (1400 for Mochi), not the pre-round start value (1200).
-  test("score chip shows final total (1400) instantly with reduced-motion", async ({ page }) => {
+test.describe("NF-1 — Reveal panel winner row (FedEx + invariant)", () => {
+  // Invariant: the winner row shows the correct points gained ("+200" for Mochi in the fixture).
+  // The combined reveal panel renders points statically (no count-up animation), so this is a
+  // straightforward presence + value check — simplified from the old count-up-settles invariant.
+  test("winner row shows the correct points delta (+200)", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await gotoStage(page, "reveal");
     await page.waitForTimeout(100);
 
-    const chip = page.locator("[data-component='score-chip']").first();
-    await expect(chip).toBeVisible();
+    const winnerRow = page.locator("[data-component='reveal-panel'] [data-winner-row]");
+    await expect(winnerRow).toBeVisible();
 
-    const total = await chip.locator("[data-total]").textContent();
-    // In the fixture, Mochi's total=1400, delta=200. With reduced-motion the count-up
-    // must settle to 1400 immediately (not 1200 the start value).
+    const points = await winnerRow.locator("[data-points]").textContent();
     expect(
-      total?.replaceAll(",", ""),
-      `Score chip [data-total] must show 1,400 with reduced-motion (count-up settles instantly). Got: ${total}`
-    ).toBe("1400");
+      points?.trim(),
+      `Reveal panel winner row [data-points] must read "+200" for Mochi in the fixture. Got: ${points}`
+    ).toBe("+200");
   });
 
-  // Invariant: [data-delta] shows the correct delta string "+200"
-  test("score chip delta is +200 (matches fixture scorer Mochi)", async ({ page }) => {
+  // Invariant: [data-points] shows the correct delta string "+200"
+  test("winner row points is +200 (matches fixture scorer Mochi)", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await gotoStage(page, "reveal");
 
-    const chip = page.locator("[data-component='score-chip']").first();
-    const delta = await chip.locator("[data-delta]").textContent();
+    const winnerRow = page.locator("[data-component='reveal-panel'] [data-winner-row]");
+    const points = await winnerRow.locator("[data-points]").textContent();
     expect(
-      delta?.trim(),
-      `Score chip [data-delta] must read "+200" for Mochi in the fixture. Got: ${delta}`
+      points?.trim(),
+      `Reveal panel winner row [data-points] must read "+200" for Mochi in the fixture. Got: ${points}`
     ).toBe("+200");
   });
 
   // Invariant: name is present and non-empty
-  test("score chip name is present and non-empty", async ({ page }) => {
+  test("winner row name is present and non-empty", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await gotoStage(page, "reveal");
 
-    const chip = page.locator("[data-component='score-chip']").first();
-    const name = await chip.locator("[data-name]").textContent();
+    const winnerRow = page.locator("[data-component='reveal-panel'] [data-winner-row]");
+    const name = await winnerRow.locator("[data-name]").textContent();
     expect(
       (name ?? "").trim().length,
-      `Score chip [data-name] must be non-empty. Got: "${name}"`
+      `Reveal panel winner row [data-name] must be non-empty. Got: "${name}"`
     ).toBeGreaterThan(0);
   });
 
   // Implicit oracle: no JS errors during reveal render
-  test("reveal screen: no JS errors with count-up active (no reduced-motion)", async ({ page }) => {
+  test("reveal screen: no JS errors with the combined reveal panel active", async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", e => errors.push(e.message));
     page.on("console", m => {

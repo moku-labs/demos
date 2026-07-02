@@ -6,6 +6,14 @@ import type { Spa } from "@moku-labs/web/browser";
 import type { JoinProfile } from "../../components/types";
 import type { TriviaState } from "../../lib/types";
 
+/**
+ * This phone's own connectivity state (item 4 — connectivity audit), driven by `onLifecycle`:
+ * `"ok"` — connected, no banner. `"reconnecting"` — a `network-warning` fired (join failed, or the
+ * transport is recovering) and a self-heal window is running; shows the spinner. `"lost"` — the
+ * self-heal window elapsed with no `sync-ready`; shows the Retry button (a manual nudge is needed).
+ */
+export type ConnectionStatus = "ok" | "reconnecting" | "lost";
+
 /** The controller island's per-instance state. */
 export type ControllerState = {
   /** The merged synced snapshot. */
@@ -24,6 +32,8 @@ export type ControllerState = {
   leaving: boolean;
   /** Whether this phone has left the game (terminal). */
   left: boolean;
+  /** This phone's own link status to the stage (item 4) — drives the connection-lost banner. */
+  connection: ConnectionStatus;
 };
 
 /** The controller island context (typed per-instance state). */

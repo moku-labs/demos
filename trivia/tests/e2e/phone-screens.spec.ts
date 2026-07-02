@@ -50,7 +50,10 @@ const CONTROLLER_PHASE: Record<PhonePhaseKey, string> = {
   questionWatcher: "question",
   revealWatcher: "reveal",
   // left: state.left=true renders the "You left" card inside data-phase="final"
-  left: "final"
+  left: "final",
+  // Item 4 (connectivity audit): the connection banner overlays the underlying (question) screen.
+  connectionReconnecting: "question",
+  connectionLost: "question"
 };
 
 /** Navigate to a fixture phone screen and wait for the controller to render it. */
@@ -327,6 +330,43 @@ test.describe("Phone — left screen", () => {
   });
 });
 
+// ─── Item 4: the phone's OWN connectivity banner (connection lost / reconnecting) ─────────
+
+test.describe("Phone — connection banner (item 4 connectivity audit)", () => {
+  test("in-flight reconnect shows a LIGHTWEIGHT, non-blocking strip (mirrors the TV's D3 strip)", async ({
+    page
+  }) => {
+    await gotoPhone(page, "connectionReconnecting");
+    const banner = page.locator("[data-component='phone-connection-banner']");
+    await expect(banner).toBeVisible();
+    await expect(banner).toHaveAttribute("data-retrying", "true");
+    await expect(banner.locator("[data-label]")).toContainText("Reconnecting");
+    await expect(banner.locator("[data-spinner]")).toBeVisible();
+    await expect(banner.locator("[data-btn='amber']")).toHaveCount(0);
+    // The strip must be NON-blocking — pointer-events:none — so it never intercepts a tap on the
+    // screen underneath during a transient blip (regression guard: this exact bug blocked the join
+    // wizard's Next button during normal WebRTC negotiation before the fix).
+    await expect(banner).toHaveCSS("pointer-events", "none");
+    await expect(page.locator("[data-controller]")).toBeVisible();
+  });
+
+  test("a settled drop shows a BLOCKING 'Connection lost' takeover with a Retry button", async ({
+    page
+  }) => {
+    await gotoPhone(page, "connectionLost");
+    const banner = page.locator("[data-component='phone-connection-banner']");
+    await expect(banner).toBeVisible();
+    await expect(banner).not.toHaveAttribute("data-retrying", "true");
+    // The settled state IS deliberately blocking (the player must act) — not pointer-events:none.
+    await expect(banner).not.toHaveCSS("pointer-events", "none");
+    await expect(banner.locator("[data-title]")).toContainText("Connection lost");
+    await expect(banner.locator("[data-spinner]")).toHaveCount(0);
+    const retryButton = banner.locator("[data-btn='amber']");
+    await expect(retryButton).toBeVisible();
+    await expect(retryButton).toContainText("Retry");
+  });
+});
+
 // ─── Visual baselines (all at 390×844 — phone-chromium + phone-webkit projects) ──────
 
 const PHONE_SCREENS: ReadonlyArray<{ phase: PhonePhaseKey; shot: string }> = [
@@ -355,7 +395,10 @@ const PHONE_SCREENS: ReadonlyArray<{ phase: PhonePhaseKey; shot: string }> = [
   { phase: "categoryPickWatcher", shot: "phone-category-pick-watcher.png" },
   { phase: "questionWatcher", shot: "phone-question-watcher.png" },
   { phase: "revealWatcher", shot: "phone-reveal-watcher.png" },
-  { phase: "left", shot: "phone-left.png" }
+  { phase: "left", shot: "phone-left.png" },
+  // Item 4 (connectivity audit): the phone's own connection banner (new baselines)
+  { phase: "connectionReconnecting", shot: "phone-connection-reconnecting.png" },
+  { phase: "connectionLost", shot: "phone-connection-lost.png" }
 ];
 
 test.describe("Phone — visual baselines (390×844)", () => {

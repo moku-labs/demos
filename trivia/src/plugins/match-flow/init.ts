@@ -12,6 +12,7 @@ import type { PeerId, StageApi } from "@moku-labs/room";
 import type { CategoryId, Tier } from "../../config";
 import { TRIVIA } from "../../config";
 import { ramp } from "../../lib/difficulty";
+import { matchLength } from "../../lib/match-length";
 import type { Lang } from "../../lib/types";
 import { buildAward, buildGrade, buildMutate, type ReadSlice } from "./adapters";
 import {
@@ -33,12 +34,14 @@ import type { Config, MatchSlice, Phase, PlayersSlice, State } from "./types";
  * (a valid JSON cell); the `question`/`reveal` slices start blank and are only read in their phase.
  *
  * @param sync - The `syncPlugin` registerSlice API.
+ * @param baseRounds - The unscaled base round count (`config.rounds`) — the lobby default for
+ *   `match.totalRounds` before the fair round-scaling total (item 5) is computed at `start-game`.
  * @example
  * ```ts
- * registerSlices(ctx.require(syncPlugin));
+ * registerSlices(ctx.require(syncPlugin), config.rounds);
  * ```
  */
-function registerSlices(sync: SyncDeps): void {
+function registerSlices(sync: SyncDeps, baseRounds: number): void {
   sync.registerSlice("match", {
     phase: "lobby",
     round: 1,
@@ -52,7 +55,10 @@ function registerSlices(sync: SyncDeps): void {
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
     phaseDeadlineTs: null,
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (null until a category is chosen)
-    chosenCategory: null
+    chosenCategory: null,
+    // Fair round scaling (item 5) is only known once players have joined; the lobby default is the
+    // unscaled base config — `start-game` recomputes it from the connected player count.
+    totalRounds: baseRounds
   });
 
   sync.registerSlice("players", { entries: [] });
@@ -79,7 +85,9 @@ function registerSlices(sync: SyncDeps): void {
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
     scorerPeer: null,
     answerText: "",
-    stealResults: []
+    stealResults: [],
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
+    answerMs: null
   });
 
   sync.registerSlice("steal", {
@@ -103,16 +111,19 @@ function registerSlices(sync: SyncDeps): void {
  * @param stage - The stage facade (mutate).
  * @param config - The resolved plugin config.
  * @param questionBank - The question-bank API (to load the chosen language's bank).
+ * @param totalRounds - This match's fair-scaled round total (item 5), computed at `start-game` from
+ *   the connected player count — stamped onto `match.totalRounds` alongside round 1.
  * @returns A `(lang) => void` callback for `language.openVote`.
  * @example
  * ```ts
- * language.openVote(beginRoundOne(stage, config, questionBank));
+ * language.openVote(beginRoundOne(stage, config, questionBank, totalRounds));
  * ```
  */
 function beginRoundOne(
   stage: Pick<StageApi, "mutate">,
   config: Config,
-  questionBank: QuestionBankDeps
+  questionBank: QuestionBankDeps,
+  totalRounds: number
 ): (lang: string) => void {
   return lang => {
     stage.mutate("match", confirmed => ({
@@ -120,7 +131,8 @@ function beginRoundOne(
       language: lang as Lang,
       phase: "roundIntro" as Phase,
       round: 1,
-      phaseDeadlineTs: Date.now() + config.roundIntroMs
+      phaseDeadlineTs: Date.now() + config.roundIntroMs,
+      totalRounds
     }));
     questionBank.load(lang).catch(() => {
       // Bank load failure surfaces via the `bank` slice status; the picker shows it.
@@ -240,7 +252,7 @@ export function initMatchFlow(
   state: State,
   readSlice: ReadSlice
 ): void {
-  registerSlices(sync);
+  registerSlices(sync, config.rounds);
 
   // ── join-profile: claim a seat (lobby) OR reconnect a reloaded phone to its existing seat ──────
   // `playerToken` is the phone's localStorage-persisted stable identity (the room framework mints a
@@ -337,8 +349,19 @@ export function initMatchFlow(
       const hostPeer = draft.hostPeer as PeerId | null | undefined;
       if (hostPeer !== null && hostPeer !== undefined && hostPeer !== meta.peerId) return draft;
 
+      // Fair round scaling (item 5): lock in this match's total round count from the connected
+      // player count NOW (lobby → languageVote), so it never shifts mid-match if someone later
+      // joins/leaves — every player's turn count + difficulty distribution stays fair to the table
+      // that actually started the game.
+      const connectedCount = Math.max(
+        1,
+        (readSlice("players") as PlayersSlice | undefined)?.entries.filter(entry => entry.connected)
+          .length ?? 1
+      );
+      const totalRounds = matchLength(connectedCount, config.rounds);
+
       // The active player is set by the clock at the roundIntro → categoryPick transition.
-      language.openVote(beginRoundOne(stage, config, questionBank));
+      language.openVote(beginRoundOne(stage, config, questionBank, totalRounds));
       return { ...draft, phase: "languageVote" as Phase };
     });
   });
@@ -362,7 +385,13 @@ export function initMatchFlow(
       if (activePeer !== meta.peerId) return draft;
 
       const round = (draft.round as number | undefined) ?? 1;
-      const question = questionBank.next(category, ramp(round));
+      const totalRounds = (draft.totalRounds as number | undefined) ?? config.rounds;
+      const connectedCount = Math.max(
+        1,
+        (readSlice("players") as PlayersSlice | undefined)?.entries.filter(entry => entry.connected)
+          .length ?? 1
+      );
+      const question = questionBank.next(category, ramp(round, connectedCount, totalRounds));
       // Category exhausted — stay in categoryPick (the island reads availability() for the D2 toast).
       if (!question) return draft;
 
@@ -438,6 +467,17 @@ export function initMatchFlow(
 
     const { correctSlot, correct } = questionBank.grade(question.id, slot);
 
+    // Combined reveal UI (item 1) needs a per-answer elapsed time (shown as "9.2s"). The window start
+    // differs by mode: the active answerer's window starts at `deadlineTs - answerMs` (the question
+    // going live); a stealer's window starts at `steal.armedTs` (when the lead-in unlocked the grid —
+    // NOT the earlier moment the active player missed, which would unfairly inflate every stealer's
+    // time by the lead-in beat they could not act during).
+    const windowStartTs =
+      question.mode === "steal" && steal.armedTs !== null
+        ? steal.armedTs
+        : question.deadlineTs - config.answerMs;
+    const answerElapsedMs = Math.max(0, Date.now() - windowStartTs);
+
     const stillOpen = resolveAnswer({
       state,
       match,
@@ -448,9 +488,11 @@ export function initMatchFlow(
       correct,
       pickedSlot: slot,
       correctSlot,
+      answerElapsedMs,
       mutate: buildMutate(stage),
       award: buildAward(scoring),
       revealMs: config.revealMs,
+      revealFastMs: config.revealFastMs,
       stealMs: config.stealMs,
       stealLeadMs: config.stealLeadMs,
       stealSpeedTiers: config.stealSpeedTiers
@@ -481,6 +523,7 @@ export function initMatchFlow(
       award: buildAward(scoring),
       grade: buildGrade(questionBank),
       revealMs: config.revealMs,
+      revealFastMs: config.revealFastMs,
       stealMs: config.stealMs,
       stealLeadMs: config.stealLeadMs,
       stealSpeedTiers: config.stealSpeedTiers
@@ -505,7 +548,11 @@ export function initMatchFlow(
     state.stealAnswers = [];
 
     const { language: lang, activePeer: previousActive } = match;
-    const firstConnected = (cachedPlayers() ?? []).find(player => player.connected);
+    const connectedPlayers = (cachedPlayers() ?? []).filter(player => player.connected);
+    const firstConnected = connectedPlayers[0];
+    // Fair round scaling (item 5): recompute the total from the CURRENT connected table for the
+    // fresh game (a play-again table may differ from the one that started the last match).
+    const totalRounds = matchLength(Math.max(1, connectedPlayers.length), config.rounds);
 
     // Prune disconnected/departed players so a fresh game never carries a ghost seat (bug #5 safety net).
     stage.mutate("players", draft => {
@@ -523,7 +570,8 @@ export function initMatchFlow(
       paused: false,
       phaseDeadlineTs: Date.now() + config.roundIntroMs,
       // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell; no chosen category on reset
-      chosenCategory: null
+      chosenCategory: null,
+      totalRounds
     }));
   });
 }

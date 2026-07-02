@@ -22,13 +22,14 @@ import type { StageState } from "./types";
 
 /** The context badge text for the top bar, per phase. */
 function badgeFor(s: TriviaState): string {
-  const { phase, round } = s.match;
+  const { phase, round, totalRounds } = s.match;
   if (phase === "lobby") return "Lobby";
   if (phase === "languageVote") return "Match setup";
   if (phase === "scoreboard") return `After Round ${round}`;
   if (phase === "final") return "🏆 Final Results";
-  // categoryReveal and all in-round phases share the "Round N / M" badge.
-  return `Round ${round} / ${TRIVIA.rounds}`;
+  // categoryReveal and all in-round phases share the "Round N / M" badge. The total is THIS match's
+  // fair-scaled length (item 5) — falls back to the unscaled base before it's set (pre-lobby state).
+  return `Round ${round} / ${totalRounds || TRIVIA.rounds}`;
 }
 
 /** B1 — the persistent top bar (logo · context badge). The mute control is its own island. */
@@ -95,7 +96,7 @@ export function render(state: Readonly<StageState>): Spa.RenderResult {
       <div data-stage data-phase={phase}>
         <RoundIntro
           round={s.match.round}
-          total={TRIVIA.rounds}
+          total={s.match.totalRounds || TRIVIA.rounds}
           avatar={active?.avatar}
           name={active?.name}
           color={active?.color}

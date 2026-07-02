@@ -53,5 +53,11 @@ export function standings(
   const zeroRows: ScoreEntry[] = players
     .filter(player => player.connected && !scored.has(player.peerId))
     .map(player => ({ peerId: player.peerId, total: 0, delta: 0, rank: 0, prevRank: 0 }));
-  return rank([...scores, ...zeroRows]);
+
+  // A merged zero-score row "was" nowhere — pin its prevRank to its final rank (no movement), else
+  // rank() would carry the 0 sentinel into prevRank and the scoreboard would slide the row in from
+  // ABOVE slot 1 (climb = 0 − rank), overlapping the title (the tv-scoreboard-zero rendering bug).
+  return rank([...scores, ...zeroRows]).map(entry =>
+    entry.prevRank === 0 ? { ...entry, prevRank: entry.rank } : entry
+  );
 }

@@ -32,6 +32,7 @@ const defaultConfig: Config = {
   roundIntroMs: TRIVIA.timers.roundIntroMs,
   categoryRevealMs: TRIVIA.timers.categoryRevealMs,
   revealMs: TRIVIA.timers.revealMs,
+  revealFastMs: TRIVIA.timers.revealFastMs,
   scoreboardMs: TRIVIA.timers.scoreboardMs,
   endCountdownMs: TRIVIA.timers.endCountdownMs,
   offerCount: TRIVIA.offerCount,

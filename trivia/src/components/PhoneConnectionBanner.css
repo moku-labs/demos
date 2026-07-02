@@ -1,0 +1,130 @@
+/**
+ * PhoneConnectionBanner — co-located CSS. Two deliberately different weights (mirrors the TV's own
+ * D1/D3 split): `[data-retrying]` is a lightweight, NON-BLOCKING top strip (pointer-events: none —
+ * it must never intercept taps on the screen underneath, e.g. the join wizard mid-connect); the
+ * settled "lost" state is a full-phone blurred backdrop + blocking card with a Retry button.
+ * @scope-encapsulated, data-* only.
+ */
+@scope ([data-component="phone-connection-banner"]) {
+  /* Lightweight reconnecting strip — pinned to the top, deliberately NON-interactive so it never
+     blocks a tap on whatever screen is underneath during a transient blip. */
+  :scope[data-retrying] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 45;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 8px var(--space-4);
+    background: rgba(8, 5, 20, 0.82);
+    border-bottom: 2px solid var(--clay-mint);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    animation: drop-in var(--dur-entry) var(--spring) both;
+  }
+
+  :scope[data-retrying] [data-icon] {
+    font-size: 15px;
+    line-height: 1;
+  }
+
+  :scope[data-retrying] [data-label] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--clay-mint);
+  }
+
+  :scope[data-retrying] [data-spinner] {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 2px solid rgba(78, 205, 196, 0.28);
+    border-top-color: var(--clay-mint);
+    animation: spin 0.7s linear infinite;
+  }
+
+  /* Settled "connection lost" — a full-phone blocking takeover (the player needs to act). */
+  :scope:not([data-retrying]) {
+    position: absolute;
+    inset: 0;
+    z-index: 45;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-5);
+    background: rgba(0, 0, 0, 0.68);
+    backdrop-filter: blur(6px);
+  }
+
+  [data-card] {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    max-width: 300px;
+    padding: var(--space-6) var(--space-5);
+    border-radius: var(--radius-xl);
+    background: #170f2c;
+    border: 1px solid rgba(78, 205, 196, 0.3);
+    box-shadow:
+      var(--shadow-xl),
+      inset 0 2px 0 rgba(255, 255, 255, 0.14);
+    text-align: center;
+    animation: pop-spring var(--dur-entry) var(--spring);
+  }
+
+  [data-card] [data-icon] {
+    font-size: 36px;
+    line-height: 1;
+  }
+
+  [data-title] {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--ink);
+  }
+
+  [data-body] {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.35;
+    color: var(--ink-dim);
+  }
+
+  [data-btn="amber"] {
+    width: 100%;
+    margin-top: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+    color: #2a1604;
+    background: linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--clay-peach) 90%, white),
+      var(--clay-peach)
+    );
+    box-shadow:
+      0 8px 18px rgba(255, 179, 71, 0.42),
+      inset 0 2px 0 rgba(255, 255, 255, 0.45);
+    transition:
+      transform var(--dur-hover) var(--spring),
+      box-shadow var(--dur-hover) ease;
+  }
+
+  [data-btn="amber"]:active {
+    transform: scale(0.96);
+    box-shadow: var(--shadow-pressed);
+  }
+}

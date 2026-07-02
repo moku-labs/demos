@@ -30,7 +30,13 @@ export type Config = {
   roundIntroMs: number;
   /** How long the category-chosen reveal beat holds before advancing to the question (ms). */
   categoryRevealMs: number;
+  /** Full reveal hold (ms) — used whenever a steal window opened (outcome stolen/wrong/unanswered). */
   revealMs: number;
+  /**
+   * Shortened reveal hold (ms) for the no-steal fast path (outcome `correct` — the active player
+   * nailed it outright, no steal opened). Adaptive reveal delay (item 2).
+   */
+  revealFastMs: number;
   scoreboardMs: number;
   /** How long the podium lingers before auto-returning to the lobby (final phase). */
   endCountdownMs: number;
@@ -45,7 +51,17 @@ export type Config = {
  * publishes them to the reveal (`RevealSlice.stealResults`) so the TV can show every opponent's pick
  * (right/wrong) by name and who was fastest (the first `correct` entry).
  */
-export type StealResult = { peerId: PeerId; slot: number; correct: boolean };
+export type StealResult = {
+  peerId: PeerId;
+  slot: number;
+  correct: boolean;
+  /**
+   * Elapsed ms from the steal window unlocking (`armedTs`) to this player's lock — the source for the
+   * combined reveal UI's per-participant answer time (item 1, shown as e.g. "9.2s"). `undefined` for a
+   * dropped/forfeited slot (`STEAL_DROP_PICK` — no real lock happened) or a legacy/harness fixture.
+   */
+  answerMs?: number;
+};
 
 /**
  * Host-internal state — peers already tried on the current question + the per-question lock guard +
@@ -92,6 +108,14 @@ export type MatchSlice = {
   phaseDeadlineTs: number | null;
   /** The category the active player just chose; set in `categoryReveal`, cleared at `question`. */
   chosenCategory: CategoryId | null;
+  /**
+   * The fair match length for THIS match (rounds) — computed once at `start-game` from the
+   * connected player count (`matchLength`, `../../lib/match-length.ts`) and held fixed for the
+   * rest of the match so the round total (and every downstream "Round n of N" / difficulty-ramp
+   * read) never shifts mid-match if someone joins or leaves. Defaults to `config.rounds` (the
+   * unscaled base) before the first `start-game`.
+   */
+  totalRounds: number;
 };
 
 /** `players` slice — the joined player roster (lobby tiles, turn chips, scoreboard names). */
@@ -123,6 +147,13 @@ export type RevealSlice = {
    * "who stole / who missed / who was fastest" panel and the per-slot name tags on the reveal grid.
    */
   stealResults: StealResult[];
+  /**
+   * The active answerer's own elapsed answer time (ms), when they answered directly with NO steal
+   * window (`outcome === "correct"`) — the combined reveal UI (item 1) shows this alongside every
+   * steal participant's `StealResult.answerMs` so "who was fastest" reads the same way in both cases.
+   * `null` for every other outcome (a steal happened, or a timeout — no single direct answer time).
+   */
+  answerMs: number | null;
 };
 
 /**

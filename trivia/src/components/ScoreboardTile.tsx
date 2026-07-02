@@ -65,7 +65,8 @@ export function ScoreboardTile({
   total,
   delta,
   maxTotal,
-  movedUpOver
+  movedUpOver,
+  readyToReorder = true
 }: ScoreboardTileProps) {
   // Count up from the pre-round total; the bar tracks the same animated value so both grow together.
   // For a player who scored nothing (`delta === 0`) `from === total`, so the hook settles instantly —
@@ -73,22 +74,35 @@ export function ScoreboardTile({
   const shown = useCountUp(total, { from: total - delta, delayMs: 350, durationMs: 1100 });
   const pct = maxTotal > 0 ? Math.max(0, Math.min(1, shown / maxTotal)) * 100 : 0;
 
-  // Climb slide (F4): a tile that changed rank slides from its OLD slot into its new one, so an
-  // overtake reads as movement (not just a glow). `climb > 0` = moved up; we seed the tile at its
-  // pre-round offset (one row stride per place) and animate to rest on the next frame.
+  // Climb slide (F4, sequenced by item 3): a tile that changed rank slides from its OLD slot into its
+  // new one, so an overtake reads as movement (not just a glow) — but ONLY after the count-up/delta
+  // beat has settled (`readyToReorder`), so viewers see "who gained what" before "who moved where"
+  // instead of everything happening on the same frame. `climb > 0` = moved up. The tile is SEEDED at
+  // its pre-round offset as soon as it mounts (so a climber never flashes at its final slot early),
+  // and only animates to rest once `readyToReorder` flips true.
   const tileRef = useRef<HTMLDivElement>(null);
   const climb = (prevRank ?? rank) - rank;
   useLayoutEffect(() => {
     const element = tileRef.current;
     const mq = reducedMotionQuery();
-    if (!element || climb === 0 || mq?.matches) return;
+    if (!element) return;
+    if (climb === 0 || mq?.matches) {
+      // Snap to rest — never bare-return: a pre-round offset seeded by an earlier run of this effect
+      // (e.g. reduced-motion flipped ON after the delta phase seeded the transform, as Playwright's
+      // post-mount emulation does) would otherwise stick, freezing the tile slots out of order.
+      element.style.transition = "none";
+      element.style.transform = "translateY(0)";
+      return;
+    }
 
     const stride = element.offsetHeight + ROW_GAP_PX;
-    // Replace the generic mount slide-in with the targeted climb slide so the two don't fight over
-    // `transform`. Start at the pre-round slot (climb places below for a climber), then ease to rest.
+    // Always seed the pre-round slot immediately (climb places below for a climber) — this holds
+    // even before `readyToReorder`, so the row never flashes at its post-reorder position early.
     element.style.animation = "none";
     element.style.transition = "none";
     element.style.transform = `translateY(${climb * stride}px)`;
+
+    if (!readyToReorder) return;
 
     const raf = requestAnimationFrame(() => {
       element.style.transition = "transform var(--dur-slow, 600ms) var(--spring, ease-out)";
@@ -110,7 +124,7 @@ export function ScoreboardTile({
       cancelAnimationFrame(raf);
       mq?.removeEventListener("change", onPreferenceChange);
     };
-  }, [climb]);
+  }, [climb, readyToReorder]);
 
   return (
     <div

@@ -26,6 +26,7 @@ export function initState(): ControllerState {
     // eslint-disable-next-line unicorn/no-null -- null = "no locked question", never undefined
     lockedQid: null,
     leaving: false,
-    left: false
+    left: false,
+    connection: "ok"
   };
 }

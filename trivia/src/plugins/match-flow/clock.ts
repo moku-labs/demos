@@ -96,7 +96,7 @@ function runTick(deps: ClockDeps): void {
   } else if (phase === "scoreboard" && deadlinePassed) {
     advanceFromScoreboard(stage, config, state, match, players, round);
   } else if (phase === "final" && deadlinePassed) {
-    advanceFromFinal(stage, scoring, state);
+    advanceFromFinal(stage, scoring, state, config.rounds);
   }
 }
 

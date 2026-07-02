@@ -64,6 +64,21 @@ export function categoryMeta(id: string): CategoryMeta {
 }
 
 /**
+ * The number of currently-connected players — the input `ramp()`/`matchLength()` scale by (fair
+ * round scaling — item 5). Always at least 1 so a transient empty-roster read never divides by zero.
+ *
+ * @param players - The current roster.
+ * @returns The connected player count (≥ 1).
+ * @example
+ * ```ts
+ * const tier = ramp(s.match.round, connectedPlayerCount(s.players), s.match.totalRounds);
+ * ```
+ */
+export function connectedPlayerCount(players: readonly PlayerProfile[]): number {
+  return Math.max(1, players.filter(player => player.connected).length);
+}
+
+/**
  * Format a score for display with thousands separators (e.g. `4200` → `"4,200"`).
  *
  * @param total - The raw score.

@@ -81,9 +81,6 @@ export type TurnChipProps = {
   tone?: "neutral" | "correct" | "wrong";
 };
 
-/** ScoreChip (TV reveal roll-up, F2) — name · total · delta in the player's colour. */
-export type ScoreChipProps = { name: string; color: string; total: number; delta: number };
-
 /** ScoreboardTile (TV interstitial, §G) — rank · avatar · name · proportional bar · score. */
 export type ScoreboardTileProps = {
   rank: number;
@@ -97,6 +94,12 @@ export type ScoreboardTileProps = {
   maxTotal: number;
   /** The name of the player just overtaken, for the "▲ overtook …" badge (F4). */
   movedUpOver?: string | undefined;
+  /**
+   * Sequenced reveal gate (item 3): `false` while the round's point gains are still being read
+   * (delta chip + count-up) — the tile holds at its PRE-round rank slot. `true` once that beat
+   * settles, at which point an overtaking tile's FLIP climb-slide is allowed to start.
+   */
+  readyToReorder?: boolean | undefined;
 };
 
 /** PodiumBlock (TV final, §G) — a gold/silver/bronze stepped block with player + score above. */
@@ -236,6 +239,20 @@ export type MidJoinModalProps = { onDismiss: () => void };
 
 /** RevealFlash (phone A13/A14) — full-screen correct/wrong flash. */
 export type RevealFlashProps = { correct: boolean; points?: number };
+
+/**
+ * PhoneConnectionBanner (phone, item 4 connectivity audit) — the phone-side "connection lost /
+ * reconnecting…" takeover, mirroring the TV's D1/D3 connectivity UX but on the player's own screen
+ * (previously the phone had NO connectivity feedback at all — a dropped link left it silently
+ * frozen on a stale screen). `retrying` distinguishes a transient in-flight reconnect (spinner only)
+ * from a settled drop that needs a manual nudge (adds the Retry button).
+ */
+export type PhoneConnectionBannerProps = {
+  /** Whether a reconnect is actively in flight (spinner, no Retry button yet). */
+  retrying: boolean;
+  /** Fired when the player taps Retry (a full reload that re-claims their seat by token). */
+  onRetry: () => void;
+};
 
 /** The categories list shape passed to grids (re-export for component authors). */
 export type { CategoryAvailView } from "../lib/types";

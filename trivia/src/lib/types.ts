@@ -80,6 +80,13 @@ export type MatchView = {
   phaseDeadlineTs: number | null;
   /** The category chosen during the `categoryReveal` beat; `null` outside that phase. */
   chosenCategory: CategoryId | null;
+  /**
+   * The fair match length (total rounds) for THIS match — scaled once at match start from the
+   * connected player count (`lib/match-length.ts`) so every player gets an equal turn count and
+   * an equal difficulty-tier distribution. Drives the "Round n of N" UI, the difficulty pips, and
+   * the end-of-match trigger — never read `TRIVIA.rounds` directly for these.
+   */
+  totalRounds: number;
 };
 
 /** `question` slice view — the active question (secret-free; `null` when no question is live). */
@@ -100,7 +107,13 @@ export type QuestionView = {
  * One player's open-steal answer (their picked slot + whether it was correct), in lock-in (speed) order.
  * The fastest correct stealer is the first `correct` entry in the reveal's `stealResults` array.
  */
-export type StealResult = { peerId: PeerId; slot: number; correct: boolean };
+export type StealResult = {
+  peerId: PeerId;
+  slot: number;
+  correct: boolean;
+  /** Elapsed ms from the steal window unlocking to this player's lock (combined reveal UI, item 1). */
+  answerMs?: number;
+};
 
 /** `reveal` slice view — the revealed correct slot + outcome (read only in the reveal phase). */
 export type RevealView = {
@@ -111,6 +124,13 @@ export type RevealView = {
   answerText: string;
   /** Every stealer's pick + right/wrong in speed order (empty for a non-steal reveal). */
   stealResults: StealResult[];
+  /**
+   * The active answerer's own elapsed answer time (ms) when they answered directly with no steal
+   * (`outcome === "correct"`); `null` otherwise. Recorded for completeness — the combined reveal
+   * panel deliberately does NOT display it (times are shown only for steal participants, as a
+   * speed comparison; user decision).
+   */
+  answerMs: number | null;
 };
 
 /**

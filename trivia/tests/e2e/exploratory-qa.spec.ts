@@ -41,6 +41,8 @@ const STAGE_PHASE: Record<StagePhaseKey, string> = {
   revealWrongSteal: "reveal",
   revealTimeout: "reveal",
   revealStolen: "reveal",
+  revealLong: "reveal",
+  revealFlag: "reveal",
   pauseOverlay: "question",
   disconnectBanner: "lobby",
   categoryExhausted: "categoryPick",
@@ -69,7 +71,9 @@ const PHONE_PHASE: Record<PhonePhaseKey, string> = {
   categoryPickWatcher: "categoryPick",
   questionWatcher: "question",
   revealWatcher: "reveal",
-  left: "final"
+  left: "final",
+  connectionReconnecting: "question",
+  connectionLost: "question"
 };
 
 async function gotoStage(page: Page, phase: StagePhaseKey): Promise<void> {
@@ -150,19 +154,21 @@ test.describe("Charter A — FedEx: data invariants on fixture screens", () => {
     await expect(wrong).toHaveCount(0);
   });
 
-  // A6 Invariant: score rollup chip (delta +200) must appear exactly once for the scorer
-  test("reveal correct: score rollup chip is present and shows +200 delta", async ({ page }) => {
+  // A6 Invariant: the combined reveal panel (item 1 redesign) shows the scorer's +200 delta.
+  // Originally guarded the standalone score-rollup chips — folded into reveal-panel's winner row.
+  test("reveal correct: combined reveal panel is present and shows +200 delta", async ({
+    page
+  }) => {
     await gotoStage(page, "reveal");
-    const rollup = page.locator("[data-score-rollup]");
-    await expect(rollup).toBeVisible();
-    // The chip should show a positive delta for Mochi (+200 in fixture)
-    // data-score-rollup contains score chips (data-component="score-chip")
-    const chips = page.locator("[data-score-rollup] [data-component='score-chip']");
-    const chipCount = await chips.count();
-    expect(
-      chipCount,
-      "Score rollup must show at least one chip for the scorer — invariant oracle"
-    ).toBeGreaterThan(0);
+    const panel = page.locator("[data-component='reveal-panel']");
+    await expect(panel).toBeVisible();
+    // The winner row should show a positive points delta for Mochi (+200 in fixture)
+    const winnerRow = panel.locator("[data-winner-row]");
+    await expect(winnerRow).toBeVisible();
+    await expect(
+      winnerRow.locator("[data-points]"),
+      "Reveal panel winner row must show the scorer's points delta — invariant oracle"
+    ).toContainText("+200");
   });
 
   // A7 Invariant: category pick grid always shows 6 categories
@@ -790,16 +796,17 @@ test.describe("Charter G — Invariants: answer button tap targets and accessibi
     }
   });
 
-  // G4: Score chip (+ delta) must be announced to screen readers (aria-live or role)
-  test("score rollup region announces results to screen readers", async ({ page }) => {
+  // G4: Combined reveal panel (item 1 redesign) must be announced to screen readers (aria-live or
+  // role). RESOLVED finding (was EQ1, a proposal against the old [data-score-rollup]): the new
+  // reveal-panel carries role="status" from the outset, so this is now a hard invariant, not a
+  // proposal — a regression here means the accessibility fix silently reverted.
+  test("combined reveal panel announces results to screen readers", async ({ page }) => {
     await gotoStage(page, "reveal");
 
-    const rollup = page.locator("[data-score-rollup]");
-    await expect(rollup).toBeVisible();
+    const panel = page.locator("[data-component='reveal-panel']");
+    await expect(panel).toBeVisible();
 
-    // Score rollup should be in a live region or have role="status"/role="alert" for SR
-    const liveRegion = await rollup.evaluate(el => {
-      // Walk up to check parent live regions
+    const liveRegion = await panel.evaluate(el => {
       let current: Element | null = el;
       while (current) {
         const live = current.getAttribute("aria-live");
@@ -810,32 +817,34 @@ test.describe("Charter G — Invariants: answer button tap targets and accessibi
       return { ariaLive: null, role: null };
     });
 
-    // This is a PROPOSAL: the score rollup should be in a live region for SR users.
-    // Recorded as an app-source improvement proposal (P2) — not a hard gate here.
-    // The test records the current state so we can track it.
-    const hasLiveRegion = liveRegion.ariaLive !== null || liveRegion.role !== null;
-    if (!hasLiveRegion) {
-      // Record as a finding but don't fail — this is a proposal for improvement
-      console.warn(
-        "[FINDING EQ1] Score rollup region has no aria-live or role=status. " +
-          "Screen reader users won't hear score changes after reveal. " +
-          "Oracle: Accessibility-vs-rendered (WCAG 4.1.3 Status Messages). " +
-          "Proposal: add role='status' or aria-live='polite' to [data-score-rollup]."
-      );
-    }
+    expect(
+      liveRegion.role === "status" || liveRegion.ariaLive !== null,
+      "Reveal panel must carry role='status' (or an aria-live ancestor) so screen reader users " +
+        "hear score changes after reveal — WCAG 4.1.3 Status Messages."
+    ).toBe(true);
   });
 
-  // G5: Invariant — the open-steal strip (item 3) shows the missed player and the open-steal copy
-  test("open steal strip: names the missed player (Mochi), open-steal wording, 4 eligible avatars", async ({
+  // G5: Invariant — the open-steal strip (item 3): armed copy + eligible avatars; the misser's NAME
+  // appears only during the LEAD-IN ("Mochi missed — get ready to steal!"), never in the armed strip
+  // (which switches to the collective "Everyone steal" copy) — asserting Mochi on the armed fixture
+  // was a wrong premise.
+  test("open steal strip: lead-in names the missed player (Mochi); armed strip shows open-steal wording + 4 eligible avatars", async ({
     page
   }) => {
+    // Lead-in beat: the strip names the active player who MISSED (Mochi/p1).
+    await gotoStage(page, "stealLeadIn");
+    const leadStrip = page.locator("[data-steal-strip]");
+    await expect(leadStrip).toBeVisible();
+    await expect(leadStrip).toContainText("Mochi");
+    await expect(leadStrip).toContainText("get ready to steal");
+
+    // Armed beat: the collective open-steal copy replaces the name.
     await gotoStage(page, "steal");
     const strip = page.locator("[data-steal-strip]");
     await expect(strip).toBeVisible();
-    // The strip names the active player who MISSED (Mochi/p1) — not a single next stealer
-    await expect(strip).toContainText("Mochi");
-    // Open-steal wording: "everyone can steal"
-    await expect(strip).toContainText("everyone can steal");
+    // Open-steal wording — the actual copy is "Everyone steal" (fixed casing/wording mismatch
+    // against the real StageQuestion.tsx copy — the old assertion never matched it).
+    await expect(strip).toContainText("Everyone steal");
     // And indicate the steal mechanic
     await expect(strip).toContainText("steal");
     // 4 eligible avatars (p2/p3/p4/p5 — everyone except Mochi/p1)
@@ -1179,50 +1188,36 @@ test.describe("Charter I — Gap: phone phases not in the fixture harness (live 
   });
 });
 
-// ─── Charter J: Durable finding — EQ1 (score rollup live region) ─────────────
-// Finding EQ1 (from Charter G exploration): the [data-score-rollup] region on the TV reveal
-// screen has no aria-live or role="status" attribute. Screen reader users don't hear score
-// changes after a reveal. Oracle: Accessibility-vs-rendered (WCAG 4.1.3 Status Messages).
+// ─── Charter J: Durable finding — EQ1 (reveal live region) ────────────────────
+// Finding EQ1 (from Charter G exploration): the OLD [data-score-rollup] region on the TV reveal
+// screen had no aria-live or role="status" — screen-reader users didn't hear score changes after
+// a reveal. Oracle: Accessibility-vs-rendered (WCAG 4.1.3 Status Messages).
 //
-// This test is a GUARD (pinning current state) so the finding is durable and won't silently
-// regress. When the app adds aria-live="polite" to [data-score-rollup], this test will
-// document the fix by asserting the PRESENCE (update the expect to toHaveAttribute).
-// For now it documents the ABSENCE as a known P2 proposal, not a hard block.
+// RESOLVED: the item-1 redesign replaced that strip with the combined RevealPanel, which ships
+// role="status" + aria-label. The guard below asserts the fix POSITIVELY (a durable regression
+// test — it fails if the live region is ever dropped).
 
-test.describe("Charter J — Durable: EQ1 score rollup accessibility guard", () => {
-  test("TV reveal: score rollup region aria-live attribute state (EQ1 proposal tracking)", async ({
+test.describe("Charter J — Durable: EQ1 reveal live-region accessibility guard", () => {
+  // EQ1 RESOLVED by the item-1 redesign: the old [data-score-rollup] strip was REPLACED by the
+  // combined RevealPanel, which ships role="status" (an implicit polite live region, WCAG 4.1.3)
+  // + an aria-label. This guard now asserts the fix POSITIVELY so it can never silently regress.
+  test("TV reveal: the combined reveal panel is a live region (EQ1 fixed by the RevealPanel redesign)", async ({
     page
   }) => {
     await gotoStage(page, "reveal");
 
-    const rollup = page.locator("[data-score-rollup]");
-    await expect(rollup).toBeVisible();
+    const panel = page.locator("[data-component='reveal-panel']");
+    await expect(panel).toBeVisible();
 
-    // Check current state of the live-region attribute
-    const ariaLive = await rollup.getAttribute("aria-live");
-    const role = await rollup.getAttribute("role");
-
-    // Document the current state — this is a PROPOSAL not a hard block.
-    // When EQ1 is fixed: ariaLive will be "polite" (or role will be "status").
-    // Current state (as found): neither attribute is present.
-    // This assertion will turn GREEN when the app adds the live region (no update needed).
-    // NOTE: if this test FAILS it means the score rollup DOES have a live region (great news! —
-    // update the comment, don't revert the fix).
+    const role = await panel.getAttribute("role");
+    const ariaLive = await panel.getAttribute("aria-live");
     const hasLiveRegion =
-      ariaLive === "polite" || ariaLive === "assertive" || role === "status" || role === "alert";
-
-    // Log the current state for tracking purposes
-    if (!hasLiveRegion) {
-      // EQ1 is not yet fixed — document the gap
-      console.info(
-        "[EQ1 OPEN] Score rollup has no aria-live/role=status. " +
-          "PROPOSAL: add aria-live='polite' to [data-score-rollup] in StageQuestion.tsx. " +
-          "This is a P2 a11y finding (WCAG 4.1.3). Not a gate failure."
-      );
-    }
-
-    // This test always passes — it tracks EQ1 without blocking.
-    // The actual fix is a proposal for the app source (StageQuestion.tsx).
-    expect(true).toBe(true);
+      role === "status" || role === "alert" || ariaLive === "polite" || ariaLive === "assertive";
+    expect(
+      hasLiveRegion,
+      "The reveal panel must be a live region (role='status' or aria-live) so screen-reader users " +
+        "hear the outcome + points — WCAG 4.1.3 Status Messages (EQ1)."
+    ).toBe(true);
+    await expect(panel).toHaveAttribute("aria-label", /.+/);
   });
 });

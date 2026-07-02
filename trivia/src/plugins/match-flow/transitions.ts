@@ -181,6 +181,7 @@ export function resolveQuestionTimeout(
     mutate: buildMutate(stage),
     award: buildAward(scoring),
     revealMs: config.revealMs,
+    revealFastMs: config.revealFastMs,
     stealMs: config.stealMs,
     stealLeadMs: config.stealLeadMs,
     stealSpeedTiers: config.stealSpeedTiers
@@ -234,8 +235,12 @@ export function advanceFromScoreboard(
   round: number
 ): void {
   const nextRound = round + 1;
+  // Fair round scaling (item 5): the match's actual length was locked in at start-game (or defaults
+  // to the unscaled base config before that) — never the static config.rounds, which a scaled table
+  // (4+ players) legitimately exceeds.
+  const totalRounds = match.totalRounds || config.rounds;
 
-  if (nextRound > config.rounds) {
+  if (nextRound > totalRounds) {
     stage.mutate("match", draft => ({
       ...draft,
       phase: "final" as Phase,
@@ -269,15 +274,18 @@ export function advanceFromScoreboard(
  * @param stage - The stage facade (mutate).
  * @param scoring - The scoring API (to reset scores for the next game).
  * @param state - The host-internal plugin state (per-question lock + tried set).
+ * @param baseRounds - The unscaled base round count (`config.rounds`) to reset `totalRounds` to —
+ *   the next `start-game` recomputes the fair scaled total from the table that starts fresh.
  * @example
  * ```ts
- * advanceFromFinal(stage, scoring, state);
+ * advanceFromFinal(stage, scoring, state, config.rounds);
  * ```
  */
 export function advanceFromFinal(
   stage: Pick<StageApi, "mutate">,
   scoring: Pick<ScoringDeps, "reset">,
-  state: State
+  state: State,
+  baseRounds: number
 ): void {
   scoring.reset();
   state.locked = false;
@@ -306,7 +314,9 @@ export function advanceFromFinal(
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (no phase deadline in the lobby)
     phaseDeadlineTs: null,
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (no chosen category in lobby)
-    chosenCategory: null
+    chosenCategory: null,
+    // Reset to the unscaled base — the next start-game recomputes it from the table that starts fresh.
+    totalRounds: baseRounds
   }));
 
   // Clear the post-question slices so a fresh game starts from a blank board.
@@ -338,6 +348,8 @@ export function advanceFromFinal(
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
     scorerPeer: null,
     answerText: "",
-    stealResults: []
+    stealResults: [],
+    // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
+    answerMs: null
   }));
 }

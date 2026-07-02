@@ -51,6 +51,9 @@ describe("leaderboard.standings — every in-game player appears (bug #2)", () =
     expect(c?.total).toBe(0);
     expect(c?.delta).toBe(0);
     expect(c?.rank).toBe(3);
+    // A merged zero row "didn't move": prevRank pins to its final rank. A 0-sentinel prevRank would
+    // make the scoreboard slide the row in from above slot 1, overlapping the title (rendering bug).
+    expect(c?.prevRank).toBe(3);
   });
 
   it("does not add a DISCONNECTED player who never scored", () => {

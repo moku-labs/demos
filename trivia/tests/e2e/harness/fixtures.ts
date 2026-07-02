@@ -94,6 +94,10 @@ export type StagePhaseKey =
   | "revealWrongSteal"
   | "revealTimeout"
   | "revealStolen"
+  // Item 1 hard layout cases: the combined reveal panel over a very long question / an image
+  // question — must not overlap or shrink the question/image illegibly.
+  | "revealLong"
+  | "revealFlag"
   // Overlay screens (C2, D1, D2, D3, D4) — overlay component rendered inline
   | "pauseOverlay"
   | "disconnectBanner"
@@ -133,7 +137,11 @@ export type PhonePhaseKey =
   // revealWatcher: non-answerer during reveal sees "Revealing… / Watch the TV"
   | "revealWatcher"
   // left: the "You left the game / Thanks for playing!" card (state.left = true)
-  | "left";
+  | "left"
+  // Item 4 (connectivity audit): the phone's own connection banner, in-flight reconnect (spinner).
+  | "connectionReconnecting"
+  // Item 4: the phone's own connection banner, settled drop (Retry button) — over the waiting card.
+  | "connectionLost";
 
 const STAGE_PHASE_KEYS = new Set<StagePhaseKey>([
   "question",
@@ -155,6 +163,8 @@ const STAGE_PHASE_KEYS = new Set<StagePhaseKey>([
   "revealWrongSteal",
   "revealTimeout",
   "revealStolen",
+  "revealLong",
+  "revealFlag",
   "pauseOverlay",
   "disconnectBanner",
   "categoryExhausted",
@@ -182,7 +192,9 @@ const PHONE_PHASE_KEYS = new Set<PhonePhaseKey>([
   "categoryPickWatcher",
   "questionWatcher",
   "revealWatcher",
-  "left"
+  "left",
+  "connectionReconnecting",
+  "connectionLost"
 ]);
 
 /**
@@ -279,7 +291,8 @@ const REVEAL_CORRECT: RevealView = {
   outcome: "correct",
   scorerPeer: "p1",
   answerText: "Saturn",
-  stealResults: []
+  stealResults: [],
+  answerMs: 4200
 };
 
 const REVEAL_WRONG: RevealView = {
@@ -288,7 +301,8 @@ const REVEAL_WRONG: RevealView = {
   outcome: "wrong",
   scorerPeer: null,
   answerText: "Saturn",
-  stealResults: []
+  stealResults: [],
+  answerMs: null
 };
 
 /** Russian-language question (A4-RU): Cyrillic prompt + options. */
@@ -343,7 +357,8 @@ const REVEAL_WRONG_STEAL: RevealView = {
   outcome: "wrong",
   scorerPeer: null,
   answerText: "Saturn",
-  stealResults: []
+  stealResults: [],
+  answerMs: null
 };
 
 /** Reveal: timed out (no answer picked → outcome="timeout"). */
@@ -353,12 +368,14 @@ const REVEAL_TIMEOUT: RevealView = {
   outcome: "timeout",
   scorerPeer: null,
   answerText: "Saturn",
-  stealResults: []
+  stealResults: [],
+  answerMs: null
 };
 
 /**
- * Reveal: an OPEN steal — Tofu (p3) was fastest correct, Pixel (p2) also correct (slower), Biscuit (p4)
- * missed. Drives the steal-results panel (⚡ fastest badge, ✓/✗ per opponent) + the per-slot name tags.
+ * Reveal: an OPEN steal — Tofu (p3) was fastest correct (9.2s), Pixel (p2) also correct but slower
+ * (14.7s), Biscuit (p4) missed (6.4s). Drives the combined reveal panel (item 1): per-participant
+ * answer times, ⚡ fastest badge, ✓/✗, and the per-slot name tags — over the everyone-scores tiers.
  */
 const REVEAL_STOLEN: RevealView = {
   correctSlot: 2,
@@ -366,10 +383,11 @@ const REVEAL_STOLEN: RevealView = {
   outcome: "stolen",
   scorerPeer: "p3",
   answerText: "Saturn",
+  answerMs: null,
   stealResults: [
-    { peerId: "p3", slot: 2, correct: true },
-    { peerId: "p2", slot: 2, correct: true },
-    { peerId: "p4", slot: 0, correct: false }
+    { peerId: "p3", slot: 2, correct: true, answerMs: 9200 },
+    { peerId: "p2", slot: 2, correct: true, answerMs: 14_700 },
+    { peerId: "p4", slot: 0, correct: false, answerMs: 6400 }
   ]
 };
 
@@ -408,7 +426,8 @@ function triviaState(
       hostPeer: "p1",
       paused: false,
       phaseDeadlineTs: null,
-      chosenCategory: null
+      chosenCategory: null,
+      totalRounds: TRIVIA.rounds
     },
     players: PLAYERS,
     question: QUESTION,
@@ -558,7 +577,8 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
           hostPeer: "p1",
           paused: false,
           phaseDeadlineTs: FIXED_NOW + 1300,
-          chosenCategory: "space"
+          chosenCategory: "space",
+          totalRounds: TRIVIA.rounds
         }
       }),
       qr: null,
@@ -607,7 +627,8 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
           hostPeer: "p1",
           paused: false,
           phaseDeadlineTs: null,
-          chosenCategory: null
+          chosenCategory: null,
+          totalRounds: TRIVIA.rounds
         }
       }),
       qr: null,
@@ -672,11 +693,47 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
 
   if (phase === "revealStolen") {
     // 11: OPEN steal reveal — Tofu (p3) fastest correct (+100), Pixel (p2) also correct but slower (+60),
-    // Biscuit (p4) missed. The steal-results panel shows ⚡ fastest + ✓/✗; the rollup shows both gains.
+    // Biscuit (p4) missed. The combined reveal panel (item 1) shows ⚡ fastest + times + ✓/✗ + points.
     return {
       s: triviaState("reveal", null, {
         reveal: REVEAL_STOLEN,
         // p3 fastest correct (+100), p2 slower correct (+60), everyone else 0 this round.
+        scores: SCORES.map(e => ({ ...e, delta: STEAL_DELTAS[e.peerId] ?? 0 })),
+        steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] }
+      }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
+  // Item 1 hard layout case: the combined reveal panel (full open-steal shape — winner + 2 others)
+  // over the LONGEST question in the fixture set. Proves the panel never overlaps or shrinks the
+  // question illegibly — the auto-fit hook scales the prompt; the panel stays a fixed compact size.
+  if (phase === "revealLong") {
+    return {
+      s: triviaState("reveal", null, {
+        question: QUESTION_LONG,
+        reveal: REVEAL_STOLEN,
+        scores: SCORES.map(e => ({ ...e, delta: STEAL_DELTAS[e.peerId] ?? 0 })),
+        steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] }
+      }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
+  // Item 1 hard layout case: the combined reveal panel over an IMAGE question (the dedicated A5
+  // layout). Proves the panel sits below the image without overlapping it or shrinking it to a
+  // thumbnail (regression guard for the same class of bug fixed in commit 5664474).
+  if (phase === "revealFlag") {
+    return {
+      s: triviaState("reveal", null, {
+        question: QUESTION_FLAG,
+        reveal: REVEAL_STOLEN,
         scores: SCORES.map(e => ({ ...e, delta: STEAL_DELTAS[e.peerId] ?? 0 })),
         steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] }
       }),
@@ -703,7 +760,8 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
           hostPeer: "p1",
           paused: true,
           phaseDeadlineTs: null,
-          chosenCategory: null
+          chosenCategory: null,
+          totalRounds: TRIVIA.rounds
         }
       }),
       qr: null,
@@ -805,7 +863,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -819,7 +878,40 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
+    };
+  }
+
+  // Item 4 (connectivity audit): the phone's own connection banner over whatever screen it was on —
+  // an in-flight reconnect (spinner, no Retry yet) over the mid-question watcher screen.
+  if (phase === "connectionReconnecting") {
+    return {
+      s: triviaState("question", "p2"),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: false,
+      connection: "reconnecting"
+    };
+  }
+
+  // Item 4: the settled "connection lost" state (self-heal window elapsed, no sync-ready) — the
+  // Retry button replaces the spinner. Same underlying screen (mid-question watcher).
+  if (phase === "connectionLost") {
+    return {
+      s: triviaState("question", "p2"),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: false,
+      connection: "lost"
     };
   }
 
@@ -834,7 +926,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -848,7 +941,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -864,7 +958,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
           hostPeer: "p1",
           paused: false,
           phaseDeadlineTs: FIXED_NOW + 1300,
-          chosenCategory: "space"
+          chosenCategory: "space",
+          totalRounds: TRIVIA.rounds
         }
       }),
       now: FIXED_NOW,
@@ -873,7 +968,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -890,7 +986,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -904,7 +1001,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -918,7 +1016,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: 2,
       lockedQid: "q-demo",
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -948,7 +1047,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -977,7 +1077,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -995,7 +1096,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -1009,7 +1111,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: true,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -1023,7 +1126,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -1051,7 +1155,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -1066,7 +1171,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -1081,7 +1187,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -1096,7 +1203,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -1114,7 +1222,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: false
+      left: false,
+      connection: "ok"
     };
   }
 
@@ -1128,7 +1237,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       lockedSlot: null,
       lockedQid: null,
       leaving: false,
-      left: true
+      left: true,
+      connection: "ok"
     };
   }
 
@@ -1144,6 +1254,7 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
     lockedSlot: null,
     lockedQid: null,
     leaving: false,
-    left: false
+    left: false,
+    connection: "ok"
   };
 }

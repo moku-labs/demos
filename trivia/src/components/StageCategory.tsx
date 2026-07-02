@@ -12,7 +12,7 @@ import type { CategoryId } from "../config";
 import { TRIVIA } from "../config";
 import { ramp } from "../lib/difficulty";
 import type { TriviaState } from "../lib/types";
-import { findPlayer } from "../lib/view";
+import { connectedPlayerCount, findPlayer } from "../lib/view";
 import { CategoryBanner } from "./CategoryBanner";
 import { CategoryCard } from "./CategoryCard";
 import { DifficultyPips } from "./DifficultyPips";
@@ -65,7 +65,9 @@ export function StageCategory({ s }: StageCategoryProps): JSX.Element {
             {active?.avatar ?? "•"} {active?.name ?? "Someone"} is picking a category…
           </span>
           {ready ? (
-            <DifficultyPips tier={ramp(s.match.round)} />
+            <DifficultyPips
+              tier={ramp(s.match.round, connectedPlayerCount(s.players), s.match.totalRounds)}
+            />
           ) : (
             <span data-loading-hint>Loading questions…</span>
           )}

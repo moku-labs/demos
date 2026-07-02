@@ -122,6 +122,11 @@ const CORRECT_CYCLE_TIMERS = {
     stealMs: 3000,
     roundIntroMs: 500,
     revealMs: 500,
+    // This test drives the "active answered correctly" fast path (item 2 — adaptive reveal delay),
+    // which uses revealFastMs (not revealMs) for the reveal hold — set it explicitly so the timing
+    // stays comfortable inside the test's waitFor windows (the plugin default, 4000ms, would leave
+    // step (2) racing a 5000ms window on a slow CI run).
+    revealFastMs: 500,
     scoreboardMs: 500,
     tickMs: 30,
     ...STEAL_TUNING

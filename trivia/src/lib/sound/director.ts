@@ -42,14 +42,16 @@ export function bedFor(phase: TriviaState["match"]["phase"]): MusicId {
  * Map a round's difficulty tier to a 0–1 music intensity (the game bed opens up as the ramp climbs).
  *
  * @param round - The 1-based round number.
+ * @param playerCount - The connected player count (fair round scaling — item 5).
+ * @param totalRounds - This match's scaled total round count (item 5).
  * @returns The 0–1 intensity for the music bed.
  * @example
  * ```ts
- * intensityFor(12); // 1 (hard band)
+ * intensityFor(12, 3, 12); // 1 (hard band)
  * ```
  */
-function intensityFor(round: number): number {
-  const tier = ramp(round);
+function intensityFor(round: number, playerCount: number, totalRounds: number): number {
+  const tier = ramp(round, playerCount, totalRounds);
   if (tier === "hard") return 1;
   if (tier === "medium") return 0.72;
   return 0.5;
@@ -59,15 +61,18 @@ function intensityFor(round: number): number {
  * The round-intro stamp pitch — heavier (lower) as the difficulty band climbs.
  *
  * @param round - The 1-based round number.
+ * @param playerCount - The connected player count (fair round scaling — item 5).
+ * @param totalRounds - This match's scaled total round count (item 5).
  * @returns The playback-rate multiplier for the round-intro cue.
  * @example
  * ```ts
- * introRate(10); // 0.84 (hard band, lands heavier)
+ * introRate(10, 3, 12); // 0.84 (hard band, lands heavier)
  * ```
  */
-function introRate(round: number): number {
-  if (round >= 9) return 0.84;
-  if (round >= 5) return 0.92;
+function introRate(round: number, playerCount: number, totalRounds: number): number {
+  const tier = ramp(round, playerCount, totalRounds);
+  if (tier === "hard") return 0.84;
+  if (tier === "medium") return 0.92;
   return 1;
 }
 
@@ -309,7 +314,9 @@ function entryCues(
   const phase = next.match.phase;
 
   if (stage && phase === "roundIntro") {
-    return [{ kind: "sfx", id: "round.intro", opts: { rate: introRate(next.match.round) } }];
+    const playerCount = Math.max(1, next.players.filter(p => p.connected).length);
+    const rate = introRate(next.match.round, playerCount, next.match.totalRounds || 12);
+    return [{ kind: "sfx", id: "round.intro", opts: { rate } }];
   }
   if (stage && phase === "categoryReveal") return [{ kind: "sfx", id: "category.chosen" }];
   if (stage && phase === "question") return questionCues(next);
@@ -340,10 +347,14 @@ function entryCues(
 function musicCues(previous: TriviaState | undefined, next: TriviaState): Cue[] {
   const nextBed = bedFor(next.match.phase);
   const previousBed = previous ? bedFor(previous.match.phase) : undefined;
-  const intensity = intensityFor(next.match.round);
+  const playerCount = Math.max(1, next.players.filter(p => p.connected).length);
+  const totalRounds = next.match.totalRounds || 12;
+  const intensity = intensityFor(next.match.round, playerCount, totalRounds);
 
   if (nextBed !== previousBed) return [{ kind: "music", id: nextBed, intensity }];
-  if (previous && nextBed === "bed.game" && ramp(previous.match.round) !== ramp(next.match.round)) {
+  const previousTier = previous ? ramp(previous.match.round, playerCount, totalRounds) : undefined;
+  const nextTier = ramp(next.match.round, playerCount, totalRounds);
+  if (previous && nextBed === "bed.game" && previousTier !== nextTier) {
     return [{ kind: "music", id: "bed.game", intensity }];
   }
   return [];

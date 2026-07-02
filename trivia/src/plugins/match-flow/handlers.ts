@@ -155,7 +155,8 @@ function readMatch(sync: SyncReadDeps): MatchSlice {
     hostPeer: null,
     paused: false,
     // eslint-disable-next-line unicorn/no-null
-    phaseDeadlineTs: null
+    phaseDeadlineTs: null,
+    totalRounds: 0
   }) as unknown as MatchSlice;
 }
 
@@ -313,6 +314,7 @@ export function createMatchFlowHandlers(deps: HookContextDeps) {
         award: buildAward(scoring),
         grade: buildGrade(questionBank),
         revealMs: config.revealMs,
+        revealFastMs: config.revealFastMs,
         stealMs: config.stealMs,
         stealLeadMs: config.stealLeadMs,
         stealSpeedTiers: config.stealSpeedTiers

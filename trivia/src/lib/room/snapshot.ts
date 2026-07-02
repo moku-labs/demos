@@ -9,6 +9,7 @@
    register (e.g. `activePeer`/`phaseDeadlineTs`/`confirmed` are `null` until set); `null` is the JSON
    value, not `undefined`. Mirrors the plugins' own registerSlice nulls. */
 import type { JsonValue, PeerId } from "@moku-labs/room";
+import { TRIVIA } from "../../config";
 import type {
   BankView,
   CategoryAvailView,
@@ -58,7 +59,9 @@ function defaultMatch(): MatchView {
     hostPeer: null,
     paused: false,
     phaseDeadlineTs: null,
-    chosenCategory: null
+    chosenCategory: null,
+    // The unscaled base — start-game recomputes the fair scaled total (item 5).
+    totalRounds: TRIVIA.rounds
   };
 }
 
@@ -78,7 +81,8 @@ function defaultReveal(): RevealView {
     outcome: "wrong",
     scorerPeer: null,
     answerText: "",
-    stealResults: []
+    stealResults: [],
+    answerMs: null
   };
 }
 
@@ -181,12 +185,17 @@ export function mergeState(read: SliceReader, self: PeerId | null | undefined): 
 
   return {
     self: self ?? null,
-    match,
+    // Defensively default totalRounds (an older/mid-migration replica may not carry it yet).
+    match: { ...match, totalRounds: match.totalRounds || TRIVIA.rounds },
     players,
     question: liveQuestion,
     // Defensively default the array cells so a slice missing them (older replica / mid-migration) never
     // crashes the reveal panel or steal strip on `.map`.
-    reveal: { ...reveal, stealResults: reveal.stealResults ?? [] },
+    reveal: {
+      ...reveal,
+      stealResults: reveal.stealResults ?? [],
+      answerMs: reveal.answerMs ?? null
+    },
     steal: { ...steal, answeredPeers: steal.answeredPeers ?? [], armedTs: steal.armedTs ?? null },
     scores,
     bank: (read("bank") as unknown as BankView | undefined) ?? defaultBank(),

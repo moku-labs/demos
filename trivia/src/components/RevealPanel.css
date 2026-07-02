@@ -1,0 +1,83 @@
+/**
+ * RevealPanel — co-located CSS. The combined TV reveal UI (item 1): ONE horizontal line of pills in
+ * ONE uniform style (user refinement — no big-winner-above-small-others stacking; the ⚡ badge and
+ * leading position are the only winner differentiators), so it reads instantly without competing
+ * with the question/image above it. @scope-encapsulated, data-* only.
+ */
+@scope ([data-component="reveal-panel"]) {
+  :scope {
+    flex: 0 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    /* Compact-but-READABLE — this sits BELOW the answer grid and must never push the grid or the
+       hero/image off-screen (item 1 hard requirement over long/image questions), but it is a
+       10-foot TV read (user feedback: the small pills were illegible from the couch). One pill
+       line is ~42px; the cap still allows a wrap on the busiest 5-player steal. */
+    max-height: 92px;
+    padding: 2px var(--space-4);
+    /* Sit LOW (user feedback: "move the panel down a bit"): the flexible prompt area above absorbs
+       all column slack, so the only downward room is the page's own bottom padding — the negative
+       bottom margin shifts the panel ~12px into it (leaving ~16px breathing room to the viewport
+       edge), consistently in every variant (text/long/image). margin-top:auto additionally pins the
+       panel to the bottom in any variant whose column DOES have slack. */
+    margin-top: auto;
+    margin-bottom: -12px;
+    animation: slide-in-left var(--dur-reveal) var(--spring) both;
+  }
+
+  /* ONE shared pill style — the winner pill and every participant pill are visually identical
+     (same slot height, padding, type size); only the ⚡ badge marks the winner. Sized for the
+     couch: this is the round's payoff, it must read from across the room. */
+  [data-winner-row],
+  [data-other] {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 18px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid color-mix(in srgb, var(--player, var(--border)) 60%, transparent);
+    background: color-mix(in srgb, var(--player, var(--surface)) 14%, transparent);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(16px, 1.7vw, 22px);
+  }
+
+  [data-fastest-badge] {
+    font-size: 1.1em;
+    line-height: 1;
+  }
+
+  [data-avatar] {
+    font-size: 1.15em;
+    line-height: 1;
+  }
+
+  [data-name] {
+    color: var(--player, inherit);
+    font-weight: 700;
+  }
+
+  [data-time] {
+    opacity: 0.8;
+    font-variant-numeric: tabular-nums;
+  }
+
+  [data-points] {
+    color: var(--clay-mint);
+    font-weight: 700;
+  }
+
+  /* Marks: the winner's ✓ and any correct stealer's ✓ read mint; a miss reads coral. */
+  [data-winner-row] [data-mark],
+  [data-other][data-correct] [data-mark] {
+    color: var(--clay-mint, #2ecc71);
+  }
+
+  [data-other]:not([data-correct]) [data-mark] {
+    color: var(--clay-coral, #ef4444);
+    opacity: 0.7;
+  }
+}

@@ -35,6 +35,7 @@ function makeMatchSlice(overrides: Partial<MatchSlice> = {}): MatchSlice {
     phaseDeadlineTs: null,
     // eslint-disable-next-line unicorn/no-null
     chosenCategory: null,
+    totalRounds: 12,
     ...overrides
   };
 }
@@ -137,6 +138,7 @@ function resolveDeps(overrides: {
     mutate: overrides.mutate,
     award: overrides.award,
     revealMs: 8000,
+    revealFastMs: 4000,
     stealMs: 8000,
     stealLeadMs: 1000,
     stealSpeedTiers: SPEED_TIERS
@@ -320,6 +322,114 @@ describe("resolveAnswer — answer mode", () => {
     expect(calls.find(c => c.ns === "steal")?.result.active).toBe(false);
     expect(calls.find(c => c.ns === "reveal")?.result.outcome).toBe("wrong");
     expect(calls.find(c => c.ns === "match")?.result.phase).toBe("reveal");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Adaptive reveal→scoreboard delay (item 2): the active-correct fast path uses revealFastMs
+// (shorter), while every path that involved a steal window (stolen/wrong/unanswered) keeps the
+// full revealMs. `resolveDeps` fixes revealMs=8000, revealFastMs=4000 so the two are unambiguous.
+// ---------------------------------------------------------------------------
+
+describe("resolveAnswer — adaptive reveal delay (item 2)", () => {
+  it("active-correct (no steal) uses the SHORT revealFastMs hold, not the full revealMs", () => {
+    const state = createMatchFlowState();
+    const { mutate, calls } = makeMockMutate();
+    const before = Date.now();
+
+    resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p1",
+        correct: true,
+        pickedSlot: 2,
+        mutate,
+        award: vi.fn()
+      })
+    );
+
+    const match = calls.find(c => c.ns === "match");
+    expect(match?.result.phase).toBe("reveal");
+    const deadline = match?.result.phaseDeadlineTs as number;
+    // ~revealFastMs (4000) ahead of "before", well short of the full revealMs (8000).
+    expect(deadline - before).toBeGreaterThanOrEqual(4000);
+    expect(deadline - before).toBeLessThan(8000);
+  });
+
+  it("an open steal resolving (last eligible stealer answers) → terminal reveal uses the FULL revealMs hold", () => {
+    const state = openStealState();
+    const { mutate, calls } = makeMockMutate();
+    const before = Date.now();
+
+    resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p2",
+        correct: false,
+        pickedSlot: 1,
+        question: { answeringPeer: "p1", mode: "steal" },
+        steal: makeStealSlice({
+          active: true,
+          stealPeers: ["p2"],
+          deadlineTs: Date.now() + 1000,
+          armedTs: Date.now() - 100
+        }),
+        mutate,
+        award: vi.fn()
+      })
+    );
+
+    const match = calls.find(c => c.ns === "match");
+    expect(match?.result.phase).toBe("reveal");
+    const deadline = match?.result.phaseDeadlineTs as number;
+    // ~revealMs (8000) ahead of "before" — NOT the shortened revealFastMs (4000).
+    expect(deadline - before).toBeGreaterThanOrEqual(8000);
+  });
+
+  it("single-player wrong (no steal target, no steal window) still uses the FULL revealMs hold", () => {
+    const state = createMatchFlowState();
+    const { mutate, calls } = makeMockMutate();
+    const before = Date.now();
+
+    resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p1",
+        correct: false,
+        pickedSlot: 0,
+        players: [basePlayers[0]] as PlayersSlice["entries"],
+        mutate,
+        award: vi.fn()
+      })
+    );
+
+    const match = calls.find(c => c.ns === "match");
+    expect(match?.result.phase).toBe("reveal");
+    const deadline = match?.result.phaseDeadlineTs as number;
+    expect(deadline - before).toBeGreaterThanOrEqual(8000);
+  });
+
+  it("a timeout (no pick at all) on the active player, single player → FULL revealMs hold", () => {
+    const state = createMatchFlowState();
+    const { mutate, calls } = makeMockMutate();
+    const before = Date.now();
+
+    resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p1",
+        correct: false,
+        pickedSlot: undefined,
+        players: [basePlayers[0]] as PlayersSlice["entries"],
+        mutate,
+        award: vi.fn()
+      })
+    );
+
+    const match = calls.find(c => c.ns === "match");
+    expect(match?.result.phase).toBe("reveal");
+    const deadline = match?.result.phaseDeadlineTs as number;
+    expect(deadline - before).toBeGreaterThanOrEqual(8000);
   });
 });
 
@@ -526,6 +636,7 @@ function peerLeftDeps(overrides: {
     award: overrides.award ?? vi.fn(),
     grade: overrides.grade ?? vi.fn(() => ({ correctSlot: 0, correct: false })),
     revealMs: 8000,
+    revealFastMs: 4000,
     stealMs: 8000,
     stealLeadMs: 1000,
     stealSpeedTiers: SPEED_TIERS
@@ -638,6 +749,7 @@ function makeRecoveryDeps(slices: Record<string, Record<string, unknown>>) {
     sync: sync as never,
     config: {
       revealMs: 8000,
+      revealFastMs: 4000,
       stealMs: 8000,
       stealLeadMs: 1000,
       stealSpeedTiers: SPEED_TIERS

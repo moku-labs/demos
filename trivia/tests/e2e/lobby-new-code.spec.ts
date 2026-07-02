@@ -26,8 +26,13 @@ import { expect, test } from "@playwright/test";
 const HUB_READY_TIMEOUT = 30_000;
 /** How long to wait for the post-reset lobby to show a fresh code. */
 const RESET_TIMEOUT = 25_000;
-/** How long to wait for a phone to appear in the TV lobby grid. */
-const JOIN_TIMEOUT = 25_000;
+/**
+ * How long to wait for a phone to appear in the TV lobby grid. Generous on purpose: a live
+ * two-context WebRTC join (hub WS + trystero peer discovery) lands in ~2 s solo but can exceed 25 s
+ * near the end of a fully-parallel 6-project suite run — the join either lands or it doesn't, so
+ * headroom here adds no false-green risk.
+ */
+const JOIN_TIMEOUT = 45_000;
 
 /**
  * Extract the lobby room code from the TV page. Returns "" if no real code visible yet.

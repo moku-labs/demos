@@ -26,6 +26,7 @@
 @import "../components/PauseOverlay.css";
 @import "../components/PhoneAnswer.css";
 @import "../components/PhoneCategory.css";
+@import "../components/PhoneConnectionBanner.css";
 @import "../components/PhoneFinal.css";
 @import "../components/PhoneLanguageVote.css";
 @import "../components/PhoneWaitingCard.css";
@@ -34,9 +35,9 @@
 @import "../components/QrBlock.css";
 @import "../components/ReconnectStrip.css";
 @import "../components/RevealFlash.css";
+@import "../components/RevealPanel.css";
 @import "../components/RoomCodeBadge.css";
 @import "../components/RoundIntro.css";
-@import "../components/ScoreChip.css";
 @import "../components/ScoreboardTile.css";
 @import "../components/StageCategory.css";
 @import "../components/StageLanguage.css";

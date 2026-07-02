@@ -63,12 +63,23 @@ export type ResolveAnswerDeps = {
   pickedSlot: number | undefined;
   /** The authoritative correct slot (from `questionBank.grade`). */
   correctSlot: number;
+  /**
+   * Elapsed ms from the answer/steal window opening to this lock (combined reveal UI, item 1 — shown
+   * as "9.2s" per participant). `undefined` on a timeout/departure (no real lock happened).
+   */
+  answerElapsedMs?: number;
   /** Stage mutate (publishes slices). */
   mutate: MutateFunction;
   /** Scoring award fn. */
   award: AwardFunction;
-  /** Hold after reveal before scoreboard (ms). */
+  /** Hold after reveal before scoreboard (ms) — the FULL hold, used whenever a steal window opened. */
   revealMs: number;
+  /**
+   * Shortened reveal hold (ms) for the no-steal fast path: the active player nailed it outright
+   * (outcome `correct`, no steal opened) — nothing extra to read, so the hold is shorter (adaptive
+   * reveal delay, item 2; `TRIVIA.timers.revealFastMs`, config-driven, never a magic literal here).
+   */
+  revealFastMs: number;
   /** Steal timer window (ms) — the shared answer window AFTER the lead-in. */
   stealMs: number;
   /** Pre-steal "get ready" lead-in (ms) — the grid is shown disabled for this beat before it unlocks. */
@@ -100,8 +111,16 @@ export type PeerLeftDeps = {
    * departing answerer's question resolves. Without it the reveal would show a wrong slot.
    */
   grade: (id: string, pickedSlot: number | undefined) => { correctSlot: number; correct: boolean };
-  /** Hold after reveal before scoreboard (ms). */
+  /**
+   * Hold after reveal before scoreboard (ms) — the FULL hold (a departure always resolves via the
+   * timeout/steal path, never the no-steal fast path, so this is the only value it needs).
+   */
   revealMs: number;
+  /**
+   * Shortened reveal hold (ms) for the no-steal fast path — plumbed through only because
+   * `resolveAnswer`'s deps require it; a departure never actually takes that path (see `revealMs`).
+   */
+  revealFastMs: number;
   /** Steal timer window (ms). */
   stealMs: number;
   /** Pre-steal "get ready" lead-in (ms). */
@@ -224,7 +243,9 @@ function resolveTerminalReveal(deps: ResolveAnswerDeps, activePeer: PeerId): voi
     outcome,
     scorerPeer: fastest,
     answerText,
-    stealResults: state.stealAnswers.map(answer => ({ ...answer }))
+    stealResults: state.stealAnswers.map(answer => ({ ...answer })),
+    // eslint-disable-next-line unicorn/no-null -- a steal/terminal reveal has no single direct answer time
+    answerMs: null
   }));
   mutate("steal", () => closedSteal());
   mutate("match", draft => ({ ...draft, phase: "reveal", phaseDeadlineTs: Date.now() + revealMs }));
@@ -261,9 +282,10 @@ export function resolveAnswer(deps: ResolveAnswerDeps): boolean {
     correct,
     pickedSlot,
     correctSlot,
+    answerElapsedMs,
     mutate,
     award,
-    revealMs,
+    revealFastMs,
     stealMs,
     stealLeadMs
   } = deps;
@@ -276,7 +298,9 @@ export function resolveAnswer(deps: ResolveAnswerDeps): boolean {
 
   // ── Answer mode (the active player) ─────────────────────────────────────────
   if (!inStealMode) {
-    // Active player nailed it → immediate reveal, no steal.
+    // Active player nailed it → immediate reveal, no steal. Adaptive reveal delay (item 2): nothing
+    // extra to read here (no opponent picks, no "who was fastest") — shorten the hold to revealFastMs
+    // instead of the full revealMs (which stays reserved for a reveal that followed a steal window).
     if (correct) {
       mutate("reveal", () => ({
         correctSlot,
@@ -284,13 +308,15 @@ export function resolveAnswer(deps: ResolveAnswerDeps): boolean {
         outcome: "correct" as Outcome,
         scorerPeer: answerer,
         answerText,
-        stealResults: []
+        stealResults: [],
+        // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell; always set on this path
+        answerMs: answerElapsedMs ?? null
       }));
       mutate("steal", () => closedSteal());
       mutate("match", draft => ({
         ...draft,
         phase: "reveal",
-        phaseDeadlineTs: Date.now() + revealMs
+        phaseDeadlineTs: Date.now() + revealFastMs
       }));
       award(answerer, { correct: true, steal: false, tier, category });
       return false;
@@ -343,7 +369,12 @@ export function resolveAnswer(deps: ResolveAnswerDeps): boolean {
   // answered (or it expires). A dropped stealer (STEAL_DROP_PICK) just forfeits their slot.
   if (!isTimeout && pickedSlot !== STEAL_DROP_PICK) {
     state.tried.add(answerer);
-    state.stealAnswers.push({ peerId: answerer, slot: pickedSlot, correct });
+    state.stealAnswers.push({
+      peerId: answerer,
+      slot: pickedSlot,
+      correct,
+      ...(answerElapsedMs === undefined ? {} : { answerMs: answerElapsedMs })
+    });
     mutate("steal", draft => ({
       ...draft,
       answeredPeers: [...((draft.answeredPeers as PeerId[] | undefined) ?? []), answerer]
@@ -472,6 +503,7 @@ function resolveDepartureMidQuestion(deps: PeerLeftDeps, roster: PlayersSlice["e
     award,
     grade,
     revealMs,
+    revealFastMs,
     stealMs,
     stealLeadMs,
     stealSpeedTiers
@@ -501,6 +533,7 @@ function resolveDepartureMidQuestion(deps: PeerLeftDeps, roster: PlayersSlice["e
     mutate,
     award,
     revealMs,
+    revealFastMs,
     stealMs,
     stealLeadMs,
     stealSpeedTiers

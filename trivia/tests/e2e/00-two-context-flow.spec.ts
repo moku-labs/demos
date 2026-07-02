@@ -413,17 +413,24 @@ test.describe("two-context WebRTC flow", () => {
             // match stayed stuck in "question" forever (the host clock's reveal→scoreboard never fired).
             await phonePage.locator("[data-answer-grid-phone] button[data-slot]").first().click();
 
-            // TV advances to the reveal screen (StageQuestion in revealing mode — the answer highlight).
-            await tvPage.waitForSelector("[data-stage][data-phase='reveal']", {
-              timeout: PHASE_TIMEOUT
-            });
-            await expect(tvPage.locator("[data-stage][data-phase='reveal']")).toBeVisible();
+            // TV resolves the round into the reveal. The reveal hold is ADAPTIVE (item 2): a direct
+            // correct answer holds only revealFastMs (4 s), so under parallel-suite load the reveal
+            // beat can already have passed by the time this wait attaches — accept the screens the
+            // host clock auto-advances to as equal proof the round resolved (the guarded regression
+            // is "match frozen in question", not "we watched the reveal").
+            await tvPage.waitForSelector(
+              "[data-stage][data-phase='reveal'], [data-stage][data-phase='scoreboard'], " +
+                "[data-stage][data-phase='roundIntro'], [data-stage][data-phase='categoryPick']",
+              { timeout: PHASE_TIMEOUT }
+            );
 
-            // …and the host clock then auto-advances reveal → scoreboard (the match is no longer frozen).
-            await tvPage.waitForSelector("[data-stage][data-phase='scoreboard']", {
-              timeout: PHASE_TIMEOUT
-            });
-            await expect(tvPage.locator("[data-stage][data-phase='scoreboard']")).toBeVisible();
+            // …and the host clock keeps advancing past the reveal — scoreboard, or already the next
+            // round's screens (the match is no longer frozen).
+            await tvPage.waitForSelector(
+              "[data-stage][data-phase='scoreboard'], [data-stage][data-phase='roundIntro'], " +
+                "[data-stage][data-phase='categoryPick']",
+              { timeout: PHASE_TIMEOUT }
+            );
           }
         }
       }
