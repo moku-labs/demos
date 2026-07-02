@@ -48,19 +48,20 @@ export const TRIVIA = {
     categoryRevealMs: 1300,
     /**
      * Reveal hold (ms) before advancing to the scoreboard. Long enough to read the outcome AND, after
-     * an open steal, every opponent's pick (right/wrong) and who was fastest (design feedback: ~8 s).
-     * This is the FULL hold — used whenever a steal window happened (outcome `stolen`/`wrong`/
-     * `unanswered`). When the active player nails it outright (outcome `correct` — no steal opened),
-     * there is nothing extra to read, so the hold shortens to `revealFastMs` (adaptive reveal delay,
-     * item 2) — the group doesn't sit on an empty beat.
+     * an open steal, every opponent's pick (right/wrong) and who was fastest. This is the FULL hold —
+     * used whenever a steal window happened (outcome `stolen`/`wrong`/`unanswered`). When the active
+     * player nails it outright (outcome `correct` — no steal opened), there is nothing extra to read,
+     * so the hold shortens to `revealFastMs` — the group doesn't sit on an empty beat.
+     * History: 8000 originally (~8 s design feedback); 6000 since the one-line reveal panel — it
+     * reads much faster than the old stacked strip+rollup, so the long hold dragged.
      */
-    revealMs: 8000,
+    revealMs: 6000,
     /**
-     * Shortened reveal hold (ms) for the no-steal fast path (outcome `correct`): 4 s less than the
-     * full `revealMs` (design requirement — item 2). Still long enough to register the correct
-     * answer + the score bump before the scoreboard interstitial takes over.
+     * Shortened reveal hold (ms) for the no-steal fast path (outcome `correct`). Still long enough to
+     * register the correct answer + the score bump before the scoreboard interstitial takes over.
+     * History: 8000 → 4000 (adaptive fast path) → 3000 (same trim pass as `revealMs`).
      */
-    revealFastMs: 4000,
+    revealFastMs: 3000,
     scoreboardMs: 3000,
     endCountdownMs: 15_000
   },
