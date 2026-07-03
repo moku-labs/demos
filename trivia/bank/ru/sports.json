@@ -672,20 +672,6 @@
     "answerCheck": "sa38:2"
   },
   {
-    "id": "79230fa5a886",
-    "category": "sports",
-    "tier": "hard",
-    "type": "text",
-    "prompt": "В 1997 году Гарри Каспаров проиграл матч сопернику, который не был человеком. Кто его обыграл?",
-    "options": [
-      "Робот-манипулятор KUKA",
-      "Суперкомпьютер Deep Blue от IBM",
-      "Программа AlphaZero",
-      "Движок Stockfish"
-    ],
-    "answerCheck": "8vehf6j:0"
-  },
-  {
     "id": "3f1716ebcc19",
     "category": "sports",
     "tier": "hard",

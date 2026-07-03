@@ -42,20 +42,6 @@
     "answerCheck": "0c93ko3:1"
   },
   {
-    "id": "8c7cbacb3f93",
-    "category": "mythology",
-    "tier": "easy",
-    "type": "text",
-    "prompt": "Как в славянской мифологии называется страшная старуха, живущая в избушке на курьих ножках?",
-    "options": [
-      "Баба-Яга",
-      "Берегиня",
-      "Кикимора",
-      "Мара"
-    ],
-    "answerCheck": "5hi4e:1"
-  },
-  {
     "id": "446bb97b03f9",
     "category": "mythology",
     "tier": "medium",

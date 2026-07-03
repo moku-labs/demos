@@ -630,20 +630,6 @@
     "answerCheck": "rfe:1"
   },
   {
-    "id": "4f0d53f9ac1b",
-    "category": "food",
-    "tier": "medium",
-    "type": "text",
-    "prompt": "Что придаёт бородинскому хлебу тёмный цвет и пряный аромат?",
-    "options": [
-      "Свёкла и гвоздика",
-      "Жжёный сахар и ваниль",
-      "Какао и корица",
-      "Солод и кориандр"
-    ],
-    "answerCheck": "ctpm:3"
-  },
-  {
     "id": "528aa1a9b210",
     "category": "food",
     "tier": "hard",

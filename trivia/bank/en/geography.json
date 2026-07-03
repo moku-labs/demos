@@ -28,20 +28,6 @@
     "answerCheck": "hkwkfv:2"
   },
   {
-    "id": "67b0ad0d3d03",
-    "category": "geography",
-    "tier": "easy",
-    "type": "text",
-    "prompt": "Lake Baikal holds about 20% of all the world's unfrozen fresh surface water. What is unusual about its age?",
-    "options": [
-      "It was created by a meteor impact about 2 million years ago",
-      "It is roughly 25–30 million years old, making it the oldest lake on Earth",
-      "It is geologically young at only 500,000 years old",
-      "It formed during the last Ice Age, making it about 15,000 years old"
-    ],
-    "answerCheck": "2q6p:1"
-  },
-  {
     "id": "0885c78ca364",
     "category": "geography",
     "tier": "easy",
