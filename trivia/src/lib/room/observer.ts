@@ -1,16 +1,23 @@
 /**
- * @file Room-lifecycle observer — a tiny hooks-only plugin that forwards the five coarse `room:*`
+ * @file Room-lifecycle observer — a tiny hooks-only plugin that forwards the six coarse `room:*`
  * events to the bridge's lifecycle emitter (the seam islands consume via `onLifecycle`).
  *
  * The Moku `App` exposes `emit` but no public event *subscription*, so the only way to observe the
  * engines' `room:*` lifecycle from outside a plugin is from inside one. This plugin owns no state,
- * config, or api — it depends on the three engines that declare the events (`transport` →
+ * config, or api — it depends on the four engines that declare the events (`transport` →
  * `room:network-warning`, `session` → `room:peer-joined`/`room:peer-left`/`room:host-reconnecting`,
- * `sync` → `room:sync-ready`) purely for compile-time event visibility (WARN-2; the runtime event bus
- * is global, so the hooks fire regardless of `depends`). All three engines are core defaults in BOTH
- * the stage and controller apps, so one observer factory serves both roles.
+ * `sync` → `room:sync-ready`, `intent` → `room:intent-undeliverable`) purely for compile-time event
+ * visibility (WARN-2; the runtime event bus is global, so the hooks fire regardless of `depends`).
+ * All four engines are core defaults in BOTH the stage and controller apps, so one observer factory
+ * serves both roles.
  */
-import { createPlugin, sessionPlugin, syncPlugin, transportPlugin } from "@moku-labs/room";
+import {
+  createPlugin,
+  intentPlugin,
+  sessionPlugin,
+  syncPlugin,
+  transportPlugin
+} from "@moku-labs/room";
 import type { RoomLifecycle } from "./types";
 
 /**
@@ -29,7 +36,7 @@ import type { RoomLifecycle } from "./types";
  */
 export function createRoomObserver(emit: (event: RoomLifecycle) => void) {
   return createPlugin("roomObserver", {
-    depends: [transportPlugin, sessionPlugin, syncPlugin],
+    depends: [transportPlugin, sessionPlugin, syncPlugin, intentPlugin],
     /**
      * Map each `room:*` event to a forwarder into the bridge lifecycle sink.
      *
@@ -97,6 +104,18 @@ export function createRoomObserver(emit: (event: RoomLifecycle) => void) {
        */
       "room:network-warning": payload => {
         emit({ kind: "network-warning", reason: payload.reason });
+      },
+      /**
+       * Forward `room:intent-undeliverable` (room ≥0.4.0 at-least-once terminal) to the bridge sink.
+       *
+       * @param payload - The dead intent's name (+ cSeq, not consumed by the UX).
+       * @example
+       * ```ts
+       * hooks: () => ({ "room:intent-undeliverable": ({ name }) => {} });
+       * ```
+       */
+      "room:intent-undeliverable": payload => {
+        emit({ kind: "intent-undeliverable", name: payload.name });
       }
     })
   });

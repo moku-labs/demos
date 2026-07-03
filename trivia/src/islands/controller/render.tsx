@@ -81,11 +81,12 @@ function makeHandlers(ctx: ControllerContext, state: ControllerState): Controlle
       sound.unlock();
       sound.play("phone.lockin");
       sound.haptic("lockin");
-      // The lock is pinned to the question the player saw (`qid` — the host drops any other), and the
-      // UI locks optimistically (tiles disable now, before any host ack). `lockedAtTs` is the ack
-      // window the lock self-heal watchdog measures from — a lost intent frame is re-sent, not stranded.
+      // The lock is pinned to the question the player saw (`qid` — the host drops any other), so the
+      // optimistic UI lock (tiles disable now, before any host ack) is safe: the wire's at-least-once
+      // delivery (room ≥0.4.0 retransmit-until-ack) re-sends a dropped frame, and a late duplicate
+      // can never resolve a different question.
       intent("answer-lock", { slot, qid });
-      ctx.set({ lockedSlot: slot, lockedQid: qid, lockedAtTs: Date.now() });
+      ctx.set({ lockedSlot: slot, lockedQid: qid });
     },
     onPlayAgain: () => {
       sound.unlock();

@@ -27,8 +27,6 @@ export function initState(): ControllerState {
     lockedSlot: null,
     // eslint-disable-next-line unicorn/no-null -- null = "no locked question", never undefined
     lockedQid: null,
-    // eslint-disable-next-line unicorn/no-null -- null = "no lock sent yet", never undefined
-    lockedAtTs: null,
     leaving: false,
     left: false,
     connection: "ok"

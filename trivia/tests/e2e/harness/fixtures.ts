@@ -1013,7 +1013,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1030,7 +1029,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1048,7 +1046,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "reconnecting"
@@ -1066,7 +1063,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "lost"
@@ -1084,7 +1080,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1101,7 +1096,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1130,7 +1124,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1150,7 +1143,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1167,7 +1159,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1184,7 +1175,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: 2,
       lockedQid: "q-demo",
-      lockedAtTs: FIXED_NOW,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1217,7 +1207,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1249,7 +1238,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1270,7 +1258,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1287,7 +1274,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: true,
       left: false,
       connection: "ok"
@@ -1304,7 +1290,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1335,7 +1320,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1353,7 +1337,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1371,7 +1354,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1389,7 +1371,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1410,7 +1391,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: false,
       connection: "ok"
@@ -1427,7 +1407,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
-      lockedAtTs: null,
       leaving: false,
       left: true,
       connection: "ok"
@@ -1446,7 +1425,6 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
     joinToken: null,
     lockedSlot: null,
     lockedQid: null,
-    lockedAtTs: null,
     leaving: false,
     left: false,
     connection: "ok"

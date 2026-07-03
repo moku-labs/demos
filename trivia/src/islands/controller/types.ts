@@ -34,13 +34,6 @@ export type ControllerState = {
   lockedSlot: number | null;
   /** The question id the lock applies to (so a new question clears the lock). */
   lockedQid: string | null;
-  /**
-   * When this phone locked its slot (`Date.now()` at the tap; `null` = no lock this session). The
-   * lock self-heal watchdog measures its ack window from here: the lock UI is optimistic (tiles
-   * disable immediately) while the `answer-lock` intent rides an at-most-once wire, so a lost frame
-   * would otherwise strand the round until the host's own question timeout.
-   */
-  lockedAtTs: number | null;
   /** Whether the leave modal is open. */
   leaving: boolean;
   /** Whether this phone has left the game (terminal). */
