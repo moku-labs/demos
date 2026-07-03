@@ -726,5 +726,145 @@
       "Glued under the mother's chin"
     ],
     "answerCheck": "v429:2"
+  },
+  {
+    "id": "1954bcffe3dd",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A snail eats using a ribbon-like tongue covered in thousands of tiny teeth. What is this rasping structure called?",
+    "options": [
+      "A mandible",
+      "A gizzard",
+      "A proboscis",
+      "A radula"
+    ],
+    "answerCheck": "by47zp:1"
+  },
+  {
+    "id": "e8f03af8cab9",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which animal makes the loudest sound of any creature on Earth, firing off clicks measured at over 230 decibels underwater?",
+    "options": [
+      "Lion",
+      "Sperm whale",
+      "Howler monkey",
+      "African elephant"
+    ],
+    "answerCheck": "h0fcsx:3"
+  },
+  {
+    "id": "9d2f483a3610",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A snapping shrimp hunts by snapping one oversized claw shut incredibly fast. What does that snap unleash to stun its prey?",
+    "options": [
+      "A blinding flash of light",
+      "A cloud of venom",
+      "A jet of ink",
+      "A powerful shockwave bubble"
+    ],
+    "answerCheck": "up3g:3"
+  },
+  {
+    "id": "9020d147ca6f",
+    "category": "animals",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is unusual about the way a woodpecker's tongue is arranged inside its head?",
+    "options": [
+      "It stores venom at the tip",
+      "It wraps all the way around the skull",
+      "It glows to attract insects",
+      "It splits into two forks"
+    ],
+    "answerCheck": "uws:0"
+  },
+  {
+    "id": "ea1f8cfedb03",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The pangolin, often called the world's most trafficked mammal, is covered in overlapping scales made of what?",
+    "options": [
+      "A single bony shell",
+      "Colourful feathers",
+      "Keratin, the same material as your fingernails",
+      "Hardened venomous spines"
+    ],
+    "answerCheck": "sdy65:3"
+  },
+  {
+    "id": "85948b44745f",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Seahorses are famous for a role reversal unusual among animals. What do the males do?",
+    "options": [
+      "Guard the eggs in their mouths",
+      "Become pregnant and give birth to the young",
+      "Build floating seaweed nests",
+      "Change into females every year"
+    ],
+    "answerCheck": "dayn32z:0"
+  },
+  {
+    "id": "4d88e069f55c",
+    "category": "animals",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The greater honeyguide, a bird of Africa, has a remarkable habit of leading human honey-hunters to what?",
+    "options": [
+      "Ripe fruit trees",
+      "Wild bees' nests full of honey",
+      "Fresh water in the dry season",
+      "Safe river crossings"
+    ],
+    "answerCheck": "mvml:1"
+  },
+  {
+    "id": "b8e9fc8e86be",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Pompeii worm lives around scalding deep-sea vents. Roughly how hot is the water bathing its tail end, one of the highest temperatures any animal is known to tolerate?",
+    "options": [
+      "About 300 degrees Celsius",
+      "About 20 degrees Celsius",
+      "About 40 degrees Celsius",
+      "About 80 degrees Celsius"
+    ],
+    "answerCheck": "b07f:3"
+  },
+  {
+    "id": "cd9f3746a66b",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Some birds have solved Aesop's fable in the lab, dropping stones into water to raise the level and reach a floating treat. Which famously clever bird family are they from?",
+    "options": [
+      "Parrots",
+      "Woodpeckers",
+      "Corvids, the crow and rook family",
+      "Owls"
+    ],
+    "answerCheck": "ky30i1:0"
+  },
+  {
+    "id": "5a1d29b66eb8",
+    "category": "animals",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "To survive months of drought, the African bullfrog burrows down and wraps itself in a protective cocoon of shed skin and mucus, entering which dormant state?",
+    "options": [
+      "Estivation",
+      "Brumation",
+      "Torpor",
+      "Diapause"
+    ],
+    "answerCheck": "kn4:3"
   }
 ]

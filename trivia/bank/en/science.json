@@ -698,5 +698,145 @@
       "CRISPR"
     ],
     "answerCheck": "w7y:2"
+  },
+  {
+    "id": "d5915e228b2c",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A frog begins life as a swimming tadpole and later breathes air on land. Which group of animals does it belong to?",
+    "options": [
+      "Molluscs",
+      "Reptiles",
+      "Amphibians",
+      "Mammals"
+    ],
+    "answerCheck": "06xkq:3"
+  },
+  {
+    "id": "85c5fe8c05af",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which vitamin does your skin naturally make when it's hit by sunlight?",
+    "options": [
+      "Vitamin C",
+      "Vitamin B12",
+      "Vitamin D",
+      "Vitamin K"
+    ],
+    "answerCheck": "ucnplic:1"
+  },
+  {
+    "id": "716d352b1c3a",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A seesaw is an everyday example of which of the six classic simple machines?",
+    "options": [
+      "A wedge",
+      "A screw",
+      "A lever",
+      "A pulley"
+    ],
+    "answerCheck": "0g56j:3"
+  },
+  {
+    "id": "e71f3b3c2e36",
+    "category": "science",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which large organ makes bile and filters harmful substances out of your blood?",
+    "options": [
+      "The liver",
+      "The pancreas",
+      "The kidney",
+      "The spleen"
+    ],
+    "answerCheck": "0m9:3"
+  },
+  {
+    "id": "cbb8b2ad628b",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A single teaspoon of healthy garden soil holds more living microbes than there are what?",
+    "options": [
+      "People on Earth",
+      "Grains of sand on a beach",
+      "Drops in a swimming pool",
+      "Stars in the Milky Way"
+    ],
+    "answerCheck": "gg3sf:1"
+  },
+  {
+    "id": "e5ebe32f31dd",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which metal has the highest melting point of any element and was used for the glowing filament in old light bulbs?",
+    "options": [
+      "Iron",
+      "Titanium",
+      "Tungsten",
+      "Platinum"
+    ],
+    "answerCheck": "wk8pv40:1"
+  },
+  {
+    "id": "7cd1c2a8b373",
+    "category": "science",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The 1986 Chornobyl disaster in Ukraine began when a botched safety test caused a catastrophic explosion in what?",
+    "options": [
+      "A cooling tower",
+      "A nuclear reactor",
+      "A turbine hall",
+      "A fuel storage pond"
+    ],
+    "answerCheck": "138g:1"
+  },
+  {
+    "id": "4e5a650fc94c",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Igor Sikorsky, the Kyiv-born aviation pioneer, is best remembered for building the first practical mass-produced version of which aircraft?",
+    "options": [
+      "The jet airliner",
+      "The helicopter",
+      "The glider",
+      "The seaplane"
+    ],
+    "answerCheck": "hz3i9r:3"
+  },
+  {
+    "id": "191d761bc24d",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Marie and Pierre Curie named one of the elements they discovered after Marie's home country, Poland. Which element was it?",
+    "options": [
+      "Radon",
+      "Francium",
+      "Polonium",
+      "Germanium"
+    ],
+    "answerCheck": "bkm87j8:1"
+  },
+  {
+    "id": "4027e7fd7b8c",
+    "category": "science",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Heisenberg's uncertainty principle says you can never precisely know both a particle's position and its ___ at the same time.",
+    "options": [
+      "Mass",
+      "Momentum",
+      "Electric charge",
+      "Temperature"
+    ],
+    "answerCheck": "0gdb0:2"
   }
 ]

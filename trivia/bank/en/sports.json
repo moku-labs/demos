@@ -726,5 +726,145 @@
       "An ancient unit of distance roughly 42 km long"
     ],
     "answerCheck": "qm1q83a:3"
+  },
+  {
+    "id": "f06016fb90b9",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Lionel Messi finally lifted the FIFA World Cup trophy with Argentina at which tournament?",
+    "options": [
+      "South Africa 2010",
+      "Russia 2018",
+      "Brazil 2014",
+      "Qatar 2022"
+    ],
+    "answerCheck": "ftor63:1"
+  },
+  {
+    "id": "c5690e70e8f2",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In volleyball, how many times may a team touch the ball before it must go back over the net?",
+    "options": [
+      "Three",
+      "Four",
+      "As many as they like",
+      "Two"
+    ],
+    "answerCheck": "87sebxy:3"
+  },
+  {
+    "id": "86d5e8efaf11",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Usain Bolt, the fastest man ever timed over 100 metres, won his Olympic sprint golds representing which country?",
+    "options": [
+      "Jamaica",
+      "Trinidad and Tobago",
+      "Great Britain",
+      "United States"
+    ],
+    "answerCheck": "avolz4m:3"
+  },
+  {
+    "id": "13a2a6826fa8",
+    "category": "sports",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which ancient board game, played on 64 light and dark squares, still crowns a World Champion today under the governing body FIDE?",
+    "options": [
+      "Checkers",
+      "Backgammon",
+      "Chess",
+      "Dominoes"
+    ],
+    "answerCheck": "n9x8dtt:1"
+  },
+  {
+    "id": "a3c17fd60f02",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Andriy Shevchenko, winner of the 2004 Ballon d'Or and later his national team's manager, is the greatest footballer to come from which country?",
+    "options": [
+      "Croatia",
+      "Ukraine",
+      "Portugal",
+      "Poland"
+    ],
+    "answerCheck": "9jn:0"
+  },
+  {
+    "id": "c6ee56f24a59",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Formula 1, what is DRS — the driver-activated device that makes overtaking easier on straights?",
+    "options": [
+      "A burst of extra engine power for a few seconds",
+      "A traction-control mode for wet corners",
+      "A moveable rear wing flap that opens to cut drag",
+      "An automatic override that skips a gear"
+    ],
+    "answerCheck": "0dc1:2"
+  },
+  {
+    "id": "b7fdda4d87b9",
+    "category": "sports",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In surfing, what is a 'goofy-foot' surfer?",
+    "options": [
+      "One who rides with the right foot forward on the board",
+      "A surfer disqualified for dropping in on a wave",
+      "A beginner who can't yet stand up",
+      "One who only rides lying on their belly"
+    ],
+    "answerCheck": "c6fd:0"
+  },
+  {
+    "id": "92eb6bd12437",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In 2023 gymnastics' governing body named its hardest-ever women's vault — a Yurchenko double pike — the 'Biles II' after the athlete who first landed it in competition. Who is she?",
+    "options": [
+      "Sunisa Lee",
+      "Rebeca Andrade",
+      "Nadia Comaneci",
+      "Simone Biles"
+    ],
+    "answerCheck": "6ttf:3"
+  },
+  {
+    "id": "20bb4d1d7228",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In 2023 Novak Djokovic set the all-time record for men's tennis Grand Slam singles titles. How many majors had he won to reach it?",
+    "options": [
+      "24",
+      "28",
+      "22",
+      "20"
+    ],
+    "answerCheck": "uu1:3"
+  },
+  {
+    "id": "40c4ee57d3bf",
+    "category": "sports",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The modern pentathlon combines fencing, swimming, shooting, running and one more discipline that organisers voted to drop after Paris 2024 — replacing it with obstacle-course racing. Which discipline was removed?",
+    "options": [
+      "Cross-country running",
+      "Horse riding (show jumping)",
+      "Fencing",
+      "Swimming"
+    ],
+    "answerCheck": "10jg657:0"
   }
 ]

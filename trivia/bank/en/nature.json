@@ -712,5 +712,145 @@
       "Sucrose"
     ],
     "answerCheck": "dry33r:2"
+  },
+  {
+    "id": "a9ec7385ff2f",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Aloe vera is a popular houseplant prized for the clear gel inside its thick leaves. What is that gel most famously used to soothe?",
+    "options": [
+      "Sunburn",
+      "Hiccups",
+      "Snoring",
+      "Toothache"
+    ],
+    "answerCheck": "huosga:2"
+  },
+  {
+    "id": "518bd6682661",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The vast fields of bright yellow flowers that became a national symbol of Ukraine are grown mainly for their oil and edible seeds. Which flower is it?",
+    "options": [
+      "Daffodil",
+      "Marigold",
+      "Tulip",
+      "Sunflower"
+    ],
+    "answerCheck": "vw3tz:0"
+  },
+  {
+    "id": "2783a2814fa3",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these popular 'nuts' is not really a nut at all, but the seed of a stone fruit related to the peach?",
+    "options": [
+      "Almond",
+      "Hazelnut",
+      "Chestnut",
+      "Pine nut"
+    ],
+    "answerCheck": "65cno8y:3"
+  },
+  {
+    "id": "e420e9c6a5e1",
+    "category": "nature",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Poison ivy causes an itchy rash thanks to an oily chemical on its leaves. What is the classic rhyme people use to identify and avoid it?",
+    "options": [
+      "Berries blue, stick like glue",
+      "Leaves of three, let it be",
+      "Petals five, stay alive",
+      "Roots that creep, put you to sleep"
+    ],
+    "answerCheck": "1eq5u:2"
+  },
+  {
+    "id": "e480e64e2cb3",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The giant Amazon water lily has leaf pads so large and strong they can support the weight of a small child. Its scientific name honours which 19th-century monarch?",
+    "options": [
+      "Marie Antoinette",
+      "Queen Elizabeth I",
+      "Queen Victoria",
+      "Empress Josephine"
+    ],
+    "answerCheck": "qp8:1"
+  },
+  {
+    "id": "b2a658cfaf67",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Coffee plants make caffeine not to keep us awake but as a natural weapon. What does the caffeine do for the plant?",
+    "options": [
+      "It poisons insects and stunts nearby rival seedlings",
+      "It helps the leaves photosynthesise faster",
+      "It makes the beans smell sweeter to birds",
+      "It draws extra rain toward the roots"
+    ],
+    "answerCheck": "k0vgcc3:3"
+  },
+  {
+    "id": "30a631aaf872",
+    "category": "nature",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Tulip mania in the 1600s Netherlands saw single rare bulbs sell for the price of a house. The most prized flowers had dramatic flame-like streaks — later found to be caused by what?",
+    "options": [
+      "Freezing winter temperatures",
+      "A virus infecting the bulb",
+      "A rare mineral in the soil",
+      "Careful crossing by breeders"
+    ],
+    "answerCheck": "sgw:0"
+  },
+  {
+    "id": "89545389095d",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The ghostly white 'ghost plant' (Monotropa uniflora) has no green colour and does no photosynthesis of its own. How does it get its food?",
+    "options": [
+      "It absorbs sunlight through its white stem",
+      "It taps into fungi that are feeding off nearby trees",
+      "It lives purely on rainwater and dissolved minerals",
+      "It digests insects like a Venus flytrap"
+    ],
+    "answerCheck": "s41:0"
+  },
+  {
+    "id": "46bd71dd7ded",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Plants like the dumb cane (dieffenbachia) and rhubarb leaves defend themselves with raphides — microscopic needle-sharp crystals that sting the mouth of anything that bites them. What are these crystals made of?",
+    "options": [
+      "Calcium oxalate",
+      "Common salt",
+      "Crystallised sugar",
+      "Pure silica"
+    ],
+    "answerCheck": "n1hnjp:2"
+  },
+  {
+    "id": "3f4f7c94e57d",
+    "category": "nature",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Cashews are never sold in their shell, and even 'raw' ones have been heat-treated first. Why can't you just crack one open and eat it straight from the shell?",
+    "options": [
+      "The shell holds a caustic oil related to the toxin in poison ivy",
+      "The shell is too hard for any tool to crack",
+      "The shell traps a gas that spoils the nut instantly",
+      "The nut has no flavour at all until it is roasted"
+    ],
+    "answerCheck": "nisc:0"
   }
 ]

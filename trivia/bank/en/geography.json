@@ -670,5 +670,145 @@
       "Its buildings are legally required to be stone"
     ],
     "answerCheck": "jefx:1"
+  },
+  {
+    "id": "e9b148eaf987",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The Eiffel Tower stands beside a river that curves through its home city. Which river is it?",
+    "options": [
+      "The Seine",
+      "The Tiber",
+      "The Rhine",
+      "The Thames"
+    ],
+    "answerCheck": "32k7a:1"
+  },
+  {
+    "id": "00a1ea1a7232",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which desert country is home to the ancient city of Petra, carved straight into rose-coloured rock?",
+    "options": [
+      "Tunisia",
+      "Jordan",
+      "Morocco",
+      "Egypt"
+    ],
+    "answerCheck": "sli:0"
+  },
+  {
+    "id": "6ff328e5d715",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Kyiv, one of the oldest capitals in Eastern Europe, sits on the banks of which major river?",
+    "options": [
+      "The Danube",
+      "The Dnipro",
+      "The Vistula",
+      "The Elbe"
+    ],
+    "answerCheck": "0c6:0"
+  },
+  {
+    "id": "9bda486bec14",
+    "category": "geography",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which US state reaches farther north than any other and is separated from the rest of the country by Canada?",
+    "options": [
+      "Montana",
+      "Maine",
+      "Alaska",
+      "Washington"
+    ],
+    "answerCheck": "7ztgxaf:1"
+  },
+  {
+    "id": "1774e119bc3b",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The abandoned city of Prypiat, frozen in time since a 1986 nuclear disaster near Chornobyl, lies in which country?",
+    "options": [
+      "Poland",
+      "Kazakhstan",
+      "Ukraine",
+      "Romania"
+    ],
+    "answerCheck": "m9w44js:1"
+  },
+  {
+    "id": "eb995e7331e8",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Cape Town sits beneath the flat-topped Table Mountain, in a country washed by two oceans at once. Which country is it?",
+    "options": [
+      "Angola",
+      "Namibia",
+      "South Africa",
+      "Kenya"
+    ],
+    "answerCheck": "4b7tv:3"
+  },
+  {
+    "id": "559c76f976a0",
+    "category": "geography",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which city, the seat of the European Union's main institutions, is sometimes nicknamed 'the capital of Europe'?",
+    "options": [
+      "Strasbourg",
+      "Geneva",
+      "The Hague",
+      "Brussels"
+    ],
+    "answerCheck": "e8k:2"
+  },
+  {
+    "id": "01b48cdb125c",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which national capital sits at the highest elevation in the world, perched around 3,600 metres up in the Andes?",
+    "options": [
+      "Quito, Ecuador",
+      "Bogotá, Colombia",
+      "Kathmandu, Nepal",
+      "La Paz, Bolivia"
+    ],
+    "answerCheck": "zdim3h0:2"
+  },
+  {
+    "id": "35bea4db44f5",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In 2011 a long civil war ended with the birth of the world's newest widely-recognised country, whose capital is Juba. Which country is it?",
+    "options": [
+      "Eritrea",
+      "Timor-Leste",
+      "Namibia",
+      "South Sudan"
+    ],
+    "answerCheck": "s3fj:3"
+  },
+  {
+    "id": "558f79658f40",
+    "category": "geography",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Angel Falls, the tallest uninterrupted waterfall on Earth at nearly a kilometre, plunges from a flat-topped 'tepui' in which country?",
+    "options": [
+      "Brazil",
+      "Guyana",
+      "Colombia",
+      "Venezuela"
+    ],
+    "answerCheck": "hh23d:0"
   }
 ]

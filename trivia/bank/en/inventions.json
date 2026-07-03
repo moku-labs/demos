@@ -726,5 +726,145 @@
       "It drained a fresh battery in a single evening"
     ],
     "answerCheck": "xzihhx:2"
+  },
+  {
+    "id": "c2d3d9390b33",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The rugged 'jerry can' fuel container copied by the Allies in WWII got its nickname from what?",
+    "options": [
+      "A popular wartime cartoon character",
+      "The Germans, nicknamed 'Jerries', who designed it",
+      "Its inventor, a man named Jerry",
+      "A jelly-like seal inside the lid"
+    ],
+    "answerCheck": "u7d35a:3"
+  },
+  {
+    "id": "08afee189ef8",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "IBM's 'Simon', released in 1994, combined a phone, a touchscreen, and apps like a calculator and calendar. It's now widely called the first what?",
+    "options": [
+      "Tablet",
+      "Smartphone",
+      "E-reader",
+      "Smartwatch"
+    ],
+    "answerCheck": "9x3:0"
+  },
+  {
+    "id": "5c9d6b5c6279",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The QR code, now scanned billions of times a day for menus and payments, was invented in 1994 by a company in which industry?",
+    "options": [
+      "The automotive industry, to track car parts",
+      "Video games",
+      "Fast food",
+      "Banking"
+    ],
+    "answerCheck": "kwww:0"
+  },
+  {
+    "id": "eeeda19e8d6a",
+    "category": "inventions",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The LED, now in nearly every screen and light bulb, is far more efficient than the old filament bulb because it produces light by doing what?",
+    "options": [
+      "Burning a tiny amount of gas",
+      "Heating a metal filament until it glows",
+      "Passing current through a semiconductor that emits light directly",
+      "Spinning a magnet to create sparks"
+    ],
+    "answerCheck": "sam33b:0"
+  },
+  {
+    "id": "6babe3335602",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Igor Sikorsky, the Kyiv-born aviation pioneer, is most famous for building the first mass-produced, practical version of which aircraft in the United States?",
+    "options": [
+      "The seaplane",
+      "The helicopter",
+      "The glider",
+      "The jet fighter"
+    ],
+    "answerCheck": "gbwwf6u:0"
+  },
+  {
+    "id": "7313e52aaa46",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The lithium-ion battery that powers nearly every phone and laptop earned its three key developers which prize in 2019?",
+    "options": [
+      "The Nobel Prize in Physics",
+      "The Fields Medal",
+      "The Nobel Prize in Chemistry",
+      "The Turing Award"
+    ],
+    "answerCheck": "zfoxxj:0"
+  },
+  {
+    "id": "a119ee8b77d8",
+    "category": "inventions",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The barcode was dreamed up by Norman Joseph Woodland, who first sketched the idea in the sand of a beach as a visual extension of what?",
+    "options": [
+      "Roman numerals",
+      "Musical notation",
+      "Morse code",
+      "The Braille alphabet"
+    ],
+    "answerCheck": "cc8hr:3"
+  },
+  {
+    "id": "321292b9f229",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The 2020 Nobel Prize in Chemistry went to Emmanuelle Charpentier and Jennifer Doudna for developing CRISPR — the 'genetic scissors' that edit DNA. What made that award historic?",
+    "options": [
+      "It was the first Nobel ever shared by two women",
+      "It was awarded just one year after the discovery",
+      "Both winners refused the prize money",
+      "It was the first Nobel given for biology"
+    ],
+    "answerCheck": "vd8id12:3"
+  },
+  {
+    "id": "ced76d8c257c",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The shipping container reshaped global trade after trucking magnate Malcolm McLean standardized it in the 1950s. What kind of vessel was his very first container ship, the Ideal X?",
+    "options": [
+      "A converted WWII oil tanker",
+      "A brand-new purpose-built cargo ship",
+      "A former naval destroyer",
+      "A repurposed ocean liner"
+    ],
+    "answerCheck": "qkc:3"
+  },
+  {
+    "id": "dc372b283998",
+    "category": "inventions",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Haber-Bosch process, credited with feeding roughly half of humanity by making synthetic fertilizer, pulls nitrogen from the air to manufacture what key product?",
+    "options": [
+      "Ethanol",
+      "Chlorine",
+      "Ammonia",
+      "Methane"
+    ],
+    "answerCheck": "44ipmvf:1"
   }
 ]

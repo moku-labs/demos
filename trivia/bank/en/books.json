@@ -712,5 +712,145 @@
       "Pushing a boulder forever up a hill"
     ],
     "answerCheck": "x7qx:2"
+  },
+  {
+    "id": "8262a2c9c9c4",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In A.A. Milne's stories, what is Winnie-the-Pooh's favourite food?",
+    "options": [
+      "Honey",
+      "Berries",
+      "Acorns",
+      "Carrots"
+    ],
+    "answerCheck": "8lli:0"
+  },
+  {
+    "id": "090c37bef9f4",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What do you call the opening section that comes before a book's main story?",
+    "options": [
+      "Glossary",
+      "Appendix",
+      "Prologue",
+      "Epilogue"
+    ],
+    "answerCheck": "c9aud:3"
+  },
+  {
+    "id": "febc89b1f371",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which colour is the road the heroes follow to the Emerald City in \"The Wonderful Wizard of Oz\"?",
+    "options": [
+      "Blue",
+      "Silver",
+      "Yellow",
+      "Red"
+    ],
+    "answerCheck": "wge:1"
+  },
+  {
+    "id": "5109d7d6296c",
+    "category": "books",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A comparison using 'like' or 'as' — such as 'brave as a lion' — is called what?",
+    "options": [
+      "A proverb",
+      "A metaphor",
+      "A pun",
+      "A simile"
+    ],
+    "answerCheck": "ce0yv3e:2"
+  },
+  {
+    "id": "bacf5de6cfc8",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In 2016, a musician surprised the world by winning the Nobel Prize in Literature for 'new poetic expressions'. Who was it?",
+    "options": [
+      "Paul Simon",
+      "Bruce Springsteen",
+      "Leonard Cohen",
+      "Bob Dylan"
+    ],
+    "answerCheck": "66val2:1"
+  },
+  {
+    "id": "43bcf30a9131",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The '&' symbol, called the ampersand, is actually a stylised version of which Latin word meaning 'and'?",
+    "options": [
+      "Et",
+      "Ac",
+      "Ad",
+      "Ut"
+    ],
+    "answerCheck": "olkortv:3"
+  },
+  {
+    "id": "7a32fcd968c5",
+    "category": "books",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The dystopian novel \"The Handmaid's Tale\", which inspired a hit streaming series, was written by which Canadian author?",
+    "options": [
+      "Alice Munro",
+      "Ursula K. Le Guin",
+      "Margaret Atwood",
+      "Doris Lessing"
+    ],
+    "answerCheck": "aobk108:1"
+  },
+  {
+    "id": "22a261c8cc9f",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "James Joyce's novel \"Ulysses\" takes place during a single day, celebrated by fans every year as 'Bloomsday'. Which date is it?",
+    "options": [
+      "17 March",
+      "24 December",
+      "1 May",
+      "16 June"
+    ],
+    "answerCheck": "cxsnvr:1"
+  },
+  {
+    "id": "6f4956954eb0",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Joseph Conrad, who wrote \"Heart of Darkness\" in English — only his third language — was born in the town of Berdychiv, now part of which country?",
+    "options": [
+      "Belgium",
+      "Austria",
+      "Poland",
+      "Ukraine"
+    ],
+    "answerCheck": "gx329:0"
+  },
+  {
+    "id": "1eff70bbf487",
+    "category": "books",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Oxford English Dictionary's editor famously exchanged thousands of quotations with a brilliant contributor secretly confined to an asylum for a killing. What was that contributor's name?",
+    "options": [
+      "James Murray",
+      "Henry Bradley",
+      "Frederick Furnivall",
+      "William Chester Minor"
+    ],
+    "answerCheck": "tomp:3"
   }
 ]

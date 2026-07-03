@@ -726,5 +726,145 @@
       "The 'People's Car', or Volkswagen"
     ],
     "answerCheck": "hl7:2"
+  },
+  {
+    "id": "4c9b27cfb759",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What colour are the reversing lights that switch on when a car backs up?",
+    "options": [
+      "Red",
+      "White",
+      "Amber",
+      "Blue"
+    ],
+    "answerCheck": "6q9nb:2"
+  },
+  {
+    "id": "6f5d39b8722c",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The rugged 'Jeep' first became world-famous as a vehicle used in which setting?",
+    "options": [
+      "Olympic ceremonies",
+      "Formula 1 racing",
+      "World War II military service",
+      "The Moon landings"
+    ],
+    "answerCheck": "7y2zt:3"
+  },
+  {
+    "id": "518ec51101d8",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which all-electric racing series, launched in 2014, features cars with no exhaust and a distinctive high-pitched whine?",
+    "options": [
+      "Formula 1",
+      "Formula E",
+      "MotoGP",
+      "Rallycross"
+    ],
+    "answerCheck": "5v2:0"
+  },
+  {
+    "id": "a77b8f37b5ba",
+    "category": "cars",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What does a car's 'odometer' measure?",
+    "options": [
+      "The current speed",
+      "Fuel left in the tank",
+      "The total distance the car has travelled",
+      "Engine temperature"
+    ],
+    "answerCheck": "tggmtme:1"
+  },
+  {
+    "id": "88bb28a78666",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The glamorous Monaco Grand Prix stands out among Formula 1 circuits for what unusual quality?",
+    "options": [
+      "It has no corners at all",
+      "It is raced entirely at night",
+      "It is run on tight public streets through the city",
+      "It is the longest track on the calendar"
+    ],
+    "answerCheck": "qdqzf:3"
+  },
+  {
+    "id": "6a3a7c8e5e65",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Modern electric and hybrid cars top up their batteries a little every time they slow down. What is this feature called?",
+    "options": [
+      "Cruise recovery",
+      "Overdrive",
+      "Regenerative braking",
+      "Turbo boosting"
+    ],
+    "answerCheck": "g1u:1"
+  },
+  {
+    "id": "2718b945e9e3",
+    "category": "cars",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Pikes Peak Hill Climb in Colorado is nicknamed the 'Race to the Clouds'. Why?",
+    "options": [
+      "Drivers are required to wear oxygen masks",
+      "It is run only when fog rolls in",
+      "The course climbs a mountain to over 4,300 metres altitude",
+      "Cars launch off a ramp at the finish"
+    ],
+    "answerCheck": "e18u1:3"
+  },
+  {
+    "id": "033f623b40f0",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The 'halo', a curved titanium bar introduced to Formula 1 cars in 2018, was added to do what?",
+    "options": [
+      "Protect the driver's head from debris and impacts",
+      "Steady the onboard camera",
+      "Cool the engine air intake",
+      "Improve aerodynamic downforce"
+    ],
+    "answerCheck": "1amxqb:2"
+  },
+  {
+    "id": "bec2ebd39f36",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A catalytic converter, fitted to a car's exhaust to cut pollution, relies on a coating of which surprisingly precious metals?",
+    "options": [
+      "Gold and silver",
+      "Titanium and tungsten",
+      "Platinum, palladium and rhodium",
+      "Copper and zinc"
+    ],
+    "answerCheck": "p6k0:2"
+  },
+  {
+    "id": "e1122df5f8ae",
+    "category": "cars",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Peel P50, recognised as the smallest production car ever made, was so tiny that it famously lacked what?",
+    "options": [
+      "A driver's seat",
+      "A reverse gear",
+      "Any windows",
+      "A steering wheel"
+    ],
+    "answerCheck": "xgy9gt:3"
   }
 ]

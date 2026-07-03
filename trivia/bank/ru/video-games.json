@@ -656,5 +656,145 @@
       "Age of Empires II"
     ],
     "answerCheck": "3ypcc:1"
+  },
+  {
+    "id": "46bcace26e95",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В Assassin's Creed фирменный трюк героев — эффектный прыжок с огромной высоты в стог сена или воду. Как называется этот приём?",
+    "options": [
+      "Прыжок веры",
+      "Тень ассасина",
+      "Свободный бег",
+      "Полёт орла"
+    ],
+    "answerCheck": "2op6k:1"
+  },
+  {
+    "id": "149532b8fee6",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В League of Legends две команды сражаются, пытаясь разрушить главное здание на базе противника. Как называется это ключевое строение?",
+    "options": [
+      "Портал",
+      "Маяк",
+      "Нексус",
+      "Замок"
+    ],
+    "answerCheck": "wqwl:2"
+  },
+  {
+    "id": "290e6451cd1c",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В файтингах Nintendo серии Super Smash Bros. вместо полоски здоровья используется другой показатель. Что растёт у бойца по мере получения урона?",
+    "options": [
+      "Таймер нокдауна",
+      "Счётчик ярости",
+      "Процент повреждений",
+      "Уровень усталости"
+    ],
+    "answerCheck": "6fh:1"
+  },
+  {
+    "id": "005caeca850b",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В хорроре Five Nights at Freddy's игрок работает ночным охранником и отбивается от оживающих аниматроников. Где происходит действие?",
+    "options": [
+      "В подземном бункере",
+      "В заброшенной больнице",
+      "В школе",
+      "В детской пиццерии"
+    ],
+    "answerCheck": "bdv:2"
+  },
+  {
+    "id": "27440e296c2b",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Ролевая игра Baldur's Gate 3 стала настоящим феноменом и получила титул «Игра года» на The Game Awards 2023. Какая студия её разработала?",
+    "options": [
+      "Larian Studios",
+      "inXile Entertainment",
+      "Obsidian Entertainment",
+      "BioWare"
+    ],
+    "answerCheck": "v900j:1"
+  },
+  {
+    "id": "e8c1c599df41",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "В Death Stranding от Хидео Кодзимы главный герой в исполнении Нормана Ридуса занимается необычной для видеоигр работой. Какой?",
+    "options": [
+      "Он врач-хирург",
+      "Он курьер, доставляющий грузы",
+      "Он наёмный убийца",
+      "Он детектив"
+    ],
+    "answerCheck": "5z26b7:3"
+  },
+  {
+    "id": "e56e39063cbe",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "На ежегодной церемонии The Game Awards вручают главный приз — «Игра года». Как в индустрии по-английски сокращают это звание?",
+    "options": [
+      "GG",
+      "MVP",
+      "AAA",
+      "GOTY"
+    ],
+    "answerCheck": "lpidtv:1"
+  },
+  {
+    "id": "556956467c22",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Souls-игры студии FromSoftware знамениты суровой сложностью. Какая надпись появляется на экране каждый раз, когда персонаж погибает в Dark Souls?",
+    "options": [
+      "THE END",
+      "YOU DIED",
+      "WASTED",
+      "GAME OVER"
+    ],
+    "answerCheck": "hkwv:1"
+  },
+  {
+    "id": "a8a1cd12d410",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Elden Ring 2022 года собрала множество наград «Игра года». Кто из знаменитых писателей был приглашён FromSoftware, чтобы создать предысторию и мифологию её мира?",
+    "options": [
+      "Нил Гейман",
+      "Брендон Сандерсон",
+      "Стивен Кинг",
+      "Джордж Р. Р. Мартин"
+    ],
+    "answerCheck": "4e13:3"
+  },
+  {
+    "id": "1a377a968db5",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Приставочная война 1990-х развернулась между Nintendo и Sega. Какой дерзкий рекламный слоган Sega напрямую высмеивал конкурента?",
+    "options": [
+      "Play It Loud",
+      "It's Thinking",
+      "Now You're Playing With Power",
+      "Genesis does what Nintendon't"
+    ],
+    "answerCheck": "4m7:2"
   }
 ]

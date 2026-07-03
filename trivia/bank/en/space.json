@@ -712,5 +712,145 @@
       "Earth"
     ],
     "answerCheck": "dz8okvy:1"
+  },
+  {
+    "id": "245f07734b79",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "SpaceX's Falcon 9 rockets became famous for doing what after launch, to save money?",
+    "options": [
+      "Parachuting into a net on land",
+      "Burning up completely on purpose",
+      "Landing upright to be reused",
+      "Splashing down and sinking"
+    ],
+    "answerCheck": "f8b:1"
+  },
+  {
+    "id": "49cf227a322f",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What do we call a huge cloud of gas and dust in space where new stars are born?",
+    "options": [
+      "A quasar",
+      "A crater",
+      "A nebula",
+      "A pulsar"
+    ],
+    "answerCheck": "6tb:1"
+  },
+  {
+    "id": "7af9aab584fc",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which dazzling planet is often the brightest thing in our sky after the Sun and Moon, earning it the nickname the 'Morning Star'?",
+    "options": [
+      "Jupiter",
+      "Mars",
+      "Neptune",
+      "Venus"
+    ],
+    "answerCheck": "986vcmh:2"
+  },
+  {
+    "id": "ed657cd23038",
+    "category": "space",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Our Sun is a giant glowing ball made mostly of which element?",
+    "options": [
+      "Carbon",
+      "Hydrogen",
+      "Iron",
+      "Oxygen"
+    ],
+    "answerCheck": "53cc:1"
+  },
+  {
+    "id": "130d3c1556f7",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "NASA's Perseverance rover carried a device called MOXIE that pulled off a first on Mars — making what from the thin Martian air?",
+    "options": [
+      "Electricity",
+      "Drinking water",
+      "Rocket fuel",
+      "Breathable oxygen"
+    ],
+    "answerCheck": "xnz5:3"
+  },
+  {
+    "id": "c08859becfe9",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The red supergiant Betelgeuse is so vast that if it swapped places with our Sun, its surface would swallow the whole inner Solar System and reach out to roughly the orbit of which giant planet?",
+    "options": [
+      "Jupiter",
+      "Neptune",
+      "Saturn",
+      "Uranus"
+    ],
+    "answerCheck": "gyahg:1"
+  },
+  {
+    "id": "c17f355a93d7",
+    "category": "space",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In roughly 4 billion years the Milky Way is on a slow-motion collision course with which neighbouring galaxy?",
+    "options": [
+      "The Large Magellanic Cloud",
+      "The Andromeda Galaxy",
+      "The Sombrero Galaxy",
+      "The Whirlpool Galaxy"
+    ],
+    "answerCheck": "u9wd2hy:0"
+  },
+  {
+    "id": "4fdcab83d851",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "NASA's Parker Solar Probe set the record as the fastest human-made object ever, reaching a top speed of roughly what as it whipped past the Sun?",
+    "options": [
+      "700,000 km/h",
+      "12,000 km/h",
+      "50,000 km/h",
+      "3 million km/h"
+    ],
+    "answerCheck": "81j:3"
+  },
+  {
+    "id": "1b329eb20f25",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In 2022 NASA's DART spacecraft deliberately smashed into a small asteroid moon named Dimorphos. What was the mission testing?",
+    "options": [
+      "How to mine metal from asteroids",
+      "Landing humans on an asteroid",
+      "Nudging an asteroid off course to defend Earth",
+      "Whether asteroids contain water"
+    ],
+    "answerCheck": "d18ab0l:1"
+  },
+  {
+    "id": "abe21f786e10",
+    "category": "space",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Ceres, the largest object in the asteroid belt, is unusual enough to also hold which grander classification?",
+    "options": [
+      "A comet",
+      "A captured moon",
+      "A dwarf planet",
+      "A baby star"
+    ],
+    "answerCheck": "jg19bx:0"
   }
 ]

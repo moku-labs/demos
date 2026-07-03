@@ -726,5 +726,145 @@
       "Bach's 'Goldberg Variations'"
     ],
     "answerCheck": "jqg5rp1:0"
+  },
+  {
+    "id": "64431aaec3f2",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which chatbot, launched by OpenAI in late 2022, became one of the fastest-growing apps ever and put 'AI' on everyone's lips?",
+    "options": [
+      "ChatGPT",
+      "Bard",
+      "Clippy",
+      "Copilot"
+    ],
+    "answerCheck": "h0sgxtz:3"
+  },
+  {
+    "id": "c9bcf58df96b",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What does the padlock icon in your browser's address bar usually mean?",
+    "options": [
+      "You need a password to leave the page",
+      "The website is family-friendly",
+      "The page has been bookmarked",
+      "The site connection is encrypted"
+    ],
+    "answerCheck": "w55:2"
+  },
+  {
+    "id": "8d3a6d94c043",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In everyday tech talk, what is 'the algorithm' that people blame for what shows up in their social media feed?",
+    "options": [
+      "A government internet filter",
+      "The software rules that decide what content to show you",
+      "A type of computer virus",
+      "The person who moderates comments"
+    ],
+    "answerCheck": "lsrd8:2"
+  },
+  {
+    "id": "6d029d55c00b",
+    "category": "tech",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What did Apple famously remove from the iPhone 7 in 2016, sparking a wave of complaints?",
+    "options": [
+      "The camera",
+      "The 3.5 mm headphone jack",
+      "The volume buttons",
+      "The home button"
+    ],
+    "answerCheck": "zb6dpr:3"
+  },
+  {
+    "id": "2247512d6234",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Igor Sikorsky, the Kyiv-born aviation pioneer, is best remembered for perfecting which type of aircraft?",
+    "options": [
+      "The jet airliner",
+      "The hot-air balloon",
+      "The mass-produced helicopter",
+      "The supersonic fighter"
+    ],
+    "answerCheck": "o3gl7g:0"
+  },
+  {
+    "id": "f8447254282c",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The tech term 'spam' for junk email was inspired by a repetitive sketch from which comedy troupe?",
+    "options": [
+      "Saturday Night Live",
+      "The Muppets",
+      "Monty Python",
+      "The Marx Brothers"
+    ],
+    "answerCheck": "kjnij1:0"
+  },
+  {
+    "id": "103324ed936c",
+    "category": "tech",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What does the '5G' in modern mobile networks actually stand for?",
+    "options": [
+      "Fifth generation",
+      "5 gigabytes",
+      "5 grid channels",
+      "5 gigahertz"
+    ],
+    "answerCheck": "tr85:0"
+  },
+  {
+    "id": "56e22b84ae1d",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The whole cryptocurrency era traces to a 2008 whitepaper by the pseudonymous 'Satoshi Nakamoto'. Which currency did it introduce?",
+    "options": [
+      "Dogecoin",
+      "Ethereum",
+      "Bitcoin",
+      "Litecoin"
+    ],
+    "answerCheck": "ujhh98m:1"
+  },
+  {
+    "id": "1f4df37b0c81",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Nvidia's chips now power much of the AI boom, but the 'GPU' was originally built to accelerate what?",
+    "options": [
+      "Spreadsheet calculations",
+      "Wi-Fi signals",
+      "Hard-drive storage",
+      "3D graphics and video games"
+    ],
+    "answerCheck": "nfk:2"
+  },
+  {
+    "id": "7a9f0c1af74c",
+    "category": "tech",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Programmers joke about 'rubber duck debugging'. What does the technique actually involve?",
+    "options": [
+      "Naming every variable after a cartoon character",
+      "Explaining your code line by line to an inanimate object until you spot the bug",
+      "Squeezing a stress toy after every crash",
+      "Testing code only on Fridays for luck"
+    ],
+    "answerCheck": "zrvweer:0"
   }
 ]

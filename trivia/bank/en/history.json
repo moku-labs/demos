@@ -684,5 +684,145 @@
       "Temujin"
     ],
     "answerCheck": "xyr:2"
+  },
+  {
+    "id": "3f693926c9e9",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Nelson Mandela spent 27 years in prison before becoming the first Black president of which country in 1994?",
+    "options": [
+      "South Africa",
+      "Nigeria",
+      "Kenya",
+      "Ghana"
+    ],
+    "answerCheck": "v7vxzy:2"
+  },
+  {
+    "id": "85339351f415",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In which modern country did the ancient Maya build stepped pyramids like Chichén Itzá?",
+    "options": [
+      "Mexico",
+      "Peru",
+      "India",
+      "Egypt"
+    ],
+    "answerCheck": "egpsfzl:3"
+  },
+  {
+    "id": "0a61e4ec1516",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which teenage French peasant led armies during the Hundred Years' War before being burned at the stake in 1431?",
+    "options": [
+      "Marie Antoinette",
+      "Joan of Arc",
+      "Catherine de' Medici",
+      "Eleanor of Aquitaine"
+    ],
+    "answerCheck": "6xp6kmb:0"
+  },
+  {
+    "id": "984e4aed7841",
+    "category": "history",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The Wright brothers' first powered flight in 1903 lasted about 12 seconds. Roughly how far did it travel?",
+    "options": [
+      "About 40 metres — less than the length of a modern jumbo jet",
+      "About 2 kilometres",
+      "About 10 kilometres",
+      "About 500 metres"
+    ],
+    "answerCheck": "2zaoqhw:3"
+  },
+  {
+    "id": "9dd4c9aa4131",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The world's first mass-produced helicopter was designed by an aviation pioneer born in Kyiv, Ukraine. Who was he?",
+    "options": [
+      "Glenn Curtiss",
+      "Igor Sikorsky",
+      "Howard Hughes",
+      "Louis Blériot"
+    ],
+    "answerCheck": "fv9ulu0:0"
+  },
+  {
+    "id": "d49be5bc5304",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "During the Apollo 14 mission in 1971, astronaut Alan Shepard did something no one had ever done on the Moon. What was it?",
+    "options": [
+      "Planted a tree seed",
+      "Played a harmonica",
+      "Hit two golf balls",
+      "Drove a car"
+    ],
+    "answerCheck": "s0z:1"
+  },
+  {
+    "id": "011109f3649e",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Great Fire of London in 1666 destroyed most of the medieval city. Remarkably, how many deaths were officially recorded?",
+    "options": [
+      "Around 1,000",
+      "Around 300",
+      "Around 6,000",
+      "Fewer than 10"
+    ],
+    "answerCheck": "0m04c:0"
+  },
+  {
+    "id": "33c1d3a8db8b",
+    "category": "history",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A wave of uprisings across the Arab world beginning in late 2010, toppling leaders in Tunisia and Egypt, became known as what?",
+    "options": [
+      "The Jasmine Accord",
+      "The Velvet Revolution",
+      "The Arab Spring",
+      "The Orange Movement"
+    ],
+    "answerCheck": "6wngysw:1"
+  },
+  {
+    "id": "63c2f2408574",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Cleopatra was the last active pharaoh of Egypt, but her royal dynasty originally came from where?",
+    "options": [
+      "Persia",
+      "Ethiopia",
+      "Greece (Macedonia)",
+      "Nubia"
+    ],
+    "answerCheck": "o8e42s:0"
+  },
+  {
+    "id": "eaedb580bc3a",
+    "category": "history",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The 18th-century conflict named the 'War of Jenkins' Ear' got its name because a British captain claimed the Spanish had done what to him?",
+    "options": [
+      "Burned his logbook",
+      "Cut off his ear",
+      "Stolen his ship's cannon",
+      "Branded his hand"
+    ],
+    "answerCheck": "cmj0:1"
   }
 ]

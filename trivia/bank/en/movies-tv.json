@@ -726,5 +726,145 @@
       "Cut from the theatrical release"
     ],
     "answerCheck": "4zaec0:0"
+  },
+  {
+    "id": "7ef84bdd2067",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In the Pixar film Up, how does the old man Carl make his house fly away?",
+    "options": [
+      "A giant fan",
+      "Jet engines on the roof",
+      "Thousands of balloons",
+      "A magic spell"
+    ],
+    "answerCheck": "1q6:1"
+  },
+  {
+    "id": "27dc405bdfaf",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which animated film features a rat named Remy who dreams of becoming a chef in Paris?",
+    "options": [
+      "Chicken Run",
+      "Flushed Away",
+      "The Secret of NIMH",
+      "Ratatouille"
+    ],
+    "answerCheck": "mzj:2"
+  },
+  {
+    "id": "725464f6d55a",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In The Big Bang Theory, what word does Sheldon say when he thinks he has pulled off a clever prank?",
+    "options": [
+      "Surprise!",
+      "Bazinga!",
+      "Gotcha!",
+      "Boom!"
+    ],
+    "answerCheck": "70yn:1"
+  },
+  {
+    "id": "8ea586b800f0",
+    "category": "movies-tv",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The 2023 blockbuster starring Margot Robbie as the famous plastic doll, directed by Greta Gerwig, was called what?",
+    "options": [
+      "Bratz",
+      "Barbie",
+      "Polly Pocket",
+      "Trolls"
+    ],
+    "answerCheck": "4rri0c:3"
+  },
+  {
+    "id": "9817791caaa5",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In the animated hit WALL-E, what is the little robot programmed to do on the deserted Earth?",
+    "options": [
+      "Explore new planets",
+      "Grow crops",
+      "Repair broken spaceships",
+      "Compact and stack trash"
+    ],
+    "answerCheck": "x3c:2"
+  },
+  {
+    "id": "ad766ae7819b",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In the Netflix series The Witcher, actor Henry Cavill plays a silver-haired monster hunter named what?",
+    "options": [
+      "Jaskier",
+      "Ciri",
+      "Geralt of Rivia",
+      "Vesemir"
+    ],
+    "answerCheck": "vxqa9l:0"
+  },
+  {
+    "id": "22468a4194b8",
+    "category": "movies-tv",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The horror hit A Nightmare on Elm Street introduced a dream-stalking killer with a bladed glove named what?",
+    "options": [
+      "Michael Myers",
+      "Jason Voorhees",
+      "Freddy Krueger",
+      "Leatherface"
+    ],
+    "answerCheck": "ing7:2"
+  },
+  {
+    "id": "004680096bb5",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Milla Jovovich, star of the Resident Evil films and The Fifth Element, was born in Kyiv — making her a native of which country?",
+    "options": [
+      "Ukraine",
+      "France",
+      "Poland",
+      "Serbia"
+    ],
+    "answerCheck": "vtw:3"
+  },
+  {
+    "id": "bddb42987d17",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In the film Whiplash, the tyrannical instructor Terence Fletcher hurls what object at his student drummer's head?",
+    "options": [
+      "A metronome",
+      "A music stand",
+      "A cymbal",
+      "A chair"
+    ],
+    "answerCheck": "w2bxbf:1"
+  },
+  {
+    "id": "ce9ab0a40f94",
+    "category": "movies-tv",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The 2001 French film Amélie is set in which Paris neighbourhood, famous for its hilltop white basilica and street artists?",
+    "options": [
+      "Le Marais",
+      "Montparnasse",
+      "Montmartre",
+      "Belleville"
+    ],
+    "answerCheck": "dyn2:2"
   }
 ]

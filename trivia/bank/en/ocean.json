@@ -726,5 +726,145 @@
       "A cloud of toxic gas"
     ],
     "answerCheck": "2pwi34:2"
+  },
+  {
+    "id": "107df4a6cf9f",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the name of the forgetful blue fish in the Pixar films who can 'speak whale'?",
+    "options": [
+      "Pearl",
+      "Nemo",
+      "Dory",
+      "Marlin"
+    ],
+    "answerCheck": "yt4:1"
+  },
+  {
+    "id": "731042961d13",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Krill are tiny shrimp-like creatures found in huge swarms. Why do they matter so much to the ocean?",
+    "options": [
+      "They are the ocean's only source of salt",
+      "They are a key food source for whales and countless other animals",
+      "They dig out the deep-sea trenches",
+      "They keep beaches clear of seaweed"
+    ],
+    "answerCheck": "8027xh:3"
+  },
+  {
+    "id": "6e6f1b86646d",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which brightly coloured sea creature moves by slowly opening and closing its bell-shaped body to pulse through the water?",
+    "options": [
+      "Sea urchin",
+      "Crab",
+      "Oyster",
+      "Jellyfish"
+    ],
+    "answerCheck": "a5gz2f9:2"
+  },
+  {
+    "id": "ea49fff0d0cd",
+    "category": "ocean",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of these seas is so salty that swimmers float on the surface with almost no effort?",
+    "options": [
+      "The North Sea",
+      "The Coral Sea",
+      "The Caribbean Sea",
+      "The Dead Sea"
+    ],
+    "answerCheck": "c1t4l:0"
+  },
+  {
+    "id": "3d37b7fcafb7",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The Mariana Trench, which holds the ocean's deepest known point, lies in which ocean?",
+    "options": [
+      "The Arctic Ocean",
+      "The Indian Ocean",
+      "The Atlantic Ocean",
+      "The Pacific Ocean"
+    ],
+    "answerCheck": "syh2g:0"
+  },
+  {
+    "id": "c7a1e424bd2d",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The coelacanth, a fish once thought to have died out with the dinosaurs, stunned scientists in 1938 when a live one turned up. What is it often called?",
+    "options": [
+      "A ghost fish",
+      "A phantom eel",
+      "A sea dragon",
+      "A living fossil"
+    ],
+    "answerCheck": "tkqf4d2:2"
+  },
+  {
+    "id": "6b7720b0da02",
+    "category": "ocean",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A garden eel spends its whole life poking out of the seabed and swaying in the current. What is it mostly doing?",
+    "options": [
+      "Digging a tunnel to the surface",
+      "Catching tiny drifting plankton from the passing water",
+      "Signalling to boats above",
+      "Hunting other eels"
+    ],
+    "answerCheck": "cl43mu:3"
+  },
+  {
+    "id": "3f743b24cbb7",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Coral reefs get their colour from tiny algae living inside them. What actually happens during 'coral bleaching'?",
+    "options": [
+      "Sunlight fades the coral like an old photograph",
+      "Coral grows a natural white winter coat",
+      "Sand scours the colour off the coral",
+      "Stressed coral expels its colourful algae and turns ghostly white"
+    ],
+    "answerCheck": "e5hqjr:1"
+  },
+  {
+    "id": "592205879ff7",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Sharks can sense the faint electric fields of hidden prey using special jelly-filled pores on their snout. What are these organs called?",
+    "options": [
+      "The swim bladder",
+      "Jacobson's organ",
+      "The lateral line",
+      "The ampullae of Lorenzini"
+    ],
+    "answerCheck": "ks2qjfd:2"
+  },
+  {
+    "id": "ad26ebffc10f",
+    "category": "ocean",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A vast, slow loop of currents circulates water around the whole globe, taking roughly 1,000 years for one full cycle. What is it commonly nicknamed?",
+    "options": [
+      "The Coriolis drift",
+      "The tidal spiral",
+      "The equatorial jet stream",
+      "The great ocean conveyor belt"
+    ],
+    "answerCheck": "or1i0:0"
   }
 ]

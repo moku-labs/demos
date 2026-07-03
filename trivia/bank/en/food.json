@@ -726,5 +726,145 @@
       "Beta-carotene"
     ],
     "answerCheck": "lirr:1"
+  },
+  {
+    "id": "fd3688038110",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Borscht, the beetroot soup inscribed on UNESCO's intangible cultural heritage list in 2022, is recognized as a traditional dish of which country?",
+    "options": [
+      "Thailand",
+      "Ukraine",
+      "Mexico",
+      "Greece"
+    ],
+    "answerCheck": "7tl:0"
+  },
+  {
+    "id": "1cbdba9c4804",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which fast-food chain's signature burger is the Big Mac?",
+    "options": [
+      "McDonald's",
+      "Burger King",
+      "Subway",
+      "Wendy's"
+    ],
+    "answerCheck": "xis:3"
+  },
+  {
+    "id": "5efcdba69ea3",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Traditional Korean kimchi is made by fermenting salted vegetables, most famously which one?",
+    "options": [
+      "Potato",
+      "Pumpkin",
+      "Sweetcorn",
+      "Napa cabbage"
+    ],
+    "answerCheck": "oygd0:0"
+  },
+  {
+    "id": "b5cf7a511f8d",
+    "category": "food",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which dark, salty spread is a beloved Australian breakfast staple made from leftover brewer's yeast?",
+    "options": [
+      "Nutella",
+      "Tahini",
+      "Hummus",
+      "Vegemite"
+    ],
+    "answerCheck": "4mvp67:1"
+  },
+  {
+    "id": "144b0112b0d6",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The world's hottest chili peppers are ranked by their score on which scale?",
+    "options": [
+      "The Richter scale",
+      "The Scoville scale",
+      "The Beaufort scale",
+      "The Mohs scale"
+    ],
+    "answerCheck": "l3i:0"
+  },
+  {
+    "id": "eeb28197bdd4",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Prized for its intense marbling, genuine Wagyu and Kobe beef come from cattle raised in which country?",
+    "options": [
+      "Argentina",
+      "Australia",
+      "Ireland",
+      "Japan"
+    ],
+    "answerCheck": "t4iue:0"
+  },
+  {
+    "id": "1631f266b4de",
+    "category": "food",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "MSG, the seasoning that boosts savory flavor, is the sodium salt of which naturally occurring substance?",
+    "options": [
+      "Baking soda",
+      "Table sugar",
+      "Citric acid",
+      "Glutamic acid"
+    ],
+    "answerCheck": "njma9j:1"
+  },
+  {
+    "id": "86ae5ed62798",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Durian, the notoriously pungent 'king of fruits,' is so smelly it's banned from many hotels and public transit across which region?",
+    "options": [
+      "Scandinavia",
+      "West Africa",
+      "Southeast Asia",
+      "The Caribbean"
+    ],
+    "answerCheck": "oap788:0"
+  },
+  {
+    "id": "ea0c7b2efb00",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Garum, a fermented fish sauce splashed on nearly everything, was a staple condiment of which ancient civilization?",
+    "options": [
+      "Dynastic Egypt",
+      "Ancient Rome",
+      "The Aztecs",
+      "The Vikings"
+    ],
+    "answerCheck": "vdma3e3:0"
+  },
+  {
+    "id": "87ab8cda2fd8",
+    "category": "food",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The vivid yellow of curry powder and of ballpark mustard comes mainly from a pigment found in which spice?",
+    "options": [
+      "Fenugreek",
+      "Cumin",
+      "Paprika",
+      "Turmeric"
+    ],
+    "answerCheck": "0hd1du:1"
   }
 ]

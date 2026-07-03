@@ -712,5 +712,145 @@
       "Repelling water completely"
     ],
     "answerCheck": "eo9c7b:0"
+  },
+  {
+    "id": "f3eed80146e4",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which children's building toy, made of interlocking plastic bricks, takes its name from a Danish phrase meaning 'play well'?",
+    "options": [
+      "K'NEX",
+      "Lego",
+      "Meccano",
+      "Playmobil"
+    ],
+    "answerCheck": "6xuih6y:0"
+  },
+  {
+    "id": "0fb49f81cc24",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What do we call a large picture or design painted directly onto a wall or ceiling?",
+    "options": [
+      "A doodle",
+      "A mural",
+      "A silhouette",
+      "A collage"
+    ],
+    "answerCheck": "zzbytud:0"
+  },
+  {
+    "id": "d05ad23fe348",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which contemporary Japanese artist is world-famous for covering paintings, giant pumpkins and mirrored 'Infinity Rooms' in polka dots?",
+    "options": [
+      "Yoko Ono",
+      "Takashi Murakami",
+      "Yayoi Kusama",
+      "Hokusai"
+    ],
+    "answerCheck": "6itwtu:0"
+  },
+  {
+    "id": "e63db38fa2f3",
+    "category": "art",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The famous circular peace symbol — a line and two downward strokes inside a ring — was designed in 1958 to campaign against what?",
+    "options": [
+      "Air pollution",
+      "World hunger",
+      "Nuclear weapons",
+      "Deforestation"
+    ],
+    "answerCheck": "bhuuinr:1"
+  },
+  {
+    "id": "9ac08df20566",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The bold 'I ♥ NY' logo — one of the most copied designs ever — was sketched in the back of a taxi and given away for free by which graphic designer?",
+    "options": [
+      "Saul Bass",
+      "Paul Rand",
+      "Massimo Vignelli",
+      "Milton Glaser"
+    ],
+    "answerCheck": "11m2bfy:2"
+  },
+  {
+    "id": "53dd7a8d1da6",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which hot-tempered Baroque painter, as notorious for street brawls and a killing as for his art, pioneered a theatrical clash of deep shadow and blazing light?",
+    "options": [
+      "Caravaggio",
+      "Diego Velázquez",
+      "Peter Paul Rubens",
+      "Nicolas Poussin"
+    ],
+    "answerCheck": "ajh:3"
+  },
+  {
+    "id": "a9dcd3f0463a",
+    "category": "art",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The still-unfinished basilica La Sagrada Família in Barcelona, under construction since 1882, was designed by which architect?",
+    "options": [
+      "Le Corbusier",
+      "Antoni Gaudí",
+      "Santiago Calatrava",
+      "Frank Lloyd Wright"
+    ],
+    "answerCheck": "fx4ta:2"
+  },
+  {
+    "id": "3e3c4e87104e",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Kazimir Malevich, the abstract pioneer who shocked the art world with a single 'Black Square', was born in Kyiv and is reclaimed as a national artist by which country?",
+    "options": [
+      "Germany",
+      "Poland",
+      "Austria",
+      "Ukraine"
+    ],
+    "answerCheck": "fso:2"
+  },
+  {
+    "id": "a0beba2ff160",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In 2019 Maurizio Cattelan duct-taped a real banana to an art-fair wall and sold editions of it for six figures. What did he title the piece?",
+    "options": [
+      "Comedian",
+      "Fruitless",
+      "Still Life No. 1",
+      "Slippery"
+    ],
+    "answerCheck": "lcr:3"
+  },
+  {
+    "id": "623590c39615",
+    "category": "art",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The soft, smoky blurring of edges and tones — the trick Leonardo da Vinci used to make the Mona Lisa's smile seem to flicker — is known by which Italian term?",
+    "options": [
+      "Impasto",
+      "Sfumato",
+      "Tenebrism",
+      "Grisaille"
+    ],
+    "answerCheck": "8lc:0"
   }
 ]

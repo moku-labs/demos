@@ -712,5 +712,145 @@
       "The breath of the wind"
     ],
     "answerCheck": "wyrwd:2"
+  },
+  {
+    "id": "bde7076855db",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Chinese tradition, the dragon is usually seen as the opposite of the fearsome fire-breathers of Western legend. What does it mainly represent?",
+    "options": [
+      "Good luck, power and rain",
+      "Chaos and disease",
+      "Death and the underworld",
+      "Greed and hoarded gold"
+    ],
+    "answerCheck": "xh4:3"
+  },
+  {
+    "id": "9c700d59b857",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In folklore around the world, a werewolf is a human who turns into a wolf. What is most famously said to trigger the transformation?",
+    "options": [
+      "A clap of thunder",
+      "A full moon",
+      "The first snow of winter",
+      "The smell of blood"
+    ],
+    "answerCheck": "wv0n56:3"
+  },
+  {
+    "id": "b336ec70d6de",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Greek mythology, who was the goddess of love and beauty, said to have been born from the foam of the sea?",
+    "options": [
+      "Hestia",
+      "Demeter",
+      "Aphrodite",
+      "Athena"
+    ],
+    "answerCheck": "4q7e:2"
+  },
+  {
+    "id": "26f24f3c0778",
+    "category": "mythology",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Scottish legend, a mysterious creature is said to lurk in a deep lake called Loch Ness. What is its popular nickname?",
+    "options": [
+      "The Selkie",
+      "Grendel",
+      "The Kraken",
+      "Nessie"
+    ],
+    "answerCheck": "c3k:2"
+  },
+  {
+    "id": "0c6b35d09e8d",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In the classic Chinese tale, the Monkey King Sun Wukong caused so much chaos in heaven that the Buddha punished him how?",
+    "options": [
+      "Trapped him under a mountain for 500 years",
+      "Locked him inside a golden gourd",
+      "Turned him to jade forever",
+      "Chained him at the bottom of the sea"
+    ],
+    "answerCheck": "nacz1d:2"
+  },
+  {
+    "id": "40151047f820",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In Slavic folklore, the fearsome witch Baba Yaga lives in a hut famous for one very strange feature. What is it?",
+    "options": [
+      "It is made entirely of gingerbread",
+      "It stands and walks on giant chicken legs",
+      "It turns invisible at sunrise",
+      "It floats on a river of fog"
+    ],
+    "answerCheck": "cnc1:1"
+  },
+  {
+    "id": "b1e8866e00f5",
+    "category": "mythology",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "According to the Maya creation story in the Popol Vuh, what material were the first successful humans finally made from?",
+    "options": [
+      "Carved jade",
+      "River clay",
+      "Woven vines",
+      "Maize (corn) dough"
+    ],
+    "answerCheck": "s55ja6:1"
+  },
+  {
+    "id": "a6e84d32938f",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Chinese myth, the archer Hou Yi saved the scorched world by shooting down nine of what, which had all appeared in the sky at once?",
+    "options": [
+      "Ten suns",
+      "Storm dragons",
+      "Nine moons",
+      "Fire cranes"
+    ],
+    "answerCheck": "o4ryy:1"
+  },
+  {
+    "id": "fa3819818e39",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Australian Aboriginal belief, what does the sacred concept known as the \"Dreaming\" (or Dreamtime) refer to?",
+    "options": [
+      "A trance reached through ceremonial song",
+      "The creation era when ancestral beings shaped the land",
+      "The spirit world entered only after death",
+      "The nightly visions elders share around the fire"
+    ],
+    "answerCheck": "mntyn:2"
+  },
+  {
+    "id": "f12694bd114b",
+    "category": "mythology",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In Slavic folklore, including Ukrainian legend, the rusalka is a water spirit said to lure young men into rivers and lakes to drown. What is a rusalka believed to be?",
+    "options": [
+      "The restless ghost of a drowned young woman",
+      "A giant serpent that dams the rivers",
+      "A fire spirit born from a lightning strike",
+      "A guardian that protects a household hearth"
+    ],
+    "answerCheck": "6up0xl:2"
   }
 ]

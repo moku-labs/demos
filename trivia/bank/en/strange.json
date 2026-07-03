@@ -726,5 +726,145 @@
       "Royal court"
     ],
     "answerCheck": "ocpc0jz:0"
+  },
+  {
+    "id": "df3320917702",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Since the 1986 disaster, the abandoned Chornobyl Exclusion Zone in northern Ukraine has surprisingly become a haven for what?",
+    "options": [
+      "Rare tropical flowers",
+      "Illegal gold mines",
+      "Underground cities",
+      "Thriving wild animals"
+    ],
+    "answerCheck": "y53a:3"
+  },
+  {
+    "id": "182695223496",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Your stomach lining renews itself every few days, largely to stop it from doing what?",
+    "options": [
+      "Turning blue",
+      "Digesting itself",
+      "Growing hair",
+      "Falling asleep"
+    ],
+    "answerCheck": "9j6rdp0:0"
+  },
+  {
+    "id": "9756cbcd276f",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "A cat's purr sits in a frequency range that some scientists suspect may actually help do what?",
+    "options": [
+      "Cool the body",
+      "Repel insects",
+      "Sharpen eyesight",
+      "Heal bones"
+    ],
+    "answerCheck": "0xzisof:2"
+  },
+  {
+    "id": "84630e3e8607",
+    "category": "strange",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Right now there are more of these living on and in your body than there are stars in the Milky Way. More of what?",
+    "options": [
+      "Fingerprints",
+      "Freckles",
+      "Hairs",
+      "Bacteria"
+    ],
+    "answerCheck": "qadj3r:1"
+  },
+  {
+    "id": "90c695c42cec",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The world's quietest room, an 'anechoic chamber', is so silent that visitors often start to hear the sound of their own what?",
+    "options": [
+      "Muscles growing",
+      "Heartbeat and blood flow",
+      "Future thoughts",
+      "Bones creaking"
+    ],
+    "answerCheck": "d6j34:2"
+  },
+  {
+    "id": "f58dd98cfb03",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "A single teaspoon of neutron-star material would weigh about as much as which of these here on Earth?",
+    "options": [
+      "A large truck",
+      "A car",
+      "A jumbo jet",
+      "A mountain"
+    ],
+    "answerCheck": "uwo2j5:1"
+  },
+  {
+    "id": "d2489b08fb68",
+    "category": "strange",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "In 1830s America, ketchup was so trusted for its supposed benefits that it was briefly sold as a what?",
+    "options": [
+      "Perfume",
+      "Medicine",
+      "Toothpaste",
+      "Sunscreen"
+    ],
+    "answerCheck": "x5sx:1"
+  },
+  {
+    "id": "e45822983ec1",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "A single light bulb in a California fire station has burned almost non-stop since 1901, earning the nickname the:",
+    "options": [
+      "Eternal Ember",
+      "Forever Flame",
+      "Centennial Light",
+      "Everlasting Bulb"
+    ],
+    "answerCheck": "uvdv:2"
+  },
+  {
+    "id": "5a704c977e37",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The Roman emperor Caligula so adored his favourite horse, Incitatus, that he reportedly planned to appoint it to which office?",
+    "options": [
+      "Ambassador",
+      "High priest",
+      "General",
+      "Consul"
+    ],
+    "answerCheck": "ajx:2"
+  },
+  {
+    "id": "59e5e3390dd9",
+    "category": "strange",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Off the coast of Grenada sits an eerie 'Underwater Sculpture Park'. Beyond being art, its statues were designed to help do what?",
+    "options": [
+      "Warn ships of reefs",
+      "Trap plastic waste",
+      "Grow new coral reefs",
+      "Measure ocean currents"
+    ],
+    "answerCheck": "fyh:1"
   }
 ]

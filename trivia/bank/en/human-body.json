@@ -726,5 +726,145 @@
       "The salivary glands"
     ],
     "answerCheck": "jsu81z:3"
+  },
+  {
+    "id": "62b542dbe945",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which type of blood cell rushes to a cut and clumps together to help your blood clot and stop the bleeding?",
+    "options": [
+      "Red blood cells",
+      "White blood cells",
+      "Platelets",
+      "Nerve cells"
+    ],
+    "answerCheck": "4i3m:2"
+  },
+  {
+    "id": "cb52ef75adfb",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "What is the common name for the clavicle?",
+    "options": [
+      "The kneecap",
+      "The shoulder blade",
+      "The breastbone",
+      "The collarbone"
+    ],
+    "answerCheck": "93eq:3"
+  },
+  {
+    "id": "9d47119c5565",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The pancreas makes insulin to control the level of which sugar in your blood?",
+    "options": [
+      "Glucose",
+      "Cholesterol",
+      "Lactose",
+      "Fructose"
+    ],
+    "answerCheck": "xvyh2h:2"
+  },
+  {
+    "id": "6669d9ce2e0b",
+    "category": "human-body",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which muscle is, for its size, one of the strongest in the whole body, able to clamp your teeth shut with the force of dozens of kilograms?",
+    "options": [
+      "The calf muscle",
+      "The muscle in your thumb",
+      "The jaw muscle (masseter)",
+      "The bicep"
+    ],
+    "answerCheck": "ozx:1"
+  },
+  {
+    "id": "d98c4bef3d15",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "What is the most abundant protein in the human body, forming the scaffolding of your skin, bones, tendons and ligaments?",
+    "options": [
+      "Hemoglobin",
+      "Insulin",
+      "Keratin",
+      "Collagen"
+    ],
+    "answerCheck": "8kd:2"
+  },
+  {
+    "id": "0ed679136d1c",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The powerful acid in your stomach is largely made of which corrosive chemical, the same acid used to clean and descale metal in industry?",
+    "options": [
+      "Citric acid",
+      "Sulfuric acid",
+      "Acetic acid",
+      "Hydrochloric acid"
+    ],
+    "answerCheck": "a2v29k:1"
+  },
+  {
+    "id": "964847d065ea",
+    "category": "human-body",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Roughly how many litres of blood does an average adult body contain?",
+    "options": [
+      "About 5 litres",
+      "About 12 litres",
+      "About 20 litres",
+      "About 1 litre"
+    ],
+    "answerCheck": "cfc23nv:3"
+  },
+  {
+    "id": "bbe7126d7a9a",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The inside of your small intestine is carpeted with millions of tiny finger-like projections that hugely increase the surface area for absorbing food. What are they called?",
+    "options": [
+      "Alveoli",
+      "Follicles",
+      "Nephrons",
+      "Villi"
+    ],
+    "answerCheck": "kam5pv:1"
+  },
+  {
+    "id": "d41827931ab2",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Your body's fastest nerve signals travel astonishingly quickly. Roughly how fast can a nerve impulse race along a nerve?",
+    "options": [
+      "About 400 km/h, faster than a Formula 1 car",
+      "About walking pace (5 km/h)",
+      "About a cyclist's pace (30 km/h)",
+      "About the speed of light"
+    ],
+    "answerCheck": "z8goc2r:3"
+  },
+  {
+    "id": "22bb7065765d",
+    "category": "human-body",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The spleen has many jobs, but one is a handy emergency reserve. What does it hold ready to release when you're injured or exerting yourself?",
+    "options": [
+      "A fresh supply of insulin",
+      "Backup digestive enzymes",
+      "A store of extra red blood cells",
+      "A dose of adrenaline"
+    ],
+    "answerCheck": "zt7lzj:0"
   }
 ]

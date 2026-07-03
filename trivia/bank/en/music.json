@@ -726,5 +726,145 @@
       "Neu!"
     ],
     "answerCheck": "ifp:0"
+  },
+  {
+    "id": "485c7045c39a",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The trumpet, trombone, and tuba all belong to which family of instruments?",
+    "options": [
+      "Woodwinds",
+      "Brass",
+      "Strings",
+      "Percussion"
+    ],
+    "answerCheck": "m61vo:2"
+  },
+  {
+    "id": "aa39e7484b42",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which pop star headlined the 2023 Super Bowl halftime show, performing on floating platforms high above the field?",
+    "options": [
+      "Lady Gaga",
+      "Shakira",
+      "Katy Perry",
+      "Rihanna"
+    ],
+    "answerCheck": "2vp:2"
+  },
+  {
+    "id": "d1f7e489af62",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "If playing loudly is marked \"forte,\" which Italian word tells a musician to play softly?",
+    "options": [
+      "Largo",
+      "Piano",
+      "Staccato",
+      "Vivace"
+    ],
+    "answerCheck": "qy8u:1"
+  },
+  {
+    "id": "a90221517b9d",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which of Billie Eilish's family members co-writes and produces nearly all of her songs?",
+    "options": [
+      "Her mother",
+      "Her father",
+      "Her brother Finneas",
+      "Her cousin"
+    ],
+    "answerCheck": "vif9evg:1"
+  },
+  {
+    "id": "64c75904b90c",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Ukraine's folk-rap group Kalush Orchestra won the 2022 Eurovision Song Contest with which song?",
+    "options": [
+      "Shum",
+      "Stefania",
+      "1944",
+      "Wild Dances"
+    ],
+    "answerCheck": "1tjhw:2"
+  },
+  {
+    "id": "5f9c278dfca1",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which The Weeknd track is the most-streamed song in Spotify's entire history, the first ever to pass five billion streams?",
+    "options": [
+      "Save Your Tears",
+      "Starboy",
+      "Blinding Lights",
+      "The Hills"
+    ],
+    "answerCheck": "hnlqbs:0"
+  },
+  {
+    "id": "c656a9e3fa03",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The 12-bar chord progression is the backbone of which genre that gave rise to rock and roll?",
+    "options": [
+      "The blues",
+      "Bluegrass",
+      "Gospel",
+      "Swing"
+    ],
+    "answerCheck": "utar:0"
+  },
+  {
+    "id": "64ea26200c94",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Which composer was so prolific he wrote over 600 works, including \"Eine kleine Nachtmusik,\" before dying at just 35?",
+    "options": [
+      "Handel",
+      "Mozart",
+      "Schubert",
+      "Haydn"
+    ],
+    "answerCheck": "tpd2:1"
+  },
+  {
+    "id": "b79b4d623dc3",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Blues guitarist Robert Johnson is the subject of a famous legend claiming he did what at a crossroads at midnight?",
+    "options": [
+      "Invented the slide guitar",
+      "Buried his first guitar",
+      "Wrote a whole album in one night",
+      "Sold his soul to the devil for his talent"
+    ],
+    "answerCheck": "i7rym:0"
+  },
+  {
+    "id": "32bc86644747",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Auto-Tune, now everywhere in pop, was created by an engineer adapting math he had used in which industry?",
+    "options": [
+      "Oil exploration",
+      "Aerospace guidance",
+      "Telephone switching",
+      "Radar defense"
+    ],
+    "answerCheck": "v5vjfx6:3"
   }
 ]

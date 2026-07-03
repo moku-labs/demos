@@ -712,5 +712,145 @@
       "Toby Fox"
     ],
     "answerCheck": "kl30it:0"
+  },
+  {
+    "id": "e2a335e72933",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "In Fortnite, what do players quickly construct during a firefight to gain cover and a height advantage?",
+    "options": [
+      "Bridges",
+      "Ramps and walls",
+      "Tunnels",
+      "Boats"
+    ],
+    "answerCheck": "tcoccb:3"
+  },
+  {
+    "id": "c8f2b9c902ba",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Which best-selling console did Nintendo launch in 2006, where players swung a motion-sensing remote to play tennis and bowling?",
+    "options": [
+      "Nintendo Wii",
+      "Sega Dreamcast",
+      "Nintendo 3DS",
+      "Nintendo GameCube"
+    ],
+    "answerCheck": "hrq:3"
+  },
+  {
+    "id": "79476348738a",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Blizzard's colourful team shooter, home to heroes like Tracer, Reinhardt and Mercy, is called what?",
+    "options": [
+      "Overwatch",
+      "Paladins",
+      "Valorant",
+      "Team Fortress 2"
+    ],
+    "answerCheck": "4q8:3"
+  },
+  {
+    "id": "5a08e0c83088",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "The wildly popular game Rocket League is essentially football (soccer) played with what instead of players?",
+    "options": [
+      "Giant robots",
+      "Rocket-powered cars",
+      "Hovering skateboards",
+      "Flying drones"
+    ],
+    "answerCheck": "8lishkx:0"
+  },
+  {
+    "id": "da8a8d0650a8",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The globally acclaimed S.T.A.L.K.E.R. games, set in the irradiated Chornobyl Exclusion Zone, are made by GSC Game World — a studio based in which country?",
+    "options": [
+      "Germany",
+      "Poland",
+      "Ukraine",
+      "Czech Republic"
+    ],
+    "answerCheck": "mthbp:3"
+  },
+  {
+    "id": "b693b77b8c94",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Which 2023 role-playing game, based on Dungeons & Dragons, swept Game of the Year awards and let players talk or sneak past nearly any fight?",
+    "options": [
+      "Diablo IV",
+      "Baldur's Gate 3",
+      "Starfield",
+      "Final Fantasy XVI"
+    ],
+    "answerCheck": "le85im:3"
+  },
+  {
+    "id": "62567b49a498",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "The hugely popular MOBA League of Legends is developed by which studio?",
+    "options": [
+      "Valve",
+      "Blizzard",
+      "Riot Games",
+      "Bethesda"
+    ],
+    "answerCheck": "6ihbvl:0"
+  },
+  {
+    "id": "9b26c8abfd5b",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "In the survival horror series Resident Evil, what is the sinister corporation whose bioweapon experiments cause most of the outbreaks?",
+    "options": [
+      "Abstergo",
+      "Aperture Science",
+      "Black Mesa",
+      "Umbrella Corporation"
+    ],
+    "answerCheck": "am9:2"
+  },
+  {
+    "id": "a67e61e4b3a8",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Elden Ring's sprawling world was co-created by which fantasy novelist, brought in by FromSoftware to write its underlying mythology?",
+    "options": [
+      "Patrick Rothfuss",
+      "Neil Gaiman",
+      "George R. R. Martin",
+      "Brandon Sanderson"
+    ],
+    "answerCheck": "opqn:2"
+  },
+  {
+    "id": "b91e39431a53",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "The original Prince of Persia (1989) got its lifelike movement because its lone creator rotoscoped footage of his own brother running. Who was that developer?",
+    "options": [
+      "John Carmack",
+      "Jordan Mechner",
+      "Will Wright",
+      "Sid Meier"
+    ],
+    "answerCheck": "7wdpx:2"
   }
 ]
