@@ -17,8 +17,8 @@ import { languagePlugin } from "../../../language";
 import { questionBankPlugin } from "../../../question-bank";
 import { scoringPlugin } from "../../../scoring";
 import { stopClock } from "../../clock";
-import { waitAdvancing } from "./wait-advancing";
 import { matchFlowPlugin } from "../../index";
+import { waitAdvancing } from "./wait-advancing";
 
 /** A tiny steal lead-in + speed tiers, shared by every timer profile below. */
 const STEAL_TUNING = { stealLeadMs: 20, stealSpeedTiers: [1, 0.6, 0.4, 0.2] };
