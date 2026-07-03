@@ -936,5 +936,145 @@
       "Edmund McMillen"
     ],
     "answerCheck": "08ye:1"
+  },
+  {
+    "id": "045290b8c891",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В какой игре игроки строят и защищают убежища, а знаменитая «танцевальная эмоция» стала мировым феноменом среди детей?",
+    "options": [
+      "Valorant",
+      "Rocket League",
+      "Fortnite",
+      "Overwatch"
+    ],
+    "answerCheck": "04juj:3"
+  },
+  {
+    "id": "f15e1c38c9f8",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В серии игр Pokémon тренеры ловят монстров в специальные сферы. Как называется этот предмет?",
+    "options": [
+      "Ловушка",
+      "Кристалл",
+      "Мегабол",
+      "Покебол"
+    ],
+    "answerCheck": "pe45:3"
+  },
+  {
+    "id": "39c5ca51107a",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Какая японская компания выпустила игровые консоли Switch, Wii и Game Boy?",
+    "options": [
+      "Nintendo",
+      "Sega",
+      "Microsoft",
+      "Sony"
+    ],
+    "answerCheck": "0hkwdy:2"
+  },
+  {
+    "id": "917f89133002",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Как называется линейка игровых консолей от Sony, чья пятая версия вышла в 2020 году?",
+    "options": [
+      "Xbox",
+      "Dreamcast",
+      "PlayStation",
+      "GameCube"
+    ],
+    "answerCheck": "zus:1"
+  },
+  {
+    "id": "33aeb2ae49ae",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Ролевая игра The Witcher 3 основана на книгах польского писателя. Как зовут этого автора?",
+    "options": [
+      "Анджей Сапковский",
+      "Станислав Лем",
+      "Джордж Мартин",
+      "Нил Гейман"
+    ],
+    "answerCheck": "rps:3"
+  },
+  {
+    "id": "4f794f2b272e",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "В хоррор-серии Resident Evil игроки сражаются с последствиями биологической катастрофы. Какая японская компания её создала?",
+    "options": [
+      "Bandai Namco",
+      "Capcom",
+      "Square Enix",
+      "Konami"
+    ],
+    "answerCheck": "8osloyg:0"
+  },
+  {
+    "id": "cefc40d91cd8",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "В The Last of Us человечество почти уничтожено пандемией. Какой реально существующий грибок-паразит вдохновил создателей на образ монстров-заражённых?",
+    "options": [
+      "Кордицепс",
+      "Дрожжи",
+      "Плесень",
+      "Спорынья"
+    ],
+    "answerCheck": "mwlo1ew:3"
+  },
+  {
+    "id": "7ef0d2ce3b1e",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Гоночная серия Gran Turismo десятилетиями выходит эксклюзивно на консолях Sony. Какая японская студия её разрабатывает?",
+    "options": [
+      "Turn 10",
+      "Codemasters",
+      "Playground Games",
+      "Polyphony Digital"
+    ],
+    "answerCheck": "84qcxdb:2"
+  },
+  {
+    "id": "f23f32e0b8b6",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Открытый мир Genshin Impact стал одним из самых кассовых мобильных проектов в истории. Какая китайская студия его выпустила?",
+    "options": [
+      "HoYoverse (miHoYo)",
+      "Tencent",
+      "Krafton",
+      "NetEase"
+    ],
+    "answerCheck": "qzein:1"
+  },
+  {
+    "id": "7e7ed43048c3",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Какой знаменитый японский геймдизайнер придумал Марио и серию The Legend of Zelda, работая в Nintendo?",
+    "options": [
+      "Гунпэй Ёкои",
+      "Сигэру Миямото",
+      "Хиронобу Сакагути",
+      "Хидео Кодзима"
+    ],
+    "answerCheck": "d3b7:1"
   }
 ]
