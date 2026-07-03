@@ -217,11 +217,14 @@ export type JoinWizardProps = {
   colors: readonly { name: string; hex: string }[];
   /** Hexes already taken by other players (greyed, unselectable). */
   takenColors: readonly string[];
-  /** The room code (shown on the "You're in!" card). */
+  /** The room code (shown on the connecting card). */
   roomCode?: string | undefined;
-  /** Once true, render the "You're in! ♪" confirmation instead of the wizard. */
-  joined?: boolean | undefined;
-  /** The joined player's chosen avatar/colour (for the confirmation card). */
+  /**
+   * Once true (profile submitted, not yet confirmed on the roster), render the honest "Joining…"
+   * connecting card instead of the wizard. NOT a success claim — see {@link JoinWizard}.
+   */
+  submitted?: boolean | undefined;
+  /** The submitted player's chosen avatar/colour (for the connecting card). */
   joinedAvatar?: string | undefined;
   joinedColor?: string | undefined;
   /** Emitted once on "Join Game". */

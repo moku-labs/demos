@@ -328,7 +328,7 @@ export function render(state: Readonly<ControllerState>, ctx: ControllerContext)
           colors={TRIVIA.playerColors}
           takenColors={s.players.map(p => p.color)}
           roomCode={state.code}
-          joined={state.joinedProfile !== null}
+          submitted={state.joinedProfile !== null}
           joinedAvatar={state.joinedProfile?.avatar}
           joinedColor={state.joinedProfile?.color}
           onJoin={handlers.onJoin}

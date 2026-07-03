@@ -20,9 +20,14 @@ export type ControllerState = {
   s: TriviaState;
   /** Ticking clock (ms) for the countdown bar. */
   now: number;
-  /** The room code from the deep-link (shown on the "You're in!" card). */
+  /** The room code from the deep-link (shown on the "Joining…" connecting card). */
   code: string;
-  /** The profile this phone submitted (drives the "You're in!" confirmation pre-roster). */
+  /**
+   * The profile this phone submitted. Drives the honest "Joining…" connecting card while the phone is
+   * NOT yet on the synced roster — never a "you're in" claim (a lost join frame could strand us here;
+   * the real confirmation is the seated lobby card). Also set optimistically on a saved-identity
+   * reconnect so the wizard is skipped while the seat re-syncs.
+   */
   joinedProfile: JoinProfile | null;
   /**
    * The stable per-room player token sent with this session's `join-profile` (fresh join or reclaim).

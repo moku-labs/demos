@@ -14,18 +14,23 @@ const STEPS = [1, 2, 3] as const;
  * where any hex in `takenColors` renders at 30% opacity and is not selectable. Each step has a lemon
  * "Next ▸" (which on step 3 reads "Join Game ▸" and emits `onJoin`) plus a "← Back" ghost link from
  * step 2 on. "Next" is blocked from step 1 while the name is empty; avatar/colour default to the first
- * available option. Once `joined` is true the dots hide and the "You're in! ♪" card renders instead.
+ * available option. Once `submitted` is true the dots hide and an honest **"Joining…"** connecting
+ * card renders — NOT a success claim: the phone has only sent its profile, not been confirmed on the
+ * TV's roster. The genuine "you're in" moment is the seated lobby card (the player's own name +
+ * "Waiting for the host to start"), which the controller shows only once its seat appears in the
+ * synced `players` slice. Telling the player they're in before that round-trips was a real bug — a
+ * lost join frame stranded them on a false "You're in!" while the TV showed nothing.
  *
  * @param props - The wizard props.
  * @param props.avatars - The avatar emoji choices (step 2 grid).
  * @param props.colors - The colour choices as `{ name, hex }` (step 3 swatches).
  * @param props.takenColors - Hexes already claimed by other players (greyed, unselectable).
- * @param props.roomCode - The room code shown on the "You're in!" confirmation card.
- * @param props.joined - When true, render the confirmation card instead of the wizard.
- * @param props.joinedAvatar - The chosen avatar to show on the confirmation card.
- * @param props.joinedColor - The chosen colour (hex) inking the "You're in!" line.
+ * @param props.roomCode - The room code shown on the connecting card.
+ * @param props.submitted - When true, render the "Joining…" connecting card instead of the wizard.
+ * @param props.joinedAvatar - The chosen avatar to show on the connecting card.
+ * @param props.joinedColor - The chosen colour (hex) inking the connecting card.
  * @param props.onJoin - Emitted once on "Join Game" with the chosen `{ name, avatar, color }`.
- * @returns The join wizard, or the "You're in!" confirmation card once joined.
+ * @returns The join wizard, or the "Joining…" connecting card once the profile is submitted.
  * @example
  * ```tsx
  * <JoinWizard
@@ -42,7 +47,7 @@ export function JoinWizard({
   colors,
   takenColors,
   roomCode,
-  joined,
+  submitted,
   joinedAvatar,
   joinedColor,
   onJoin
@@ -81,16 +86,23 @@ export function JoinWizard({
     setStep(step + 1);
   };
 
-  // ── Confirmation card — the wizard is done, waiting for the host ──
-  if (joined) {
+  // ── Connecting card — the profile is SUBMITTED but not yet confirmed on the TV's roster. Honest:
+  // this is NOT "You're in!" (a lost join frame could strand us here) — the self-heal watchdog keeps
+  // re-sending underneath, and the real "you're in" is the seated lobby card once our seat syncs. ──
+  if (submitted) {
     return (
-      <div data-component="join-wizard" data-joined="true">
+      <div data-component="join-wizard" data-submitted="true">
         <div data-confirm style={{ "--joined": joinedColor ?? color }}>
           <span data-confirm-avatar aria-hidden="true">
             {joinedAvatar ?? avatar}
           </span>
-          <strong data-confirm-title>You're in! ♪</strong>
-          <span data-confirm-room>Room {roomCode ?? "—"} · Waiting for host…</span>
+          <strong data-confirm-title>Joining…</strong>
+          <span data-confirm-room>Room {roomCode ?? "—"} · connecting you to the TV…</span>
+          <span data-confirm-dots role="status" aria-label="Connecting">
+            <span data-dot />
+            <span data-dot />
+            <span data-dot />
+          </span>
         </div>
       </div>
     );

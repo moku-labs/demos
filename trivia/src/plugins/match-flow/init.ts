@@ -336,7 +336,7 @@ export function initMatchFlow(
     // Ack-beat: bump `players.rev` so EVERY accepted join-profile publishes a fresh players delta —
     // even a byte-identical duplicate, which the sync engine's deep-equal mutate guard would otherwise
     // swallow into NO frame. This is the host half of the phone's join self-heal: a phone stranded on
-    // the "You're in!" card (its baseline/roster frame lost on the wire — at-most-once delivery)
+    // the "Joining…" connecting card (its baseline/roster frame lost on the wire — at-most-once delivery)
     // re-sends join-profile, and this bump guarantees the re-send is answered with a delta carrying
     // the full players slice, whichever direction the original loss was.
     stage.mutate("players", draft => ({

@@ -25,7 +25,7 @@ const CONNECTION_LOST_MS = 8000;
  * Join self-heal cadence: how often the watchdog checks whether this phone's submitted join has
  * actually landed (its seat visible in the synced `players` slice). A stranded join is re-sent from
  * the SECOND stranded tick (so the normal join path gets a full interval to land — first re-send
- * fires 5–10 s after the "You're in!" card appeared, matching the observed wedge window), then once
+ * fires 5–10 s after the "Joining…" card appeared, matching the observed wedge window), then once
  * per interval up to {@link JOIN_HEAL_MAX_RESENDS}.
  */
 const JOIN_HEAL_INTERVAL_MS = 5000;
@@ -75,7 +75,7 @@ function rememberSeen(id: string): void {
 }
 
 /**
- * Arm the join self-heal watchdog: while this phone shows the post-wizard "You're in!" card
+ * Arm the join self-heal watchdog: while this phone shows the post-wizard "Joining…" connecting card
  * (`joinedProfile` set) but its seat has NOT appeared in the synced `players` slice, re-send the
  * `join-profile` intent (idempotent — the host keys the seat on `playerToken`/peerId, and its
  * ack-beat `players.rev` bump answers even a byte-identical duplicate with a fresh delta).
@@ -116,7 +116,7 @@ function armJoinSelfHeal(ctx: ControllerContext): () => void {
       return;
     }
 
-    // Stranded on the "You're in!" card. Give the normal path one full interval before interfering.
+    // Stranded on the "Joining…" card. Give the normal path one full interval before interfering.
     strandedTicks += 1;
     if (strandedTicks < 2) return;
 
@@ -242,7 +242,7 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
     ctx.cleanup(armJoinSelfHeal(ctx));
   } catch {
     // A failed join (full / not-found / room gone after a "New code" reset / unreachable): roll back the
-    // OPTIMISTIC reconnect so we don't strand the player on a fake "You're in!" card — clearing the
+    // OPTIMISTIC reconnect so we don't strand the player on a stuck "Joining…" card — clearing the
     // local profile drops back to the interactive wizard, where they can re-enter or rescan a fresh QR.
     // eslint-disable-next-line unicorn/no-null -- the controller view layer speaks `null` for "not joined"
     if (saved) ctx.set({ joinedProfile: null, joinToken: null });

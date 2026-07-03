@@ -245,7 +245,7 @@
     cursor: not-allowed;
   }
 
-  /* ── "You're in!" confirmation card ── */
+  /* ── "Joining…" connecting card (submitted, not yet confirmed on the roster) ── */
   [data-confirm] {
     display: flex;
     flex-direction: column;
@@ -277,5 +277,54 @@
     font-weight: 500;
     font-size: 14px;
     color: var(--ink-dim);
+  }
+
+  /* Three pulsing dots — an unmistakable "actively connecting / retrying" signal so the card never
+     reads as a finished/stuck success state. */
+  [data-confirm-dots] {
+    display: inline-flex;
+    gap: 6px;
+    margin-top: var(--space-2);
+  }
+
+  [data-confirm-dots] [data-dot] {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--joined, var(--ink-dim));
+    opacity: 0.35;
+    animation: connect-pulse 1.2s ease-in-out infinite;
+  }
+
+  [data-confirm-dots] [data-dot]:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  [data-confirm-dots] [data-dot]:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes connect-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: translateY(0);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(-3px);
+    }
+  }
+
+  /* Reduced motion: no bob/pulse, but keep the dots visible (the state is still "connecting"). */
+  @media (prefers-reduced-motion: reduce) {
+    [data-confirm-avatar],
+    [data-confirm-dots] [data-dot] {
+      animation: none;
+    }
+
+    [data-confirm-dots] [data-dot] {
+      opacity: 0.7;
+    }
   }
 }

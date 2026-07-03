@@ -122,7 +122,7 @@ export type MatchSlice = {
  * `players` slice — the joined player roster (lobby tiles, turn chips, scoreboard names), plus a
  * `rev` ack-beat counter bumped on EVERY accepted `join-profile` (even a byte-identical duplicate).
  * The sync engine deep-equality-guards `mutate`, so without the bump a re-sent join whose seat is
- * already correct would publish NO frame — and the phone's join self-heal (a stranded "You're in!"
+ * already correct would publish NO frame — and the phone's join self-heal (a stranded "Joining…"
  * card re-sending its join) relies on the duplicate being answered with a fresh `players` delta.
  * Views ignore `rev` (they read `entries`); mutates that rebuild the slice may drop it — the bump
  * only ever needs to differ from the current value, not stay contiguous.

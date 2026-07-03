@@ -105,7 +105,7 @@ async function settleForShot(page: import("@playwright/test").Page): Promise<voi
 }
 
 test.describe("Phone controller — join wizard steps (A9 visual baselines)", () => {
-  test("drives name → avatar → colour → You're-in and baselines each step", async ({ page }) => {
+  test("drives name → avatar → colour → Joining… and baselines each step", async ({ page }) => {
     await page.goto(`/code/${FAKE_CODE}`);
     await page.waitForSelector("[data-controller][data-phase='join']", { timeout: 20_000 });
     await page.evaluate(() => document.fonts.ready);
@@ -131,9 +131,11 @@ test.describe("Phone controller — join wizard steps (A9 visual baselines)", ()
       animations: "disabled"
     });
 
-    // Join Game → the "You're in! ♪" confirmation card.
+    // Join Game → the honest "Joining…" connecting card (submitted, NOT yet confirmed on the roster —
+    // the harness fixture has no live host, so the seat never syncs and the card stays "connecting").
     await page.locator("button[data-next]").click();
-    await page.waitForSelector("[data-component='join-wizard'][data-joined='true']");
+    await page.waitForSelector("[data-component='join-wizard'][data-submitted='true']");
+    await expect(page.locator("[data-confirm-title]")).toHaveText("Joining…");
     await settleForShot(page);
     await expect(page).toHaveScreenshot("phone-join-confirm.png", {
       fullPage: false,
