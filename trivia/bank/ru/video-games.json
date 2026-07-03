@@ -796,5 +796,145 @@
       "Genesis does what Nintendon't"
     ],
     "answerCheck": "4m7:2"
+  },
+  {
+    "id": "9d730588e115",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В The Legend of Zelda: Tears of the Kingdom (2023) Линк умеет соединять предметы и собирать из хлама целые машины. Как называется эта фирменная способность?",
+    "options": [
+      "Мегакулак",
+      "Ультраруки (Ultrahand)",
+      "Кузнец",
+      "Гравитон"
+    ],
+    "answerCheck": "waq:0"
+  },
+  {
+    "id": "4e9e9ffccc60",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В какой сверхпопулярной платформе игроки не просто играют, а сами строят миры и мини-игры для других — и особенно любят её дети?",
+    "options": [
+      "Terraria",
+      "Rust",
+      "Roblox",
+      "Valheim"
+    ],
+    "answerCheck": "c34:1"
+  },
+  {
+    "id": "25bf7b8a7ac5",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В уютной Animal Crossing игрок обживает остров и вечно должен денег хитрому предпринимателю-еноту. Как его зовут?",
+    "options": [
+      "Дядюшка Скрудж",
+      "Том Нук",
+      "Сэр Хамстер",
+      "Мистер Крабс"
+    ],
+    "answerCheck": "x11w4:2"
+  },
+  {
+    "id": "a69bf835bbf4",
+    "category": "video-games",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "В мобильном хите Candy Crush Saga игрок набирает очки, составляя в ряд три одинаковых предмета. Какие именно?",
+    "options": [
+      "Пузыри",
+      "Драгоценные камни",
+      "Конфеты",
+      "Фрукты"
+    ],
+    "answerCheck": "ojx:1"
+  },
+  {
+    "id": "92f0e77bac19",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Игра на выявление предателя Among Us вышла ещё в 2018-м, но взорвала популярность лишь в 2020 году. Какая небольшая студия её сделала?",
+    "options": [
+      "InnerSloth",
+      "Team Cherry",
+      "Supergiant",
+      "ConcernedApe"
+    ],
+    "answerCheck": "wnane:1"
+  },
+  {
+    "id": "ca87f09966b8",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "В рогалике Hades игрок раз за разом пытается сбежать из царства мёртвых. Кто главный герой — сын самого владыки подземного мира?",
+    "options": [
+      "Кратос",
+      "Персей",
+      "Икар",
+      "Загрей"
+    ],
+    "answerCheck": "v316r:0"
+  },
+  {
+    "id": "d46633b8e61a",
+    "category": "video-games",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Открытый мир Elden Ring создала та же японская студия, что прославилась суровыми Souls-играми вроде Dark Souls. Как она называется?",
+    "options": [
+      "FromSoftware",
+      "Konami",
+      "Square Enix",
+      "Capcom"
+    ],
+    "answerCheck": "vk5xuns:3"
+  },
+  {
+    "id": "fe2a6665b086",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Метроидванию Hollow Knight с обаятельными жуками создала крошечная австралийская студия всего из трёх человек. Как она называется?",
+    "options": [
+      "Motion Twin",
+      "Team Cherry",
+      "Devolver",
+      "Playdead"
+    ],
+    "answerCheck": "i9090:2"
+  },
+  {
+    "id": "cdb674a3c7b1",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "В Baldur's Gate 3 один из спутников — обаятельный вампир-негодяй, мгновенно ставший любимцем фанатов. Как его зовут?",
+    "options": [
+      "Халсин",
+      "Уилл",
+      "Астарион",
+      "Гейл"
+    ],
+    "answerCheck": "4yap:2"
+  },
+  {
+    "id": "bea21d8948a3",
+    "category": "video-games",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Фермерский симулятор Stardew Valley почти целиком в одиночку создавал один человек несколько лет подряд. Под каким псевдонимом он известен?",
+    "options": [
+      "Toby Fox",
+      "ConcernedApe",
+      "Notch",
+      "Edmund McMillen"
+    ],
+    "answerCheck": "08ye:1"
   }
 ]

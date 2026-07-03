@@ -726,5 +726,145 @@
       "Нью-Йорк"
     ],
     "answerCheck": "ptr:1"
+  },
+  {
+    "id": "894b2c5e0279",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Американская певица, которую поклонники зовут по фамилии «Swift» и чьи фанаты называют себя Swifties, — это:",
+    "options": [
+      "Дуа Липа",
+      "Ариана Гранде",
+      "Кэти Перри",
+      "Тейлор Свифт"
+    ],
+    "answerCheck": "vy3dl:0"
+  },
+  {
+    "id": "e2ac28062f4e",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Как называется южнокорейская мужская группа из семи участников, ставшая в 2010-х самым известным бой-бэндом в мире?",
+    "options": [
+      "NCT",
+      "SHINee",
+      "EXO",
+      "BTS"
+    ],
+    "answerCheck": "pa7d1em:2"
+  },
+  {
+    "id": "ae0d8c2f3dfd",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Пуэрто-риканский исполнитель Bad Bunny поёт в основном на каком языке?",
+    "options": [
+      "Испанском",
+      "Французском",
+      "Португальском",
+      "Английском"
+    ],
+    "answerCheck": "qggc:0"
+  },
+  {
+    "id": "ebc53131356d",
+    "category": "music",
+    "tier": "easy",
+    "type": "text",
+    "prompt": "Как называется приложение, где короткие ролики под музыку сделали хитами множество песен и запустили массу танцевальных челленджей?",
+    "options": [
+      "TikTok",
+      "Pinterest",
+      "Telegram",
+      "LinkedIn"
+    ],
+    "answerCheck": "2ucf8x3:3"
+  },
+  {
+    "id": "9502a8676ec3",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Гастрольный тур Бейонсе 2023 года, приуроченный к альбому «Renaissance», назывался:",
+    "options": [
+      "On the Run Tour",
+      "The Mrs. Carter Show",
+      "Renaissance World Tour",
+      "Formation World Tour"
+    ],
+    "answerCheck": "xauy:2"
+  },
+  {
+    "id": "603defc2a5f5",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Британская певица Адель называет свои альбомы числами. Какой из них принёс хит «Hello»?",
+    "options": [
+      "25",
+      "21",
+      "19",
+      "30"
+    ],
+    "answerCheck": "zzu38f:2"
+  },
+  {
+    "id": "ec0ba88eebca",
+    "category": "music",
+    "tier": "medium",
+    "type": "text",
+    "prompt": "Кто из этих артистов долго был самым прослушиваемым исполнителем на стримингах и известен хитами «Blinding Lights» и «Starboy»?",
+    "options": [
+      "Bruno Mars",
+      "Post Malone",
+      "The Weeknd",
+      "Drake"
+    ],
+    "answerCheck": "eu1qki:0"
+  },
+  {
+    "id": "eb2f1cad93ab",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Песня какой южнокорейской звезды с клипом-пародией на богатый район Сеула первой на YouTube преодолела отметку в 1 миллиард просмотров (2012)?",
+    "options": [
+      "PSY — «Gangnam Style»",
+      "BTS — «Dynamite»",
+      "BLACKPINK — «Ddu-Du Ddu-Du»",
+      "BIGBANG — «Fantastic Baby»"
+    ],
+    "answerCheck": "nxbj:0"
+  },
+  {
+    "id": "2fe89c361a9b",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Какой немецкий изобретатель в XIX веке запатентовал граммофон и плоскую пластинку-диск, вытеснившую восковые цилиндры Эдисона?",
+    "options": [
+      "Рудольф Дизель",
+      "Вернер фон Сименс",
+      "Роберт Бош",
+      "Эмиль Берлинер"
+    ],
+    "answerCheck": "9tji6fk:2"
+  },
+  {
+    "id": "7cd9e3f3dfe7",
+    "category": "music",
+    "tier": "hard",
+    "type": "text",
+    "prompt": "Как в теории музыки называют одновременное звучание трёх и более нот, образующих гармонию?",
+    "options": [
+      "Тембр",
+      "Аккорд",
+      "Синкопа",
+      "Интервал"
+    ],
+    "answerCheck": "hr7x33t:0"
   }
 ]
