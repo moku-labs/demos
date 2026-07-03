@@ -198,15 +198,33 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
   };
   ctx.cleanup(
     onLifecycle(event => {
-      if (event.kind === "network-warning") {
-        if (!everSynced) return; // pre-join: never block the wizard with connectivity UI
-        ctx.set({ connection: "reconnecting" });
-        clearLostTimer();
-        lostTimer = setTimeout(() => ctx.set({ connection: "lost" }), CONNECTION_LOST_MS);
-      } else if (event.kind === "sync-ready" || event.kind === "peer-joined") {
-        if (event.kind === "sync-ready") everSynced = true;
-        clearLostTimer();
-        ctx.set({ connection: "ok" });
+      switch (event.kind) {
+        case "network-warning": {
+          if (!everSynced) return; // pre-join: never block the wizard with connectivity UI
+          ctx.set({ connection: "reconnecting" });
+          clearLostTimer();
+          lostTimer = setTimeout(() => ctx.set({ connection: "lost" }), CONNECTION_LOST_MS);
+          return;
+        }
+        case "intent-undeliverable": {
+          // The wire's at-least-once retransmit budget exhausted (room ≥0.4.0) — the engine already
+          // spent ~15 s of same-frame retransmits, so this IS the dead-wire verdict: skip the
+          // "Reconnecting…" spinner and escalate straight to the Retry banner. Intents only flow
+          // post-join, so this can never cover the wizard.
+          clearLostTimer();
+          ctx.set({ connection: "lost" });
+          return;
+        }
+        case "sync-ready":
+        case "peer-joined": {
+          if (event.kind === "sync-ready") everSynced = true;
+          clearLostTimer();
+          ctx.set({ connection: "ok" });
+          return;
+        }
+        default: {
+          return; // peer-left / host-reconnecting: no phone-banner impact
+        }
       }
     })
   );

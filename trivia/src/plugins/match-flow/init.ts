@@ -454,11 +454,18 @@ export function initMatchFlow(
   });
 
   // ── answer-lock: the active answerer OR any eligible stealer locks a slot → run the steal machine ──
-  intent.register("answer-lock", { fields: { slot: { type: "number" } }, additionalFields: false });
+  // The payload carries the question id the phone locked AGAINST (`qid`): the wire is at-most-once,
+  // so the phone's lock self-heal re-sends an unacked lock — and the qid gate below is what makes any
+  // re-send (or late duplicate) structurally safe, independent of timing: a lock can only ever resolve
+  // the exact question the player saw, never a later one.
+  intent.register("answer-lock", {
+    fields: { slot: { type: "number" }, qid: { type: "string" } },
+    additionalFields: false
+  });
   intent.onIntent("answer-lock", (payload, meta) => {
     if (typeof payload !== "object" || payload === null) return;
-    const slot = (payload as Record<string, unknown>).slot;
-    if (typeof slot !== "number") return;
+    const { slot, qid } = payload as Record<string, unknown>;
+    if (typeof slot !== "number" || typeof qid !== "string") return;
 
     // `state.locked` means the question is RESOLVED (a winner or a terminal reveal) — drop late locks.
     // It is host-synchronous, so the FIRST correct lock blocks every other racing lock this same tick.
@@ -468,6 +475,11 @@ export function initMatchFlow(
     const question = cachedQuestion();
     if (!question || !match) return;
     if (match.phase !== "question") return;
+
+    // The structural staleness gate: only a lock FOR the live question resolves it. A re-sent or
+    // delayed lock from a previous question (a badly-stale replica, a half-open channel flushing) is
+    // dropped here no matter when it arrives.
+    if (question.id !== qid) return;
 
     // Eligibility from host-SYNCHRONOUS state (the slice cache lags a tick): in answer mode only the
     // active answerer may lock; in an open steal ANY connected non-active peer who hasn't tried yet may

@@ -163,7 +163,8 @@ const SINGLE_ROUND_ENDGAME_TIMERS = {
  *
  * @param count - Number of controllers to join (1–5).
  * @param timers - The plugin-config timer profile (controls how fast phases auto-advance).
- * @returns The started `host` app + the `controllers` array (index = join/rotation order).
+ * @returns The started `host` app + the `controllers` array (index = join/rotation order) + the
+ *   published question's `qid` (every `answer-lock` must pin the question it answers).
  */
 async function driveToQuestion(count: number, timers: typeof TIMEOUT_STEAL_TIMERS) {
   const sig = inMemory();
@@ -226,14 +227,32 @@ async function driveToQuestion(count: number, timers: typeof TIMEOUT_STEAL_TIMER
   // Pick a category. Likewise the round-1 active player isn't deterministic — broadcast from all;
   // only the active player's pick is honoured, publishing the question.
   for (const c of controllers) c.controller.intent("category-pick", { category: "animals" });
+  let qid = "";
   await waitAdvancing(
     () => {
       expect(lead.controller.read("match")?.phase).toBe("question");
+      qid = (lead.controller.read("question")?.id as string | undefined) ?? "";
+      expect(qid).not.toBe("");
     },
     { timeout: 5000 }
   );
 
-  return { host, controllers, sig, code };
+  return { host, controllers, sig, code, qid };
+}
+
+/**
+ * Read every player's score total from an app's replica (order = scoring's entry order).
+ *
+ * @param read - The app's namespace reader (`host.sync.read` or `controller.read`).
+ * @returns The current totals (empty before any award).
+ * @example
+ * ```ts
+ * readScoreTotals(ns => host.sync.read(ns)); // [100] after one easy correct answer
+ * ```
+ */
+function readScoreTotals(read: (ns: string) => Record<string, unknown> | undefined): number[] {
+  const entries = (read("scores")?.entries as { total: number }[] | undefined) ?? [];
+  return entries.map(entry => entry.total);
 }
 
 describe("match-flow plugin integration", () => {
@@ -631,12 +650,12 @@ describe("match-flow plugin integration", () => {
     // the path that froze the match: the active player actively locking a WRONG slot set `state.locked`
     // and opened a steal, but the lock handler never re-unlocked, so the stealer's lock AND the
     // steal-timeout were swallowed by the `state.locked` guard. Regression for that fix.
-    const { host, controllers } = await driveToQuestion(2, STABLE_QUESTION_TIMERS);
+    const { host, controllers, qid } = await driveToQuestion(2, STABLE_QUESTION_TIMERS);
     const lead = controllers[0];
 
     // The bank fixture `answerCheck: "sha:0"` decodes to slot 1 = CORRECT, so slot 0 is WRONG. Only the
     // active answerer's lock is honoured (the other controller's is rejected on the answeringPeer guard).
-    for (const c of controllers) c.controller.intent("answer-lock", { slot: 0 });
+    for (const c of controllers) c.controller.intent("answer-lock", { slot: 0, qid });
 
     // The active player's wrong lock opens a steal targeting the other player (with a brief lead-in).
     // Generous timeout: under full-suite CPU contention the host→controller sync frame can lag, and the
@@ -654,7 +673,7 @@ describe("match-flow plugin integration", () => {
     // tried, the open steal resolves to the terminal reveal — the match never freezes on the question
     // screen. (A raw awaited setTimeout would never fire under fake timers.)
     await vi.advanceTimersByTimeAsync(60);
-    for (const c of controllers) c.controller.intent("answer-lock", { slot: 0 });
+    for (const c of controllers) c.controller.intent("answer-lock", { slot: 0, qid });
 
     await waitAdvancing(
       () => {
@@ -709,12 +728,12 @@ describe("match-flow plugin integration", () => {
   }, async () => {
     restoreFetch = mockFetch();
     // Single player → the sole connected player is the round-1 active answerer (deterministic lock).
-    const { host, controllers } = await driveToQuestion(1, CORRECT_CYCLE_TIMERS);
+    const { host, controllers, qid } = await driveToQuestion(1, CORRECT_CYCLE_TIMERS);
     const lead = controllers[0];
 
     // The bank fixture is `answerCheck: "sha:0"` → decode("sha:0") === 1, so slot 1 is the correct
     // answer (salt "sha" len 3: (0 - 3 + 4) % 4 = 1). Locking it drives the active-correct branch.
-    lead?.controller.intent("answer-lock", { slot: 1 });
+    lead?.controller.intent("answer-lock", { slot: 1, qid });
 
     // (1) The resolved correct answer must move the match into the reveal phase — the bug fix.
     await waitAdvancing(
@@ -759,11 +778,11 @@ describe("match-flow plugin integration", () => {
   }, async () => {
     restoreFetch = mockFetch();
     // Single player on a one-round match → the sole connected player is the round-1 active answerer.
-    const { host, controllers } = await driveToQuestion(1, SINGLE_ROUND_ENDGAME_TIMERS);
+    const { host, controllers, qid } = await driveToQuestion(1, SINGLE_ROUND_ENDGAME_TIMERS);
     const lead = controllers[0];
 
     // Lock the correct slot (fixture `answerCheck: "sha:0"` → slot 1 is correct) to resolve the round.
-    lead?.controller.intent("answer-lock", { slot: 1 });
+    lead?.controller.intent("answer-lock", { slot: 1, qid });
 
     // The only round resolves through reveal → scoreboard → "final" (the podium), since rounds === 1.
     await waitAdvancing(
@@ -782,6 +801,210 @@ describe("match-flow plugin integration", () => {
       },
       { timeout: 5000 }
     );
+
+    await host.stop();
+    await Promise.all(controllers.map(c => c.stop()));
+  });
+
+  // ─── answer-lock self-heal: dropped / duplicated re-sends (the watchdog's host contract) ──
+  // The phone's lock UI is optimistic (tiles disable on the tap) while `answer-lock` rides an
+  // at-most-once wire, so the controller island re-sends an unacked lock (armLockSelfHeal, ~2 s ack
+  // window). These pin the host half of that heal: the qid gate makes a stale lock structurally
+  // inert (it can never resolve a later question), a LATE lock (the re-send after the original
+  // frame was lost) resolves the question exactly like a fresh one, and a DUPLICATE (a re-send
+  // crossing a late ack frame) is dropped at every point it can land — no double award, no steal
+  // corruption, no duplicate steal rows.
+
+  it("an answer-lock pinned to a stale qid is dropped — only a lock for the live question resolves", {
+    timeout: 15_000
+  }, async () => {
+    restoreFetch = mockFetch();
+    const { host, controllers, qid } = await driveToQuestion(1, STABLE_QUESTION_TIMERS);
+    const lead = controllers[0];
+
+    // A lock for a question that is NOT live (a badly-stale replica, a half-open channel flushing a
+    // previous round's re-send late) must not touch the live one — the qid gate drops it up front.
+    lead?.controller.intent("answer-lock", { slot: 1, qid: "q-previous-round" });
+    await vi.advanceTimersByTimeAsync(300);
+    expect(host.sync.read("match")?.phase).toBe("question");
+
+    // The same slot pinned to the LIVE question resolves it — the gate blocks staleness, not players.
+    lead?.controller.intent("answer-lock", { slot: 1, qid });
+    await waitAdvancing(
+      () => {
+        expect(lead?.controller.read("match")?.phase).toBe("reveal");
+      },
+      { timeout: 5000 }
+    );
+    expect(lead?.controller.read("reveal")?.outcome).toBe("correct");
+
+    await host.stop();
+    await Promise.all(controllers.map(c => c.stop()));
+  });
+
+  it("a re-sent answer-lock ~2 s after the original was lost still resolves the question", {
+    timeout: 15_000
+  }, async () => {
+    restoreFetch = mockFetch();
+    // Single player → the sole connected player is the round-1 active answerer (deterministic lock).
+    const { host, controllers, qid } = await driveToQuestion(1, STABLE_QUESTION_TIMERS);
+    const lead = controllers[0];
+
+    // The original tap's frame was lost (never sent here); the watchdog re-sends after its 2 s ack
+    // window — still well inside the 5 s answer window, so the host treats it as a first-class lock.
+    await vi.advanceTimersByTimeAsync(2000);
+    lead?.controller.intent("answer-lock", { slot: 1, qid }); // fixture `sha:0` → slot 1 is correct
+
+    await waitAdvancing(
+      () => {
+        expect(lead?.controller.read("match")?.phase).toBe("reveal");
+      },
+      { timeout: 5000 }
+    );
+    expect(lead?.controller.read("reveal")?.outcome).toBe("correct");
+    expect(lead?.controller.read("reveal")?.scorerPeer).toBeTruthy();
+
+    await host.stop();
+    await Promise.all(controllers.map(c => c.stop()));
+  });
+
+  it("a duplicate answer-lock after a correct resolution is idempotent — one award, reveal untouched, the match advances", {
+    timeout: 20_000
+  }, async () => {
+    restoreFetch = mockFetch();
+    const { host, controllers, qid } = await driveToQuestion(1, CORRECT_CYCLE_TIMERS);
+    const lead = controllers[0];
+
+    lead?.controller.intent("answer-lock", { slot: 1, qid });
+    await waitAdvancing(
+      () => {
+        expect(host.sync.read("match")?.phase).toBe("reveal");
+      },
+      { timeout: 5000 }
+    );
+    const awardedOnce = readScoreTotals(ns => host.sync.read(ns));
+    expect(awardedOnce).toHaveLength(1);
+    expect(awardedOnce[0]).toBeGreaterThan(0);
+
+    // The watchdog's false positive: the ack frame was merely late and the re-send crossed it on the
+    // wire. The resolved-lock guard must drop the duplicate — no second award, reveal untouched.
+    lead?.controller.intent("answer-lock", { slot: 1, qid });
+    await vi.advanceTimersByTimeAsync(200); // deliver the duplicate + a few host clock ticks
+    expect(readScoreTotals(ns => host.sync.read(ns))).toEqual(awardedOnce);
+    expect(host.sync.read("reveal")?.outcome).toBe("correct");
+    expect(host.sync.read("reveal")?.stealResults).toEqual([]);
+
+    // …and the clock keeps advancing — the duplicate wedged nothing, the match reaches round 2.
+    await waitAdvancing(
+      () => {
+        const match = lead?.controller.read("match");
+        expect(match?.phase).toBe("roundIntro");
+        expect(match?.round).toBe(2);
+      },
+      { timeout: 5000 }
+    );
+
+    await host.stop();
+    await Promise.all(controllers.map(c => c.stop()));
+  });
+
+  it("a duplicate lock from the active answerer during the open steal leaves the steal untouched", {
+    timeout: 25_000
+  }, async () => {
+    restoreFetch = mockFetch();
+    const { host, controllers, qid } = await driveToQuestion(2, STABLE_QUESTION_TIMERS);
+    const lead = controllers[0];
+
+    // The active answerer is the question's answeringPeer (the honoured category picker) — resolve
+    // the roles up front so ONLY the active locks (no stray stealer intent racing the lead-in guard).
+    const answeringPeer = host.sync.read("question")?.answeringPeer as string;
+    const active = controllers.find(c => c.session.self().selfId === answeringPeer);
+    const stealer = controllers.find(c => c.session.self().selfId !== answeringPeer);
+    const stealerPeer = stealer?.session.self().selfId;
+
+    // The active answerer locks WRONG (fixture `sha:0` → slot 1 correct, 0 wrong) → the steal opens.
+    active?.controller.intent("answer-lock", { slot: 0, qid });
+    await waitAdvancing(
+      () => {
+        expect(lead?.controller.read("steal")?.active).toBe(true);
+        expect(lead?.controller.read("question")?.mode).toBe("steal");
+      },
+      { timeout: 9000 }
+    );
+
+    // The watchdog's false positive: the active answerer re-sends the SAME wrong lock mid-steal.
+    // The eligibility guards must drop it — mode is no longer "answer" and they are not a stealer.
+    active?.controller.intent("answer-lock", { slot: 0, qid });
+    await vi.advanceTimersByTimeAsync(200); // deliver the duplicate (also moves past the lead-in)
+    expect(host.sync.read("steal")?.active).toBe(true);
+    expect(host.sync.read("steal")?.answeredPeers).toEqual([]);
+    expect(host.sync.read("steal")?.stealPeers).toEqual([stealerPeer]);
+
+    // The steal still resolves normally from here: the (post-lead-in) stealer lock → terminal reveal
+    // with exactly ONE steal row (the duplicate never leaked into the results).
+    stealer?.controller.intent("answer-lock", { slot: 0, qid });
+    await waitAdvancing(
+      () => {
+        expect(lead?.controller.read("match")?.phase).toBe("reveal");
+        expect(lead?.controller.read("steal")?.active).toBe(false);
+      },
+      { timeout: 5000 }
+    );
+    expect(host.sync.read("reveal")?.stealResults as unknown[]).toHaveLength(1);
+
+    await host.stop();
+    await Promise.all(controllers.map(c => c.stop()));
+  });
+
+  it("a duplicate steal lock from the same stealer is recorded once (answeredPeers + stealResults)", {
+    timeout: 25_000
+  }, async () => {
+    restoreFetch = mockFetch();
+    // Three players → after the active answerer misses, TWO stealers share the open window.
+    const { host, controllers, qid } = await driveToQuestion(3, STABLE_QUESTION_TIMERS);
+    const lead = controllers[0];
+
+    const answeringPeer = host.sync.read("question")?.answeringPeer as string;
+    const active = controllers.find(c => c.session.self().selfId === answeringPeer);
+    active?.controller.intent("answer-lock", { slot: 0, qid }); // wrong → open steal for the other two
+
+    await waitAdvancing(
+      () => {
+        expect(lead?.controller.read("steal")?.active).toBe(true);
+      },
+      { timeout: 9000 }
+    );
+    // Move past the "get ready" lead-in so stealer locks are honoured (the armedTs fair-start guard).
+    await vi.advanceTimersByTimeAsync(200);
+
+    const [first, second] = controllers.filter(c => c.session.self().selfId !== answeringPeer);
+    const firstPeer = first?.session.self().selfId;
+
+    // The first stealer locks (wrong) — recorded — then the watchdog re-sends the same lock.
+    first?.controller.intent("answer-lock", { slot: 0, qid });
+    await waitAdvancing(
+      () => {
+        expect(host.sync.read("steal")?.answeredPeers).toEqual([firstPeer]);
+      },
+      { timeout: 5000 }
+    );
+    first?.controller.intent("answer-lock", { slot: 0, qid });
+    await vi.advanceTimersByTimeAsync(200);
+    // Recorded ONCE: the per-question tried-set guard dropped the duplicate; the window stays open.
+    expect(host.sync.read("steal")?.answeredPeers).toEqual([firstPeer]);
+    expect(host.sync.read("steal")?.active).toBe(true);
+
+    // The second stealer resolves the steal (everyone tried) → exactly one row per stealer.
+    second?.controller.intent("answer-lock", { slot: 0, qid });
+    await waitAdvancing(
+      () => {
+        expect(lead?.controller.read("match")?.phase).toBe("reveal");
+      },
+      { timeout: 5000 }
+    );
+    const rows = host.sync.read("reveal")?.stealResults as { peerId: string }[];
+    expect(rows).toHaveLength(2);
+    expect(new Set(rows.map(row => row.peerId)).size).toBe(2);
 
     await host.stop();
     await Promise.all(controllers.map(c => c.stop()));
