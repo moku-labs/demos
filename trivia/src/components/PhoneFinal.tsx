@@ -4,7 +4,7 @@
  * Rendered for the `final` phase.
  */
 import type { JSX } from "preact";
-import { rank } from "../lib/leaderboard";
+import { competitionLabels, rank } from "../lib/leaderboard";
 import type { ScoreEntry, TriviaState } from "../lib/types";
 import { categoryMeta, findPlayer, formatScore } from "../lib/view";
 import { ClayButton } from "./ClayButton";
@@ -61,8 +61,12 @@ export type PhoneFinalProps = {
 export function PhoneFinal({ s, onPlayAgain, onLeaveOpen }: PhoneFinalProps): JSX.Element {
   const self = findPlayer(s.players, s.self);
   const ranked = rank(s.scores);
-  const entry = ranked.find(e => e.peerId === s.self);
-  const place = entry?.rank ?? ranked.length;
+  // Competition place (spec/scoreboard-animation.md §5): tied totals share the placement, so two
+  // players who finish level BOTH see "You came 1st!" — never an arbitrary 1st/2nd split.
+  const labels = competitionLabels(ranked.map(e => e.total));
+  const selfIndex = ranked.findIndex(e => e.peerId === s.self);
+  const entry = selfIndex >= 0 ? ranked[selfIndex] : undefined;
+  const place = selfIndex >= 0 ? ((labels[selfIndex] ?? selfIndex + 1) as number) : ranked.length;
   const medal = place === 1 ? "🥇" : place === 2 ? "🥈" : place === 3 ? "🥉" : "🎖";
   const ordinal = place === 1 ? "1st" : place === 2 ? "2nd" : place === 3 ? "3rd" : `${place}th`;
   const stats = finalStats(entry);

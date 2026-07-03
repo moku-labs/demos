@@ -14,6 +14,7 @@
  * for the surface, so every function stays flat and individually testable.
  */
 import { ramp } from "../difficulty";
+import { boardRows, maxClimb } from "../leaderboard";
 import type { ScoreEntry, TriviaState } from "../types";
 import { joinRate, overtakeRate, streakRate } from "./ladder";
 import type { Cue, MusicId, Surface } from "./types";
@@ -137,22 +138,6 @@ function streakOf(scores: ScoreEntry[], peer: string | null): number {
 }
 
 /**
- * The largest number of ranks any tile climbed this reorder (drives the overtake whoosh pitch).
- *
- * @param scores - The scoreboard rows.
- * @returns The maximum positions climbed (0 when none moved up).
- * @example
- * ```ts
- * maxClimb([{ rank: 1, prevRank: 3 }]); // 2
- * ```
- */
-function maxClimb(scores: ScoreEntry[]): number {
-  let best = 0;
-  for (const entry of scores) best = Math.max(best, entry.prevRank - entry.rank);
-  return best;
-}
-
-/**
  * The TV's reveal sting for a resolved outcome (+ the score count-up where points were earned).
  *
  * @param outcome - The resolved outcome.
@@ -266,7 +251,9 @@ function questionCues(next: TriviaState): Cue[] {
  * ```
  */
 function scoreboardCues(next: TriviaState): Cue[] {
-  const climb = maxClimb(next.scores);
+  // Pitch by the SAME derived climb the board animates (spec/scoreboard-animation.md §5), so the
+  // whoosh matches the motion — the synced rank fields under-reported multi-award steal rounds.
+  const climb = maxClimb(boardRows(next.players, next.scores));
   const overtake: Cue[] =
     climb > 0 ? [{ kind: "sfx", id: "board.overtake", opts: { rate: overtakeRate(climb) } }] : [];
   return [{ kind: "sfx", id: "board.in" }, ...overtake];

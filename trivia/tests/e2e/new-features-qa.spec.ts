@@ -97,27 +97,28 @@ test.describe("NF-1 — Reveal panel winner row (FedEx + invariant)", () => {
 // ─── NF-2: TV scoreboard round-gain badge + count-up ─────────────────────────
 
 test.describe("NF-2 — TV scoreboard round-gain badge (FedEx + invariant)", () => {
-  // Invariant: exactly 1 "+200" gain badge (only Mochi scored in the fixture)
-  test("scoreboard: exactly one +200 gain badge (Mochi only)", async ({ page }) => {
+  // Invariant: exactly 2 gain badges — Mochi +200 (gain, no rank change) and Pixel +400 (a real overtake)
+  test("scoreboard: two gain badges (Mochi +200, Pixel +400)", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await gotoStage(page, "scoreboard");
 
     const gainBadges = page.locator("[data-component='scoreboard-tile'] [data-gain]");
-    await expect(gainBadges).toHaveCount(1);
-    await expect(gainBadges.first()).toContainText("+200");
+    await expect(gainBadges).toHaveCount(2);
+    // Rows render in position order (Mochi=0, Pixel=1) — the array form matches element-by-element.
+    await expect(gainBadges).toContainText(["+200", "+400"]);
   });
 
   // Invariant: zero-delta players have NO gain badge
-  test("scoreboard: 4 tiles with no +N gain badge (non-scorers)", async ({ page }) => {
+  test("scoreboard: 3 tiles with no +N gain badge (non-scorers)", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await gotoStage(page, "scoreboard");
 
-    // 5 tiles total; exactly 1 has [data-gain]; the 4 non-scorers must not have it
+    // 5 tiles total; exactly 2 have [data-gain] (Mochi, Pixel); the 3 non-scorers must not have it
     const tiles = page.locator("[data-component='scoreboard-tile']");
     await expect(tiles).toHaveCount(5);
 
     const tilesWithGain = page.locator("[data-component='scoreboard-tile'] [data-gain]");
-    await expect(tilesWithGain).toHaveCount(1);
+    await expect(tilesWithGain).toHaveCount(2);
   });
 
   // Invariant: with reduced-motion, each [data-score] shows the final total (not the start value)
@@ -156,14 +157,15 @@ test.describe("NF-2 — TV scoreboard round-gain badge (FedEx + invariant)", () 
     expect(fill, `First-place tile --fill must not be "0%". Got: "${fill}"`).not.toBe("0%");
   });
 
-  // Invariant: Pixel (p2) overtook Tofu in the fixture (prevRank=3 → rank=2) → data-badge visible
+  // Invariant: Pixel (p2, +400) genuinely passed Tofu (p3, +0) — boardRows() derives preTotal 700 <
+  // Tofu's 800 (prevPosition 2 vs 1) and total 1100 > Tofu's 800 (position 1 vs 2) → data-badge visible
   test("scoreboard: overtake badge appears for the player that climbed a rank (Pixel overtook Tofu)", async ({
     page
   }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await gotoStage(page, "scoreboard");
 
-    // The fixture: Pixel (p2) prevRank=3, live rank=2 (overtook Tofu) → [data-badge] must show "overtook Tofu".
+    // Mochi (+200) gains without moving (already the leader) — only Pixel's climb badges.
     // Exactly 1 tile should have a [data-badge].
     const badge = page.locator("[data-component='scoreboard-tile'] [data-badge]");
     await expect(badge).toHaveCount(1);

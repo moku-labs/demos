@@ -46,7 +46,10 @@ function question(over: Partial<QuestionView> = {}): QuestionView {
   };
 }
 
-/** A score row (rank/prevRank drive the overtake; bestStreak drives the correct-chime pitch). */
+/**
+ * A score row (bestStreak drives the correct-chime pitch; the overtake pitch derives from
+ * total/delta via `boardRows`, so the rank fields here are inert).
+ */
 function score(peerId: string, rank: number, prevRank: number, bestStreak = 1): ScoreEntry {
   return { peerId, total: 0, delta: 0, rank, prevRank, bestStreak };
 }
@@ -248,9 +251,15 @@ describe("diffCues — reveal flash (controller, answerer only)", () => {
 
 describe("diffCues — scoreboard, steal, vote, pause, final", () => {
   it("scoreboard with a climber → board.in + a pitched overtake", () => {
+    // The climb derives from total/delta (boardRows — spec/scoreboard-animation.md §5), never from
+    // the synced rank fields: p1 (+350 → 400) passes p0 (300) → a one-slot climb → pitched whoosh.
+    const climbers: ScoreEntry[] = [
+      { peerId: "p0", total: 300, delta: 0, rank: 1, prevRank: 1 },
+      { peerId: "p1", total: 400, delta: 350, rank: 1, prevRank: 2 }
+    ];
     const cues = diffCues(
-      st({ phase: "reveal" }),
-      st({ phase: "scoreboard", scores: [score("p1", 1, 3)] }),
+      st({ phase: "reveal", playerCount: 2 }),
+      st({ phase: "scoreboard", playerCount: 2, scores: climbers }),
       "stage"
     );
     expect(sfx(cues)).toContain("board.in");

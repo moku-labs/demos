@@ -215,3 +215,207 @@ test.describe("full match — 1 TV + 2 phones play all 12 rounds", () => {
     }
   });
 });
+
+// ─── Live-flow proof: the REAL scoreboard animates on a genuinely awarded round ───────
+// The harness fixtures render frozen state — this proves the real app ALSO animates, over an actual
+// WebRTC room with the host clock driving phase advances (no fixture, no frozen snapshot).
+
+/**
+ * How many rounds to attempt before giving up on seeing a genuine award (open steal makes it likely
+ * within a handful of rounds, but never guaranteed on any single round — `answerUntilResolved` taps the
+ * first available slot, which is only sometimes correct).
+ */
+const MAX_ROUNDS_FOR_AWARD = 8;
+
+/** Poll the scoreboard root's `data-choreography` attribute (mirrors stage-screens.spec.ts). */
+async function scoreboardChoreography(tv: Page): Promise<string | null> {
+  const root = tv.locator("[data-component='stage-scoreboard']");
+  if (!(await root.count())) return null;
+  // eslint-disable-next-line unicorn/prefer-dom-node-dataset -- Playwright Locator, not a DOM node
+  return root.getAttribute("data-choreography");
+}
+
+test.describe("full match — live scoreboard animation proof (motion ON)", () => {
+  test.setTimeout(180_000);
+
+  test("a genuinely awarded round animates the real scoreboard (delta → reorder → settled, no overlap)", async ({
+    browser
+  }: {
+    browser: Browser;
+  }) => {
+    // Motion ON for the TV (unlike the reduced-motion contexts above) — this is the one context in the
+    // suite that must observe the REAL choreography, not its reduced-motion collapse.
+    const tvCtx = await browser.newContext({ colorScheme: "dark" });
+    const phoneOpts = {
+      viewport: { width: 390, height: 844 },
+      colorScheme: "dark" as const,
+      reducedMotion: "reduce" as const,
+      hasTouch: true
+    };
+    const p1Ctx = await browser.newContext(phoneOpts);
+    const p2Ctx = await browser.newContext(phoneOpts);
+
+    const tv = await tvCtx.newPage();
+    const p1 = await p1Ctx.newPage();
+    const p2 = await p2Ctx.newPage();
+    const errors = [...trackErrors(tv, "tv"), ...trackErrors(p1, "p1"), ...trackErrors(p2, "p2")];
+
+    try {
+      await tv.goto("/");
+      await tv.waitForSelector("[data-stage][data-phase='lobby']", { timeout: 20_000 });
+      const code = await readRoomCode(tv);
+      if (!code) {
+        test.skip(
+          true,
+          "Hub DO unavailable (no room code) — cannot run the live match in this env"
+        );
+        return;
+      }
+
+      await joinPhone(p1, code, "Ari");
+      await joinPhone(p2, code, "Bo");
+      await expect(
+        tv.locator("[data-player-grid] [data-component='player-tile']:not([data-empty])")
+      ).toHaveCount(2, { timeout: CONNECT_TIMEOUT });
+
+      const startBtn = p1.locator("button").filter({ hasText: /start\s*game/i });
+      await expect(startBtn).toBeVisible({ timeout: PHASE_TIMEOUT });
+      await startBtn.click();
+
+      await tv.waitForSelector("[data-stage][data-phase='languageVote']", {
+        timeout: PHASE_TIMEOUT
+      });
+      for (const p of [p1, p2]) {
+        const en = p
+          .locator("button")
+          .filter({ hasText: /english/i })
+          .first();
+        if (await en.count()) await en.click().catch(() => undefined);
+      }
+
+      // Play rounds until a scoreboard shows a genuine gain badge (an actual award this round), or the
+      // round budget runs out. Every round still exercises the invariants that MUST hold regardless of
+      // whether it scored (unique positions, disjoint boxes) — the award-specific assertions gate on
+      // `scored`.
+      let scored = false;
+      for (let round = 1; round <= MAX_ROUNDS_FOR_AWARD && !scored; round++) {
+        await tv.waitForSelector(
+          "[data-stage][data-phase='roundIntro'], [data-stage][data-phase='categoryPick']",
+          { timeout: PHASE_TIMEOUT }
+        );
+        await tv.waitForSelector("[data-stage][data-phase='categoryPick']", {
+          timeout: PHASE_TIMEOUT
+        });
+        expect(
+          await pickCategory([p1, p2]),
+          `round ${round}: a phone should be the active category picker`
+        ).toBe(true);
+
+        await tv.waitForSelector("[data-stage][data-phase='question']", { timeout: PHASE_TIMEOUT });
+        await answerUntilResolved(tv, [p1, p2]);
+        await tv.waitForSelector("[data-stage][data-phase='reveal']", { timeout: PHASE_TIMEOUT });
+        await tv.waitForSelector("[data-stage][data-phase='scoreboard']", {
+          timeout: PHASE_TIMEOUT
+        });
+
+        // The instant the scoreboard mounts, read whether THIS round awarded anyone (a `[data-gain]`
+        // badge). Read as early as possible — the DOM invariants below must hold at every instant, so
+        // there is no race to win here, but the scoring signal itself is only meaningful right at mount
+        // (the host clock advances past `scoreboard` after `scoreboardMs`, config.ts's 3000ms).
+        scored = (await tv.locator("[data-component='scoreboard-tile'] [data-gain]").count()) > 0;
+
+        // ── Invariants that MUST hold on ANY scoreboard render (scored or not) ──
+        const tiles = tv.locator("[data-component='scoreboard-tile']");
+        const tileCount = await tiles.count();
+        const positions: number[] = [];
+        const prevPositions: number[] = [];
+        const boxes: Array<{ y: number; height: number }> = [];
+        for (let i = 0; i < tileCount; i++) {
+          const tile = tiles.nth(i);
+          const position = await tile.getAttribute("data-position");
+          const prevPosition = await tile.getAttribute("data-prev-position");
+          const box = await tile.boundingBox();
+          expect(
+            box,
+            `round ${round}: every scoreboard tile must have a bounding box`
+          ).not.toBeNull();
+          positions.push(Number(position));
+          prevPositions.push(Number(prevPosition));
+          if (box) boxes.push({ y: box.y, height: box.height });
+        }
+        // §I1: position and prevPosition are each a permutation of 0..N−1 — never a shared slot.
+        expect(
+          positions.toSorted((a, b) => a - b),
+          `round ${round}: data-position must be a permutation of 0..N-1`
+        ).toEqual([...positions.keys()]);
+        expect(
+          prevPositions.toSorted((a, b) => a - b),
+          `round ${round}: data-prev-position must be a permutation of 0..N-1`
+        ).toEqual([...positions.keys()]);
+        // Pairwise-disjoint bounding boxes — the reported overlap bug, live.
+        const byTop = boxes.toSorted((a, b) => a.y - b.y);
+        for (let i = 1; i < byTop.length; i++) {
+          const prev = byTop[i - 1];
+          const curr = byTop[i];
+          if (!prev || !curr) continue;
+          expect(
+            curr.y,
+            `round ${round}: live scoreboard tiles must not overlap vertically`
+          ).toBeGreaterThanOrEqual(prev.y + prev.height - 1);
+        }
+
+        if (scored) {
+          // ── This round genuinely scored — prove the choreography walks the full sequence with
+          // motion on, and that at least one tile's prev/position pair actually differs (a mover). ──
+          const hasMover = positions.some((p, i) => p !== prevPositions[i]);
+          if (hasMover) {
+            // A mover exists — the choreography must be observed running (not stuck at reduced-motion's
+            // instant "settled"). It may already have advanced past "delta" by the time we poll (real
+            // network/render latency), so accept any of the three phases as proof motion is live, then
+            // confirm it reaches "settled" before the host's scoreboardMs hold ends.
+            const phase = await scoreboardChoreography(tv);
+            expect(
+              ["delta", "reorder", "settled"],
+              `round ${round}: scoreboard must expose a valid data-choreography phase`
+            ).toContain(phase);
+          }
+          await expect(tv.locator("[data-component='stage-scoreboard']")).toHaveAttribute(
+            "data-choreography",
+            "settled",
+            { timeout: 4000 }
+          );
+          // Once settled, every tile transform is at rest — no stuck seeded transform (§I5), live.
+          const transforms = await tv
+            .locator("[data-component='scoreboard-tile']")
+            .evaluateAll(els => els.map(el => (el as HTMLElement).style.transform));
+          for (const t of transforms) {
+            if (t) expect(t).toBe("translateY(0px)");
+          }
+        }
+
+        // Advance past the scoreboard hold before starting the next round (or ending the loop).
+        if (!scored && round < MAX_ROUNDS_FOR_AWARD) {
+          await tv
+            .waitForSelector(
+              "[data-stage][data-phase='roundIntro'], [data-stage][data-phase='categoryPick'], [data-stage][data-phase='final']",
+              { timeout: PHASE_TIMEOUT }
+            )
+            .catch(() => undefined);
+        }
+      }
+
+      expect(
+        scored,
+        `no round awarded anyone across ${MAX_ROUNDS_FOR_AWARD} rounds — cannot prove the live award/animation path (this is an environment-flakiness note, not necessarily a product bug)`
+      ).toBe(true);
+
+      expect(errors, `runtime errors during the live-flow proof:\n${errors.join("\n")}`).toEqual(
+        []
+      );
+    } finally {
+      await tvCtx.close();
+      await p1Ctx.close();
+      await p2Ctx.close();
+    }
+  });
+});

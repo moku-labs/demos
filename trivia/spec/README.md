@@ -15,6 +15,7 @@
 | [`TRIVIA_DESIGN.md`](./TRIVIA_DESIGN.md) | The game-design narrative — screens, flow, animation catalog, popups, edge cases, accessibility. Earlier than `design-context.md`; where they differ, `design-context.md` wins. |
 | [`SPEC.md`](./SPEC.md) | The original concept — Moku Room + Trivia idea, the game brief, and the question-generation requirements. |
 | [`TRIVIA_SKILL.md`](./TRIVIA_SKILL.md) | The starter skeleton for the **`/trivia-gen`** question-generation Claude skill (args, languages, types, difficulty, quality review, answer obfuscation, output). The built skill extends this. |
+| [`scoreboard-animation.md`](./scoreboard-animation.md) | **The scoreboard animation schema** — the derived-position model (unique slots, the exceed rule for ties), the delta→reorder→settled choreography, invariants I1–I6, and the exhaustive S1–S14 transition case matrix every change must keep green (each case maps to a unit test, an e2e test, and a recorded review artifact). |
 
 ## How this maps to the build
 

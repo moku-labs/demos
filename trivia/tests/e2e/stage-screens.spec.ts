@@ -26,6 +26,14 @@ const MATCH_PHASE: Record<StagePhaseKey, string> = {
   scoreboard: "scoreboard",
   // Scoreboard with a not-yet-scored connected player still on the board
   scoreboardZero: "scoreboard",
+  // Scoreboard-animation case matrix (spec/scoreboard-animation.md §4) — all render the scoreboard phase.
+  scoreboardS2: "scoreboard",
+  scoreboardS4: "scoreboard",
+  scoreboardS5: "scoreboard",
+  scoreboardS6: "scoreboard",
+  scoreboardS7: "scoreboard",
+  scoreboardS9: "scoreboard",
+  scoreboardS11: "scoreboard",
   final: "final",
   lobby: "lobby",
   languageVote: "languageVote",
@@ -276,12 +284,12 @@ test.describe("TV Stage — phase screens render (deterministic fixtures)", () =
       "Standings after Round 6"
     );
     await expect(page.locator("[data-component='scoreboard-tile']")).toHaveCount(5);
-    // The round gain is demonstrated by a "+N" badge on the tiles that scored this round (Mochi +200);
+    // The round gain is demonstrated by a "+N" badge on the two tiles that scored this round —
+    // Mochi (+200, gain without a rank change) and Pixel (+400, a real overtake past Tofu);
     // tiles with no gain show none. (The score + bar also count up from the pre-round figure — animated.)
-    await expect(page.locator("[data-component='scoreboard-tile'] [data-gain]")).toHaveCount(1);
-    await expect(page.locator("[data-component='scoreboard-tile'] [data-gain]")).toContainText(
-      "+200"
-    );
+    const gainBadges = page.locator("[data-component='scoreboard-tile'] [data-gain]");
+    await expect(gainBadges).toHaveCount(2);
+    await expect(gainBadges).toContainText(["+200", "+400"]);
   });
 
   test("scoreboard zero-score (item 2): a connected player who has not scored yet still appears at 0", async ({
@@ -584,8 +592,10 @@ test.describe("TV Stage — scoreboard bar tracks (item 2)", () => {
     page
   }) => {
     await gotoStage(page, "scoreboard");
-    // The fixture has Pixel (p2, total 1100) overtaking Tofu (p3, total 800)
-    // rank() re-sorts by total: p1=1, p2=2 (was 3), p3=3 (was 2) → p2 climbed 1
+    // Pixel (p2, +400) genuinely passes Tofu (p3, +0): boardRows() derives preTotal 700 < Tofu's 800
+    // (prevPosition 2 vs 1) and total 1100 > Tofu's 800 (position 1 vs 2) — a real climb, not a
+    // synced-rank artifact. Mochi (p1, +200) gains without moving (already the leader), so exactly
+    // one tile (Pixel) carries [data-moved-up].
     await expect(
       page.locator("[data-component='scoreboard-tile'][data-moved-up='true']")
     ).toHaveCount(1);
@@ -603,22 +613,32 @@ test.describe("TV Stage — scoreboard overtake choreography (item 3)", () => {
     // Real motion — this test proves the live sequencing, not the settled end-state.
     await gotoStage(page, "scoreboard");
     const root = page.locator("[data-component='stage-scoreboard']");
-    const mover = page.locator("[data-component='scoreboard-tile'][data-moved-up='true']");
+    // Identify the mover by NAME (Pixel, per the fixture) — [data-moved-up] is deliberately absent
+    // during "delta" (the badge/glow only appear from "reorder" on, spec §2), so it can't be used to
+    // find the tile at Phase 1 below; selecting by name works across all three phases.
+    const mover = page
+      .locator("[data-component='scoreboard-tile']")
+      .filter({ has: page.locator("[data-name]", { hasText: "Pixel" }) });
 
-    // Phase 1 — "delta": the round-gain badge is visible immediately, and the mover is still held
-    // at its PRE-round offset (a non-zero translateY — it has not reordered onto the final row yet).
+    // Phase 1 — "delta": the round-gain badges (Mochi +200, Pixel +400) are visible immediately, and
+    // the mover is still held at its PRE-round offset (a non-zero translateY — it has not reordered
+    // onto the final row yet). The overtake badge/glow are deliberately HIDDEN during this phase (§2).
     await expect(root).toHaveAttribute("data-choreography", "delta");
-    await expect(page.locator("[data-component='scoreboard-tile'] [data-gain]")).toHaveCount(1);
+    await expect(page.locator("[data-component='scoreboard-tile'] [data-gain]")).toHaveCount(2);
+    expect(await mover.getAttribute("data-moved-up")).toBeNull();
     const preReorderTransform = await mover.evaluate(el => (el as HTMLElement).style.transform);
     expect(preReorderTransform).toMatch(/translateY\((?!0px\)).+\)/);
 
     // Phase 2 — "reorder": once the delta beat's hold elapses, the root flips to "reorder" and the
-    // mover's transform is actively animating toward rest (still mid-flight, not yet 0).
+    // mover's transform is actively animating toward rest (still mid-flight, not yet 0); the badge/glow
+    // now pop in (§2).
     await expect(root).toHaveAttribute("data-choreography", "reorder", { timeout: 3000 });
+    await expect(mover).toHaveAttribute("data-moved-up", "true");
     await expect(mover).toHaveCSS("transition-property", "transform");
 
     // Phase 3 — "settled": the FLIP transition completes and the whole choreography rests.
     await expect(root).toHaveAttribute("data-choreography", "settled", { timeout: 2000 });
+    await expect(mover).toHaveAttribute("data-moved-up", "true");
     await expect
       .poll(async () => mover.evaluate(el => (el as HTMLElement).style.transform), {
         timeout: 2000

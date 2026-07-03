@@ -83,23 +83,20 @@ export type TurnChipProps = {
 
 /** ScoreboardTile (TV interstitial, §G) — rank · avatar · name · proportional bar · score. */
 export type ScoreboardTileProps = {
-  rank: number;
-  /** The player's standing *before* this round — drives the F4 climb (overtake) slide animation. */
-  prevRank?: number | undefined;
+  /** The competition rank label to display — ties share a number; layout never uses it (spec §I4). */
+  rankLabel: number;
+  /** The row's unique 0-based display slot after the round (`data-position` e2e geometry hook). */
+  position: number;
+  /** The row's unique 0-based slot before the round (`data-prev-position` — the FLIP seed's source). */
+  prevPosition: number;
   player: PlayerProfile;
   total: number;
   /** Points earned this round — drives the count-up head start and the "+N" round-gain badge. */
   delta: number;
   /** The leader's total (for the proportional bar width). */
   maxTotal: number;
-  /** The name of the player just overtaken, for the "▲ overtook …" badge (F4). */
+  /** The name of the player just overtaken, for the "▲ overtook …" badge + glow (F4). */
   movedUpOver?: string | undefined;
-  /**
-   * Sequenced reveal gate (item 3): `false` while the round's point gains are still being read
-   * (delta chip + count-up) — the tile holds at its PRE-round rank slot. `true` once that beat
-   * settles, at which point an overtaking tile's FLIP climb-slide is allowed to start.
-   */
-  readyToReorder?: boolean | undefined;
 };
 
 /** PodiumBlock (TV final, §G) — a gold/silver/bronze stepped block with player + score above. */

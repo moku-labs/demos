@@ -78,6 +78,16 @@ export type StagePhaseKey =
   | "scoreboard"
   // Scoreboard where a connected player has NOT scored yet — they must still appear (at 0).
   | "scoreboardZero"
+  // Scoreboard-animation case matrix (spec/scoreboard-animation.md §4) — S1/S3 are covered by the base
+  // "scoreboard" fixture above (Pixel overtakes Tofu; Mochi gains without moving); S10/S12/S13 reuse S1's
+  // board (S10 via reduced-motion/pause assertions in the spec test, no dedicated snapshot needed).
+  | "scoreboardS2"
+  | "scoreboardS4"
+  | "scoreboardS5"
+  | "scoreboardS6"
+  | "scoreboardS7"
+  | "scoreboardS9"
+  | "scoreboardS11"
   | "final"
   | "lobby"
   | "languageVote"
@@ -150,6 +160,13 @@ const STAGE_PHASE_KEYS = new Set<StagePhaseKey>([
   "reveal",
   "scoreboard",
   "scoreboardZero",
+  "scoreboardS2",
+  "scoreboardS4",
+  "scoreboardS5",
+  "scoreboardS6",
+  "scoreboardS7",
+  "scoreboardS9",
+  "scoreboardS11",
   "final",
   "lobby",
   "languageVote",
@@ -228,9 +245,32 @@ const PLAYERS: PlayerProfile[] = [
   { peerId: "p5", name: "Sprout", color: "#84CC16", avatar: "🐸", connected: true, isHost: false }
 ];
 
-// Each entry's `rank` carries the PRE-round standing; `rank()` re-derives the live order by total and
-// folds these into `prevRank`. Pixel's pre-rank 3 → live rank 2 makes the scoreboard show it overtaking
-// Tofu. `delta` (Mochi +200) drives the reveal score-rollup chips.
+/**
+ * Build a score entry for the scoreboard-animation case-matrix fixtures (spec §4) — only `total` and
+ * `delta` are consumed by `boardRows()`, so `rank`/`prevRank` are the inert placeholder `0` (the synced
+ * wire fields the TV board no longer reads).
+ *
+ * @param peerId - The roster peer id this entry belongs to.
+ * @param total - This player's running score total AFTER the round.
+ * @param delta - Points earned THIS round (defaults to `0` — a non-scorer).
+ * @returns A `ScoreEntry` with placeholder `rank`/`prevRank`.
+ */
+function entry(peerId: string, total: number, delta = 0): ScoreEntry {
+  return { peerId, total, delta, rank: 0, prevRank: 0 };
+}
+
+// `rank`/`prevRank` are the SYNCED wire fields — the host recomputes both at EVERY award, so by
+// scoreboard time they are already the final post-round competition ranks (ties share a number).
+// This is exactly why the TV board no longer consumes them (spec/scoreboard-animation.md §1 history):
+// they were never a usable "previous display position". Both fields below are set to the honest final
+// ranking (1,2,3,4,5 — no ties in this base fixture) purely so the wire shape is realistic; nothing in
+// `boardRows()` reads them. The actual before/after geometry is derived from `total − delta`:
+//   preTotal:  p1 1200, p3 800, p2 700, p4 500, p5 200 → prevPosition order p1,p3,p2,p4,p5
+//   total:     p1 1400, p2 1100, p3 800, p4 500, p5 200 → position order     p1,p2,p3,p4,p5
+// Pixel (p2, +400) passes Tofu (p3, +0): preTotal 700 < Tofu's 800, total 1100 > Tofu's 800 → a REAL
+// overtake (badge "▲ overtook Tofu" + data-moved-up at settled). Mochi (p1, +200) gains without a rank
+// change (preTotal 1200 already the leader) — proves the "gain, no motion" case (S3) alongside the
+// overtake in the same screen.
 const SCORES: ScoreEntry[] = [
   {
     peerId: "p1",
@@ -244,13 +284,13 @@ const SCORES: ScoreEntry[] = [
   {
     peerId: "p2",
     total: 1100,
-    delta: 0,
-    rank: 3,
-    prevRank: 3,
+    delta: 400,
+    rank: 2,
+    prevRank: 2,
     topCategory: "space",
     bestStreak: 3
   },
-  { peerId: "p3", total: 800, delta: 0, rank: 2, prevRank: 2, topCategory: "music", bestStreak: 2 },
+  { peerId: "p3", total: 800, delta: 0, rank: 3, prevRank: 3, topCategory: "music", bestStreak: 2 },
   { peerId: "p4", total: 500, delta: 0, rank: 4, prevRank: 4, topCategory: "food", bestStreak: 2 },
   {
     peerId: "p5",
@@ -512,6 +552,116 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
     return {
       s: triviaState("scoreboard", null, {
         scores: SCORES.filter(e => e.peerId !== "p5").map(e => ({ ...e, delta: 0 }))
+      }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
+  // ── Scoreboard-animation case matrix (spec/scoreboard-animation.md §4) ──
+  // S1 (single overtake) and S3 (gain, no motion) are the base "scoreboard" fixture above (Pixel
+  // overtakes Tofu; Mochi gains without moving) — no dedicated phase key needed. Each case below uses
+  // a 3–4 player slice of PLAYERS (join order = the identity tiebreak the spec calls A, B, C…), with
+  // `total`/`delta` chosen so `boardRows()` reproduces the spec table's pre/post order exactly.
+
+  if (phase === "scoreboardS2") {
+    // S2 multi-slot climb: Tofu (+400) jumps two slots — pre Mochi,Pixel,Tofu → post Tofu,Mochi,Pixel.
+    return {
+      s: triviaState("scoreboard", null, {
+        players: [PLAYERS[0], PLAYERS[1], PLAYERS[2]] as PlayerProfile[],
+        scores: [entry("p1", 300), entry("p2", 250), entry("p3", 500, 400)]
+      }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
+  if (phase === "scoreboardS4") {
+    // S4 tie formed — the EXCEED rule (§I2): Pixel (+300) reaches Mochi's 400 but does not PASS it —
+    // zero motion, honest shared label (1, 1). This is the historical overlap-bug case.
+    return {
+      s: triviaState("scoreboard", null, {
+        players: [PLAYERS[0], PLAYERS[1]] as PlayerProfile[],
+        scores: [entry("p1", 400), entry("p2", 400, 300)]
+      }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
+  if (phase === "scoreboardS5") {
+    // S5 tie broken: Mochi and Pixel were tied at 400; Pixel (+100) EXCEEDS it and slides past.
+    return {
+      s: triviaState("scoreboard", null, {
+        players: [PLAYERS[0], PLAYERS[1]] as PlayerProfile[],
+        scores: [entry("p1", 400), entry("p2", 500, 100)]
+      }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
+  if (phase === "scoreboardS6") {
+    // S6 multi-way tie board: three equal totals — zero motion, three distinct slots, labels 1,1,1.
+    return {
+      s: triviaState("scoreboard", null, {
+        players: [PLAYERS[0], PLAYERS[1], PLAYERS[2]] as PlayerProfile[],
+        scores: [entry("p1", 200), entry("p2", 200), entry("p3", 200)]
+      }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
+  if (phase === "scoreboardS7") {
+    // S7 multi-mover (open steal): Pixel (+140) and Tofu (+80) both climb past Mochi simultaneously;
+    // Biscuit (+60, was last) holds last. Both movers' badges must read "overtook Mochi" — never a
+    // fellow climber — since Mochi is the only player either of them actually passed.
+    return {
+      s: triviaState("scoreboard", null, {
+        players: [PLAYERS[0], PLAYERS[1], PLAYERS[2], PLAYERS[3]] as PlayerProfile[],
+        scores: [entry("p1", 100), entry("p2", 240, 140), entry("p3", 180, 80), entry("p4", 60, 60)]
+      }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
+  if (phase === "scoreboardS9") {
+    // S9 movement above zero rows: only Pixel has scored (+200); Mochi and Tofu are connected roster
+    // players synthesized at 0 (never scored yet). Pixel climbs OUT of the all-zero group; the two
+    // zero rows keep their relative (join) order.
+    return {
+      s: triviaState("scoreboard", null, {
+        players: [PLAYERS[0], PLAYERS[1], PLAYERS[2]] as PlayerProfile[],
+        scores: [entry("p2", 200, 200)]
+      }),
+      qr: null,
+      code: "TRIV1234",
+      now: FIXED_NOW,
+      endStats: null
+    };
+  }
+
+  if (phase === "scoreboardS11") {
+    // S11 mid-match joiner: Biscuit joined mid-match with no score entry — a fresh zero row appears
+    // at the bottom with NO phantom slide (prevPosition === position for the joiner).
+    return {
+      s: triviaState("scoreboard", null, {
+        players: [PLAYERS[0], PLAYERS[1], PLAYERS[3]] as PlayerProfile[],
+        scores: [entry("p1", 300), entry("p2", 100)]
       }),
       qr: null,
       code: "TRIV1234",
