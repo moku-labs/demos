@@ -6,6 +6,7 @@
  */
 import { intent, onLifecycle, startController, subscribe } from "../../lib/room";
 import { startSoundDirector } from "../../lib/sound";
+import { findPlayer } from "../../lib/view";
 import { loadIdentity } from "./profile";
 import type { ControllerContext } from "./types";
 
@@ -19,6 +20,22 @@ const SEEN_KEY = "trivia.seen";
  * escalating past it means the drop is real and the player needs a manual nudge.
  */
 const CONNECTION_LOST_MS = 8000;
+
+/**
+ * Join self-heal cadence: how often the watchdog checks whether this phone's submitted join has
+ * actually landed (its seat visible in the synced `players` slice). A stranded join is re-sent from
+ * the SECOND stranded tick (so the normal join path gets a full interval to land — first re-send
+ * fires 5–10 s after the "You're in!" card appeared, matching the observed wedge window), then once
+ * per interval up to {@link JOIN_HEAL_MAX_RESENDS}.
+ */
+const JOIN_HEAL_INTERVAL_MS = 5000;
+
+/**
+ * How many `join-profile` re-sends the self-heal attempts before escalating to the connection-lost
+ * banner (manual Retry → reload → persisted-token reclaim — the same recovery a human performs
+ * today). Bounded so a genuinely dead room degrades to actionable UX instead of silent re-sends.
+ */
+const JOIN_HEAL_MAX_RESENDS = 3;
 
 /**
  * Read the `|`-delimited seen-question ids from localStorage (empty string when unavailable).
@@ -58,6 +75,68 @@ function rememberSeen(id: string): void {
 }
 
 /**
+ * Arm the join self-heal watchdog: while this phone shows the post-wizard "You're in!" card
+ * (`joinedProfile` set) but its seat has NOT appeared in the synced `players` slice, re-send the
+ * `join-profile` intent (idempotent — the host keys the seat on `playerToken`/peerId, and its
+ * ack-beat `players.rev` bump answers even a byte-identical duplicate with a fresh delta).
+ *
+ * This closes the at-most-once wire gap that stranded phones on the success card: either the join
+ * intent itself or the answering baseline/roster frame can be lost, and the host re-broadcasts
+ * nothing until its next mutation — which, in a lobby waiting on THIS phone, may never come. After
+ * {@link JOIN_HEAL_MAX_RESENDS} unanswered re-sends the watchdog escalates to the connection-lost
+ * banner (manual Retry → reload → persisted-token reclaim), and un-escalates if a late frame heals
+ * the join. Idle (zero work beyond one predicate read) once the seat is visible or the wizard is
+ * still interactive; permanently quiet after a deliberate leave.
+ *
+ * @param ctx - The island context (live `state` + `set`).
+ * @returns The disposer that stops the watchdog (for `ctx.cleanup`).
+ * @example
+ * ```ts
+ * ctx.cleanup(armJoinSelfHeal(ctx));
+ * ```
+ */
+function armJoinSelfHeal(ctx: ControllerContext): () => void {
+  let strandedTicks = 0;
+  let resends = 0;
+  let escalated = false;
+
+  // eslint-disable-next-line jsdoc/require-jsdoc -- inline watchdog beat (the enclosing doc is the contract)
+  const tick = (): void => {
+    const { s, joinedProfile, joinToken, left } = ctx.state;
+    const seated = Boolean(findPlayer(s.players, s.self));
+
+    // Healthy / not applicable: seat landed, wizard still open, or the player deliberately left.
+    if (left || joinedProfile === null || joinToken === null || seated) {
+      // A late frame healed a join we had escalated on — lift our banner (a REAL ongoing outage
+      // re-raises it via the network-warning path, which owns the post-sync connectivity UX).
+      if (escalated && seated && ctx.state.connection === "lost") ctx.set({ connection: "ok" });
+      strandedTicks = 0;
+      resends = 0;
+      escalated = false;
+      return;
+    }
+
+    // Stranded on the "You're in!" card. Give the normal path one full interval before interfering.
+    strandedTicks += 1;
+    if (strandedTicks < 2) return;
+
+    if (resends < JOIN_HEAL_MAX_RESENDS) {
+      resends += 1;
+      intent("join-profile", { ...joinedProfile, playerToken: joinToken });
+      return;
+    }
+
+    if (!escalated) {
+      escalated = true;
+      ctx.set({ connection: "lost" });
+    }
+  };
+
+  const timer = setInterval(tick, JOIN_HEAL_INTERVAL_MS);
+  return () => clearInterval(timer);
+}
+
+/**
  * Join the room from the deep-link code, wire the snapshot subscription (persisting each shown question
  * id), the countdown ticker, and seed the host's no-repeat union with this phone's history.
  *
@@ -77,7 +156,7 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
   // state immediately (skip the wizard / mid-join modal) while the connection re-establishes. The
   // actual re-claim intent fires once the room is connected (below).
   const saved = loadIdentity(code);
-  if (saved) ctx.set({ joinedProfile: saved.profile });
+  if (saved) ctx.set({ joinedProfile: saved.profile, joinToken: saved.token });
 
   // Fix data-layout — the server always serves the stage layout for all routes (SPA mode, no SSR).
   // On direct load to /code/:code the outer [data-layout] element has data-layout="stage"
@@ -139,11 +218,15 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
     // Re-claim our seat with the stable token so the host re-binds our slot/score/turn instead of
     // seating us as a new player (and so the mid-match join lock lets us — a returning player — back in).
     if (saved) intent("join-profile", { ...saved.profile, playerToken: saved.token });
+    // Join self-heal (armed only once the room boot succeeded — before that, intents cannot flow and
+    // the pre-join failure path below owns the UX): if the submitted join never lands in the synced
+    // players slice, re-send it; escalate to the connection-lost banner when re-sends go unanswered.
+    ctx.cleanup(armJoinSelfHeal(ctx));
   } catch {
     // A failed join (full / not-found / room gone after a "New code" reset / unreachable): roll back the
     // OPTIMISTIC reconnect so we don't strand the player on a fake "You're in!" card — clearing the
     // local profile drops back to the interactive wizard, where they can re-enter or rescan a fresh QR.
     // eslint-disable-next-line unicorn/no-null -- the controller view layer speaks `null` for "not joined"
-    if (saved) ctx.set({ joinedProfile: null });
+    if (saved) ctx.set({ joinedProfile: null, joinToken: null });
   }
 }

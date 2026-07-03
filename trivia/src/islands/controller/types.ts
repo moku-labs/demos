@@ -24,6 +24,12 @@ export type ControllerState = {
   code: string;
   /** The profile this phone submitted (drives the "You're in!" confirmation pre-roster). */
   joinedProfile: JoinProfile | null;
+  /**
+   * The stable per-room player token sent with this session's `join-profile` (fresh join or reclaim).
+   * Kept in island state (not re-read from storage) so the join self-heal can re-send the SAME
+   * identity even when localStorage persistence failed (private mode / quota).
+   */
+  joinToken: string | null;
   /** The slot this phone locked for the current question (`null` = not locked). */
   lockedSlot: number | null;
   /** The question id the lock applies to (so a new question clears the lock). */

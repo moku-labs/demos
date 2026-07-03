@@ -118,8 +118,16 @@ export type MatchSlice = {
   totalRounds: number;
 };
 
-/** `players` slice — the joined player roster (lobby tiles, turn chips, scoreboard names). */
-export type PlayersSlice = { entries: PlayerProfile[] };
+/**
+ * `players` slice — the joined player roster (lobby tiles, turn chips, scoreboard names), plus a
+ * `rev` ack-beat counter bumped on EVERY accepted `join-profile` (even a byte-identical duplicate).
+ * The sync engine deep-equality-guards `mutate`, so without the bump a re-sent join whose seat is
+ * already correct would publish NO frame — and the phone's join self-heal (a stranded "You're in!"
+ * card re-sending its join) relies on the duplicate being answered with a fresh `players` delta.
+ * Views ignore `rev` (they read `entries`); mutates that rebuild the slice may drop it — the bump
+ * only ever needs to differ from the current value, not stay contiguous.
+ */
+export type PlayersSlice = { entries: PlayerProfile[]; rev?: number };
 
 /** `question` slice — the active question (NO correctSlot/answerCheck — secrecy stays in question-bank). */
 export type QuestionSlice = {

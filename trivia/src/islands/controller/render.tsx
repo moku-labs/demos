@@ -51,7 +51,9 @@ function makeHandlers(ctx: ControllerContext, state: ControllerState): Controlle
       // player), and send the token with the join so the host keys the roster slot on it.
       const playerToken = rememberIdentity(state.code, profile);
       intent("join-profile", { ...profile, playerToken });
-      ctx.set({ joinedProfile: profile });
+      // Keep the token in island state too: the join self-heal re-sends from here, so a phone whose
+      // localStorage persist failed (private mode) still re-claims with the SAME token it first sent.
+      ctx.set({ joinedProfile: profile, joinToken: playerToken });
       sound.unlock();
       sound.play("join.confirm");
       sound.haptic("confirm");

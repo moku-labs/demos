@@ -3,12 +3,17 @@
  * (00-two-context-flow / 01-full-match / lobby-new-code), with ONE built-in recovery attempt.
  *
  * The signaling/WebRTC handshake can wedge on a long-lived dev workerd (the hub-accumulation flake:
- * a join that never reaches the lobby, while a fresh attempt succeeds). The product's own recovery
- * for that state is a full reload (the phone connection banner's Retry button = `hardNavigate`), so
- * the recovery here is the same move: re-`goto` the join URL. A fresh document either auto-reclaims
- * the seat via the persisted `playerToken` (straight into the lobby, no wizard) or re-presents the
- * join wizard — `joinPhoneOnce` handles both paths, so the retry is honest app behaviour, not a
- * test-only cheat.
+ * a join that never reaches the lobby, while a fresh attempt succeeds). The product now self-heals
+ * the post-wizard wedge in-place: a phone stranded on the "You're in!" card (join intent or its
+ * answering roster frame lost — at-most-once wire) re-sends `join-profile` from ~5–10 s (idempotent
+ * by `playerToken`; the host's `players.rev` ack-beat answers even a byte-identical duplicate with a
+ * fresh delta), escalating to the connection banner's Retry (= `hardNavigate` reload) after ~20 s of
+ * unanswered re-sends. Most wedges therefore recover inside `joinPhoneOnce`'s lobby wait. The
+ * recovery HERE covers what in-place re-sends cannot (a pre-join handshake that never opened, or a
+ * replica wedged stale on a missed-baseline sequence gap): re-`goto` the join URL. A fresh document
+ * either auto-reclaims the seat via the persisted `playerToken` (straight into the lobby, no wizard)
+ * or re-presents the join wizard — `joinPhoneOnce` handles both paths, so the retry is honest app
+ * behaviour, not a test-only cheat.
  */
 import type { Page } from "@playwright/test";
 

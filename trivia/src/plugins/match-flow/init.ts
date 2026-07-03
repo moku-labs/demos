@@ -61,7 +61,9 @@ function registerSlices(sync: SyncDeps, baseRounds: number): void {
     totalRounds: baseRounds
   });
 
-  sync.registerSlice("players", { entries: [] });
+  // `rev` is the join ack-beat counter (see PlayersSlice) — bumped per accepted join-profile so even
+  // a byte-identical duplicate join publishes a fresh delta (the phone join self-heal's host half).
+  sync.registerSlice("players", { entries: [], rev: 0 });
 
   // `question` — active question (NO correctSlot/answerCheck — secrecy stays in question-bank).
   sync.registerSlice("question", {
@@ -216,7 +218,11 @@ function normalizeHost(stage: Pick<StageApi, "mutate">, state: State): void {
   stage.mutate("players", draft => {
     const entries = (draft.entries as PlayersSlice["entries"] | undefined) ?? [];
     if (entries.every(entry => entry.isHost === (entry.peerId === hostPeerId))) return draft;
-    return { entries: entries.map(entry => ({ ...entry, isHost: entry.peerId === hostPeerId })) };
+    // `...draft` preserves the `rev` ack-beat cell (this runs right after the join handler bumps it).
+    return {
+      ...draft,
+      entries: entries.map(entry => ({ ...entry, isHost: entry.peerId === hostPeerId }))
+    };
   });
 }
 
@@ -306,8 +312,11 @@ export function initMatchFlow(
       const entries = (draft.entries as PlayersSlice["entries"] | undefined) ?? [];
       const found = entries.find(entry => entry.peerId === slotKey);
 
+      // Both branches spread `...draft` so the `rev` ack-beat cell survives the seat write and the
+      // bump below stays monotonic (a rebuilt cell map would silently reset it every join).
       if (found) {
         return {
+          ...draft,
           entries: entries.map(entry =>
             entry.peerId === slotKey
               ? { ...entry, peerId, name, color, avatar, connected: true }
@@ -319,9 +328,21 @@ export function initMatchFlow(
       const isFirst = entries.filter(entry => entry.connected).length === 0;
       if (isFirst) shouldSetHost = true;
       return {
+        ...draft,
         entries: [...entries, { peerId, name, color, avatar, connected: true, isHost: isFirst }]
       };
     });
+
+    // Ack-beat: bump `players.rev` so EVERY accepted join-profile publishes a fresh players delta —
+    // even a byte-identical duplicate, which the sync engine's deep-equal mutate guard would otherwise
+    // swallow into NO frame. This is the host half of the phone's join self-heal: a phone stranded on
+    // the "You're in!" card (its baseline/roster frame lost on the wire — at-most-once delivery)
+    // re-sends join-profile, and this bump guarantees the re-send is answered with a delta carrying
+    // the full players slice, whichever direction the original loss was.
+    stage.mutate("players", draft => ({
+      ...draft,
+      rev: ((draft.rev as number | undefined) ?? 0) + 1
+    }));
 
     // First joiner becomes host — recorded by TOKEN so a host reload reclaims the role (host identity
     // is token-derived, not peerId; normalizeHost below publishes match.hostPeer + the isHost flags).

@@ -21,6 +21,8 @@ export function initState(): ControllerState {
     code: "",
     // eslint-disable-next-line unicorn/no-null -- the bridge speaks null for "no joined profile yet"
     joinedProfile: null,
+    // eslint-disable-next-line unicorn/no-null -- null = "no join sent this session yet"
+    joinToken: null,
     // eslint-disable-next-line unicorn/no-null -- null = "no slot locked", never undefined
     lockedSlot: null,
     // eslint-disable-next-line unicorn/no-null -- null = "no locked question", never undefined
