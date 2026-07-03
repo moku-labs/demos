@@ -54,12 +54,17 @@ test.describe("Charter A -- New-code: double-reset edge case (OCD oracle)", () =
     const resetBtn = page.locator("[data-reset]");
     await expect(resetBtn).toBeVisible({ timeout: 5_000 });
 
-    let navCount = 0;
-    page.on("framenavigated", frame => {
-      if (frame === page.mainFrame()) navCount += 1;
+    // Count real DOCUMENT loads ('load' fires once per document) — `framenavigated` also fires for
+    // same-document history/Navigation-API events (the SPA's own bookkeeping), which under a slow
+    // server inflated the count and failed the oracle for the wrong reason. The oracle's intent is
+    // exactly "no second full-page reload", so count documents. The button also hard-disables itself
+    // on first activation (StageLobby), making the second click of the dblclick a guaranteed no-op.
+    let loadCount = 0;
+    page.on("load", () => {
+      loadCount += 1;
     });
 
-    const navDone = page.waitForEvent("framenavigated", { timeout: 15_000 });
+    const navDone = page.waitForEvent("load", { timeout: 15_000 });
     await resetBtn.dblclick();
     await navDone.catch(() => {});
 
@@ -67,8 +72,8 @@ test.describe("Charter A -- New-code: double-reset edge case (OCD oracle)", () =
     await page.waitForTimeout(1000);
 
     expect(
-      navCount,
-      `Double-clicking [data-reset] must produce exactly 1 navigation. Got ${navCount}. ` +
+      loadCount,
+      `Double-clicking [data-reset] must produce exactly 1 full-page load. Got ${loadCount}. ` +
         "Oracle: OCD -- double-click must not trigger two full-page reloads"
     ).toBe(1);
 

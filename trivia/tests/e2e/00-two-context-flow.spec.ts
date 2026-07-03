@@ -15,6 +15,7 @@
  * We use localhost which avoids TURN/ICE issues.
  */
 import { expect, test } from "@playwright/test";
+import { joinPhone } from "./live-join";
 
 /** Time to wait for WebRTC connection to establish */
 const CONNECTION_TIMEOUT = 25_000;
@@ -136,31 +137,8 @@ test.describe("two-context WebRTC flow", () => {
         }
       }
 
-      // --- Phone joins the room ---
-      await phonePage.goto(`/code/${roomCode}`);
-      // The SPA boots + controller island hydrates: wait for [data-controller] to appear.
-      // (The outer data-layout wrapper stays as "stage" from SSR — SPA swaps island content.)
-      await phonePage.waitForSelector("[data-controller]", { timeout: 20_000 });
-
-      // The join wizard should appear (not mid-join modal since game hasn't started)
-      await expect(phonePage.locator("[data-controller][data-phase='join']")).toBeVisible({
-        timeout: 10_000
-      });
-
-      // Complete the join wizard — 3-step flow: name → avatar → colour → join
-      // Step 1: enter a name
-      const nameInput = phonePage.locator("[data-name-input]");
-      if (await nameInput.count()) {
-        await nameInput.fill("TestPlayer");
-      }
-      // Click Next to advance to avatar step
-      await phonePage.locator("button[data-next]").click();
-
-      // Step 2: pick an avatar (first in grid is pre-selected; just advance)
-      await phonePage.locator("button[data-next]").click();
-
-      // Step 3: pick a colour (first available is pre-selected; click Join Game)
-      await phonePage.locator("button[data-next]").click();
+      // --- Phone joins the room (3-step wizard; recovery-aware — see ./live-join) ---
+      await joinPhone(phonePage, roomCode, "TestPlayer");
 
       // --- TV should see the player join ---
       // Note: PlayerTile renders data-component="player-tile" (not data-player-tile).
@@ -233,26 +211,8 @@ test.describe("two-context WebRTC flow", () => {
         return;
       }
 
-      // Phone joins
-      await phonePage.goto(`/code/${roomCode}`);
-      await phonePage.waitForSelector("[data-controller][data-phase='join']", { timeout: 20_000 });
-
-      // Complete join wizard (3-step: name → avatar → colour → join)
-      const nameInput2 = phonePage.locator("[data-name-input]");
-      if (await nameInput2.count()) {
-        await nameInput2.fill("Alex");
-      }
-      // Next (step 1 → 2)
-      await phonePage.locator("button[data-next]").click();
-      // Next (step 2 → 3, avatar pre-selected)
-      await phonePage.locator("button[data-next]").click();
-      // Join Game (step 3 → submit)
-      await phonePage.locator("button[data-next]").click();
-
-      // Wait for phone to be in lobby phase as a joined player
-      await phonePage.waitForSelector("[data-controller][data-phase='lobby']", {
-        timeout: CONNECTION_TIMEOUT
-      });
+      // Phone joins + completes the wizard (recovery-aware — see ./live-join), landing in the lobby.
+      await joinPhone(phonePage, roomCode, "Alex", { connectTimeout: CONNECTION_TIMEOUT });
 
       // Phone should show "Start Game" button (first player is host)
       const startBtn = phonePage.locator("button").filter({ hasText: /start\s*game/i });
@@ -316,23 +276,8 @@ test.describe("two-context WebRTC flow", () => {
         return;
       }
 
-      // Phone joins + completes wizard
-      await phonePage.goto(`/code/${roomCode}`);
-      await phonePage.waitForSelector("[data-controller][data-phase='join']", { timeout: 20_000 });
-
-      // Fill name input
-      const input3 = phonePage.locator("[data-name-input]");
-      if (await input3.count()) await input3.fill("Alex");
-      // Step 1 → 2
-      await phonePage.locator("button[data-next]").click();
-      // Step 2 → 3 (avatar pre-selected)
-      await phonePage.locator("button[data-next]").click();
-      // Step 3 → join (colour pre-selected)
-      await phonePage.locator("button[data-next]").click();
-
-      await phonePage.waitForSelector("[data-controller][data-phase='lobby']", {
-        timeout: CONNECTION_TIMEOUT
-      });
+      // Phone joins + completes the wizard (recovery-aware — see ./live-join), landing in the lobby.
+      await joinPhone(phonePage, roomCode, "Alex", { connectTimeout: CONNECTION_TIMEOUT });
 
       // Start the game
       const startBtn = phonePage.locator("button").filter({ hasText: /start/i });
@@ -411,7 +356,20 @@ test.describe("two-context WebRTC flow", () => {
             // (connectedCount === 1), so ANY locked slot hits the terminal branch and resolves to the
             // reveal — there is no steal. Before the fix, resolveAnswer set only phaseDeadlineTs and the
             // match stayed stuck in "question" forever (the host clock's reveal→scoreboard never fired).
-            await phonePage.locator("[data-answer-grid-phone] button[data-slot]").first().click();
+            // Tap-until-resolved (the same idiom as the category pick above): a single answer-lock
+            // intent can be dropped on the wire under suite load, and a real player whose tap didn't
+            // register taps again — so retry the tap until the TV leaves the question phase.
+            await expect(async () => {
+              const phase = await tvPage.locator("[data-stage]").getAttribute("data-phase");
+              if (phase === "question") {
+                await phonePage
+                  .locator("[data-answer-grid-phone] button[data-slot]")
+                  .first()
+                  .click({ timeout: 3000 })
+                  .catch(() => undefined);
+              }
+              expect(phase).not.toBe("question");
+            }).toPass({ timeout: 25_000, intervals: [800, 1500, 2500] });
 
             // TV resolves the round into the reveal. The reveal hold is ADAPTIVE (item 2): a direct
             // correct answer holds only revealFastMs (4 s), so under parallel-suite load the reveal

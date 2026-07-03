@@ -11,12 +11,13 @@
  */
 import type { JsonValue } from "@moku-labs/room";
 import { controllerPlugin, createApp, inMemory, stagePlugin } from "@moku-labs/room";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { matchLength } from "../../../../lib/match-length";
 import { languagePlugin } from "../../../language";
 import { questionBankPlugin } from "../../../question-bank";
 import { scoringPlugin } from "../../../scoring";
 import { stopClock } from "../../clock";
+import { waitAdvancing } from "./wait-advancing";
 import { matchFlowPlugin } from "../../index";
 
 /** A tiny steal lead-in + speed tiers, shared by every timer profile below. */
@@ -109,7 +110,7 @@ async function playOneRound(
   controllers: readonly LeadController[],
   lead: LeadController
 ): Promise<"final" | "played"> {
-  await vi.waitFor(
+  await waitAdvancing(
     () => {
       const phase = (lead.controller.read("match") as { phase?: string } | undefined)?.phase;
       expect(["categoryPick", "final"]).toContain(phase);
@@ -125,7 +126,7 @@ async function playOneRound(
   const category = offer?.[0]?.id ?? "animals";
   for (const c of controllers) c.controller.intent("category-pick", { category });
 
-  await vi.waitFor(
+  await waitAdvancing(
     () => {
       expect((lead.controller.read("match") as { phase?: string } | undefined)?.phase).toBe(
         "question"
@@ -138,7 +139,7 @@ async function playOneRound(
   // the active answerer's lock is honoured; the rest are no-ops via the eligibility guard).
   for (const c of controllers) c.controller.intent("answer-lock", { slot: 3 });
 
-  await vi.waitFor(
+  await waitAdvancing(
     () => {
       expect((lead.controller.read("match") as { phase?: string } | undefined)?.phase).toBe(
         "reveal"
@@ -186,7 +187,7 @@ async function playFullMatch(count: number): Promise<{
   const lead = controllers[0];
   if (!lead) throw new Error("playFullMatch needs at least one controller");
 
-  await vi.waitFor(() => expect(lead.controller.read("match")).toBeDefined(), { timeout: 5000 });
+  await waitAdvancing(() => expect(lead.controller.read("match")).toBeDefined(), { timeout: 5000 });
 
   for (const [i, c] of controllers.entries()) {
     c.controller.intent("join-profile", {
@@ -196,7 +197,7 @@ async function playFullMatch(count: number): Promise<{
       playerToken: `token-${i}`
     });
   }
-  await vi.waitFor(
+  await waitAdvancing(
     () => {
       const entries = lead.controller.read("players")?.entries as unknown[] | undefined;
       expect(entries?.length).toBe(count);
@@ -208,7 +209,7 @@ async function playFullMatch(count: number): Promise<{
   // Wait for the match to actually reach roundIntro — NOT merely "phase !== lobby" (languageVote is
   // an earlier, async-confirmed phase; racing that would read totalRounds before beginRoundOne's
   // onConfirm callback has actually landed it on the match slice).
-  await vi.waitFor(
+  await waitAdvancing(
     () => {
       const match = lead.controller.read("match") as { phase?: string } | undefined;
       expect(match?.phase).toBe("roundIntro");
@@ -226,7 +227,7 @@ async function playFullMatch(count: number): Promise<{
     if (outcome === "final") break;
   }
 
-  await vi.waitFor(
+  await waitAdvancing(
     () => {
       expect((lead.controller.read("match") as { phase?: string } | undefined)?.phase).toBe(
         "final"
@@ -248,6 +249,12 @@ async function playFullMatch(count: number): Promise<{
 
 describe("match-flow plugin integration — fair round scaling (item 5)", () => {
   let restoreFetch: (() => void) | undefined;
+
+  beforeEach(() => {
+    // Fake timers (mirrors match-flow.test.ts): the full-match phase windows elapse instantly under
+    // `vi.waitFor`'s auto-advance — zero wall-clock, no real-time races under parallel load.
+    vi.useFakeTimers();
+  });
 
   afterEach(() => {
     stopClock();

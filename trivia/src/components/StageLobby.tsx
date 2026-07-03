@@ -44,7 +44,17 @@ export function StageLobby({ s, qr, code, onReset }: StageLobbyProps): JSX.Eleme
         <RoomCodeBadge code={code || "····"} />
         <QrBlock matrix={qr} hint="Scan to join — or enter the code" />
         {onReset ? (
-          <button type="button" data-reset onClick={onReset} aria-label="Generate a new room code">
+          <button
+            type="button"
+            data-reset
+            onClick={event => {
+              // One activation only: `onReset` triggers a full-page reload, and a double-tap that
+              // lands before the old document tears down would otherwise fire a SECOND reload.
+              event.currentTarget.disabled = true;
+              onReset();
+            }}
+            aria-label="Generate a new room code"
+          >
             ↻ New code
           </button>
         ) : null}

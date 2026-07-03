@@ -42,6 +42,18 @@ const chromiumFlags = [
 /** Specs that are phone-only (exclude from TV projects). */
 const PHONE_ONLY_SPECS = ["**/phone-screens.spec.ts", "**/controller-rendering.spec.ts"];
 
+/**
+ * The LIVE real-room specs (Hub DO + WebRTC mesh, multi-context): isolated into their own
+ * single-worker serial project so two live matches never run concurrently (stale-connection
+ * accumulation makes parallel live rooms flaky), while the fixture-driven rest of the suite
+ * parallelises freely — fixture tests only read rendered harness state over plain HTTP.
+ */
+const LIVE_ROOM_SPECS = [
+  "**/00-two-context-flow.spec.ts",
+  "**/01-full-match.spec.ts",
+  "**/lobby-new-code.spec.ts"
+];
+
 /** WebKit runs visual baselines + boot guard ONLY (engine-specific render; not logic testing). */
 const WEBKIT_MATCH_SPECS = [
   "**/*-screens.spec.ts",
@@ -60,8 +72,14 @@ export default defineConfig({
    * Renaming projects (chromium → tv-chromium) changes the suffix — all baselines regenerated.
    */
   snapshotPathTemplate: "{testDir}/{testFilePath}-snapshots/{arg}{-projectName}-{platform}{ext}",
-  fullyParallel: false,
-  workers: 1,
+  // Fixture-driven specs (the vast majority) parallelise freely — they render frozen harness state
+  // over plain HTTP with no cross-test coupling. The live real-room specs are pinned to their own
+  // single-worker serial project below (`live-chromium`), so at most ONE live match runs at a time.
+  fullyParallel: true,
+  // 3 = 1 live worker + 2 fixture workers: the serial live project is the wall-clock pole, so the
+  // fixture pool finishing inside it costs nothing — while one fewer chromium keeps peak CPU low
+  // enough that the 3-minute live 12-round marathon doesn't degrade (it stalled under 4 workers).
+  workers: 3,
   // 2 retries: WebRTC + Hub DO tests need a fresh attempt after stale connections accumulate.
   retries: 2,
   reporter: [["list"], ["html", { outputFolder: "playwright-report", open: "never" }]],
@@ -86,12 +104,29 @@ export default defineConfig({
 
   projects: [
     // ──────────────────────────────────────────────────────────────────────────────
+    // LIVE real-room project — Hub DO + WebRTC, one match at a time (workers: 1, serial)
+    // ──────────────────────────────────────────────────────────────────────────────
+    {
+      name: "live-chromium",
+      testMatch: LIVE_ROOM_SPECS,
+      fullyParallel: false,
+      workers: 1,
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1280, height: 720 },
+        deviceScaleFactor: 1,
+        colorScheme: "dark",
+        launchOptions: { args: chromiumFlags }
+      }
+    },
+
+    // ──────────────────────────────────────────────────────────────────────────────
     // TV / Stage projects — 1280×720 desktop, 16:9
     // ──────────────────────────────────────────────────────────────────────────────
     {
       name: "tv-chromium",
-      // Runs the FULL TV + shared functional/visual/a11y/boot suite.
-      testIgnore: PHONE_ONLY_SPECS,
+      // Runs the FULL TV + shared functional/visual/a11y/boot suite (live specs run in live-chromium).
+      testIgnore: [...PHONE_ONLY_SPECS, ...LIVE_ROOM_SPECS],
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1280, height: 720 },

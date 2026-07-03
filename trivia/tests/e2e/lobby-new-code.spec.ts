@@ -21,6 +21,7 @@
  * The Hub DO warm-up + code-wait are borrowed from 00-two-context-flow.spec.ts.
  */
 import { expect, test } from "@playwright/test";
+import { joinPhone } from "./live-join";
 
 /** How long to wait for the WebRTC Hub DO to settle a room code. */
 const HUB_READY_TIMEOUT = 30_000;
@@ -245,15 +246,8 @@ test.describe("lobby New-code button (Issue 2 regression)", () => {
         }
       }
 
-      // ── Phone joins C1 (sanity: C1 is live) ──────────────────────────────────
-      await phonePage.goto(`/code/${codeC1}`);
-      await phonePage.waitForSelector("[data-controller][data-phase='join']", { timeout: 20_000 });
-
-      const nameInput = phonePage.locator("[data-name-input]");
-      if (await nameInput.count()) await nameInput.fill("PlayerA");
-      await phonePage.locator("button[data-next]").click();
-      await phonePage.locator("button[data-next]").click();
-      await phonePage.locator("button[data-next]").click();
+      // ── Phone joins C1 (sanity: C1 is live; recovery-aware — see ./live-join) ──
+      await joinPhone(phonePage, codeC1, "PlayerA", { connectTimeout: JOIN_TIMEOUT });
 
       await tvPage.waitForSelector(
         "[data-player-grid] [data-component='player-tile']:not([data-empty])",
@@ -289,16 +283,8 @@ test.describe("lobby New-code button (Issue 2 regression)", () => {
       });
       const phone2Page = await phone2Ctx.newPage();
       try {
-        await phone2Page.goto(`/code/${codeC2}`);
-        await phone2Page.waitForSelector("[data-controller][data-phase='join']", {
-          timeout: 20_000
-        });
-
-        const name2 = phone2Page.locator("[data-name-input]");
-        if (await name2.count()) await name2.fill("PlayerB");
-        await phone2Page.locator("button[data-next]").click();
-        await phone2Page.locator("button[data-next]").click();
-        await phone2Page.locator("button[data-next]").click();
+        // Recovery-aware join (see ./live-join) — this was the suite's most frequent flake site.
+        await joinPhone(phone2Page, codeC2, "PlayerB", { connectTimeout: JOIN_TIMEOUT });
 
         // TV (now on C2) should see PlayerB appear in the grid
         await tvPage.waitForSelector(

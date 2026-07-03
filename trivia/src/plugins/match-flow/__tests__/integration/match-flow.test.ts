@@ -4,11 +4,12 @@
  * clock timeout → steal, disconnect mid-question advances the machine.
  */
 import { controllerPlugin, createApp, inMemory, stagePlugin } from "@moku-labs/room";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { languagePlugin } from "../../../language";
 import { questionBankPlugin } from "../../../question-bank";
 import { scoringPlugin } from "../../../scoring";
 import { stopClock } from "../../clock";
+import { waitAdvancing } from "./wait-advancing";
 import { matchFlowPlugin } from "../../index";
 
 // ---------------------------------------------------------------------------
@@ -187,7 +188,7 @@ async function driveToQuestion(count: number, timers: typeof TIMEOUT_STEAL_TIMER
   if (!lead) throw new Error("driveToQuestion needs at least one controller");
 
   // Initial authoritative sync reaches the controllers.
-  await vi.waitFor(
+  await waitAdvancing(
     () => {
       expect(lead.controller.read("match")).toBeDefined();
     },
@@ -203,7 +204,7 @@ async function driveToQuestion(count: number, timers: typeof TIMEOUT_STEAL_TIMER
       playerToken: `token-${i}`
     });
   }
-  await vi.waitFor(
+  await waitAdvancing(
     () => {
       const entries = lead.controller.read("players")?.entries as unknown[] | undefined;
       expect(entries?.length).toBe(count);
@@ -214,7 +215,7 @@ async function driveToQuestion(count: number, timers: typeof TIMEOUT_STEAL_TIMER
   // Start the game. Wire-arrival order of the join-profiles can race, so which controller became the
   // host isn't deterministic — broadcast start-game from all; only the host's intent is honoured.
   for (const c of controllers) c.controller.intent("start-game", {});
-  await vi.waitFor(
+  await waitAdvancing(
     () => {
       expect(lead.controller.read("bank")?.status).toBe("ready");
       expect(lead.controller.read("match")?.phase).toBe("categoryPick");
@@ -225,7 +226,7 @@ async function driveToQuestion(count: number, timers: typeof TIMEOUT_STEAL_TIMER
   // Pick a category. Likewise the round-1 active player isn't deterministic — broadcast from all;
   // only the active player's pick is honoured, publishing the question.
   for (const c of controllers) c.controller.intent("category-pick", { category: "animals" });
-  await vi.waitFor(
+  await waitAdvancing(
     () => {
       expect(lead.controller.read("match")?.phase).toBe("question");
     },
@@ -237,6 +238,13 @@ async function driveToQuestion(count: number, timers: typeof TIMEOUT_STEAL_TIMER
 
 describe("match-flow plugin integration", () => {
   let restoreFetch: (() => void) | undefined;
+
+  beforeEach(() => {
+    // Fake timers for the WHOLE harness: the host clock's phase windows elapse instantly as
+    // `vi.waitFor` auto-advances them, so the configured reveal/scoreboard/steal holds cost zero
+    // wall-clock AND can never race real CPU contention (the old parallel-load flake class).
+    vi.useFakeTimers();
+  });
 
   afterEach(() => {
     // Clear the authoritative host clock between tests
@@ -275,7 +283,7 @@ describe("match-flow plugin integration", () => {
     await controller.controller.joinRoom(code);
 
     // Wait for initial sync
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         expect(controller.controller.read("match")).toBeDefined();
       },
@@ -295,7 +303,7 @@ describe("match-flow plugin integration", () => {
     });
 
     // Wait for players slice to reflect the join
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         const entries = controller.controller.read("players")?.entries as
           | Array<{ name: string }>
@@ -309,7 +317,7 @@ describe("match-flow plugin integration", () => {
     controller.controller.intent("start-game", {});
 
     // Waits for languageVote phase or roundIntro (depending on timer speed)
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         const phase = controller.controller.read("match")?.phase as string | undefined;
         expect(["languageVote", "roundIntro", "categoryPick"]).toContain(phase);
@@ -337,7 +345,7 @@ describe("match-flow plugin integration", () => {
     });
     await latecomer.start();
     await latecomer.controller.joinRoom(code);
-    await vi.waitFor(() => expect(latecomer.controller.read("players")).toBeDefined(), {
+    await waitAdvancing(() => expect(latecomer.controller.read("players")).toBeDefined(), {
       timeout: 5000
     });
 
@@ -349,7 +357,7 @@ describe("match-flow plugin integration", () => {
     });
 
     // Give the (rejected) intent time to round-trip; the roster must NOT grow.
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await vi.advanceTimersByTimeAsync(500);
     const entries = lead?.controller.read("players")?.entries as unknown[] | undefined;
     expect(entries?.length).toBe(2);
 
@@ -373,7 +381,7 @@ describe("match-flow plugin integration", () => {
     });
     await reloaded.start();
     await reloaded.controller.joinRoom(code);
-    await vi.waitFor(() => expect(reloaded.controller.read("players")).toBeDefined(), {
+    await waitAdvancing(() => expect(reloaded.controller.read("players")).toBeDefined(), {
       timeout: 5000
     });
 
@@ -386,7 +394,7 @@ describe("match-flow plugin integration", () => {
     });
 
     // Roster stays at 2 (re-bind in place), and player 0's seat now carries the reloaded peerId.
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         const entries = lead?.controller.read("players")?.entries as
           | Array<{ peerId: string }>
@@ -426,7 +434,7 @@ describe("match-flow plugin integration", () => {
     const { code } = host.stage.createRoom();
     await alice.controller.joinRoom(code);
     await bob.controller.joinRoom(code);
-    await vi.waitFor(() => expect(alice.controller.read("players")).toBeDefined(), {
+    await waitAdvancing(() => expect(alice.controller.read("players")).toBeDefined(), {
       timeout: 5000
     });
 
@@ -437,7 +445,7 @@ describe("match-flow plugin integration", () => {
       avatar: "cat",
       playerToken: "tok-alice"
     });
-    await vi.waitFor(
+    await waitAdvancing(
       () => expect((host.sync.read("players")?.entries as unknown[])?.length).toBe(1),
       {
         timeout: 5000
@@ -449,7 +457,7 @@ describe("match-flow plugin integration", () => {
       avatar: "cat",
       playerToken: "tok-bob"
     });
-    await vi.waitFor(
+    await waitAdvancing(
       () => expect((host.sync.read("players")?.entries as unknown[])?.length).toBe(2),
       {
         timeout: 5000
@@ -460,7 +468,7 @@ describe("match-flow plugin integration", () => {
     const aliceReloaded = make();
     await aliceReloaded.start();
     await aliceReloaded.controller.joinRoom(code);
-    await vi.waitFor(() => expect(aliceReloaded.controller.read("players")).toBeDefined(), {
+    await waitAdvancing(() => expect(aliceReloaded.controller.read("players")).toBeDefined(), {
       timeout: 5000
     });
     const newPeerId = aliceReloaded.session.self().selfId;
@@ -472,7 +480,7 @@ describe("match-flow plugin integration", () => {
     });
 
     // Host role follows the token to the new peerId; exactly one host; roster still 2.
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         const entries = host.sync.read("players")?.entries as
           | Array<{ peerId: string; isHost: boolean }>
@@ -516,7 +524,7 @@ describe("match-flow plugin integration", () => {
     const { code } = host.stage.createRoom();
     await alice.controller.joinRoom(code);
     await late.controller.joinRoom(code);
-    await vi.waitFor(() => expect(alice.controller.read("players")).toBeDefined(), {
+    await waitAdvancing(() => expect(alice.controller.read("players")).toBeDefined(), {
       timeout: 5000
     });
 
@@ -526,7 +534,7 @@ describe("match-flow plugin integration", () => {
       avatar: "cat",
       playerToken: "tok-alice"
     });
-    await vi.waitFor(
+    await waitAdvancing(
       () => expect((host.sync.read("players")?.entries as unknown[])?.length).toBe(1),
       {
         timeout: 5000
@@ -536,7 +544,7 @@ describe("match-flow plugin integration", () => {
     // Start the game and, the instant the host's AUTHORITATIVE phase leaves lobby, fire the latecomer.
     // The lock reads the live phase (not the lagging clock cache), so the brand-new token is rejected.
     alice.controller.intent("start-game", {});
-    await vi.waitFor(
+    await waitAdvancing(
       () =>
         expect((host.sync.read("match") as { phase?: string } | undefined)?.phase).not.toBe(
           "lobby"
@@ -551,7 +559,7 @@ describe("match-flow plugin integration", () => {
     });
 
     // Give the (rejected) intent ample time to round-trip; the roster must NOT grow past Alice.
-    await new Promise(resolve => setTimeout(resolve, 600));
+    await vi.advanceTimersByTimeAsync(600);
     expect((host.sync.read("players")?.entries as unknown[])?.length).toBe(1);
 
     await host.stop();
@@ -591,7 +599,7 @@ describe("match-flow plugin integration", () => {
     const lead = controllers[0];
 
     // answerMs is short → the authoritative host clock times Alice out → open steal for everyone else.
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         expect(lead?.controller.read("steal")?.active).toBe(true);
       },
@@ -602,7 +610,7 @@ describe("match-flow plugin integration", () => {
     ).toBeGreaterThan(0);
 
     // The republished question is now in steal mode (open to all non-active players).
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         expect(lead?.controller.read("question")?.mode).toBe("steal");
       },
@@ -633,7 +641,7 @@ describe("match-flow plugin integration", () => {
     // The active player's wrong lock opens a steal targeting the other player (with a brief lead-in).
     // Generous timeout: under full-suite CPU contention the host→controller sync frame can lag, and the
     // steal window (8 s) is what keeps `steal.active` observable — this is a "did it open" check, not a race.
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         expect(lead?.controller.read("steal")?.active).toBe(true);
         expect(lead?.controller.read("question")?.mode).toBe("steal");
@@ -641,13 +649,14 @@ describe("match-flow plugin integration", () => {
       { timeout: 9000 }
     );
 
-    // Wait out the (tiny) lead-in so the stealer's lock is honoured rather than dropped by the fair-start
-    // guard, then the stealer locks (also wrong). With every eligible player now tried, the open steal
-    // resolves to the terminal reveal — the match never freezes on the question screen.
-    await new Promise(resolve => setTimeout(resolve, 60));
+    // Advance fake time past the (tiny) lead-in so the stealer's lock is honoured rather than dropped
+    // by the fair-start guard, then the stealer locks (also wrong). With every eligible player now
+    // tried, the open steal resolves to the terminal reveal — the match never freezes on the question
+    // screen. (A raw awaited setTimeout would never fire under fake timers.)
+    await vi.advanceTimersByTimeAsync(60);
     for (const c of controllers) c.controller.intent("answer-lock", { slot: 0 });
 
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         expect(lead?.controller.read("match")?.phase).toBe("reveal");
         expect(lead?.controller.read("steal")?.active).toBe(false);
@@ -675,7 +684,7 @@ describe("match-flow plugin integration", () => {
     // Alice (the active answerer) drops → room:peer-left → treated as a timeout → steal to a peer.
     await alice?.stop();
 
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         expect(bob?.controller.read("steal")?.active).toBe(true);
       },
@@ -708,7 +717,7 @@ describe("match-flow plugin integration", () => {
     lead?.controller.intent("answer-lock", { slot: 1 });
 
     // (1) The resolved correct answer must move the match into the reveal phase — the bug fix.
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         expect(lead?.controller.read("match")?.phase).toBe("reveal");
       },
@@ -719,7 +728,7 @@ describe("match-flow plugin integration", () => {
     expect(lead?.controller.read("reveal")?.scorerPeer).toBeTruthy();
 
     // (2) The host clock then auto-advances reveal → scoreboard once the reveal hold expires.
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         expect(lead?.controller.read("match")?.phase).toBe("scoreboard");
       },
@@ -727,7 +736,7 @@ describe("match-flow plugin integration", () => {
     );
 
     // (3) …and scoreboard → the next round's intro (round increments) — the match is no longer frozen.
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         const match = lead?.controller.read("match");
         expect(match?.phase).toBe("roundIntro");
@@ -757,7 +766,7 @@ describe("match-flow plugin integration", () => {
     lead?.controller.intent("answer-lock", { slot: 1 });
 
     // The only round resolves through reveal → scoreboard → "final" (the podium), since rounds === 1.
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         expect(lead?.controller.read("match")?.phase).toBe("final");
       },
@@ -765,7 +774,7 @@ describe("match-flow plugin integration", () => {
     );
 
     // The end-of-match countdown deadline then fires → the clock resets the game back to the lobby.
-    await vi.waitFor(
+    await waitAdvancing(
       () => {
         const match = lead?.controller.read("match");
         expect(match?.phase).toBe("lobby");

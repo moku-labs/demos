@@ -13,8 +13,9 @@
  * app — the fixture harness only intercepts `?e2ephase=` URLs.
  */
 import { type Browser, expect, type Page, test } from "@playwright/test";
+import { joinPhone } from "./live-join";
 
-const CONNECT_TIMEOUT = 30_000;
+const CONNECT_TIMEOUT = 45_000;
 const PHASE_TIMEOUT = 25_000;
 const ROUNDS = 12;
 
@@ -39,20 +40,8 @@ async function readRoomCode(tv: Page): Promise<string> {
   return "";
 }
 
-/** Complete the 3-step join wizard (name → avatar → colour → join) on a phone. */
-async function joinPhone(phone: Page, code: string, name: string): Promise<void> {
-  await phone.goto(`/code/${code}`);
-  await phone.waitForSelector("[data-controller][data-phase='join']", { timeout: 20_000 });
-  const nameInput = phone.locator("[data-name-input]");
-  if (await nameInput.count()) await nameInput.fill(name);
-  // Three taps of "Next ▸" / "Join Game ▸" (avatar + colour pre-selected).
-  await phone.locator("button[data-next]").click();
-  await phone.locator("button[data-next]").click();
-  await phone.locator("button[data-next]").click();
-  await phone.waitForSelector("[data-controller][data-phase='lobby']", {
-    timeout: CONNECT_TIMEOUT
-  });
-}
+// joinPhone (recovery-aware, shared by the live-room specs) is imported from ./live-join — its
+// per-attempt connect budget defaults to the same 45 s this file's CONNECT_TIMEOUT uses elsewhere.
 
 /** Tap a category on whichever phone is the active picker. Returns true if a pick was made. */
 async function pickCategory(phones: Page[]): Promise<boolean> {
