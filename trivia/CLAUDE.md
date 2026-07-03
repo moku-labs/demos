@@ -14,12 +14,12 @@ then [`spec/design-context.md`](./spec/design-context.md) (authoritative). The a
 plugin list, and risks are in [`.planning/context-trivia.md`](./.planning/context-trivia.md) (the
 brainstorm output). **Planner/builder: reference `spec/` — do not re-search for the design.**
 
-> **Stack (settled 2026-06-26; room→0.3.1 2026-06-27; web→2.3.1 2026-07-03):** **@moku-labs/room@0.3.1** (a standalone
+> **Stack (settled 2026-06-26; room→0.3.1 2026-06-27; web→2.3.1 + worker→0.15.1 2026-07-03):** **@moku-labs/room@0.3.1** (a standalone
 > `@moku-labs/core` framework — NOT the old 0.1.x plugin-pack), **@moku-labs/web@2.3.1**, **preact@10.29.3**. The app
 > is **one `@moku-labs/web` SPA whose role is chosen by the URL** (`/` = TV/stage, `/controller/:code` =
 > phone) + per-role room `createApp`s (`src/lib/room/`) + **one** `@moku-labs/room/server` Hub-DO worker
 > (`src/server.ts` + `src/cloudflare/worker.ts`) that serves the SPA via `ASSETS` and brokers
-> `serverSignaling`. **`@moku-labs/worker@0.15.0` is a direct dependency** — `src/server.ts` composes ONE
+> `serverSignaling`. **`@moku-labs/worker@0.15.1` is a direct dependency** — `src/server.ts` composes ONE
 > worker app (atlas-style) with room's `hubPlugin` (room 0.3.1's `./server` exports the hub as a worker plugin):
 > `server.hub.handle` is the runtime; `server.cli.{dev,deploy}` **generate `wrangler.jsonc`**.
 
@@ -100,12 +100,12 @@ for app shape (multiple `createApp` instances, side-by-side frameworks, folder s
 
 ## Dependency stack
 
-`@moku-labs/room@0.3.1` + `@moku-labs/web@2.3.1` + `@moku-labs/worker@0.15.0` + `preact@10.29.3` +
+`@moku-labs/room@0.3.1` + `@moku-labs/web@2.3.1` + `@moku-labs/worker@0.15.1` + `preact@10.29.3` +
 `preact-render-to-string@6.7.0`; all four frameworks pin one aligned `@moku-labs/core@1.5.0`.
-(web 2.3.1 = incremental `copyPublic` — dev rebuilds skip unchanged public assets, ending the APFS
-clone-echo rebuild storm; `scripts/dev.ts` keeps its `fresh-changes` watcher guard as defense-in-depth
-until @moku-labs/worker ships the same guard in its dev watcher.)
-**`@moku-labs/worker@0.15.0` is a direct dependency** — `src/server.ts` composes ONE worker app (atlas-style)
+(web 2.3.1 = incremental `copyPublic` — dev rebuilds skip unchanged public assets — and worker 0.15.1's
+dev watcher drops stale watch-echo batches before they reach `onChange`, ending the APFS clone-echo
+rebuild storm framework-side; `scripts/dev.ts` carries no app-side guard.)
+**`@moku-labs/worker@0.15.1` is a direct dependency** — `src/server.ts` composes ONE worker app (atlas-style)
 with room's `hubPlugin` (`@moku-labs/room/server` 0.3.1 exports the hub as a worker plugin; worker is its
 optional peer dep). `server.hub.handle` is the runtime; `server.cli.{dev,deploy}` generate `wrangler.jsonc`.
 The **question bank** ships as build-authored JSON via @moku-labs/web's `collection` provider (new in 2.3.0):

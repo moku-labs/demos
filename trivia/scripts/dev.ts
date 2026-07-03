@@ -14,7 +14,6 @@
 import { app as web } from "../src/app";
 import { server } from "../src/server";
 import { readBankShards } from "./lib/bank-shards";
-import { hasFreshChange } from "./lib/fresh-changes";
 
 // Dev port + stage come straight from the CLI args — explicit, no hidden framework resolution.
 const portFlag = process.argv.indexOf("--port");
@@ -23,9 +22,6 @@ const port = portValue ? Number(portValue) : 8787;
 
 const stageFlag = process.argv.indexOf("--stage");
 const stage = stageFlag === -1 ? "production" : (process.argv[stageFlag + 1] ?? "production");
-
-// The last APPLIED rebuild's start time — the freshness threshold for the clone-echo guard below.
-let lastApplied = Date.now();
 
 await server.cli.dev({
   port,
@@ -37,13 +33,5 @@ await server.cli.dev({
     await web.collection.write(await readBankShards(), { outDir: result.outDir });
     return result;
   },
-  // Every rebuild re-copies `public/` into dist, and on APFS Bun clones the large sfx tracks —
-  // which FSEvents echoes back as phantom `public/**` changes, re-triggering the watcher forever
-  // (a ~1/s rebuild → wrangler-reload storm that kills the Hub DO's signaling WebSockets). Skip
-  // batches where nothing actually changed on disk since the last applied rebuild.
-  onChange: changes => {
-    if (!hasFreshChange(changes, lastApplied)) return Promise.resolve({ files: 0 });
-    lastApplied = Date.now();
-    return web.cli.update(changes);
-  }
+  onChange: changes => web.cli.update(changes)
 });
