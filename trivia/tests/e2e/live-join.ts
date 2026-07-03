@@ -95,5 +95,12 @@ async function joinPhoneOnce(
     await phone.locator("button[data-next]").click({ timeout: 15_000 });
   }
 
+  // Wait for the lobby. Deliberately a plain wait — NOT an in-test Retry-click loop: driving the
+  // app's "Connection lost" Retry mid-join adds reload churn (each is a fresh Hub-DO connection),
+  // which under the cold-start CPU storm made contention WORSE — an added-churn run doubled the live
+  // flakes and added ~3 min. The correct backstop for a genuine connection drop under peak load is
+  // Playwright's per-test retry (config `retries: 2`), which reruns the whole match after the fixture
+  // storm has drained onto a calm machine. joinPhone's outer catch still does one whole re-goto for a
+  // wedged pre-lobby handshake.
   await lobby.waitFor({ timeout: options.connectTimeout ?? 45_000 });
 }
