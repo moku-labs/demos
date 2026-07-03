@@ -213,7 +213,13 @@ export type IntentPayload = {
   "join-profile": { name: string; color: string; avatar: string; playerToken: string };
   "start-game": Record<string, never>;
   "category-pick": { category: CategoryId };
-  "answer-lock": { slot: number };
+  /**
+   * `qid` pins the lock to the question the player actually saw: the host drops any lock whose qid
+   * is not the LIVE question's id. That makes the lock safe to re-send (the phone's lock self-heal
+   * re-sends an unacked lock over the at-most-once wire) — a duplicate or stale re-send is
+   * structurally inert, it can never land as an answer to a later question.
+   */
+  "answer-lock": { slot: number; qid: string };
   "play-again": Record<string, never>;
   /** Leave the game for good — the host drops this player's roster seat + token (no ghost in the next lobby). */
   "leave-game": Record<string, never>;

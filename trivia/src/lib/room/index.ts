@@ -293,7 +293,7 @@ export function subscribe(fn: (state: TriviaState) => void): () => void {
  * @param payload - The typed payload.
  * @example
  * ```ts
- * intent("answer-lock", { slot: 1 });
+ * intent("answer-lock", { slot: 1, qid: "q-abc123" });
  * ```
  */
 export function intent<K extends IntentName>(name: K, payload: IntentPayload[K]): void {

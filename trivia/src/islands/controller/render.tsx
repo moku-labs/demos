@@ -75,11 +75,17 @@ function makeHandlers(ctx: ControllerContext, state: ControllerState): Controlle
       intent("category-pick", { category: id as CategoryId });
     },
     onLock: slot => {
+      // No live question, no lock (unreachable from the grid, which only renders with a question).
+      const qid = state.s.question?.id;
+      if (!qid) return;
       sound.unlock();
       sound.play("phone.lockin");
       sound.haptic("lockin");
-      intent("answer-lock", { slot });
-      ctx.set({ lockedSlot: slot, lockedQid: state.s.question?.id ?? null });
+      // The lock is pinned to the question the player saw (`qid` — the host drops any other), and the
+      // UI locks optimistically (tiles disable now, before any host ack). `lockedAtTs` is the ack
+      // window the lock self-heal watchdog measures from — a lost intent frame is re-sent, not stranded.
+      intent("answer-lock", { slot, qid });
+      ctx.set({ lockedSlot: slot, lockedQid: qid, lockedAtTs: Date.now() });
     },
     onPlayAgain: () => {
       sound.unlock();

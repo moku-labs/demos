@@ -124,20 +124,27 @@ async function playOneRound(
   const offer = (lead.controller.read("offer") as { items?: Array<{ id: string }> } | undefined)
     ?.items;
   const category = offer?.[0]?.id ?? "animals";
+  // The question slice still holds LAST round's question until this round's publish overwrites it —
+  // remember its id so the lock below is pinned to THIS round's question (ids are consume-once).
+  const staleQid = (lead.controller.read("question") as { id?: string } | undefined)?.id ?? "";
   for (const c of controllers) c.controller.intent("category-pick", { category });
 
+  let qid = "";
   await waitAdvancing(
     () => {
       expect((lead.controller.read("match") as { phase?: string } | undefined)?.phase).toBe(
         "question"
       );
+      qid = (lead.controller.read("question") as { id?: string } | undefined)?.id ?? "";
+      expect(qid).not.toBe("");
+      expect(qid).not.toBe(staleQid);
     },
     { timeout: 5000 }
   );
 
   // Every generated question's answerCheck decodes to slot 3 — lock it from every controller (only
   // the active answerer's lock is honoured; the rest are no-ops via the eligibility guard).
-  for (const c of controllers) c.controller.intent("answer-lock", { slot: 3 });
+  for (const c of controllers) c.controller.intent("answer-lock", { slot: 3, qid });
 
   await waitAdvancing(
     () => {

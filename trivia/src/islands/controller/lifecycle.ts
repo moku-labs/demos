@@ -37,6 +37,25 @@ const JOIN_HEAL_INTERVAL_MS = 5000;
  */
 const JOIN_HEAL_MAX_RESENDS = 3;
 
+/** Lock self-heal cadence: how often the watchdog checks a sent `answer-lock` for host evidence. */
+const LOCK_HEAL_INTERVAL_MS = 1000;
+
+/**
+ * The per-send ack window for the lock self-heal: how long after (re)sending `answer-lock` the
+ * watchdog waits for host evidence before re-sending. Well under the question window (25 s) so a
+ * dropped lock heals invisibly, but long enough that a normally-lagging sync frame lands first.
+ */
+const LOCK_HEAL_ACK_MS = 2000;
+
+/**
+ * How many `answer-lock` re-sends the self-heal attempts — pure traffic hygiene, NOT a safety
+ * mechanism: every lock carries its `qid` and the host only accepts a lock for the LIVE question,
+ * so a stale or duplicated re-send is structurally inert however late it lands. The bound just
+ * stops pointless sends on a genuinely dead wire, where the connectivity banner + the host's own
+ * question timeout own the recovery (the same rationale as {@link JOIN_HEAL_MAX_RESENDS}).
+ */
+const LOCK_HEAL_MAX_RESENDS = 3;
+
 /**
  * Read the `|`-delimited seen-question ids from localStorage (empty string when unavailable).
  *
@@ -137,6 +156,75 @@ function armJoinSelfHeal(ctx: ControllerContext): () => void {
 }
 
 /**
+ * Arm the answer-lock self-heal watchdog: while this phone shows an optimistic lock ("Locked in!" —
+ * `lockedSlot`/`lockedQid` set, tiles disabled) but the synced state carries NO evidence the host
+ * received the `answer-lock` intent, re-send the same intent. This closes the second at-most-once
+ * wire gap (the join's sibling): a lost lock frame otherwise strands the whole round — the player
+ * cannot re-tap (tiles disabled) and the host sits in the question phase until its own
+ * `answerMs` timeout.
+ *
+ * Safety is structural, not timed: every lock (first send and re-sends alike) carries the `qid` it
+ * was tapped against, and the host only accepts a lock for the LIVE question — so a re-send can
+ * never resolve a later question, and a duplicate is dropped by the host's resolved-lock guard, the
+ * answeringPeer/steal eligibility checks, and the per-question `tried` set. The watchdog therefore
+ * only decides when re-sending is still USEFUL — host evidence the lock landed (any of these goes
+ * quiet): the match left the `question` phase (resolved — or timed out, when re-sending is moot), a
+ * different question is live, our answer-mode miss flipped `question.mode` to `"steal"` (we remain
+ * `answeringPeer`), or our steal answer was recorded in `steal.answeredPeers`. The "Locked in!" UI
+ * never changes — a heal is invisible.
+ *
+ * @param ctx - The island context (live `state` + `set`).
+ * @returns The disposer that stops the watchdog (for `ctx.cleanup`).
+ * @example
+ * ```ts
+ * ctx.cleanup(armLockSelfHeal(ctx));
+ * ```
+ */
+function armLockSelfHeal(ctx: ControllerContext): () => void {
+  // eslint-disable-next-line unicorn/no-null -- mirrors lockedQid's null vocabulary ("no heal running")
+  let healingQid: string | null = null;
+  let resends = 0;
+
+  // eslint-disable-next-line jsdoc/require-jsdoc -- inline watchdog beat (the enclosing doc is the contract)
+  const tick = (): void => {
+    const { s, lockedSlot, lockedQid, lockedAtTs, left } = ctx.state;
+
+    // Idle: no lock sent (or the player deliberately left) — nothing to heal.
+    if (left || lockedSlot === null || lockedQid === null || lockedAtTs === null) {
+      // eslint-disable-next-line unicorn/no-null -- see healingQid above
+      healingQid = null;
+      return;
+    }
+
+    // A lock on a NEW question supersedes any previous heal — fresh re-send budget.
+    if (healingQid !== lockedQid) {
+      healingQid = lockedQid;
+      resends = 0;
+    }
+
+    // Host evidence the lock landed — or the question moved on. Either way: quiet until the next lock.
+    const question = s.question;
+    if (s.match.phase !== "question" || !question || question.id !== lockedQid) return;
+    if (question.mode === "steal" && s.self !== null) {
+      // Our answer-mode miss opened the steal (we stay `answeringPeer`) → the host has our lock.
+      if (question.answeringPeer === s.self) return;
+      // Our steal answer was recorded (the shared window races on for the remaining stealers).
+      if (s.steal.answeredPeers.includes(s.self)) return;
+    }
+
+    // Unacked. Give each send one full ack window before the next re-send; bounded so a genuinely
+    // dead wire degrades to the host's question timeout + the connectivity banner (which owns that UX).
+    if (resends >= LOCK_HEAL_MAX_RESENDS) return;
+    if (Date.now() - lockedAtTs < LOCK_HEAL_ACK_MS * (resends + 1)) return;
+    resends += 1;
+    intent("answer-lock", { slot: lockedSlot, qid: lockedQid });
+  };
+
+  const timer = setInterval(tick, LOCK_HEAL_INTERVAL_MS);
+  return () => clearInterval(timer);
+}
+
+/**
  * Join the room from the deep-link code, wire the snapshot subscription (persisting each shown question
  * id), the countdown ticker, and seed the host's no-repeat union with this phone's history.
  *
@@ -222,6 +310,10 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
     // the pre-join failure path below owns the UX): if the submitted join never lands in the synced
     // players slice, re-send it; escalate to the connection-lost banner when re-sends go unanswered.
     ctx.cleanup(armJoinSelfHeal(ctx));
+    // Lock self-heal (same idiom, the wire's other one-shot intent): if a sent answer-lock produces
+    // no host evidence in the synced state within its ack window, re-send it — an optimistically
+    // disabled answer grid must never strand the round on a single lost frame.
+    ctx.cleanup(armLockSelfHeal(ctx));
   } catch {
     // A failed join (full / not-found / room gone after a "New code" reset / unreachable): roll back the
     // OPTIMISTIC reconnect so we don't strand the player on a fake "You're in!" card — clearing the

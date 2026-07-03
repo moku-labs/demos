@@ -356,9 +356,12 @@ test.describe("two-context WebRTC flow", () => {
             // (connectedCount === 1), so ANY locked slot hits the terminal branch and resolves to the
             // reveal — there is no steal. Before the fix, resolveAnswer set only phaseDeadlineTs and the
             // match stayed stuck in "question" forever (the host clock's reveal→scoreboard never fired).
-            // Tap-until-resolved (the same idiom as the category pick above): a single answer-lock
-            // intent can be dropped on the wire under suite load, and a real player whose tap didn't
-            // register taps again — so retry the tap until the TV leaves the question phase.
+            // One real tap is enough: the first click locks the phone optimistically (tiles disable),
+            // and a lock intent lost on the wire is re-sent by the controller's lock self-heal
+            // watchdog (~2 s ack window — see armLockSelfHeal). The loop's re-click is a no-op on a
+            // locked grid; it only matters if the FIRST tap itself never registered. Budget is 30 s —
+            // deliberately ABOVE answerMs (25 s) so even the host's own question-timeout resolution
+            // counts as "the match is not frozen" instead of racing the loop's deadline.
             await expect(async () => {
               const phase = await tvPage.locator("[data-stage]").getAttribute("data-phase");
               if (phase === "question") {
@@ -369,7 +372,7 @@ test.describe("two-context WebRTC flow", () => {
                   .catch(() => undefined);
               }
               expect(phase).not.toBe("question");
-            }).toPass({ timeout: 25_000, intervals: [800, 1500, 2500] });
+            }).toPass({ timeout: 30_000, intervals: [800, 1500, 2500] });
 
             // TV resolves the round into the reveal. The reveal hold is ADAPTIVE (item 2): a direct
             // correct answer holds only revealFastMs (4 s), so under parallel-suite load the reveal
