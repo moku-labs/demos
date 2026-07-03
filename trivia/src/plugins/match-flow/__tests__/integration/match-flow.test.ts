@@ -9,8 +9,8 @@ import { languagePlugin } from "../../../language";
 import { questionBankPlugin } from "../../../question-bank";
 import { scoringPlugin } from "../../../scoring";
 import { stopClock } from "../../clock";
-import { waitAdvancing } from "./wait-advancing";
 import { matchFlowPlugin } from "../../index";
+import { waitAdvancing } from "./wait-advancing";
 
 // ---------------------------------------------------------------------------
 // Integration: match-flow plugin with the real room framework
