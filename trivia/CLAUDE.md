@@ -14,13 +14,13 @@ then [`spec/design-context.md`](./spec/design-context.md) (authoritative). The a
 plugin list, and risks are in [`.planning/context-trivia.md`](./.planning/context-trivia.md) (the
 brainstorm output). **Planner/builder: reference `spec/` — do not re-search for the design.**
 
-> **Stack (settled 2026-06-26; room→0.3.1 2026-06-27; web→2.3.1 + worker→0.15.1 2026-07-03):** **@moku-labs/room@0.3.1** (a standalone
+> **Stack (settled 2026-06-26; room→0.3.2 2026-07-03; web→2.3.1 + worker→0.15.1 2026-07-03):** **@moku-labs/room@0.3.2** (a standalone
 > `@moku-labs/core` framework — NOT the old 0.1.x plugin-pack), **@moku-labs/web@2.3.1**, **preact@10.29.3**. The app
 > is **one `@moku-labs/web` SPA whose role is chosen by the URL** (`/` = TV/stage, `/controller/:code` =
 > phone) + per-role room `createApp`s (`src/lib/room/`) + **one** `@moku-labs/room/server` Hub-DO worker
 > (`src/server.ts` + `src/cloudflare/worker.ts`) that serves the SPA via `ASSETS` and brokers
 > `serverSignaling`. **`@moku-labs/worker@0.15.1` is a direct dependency** — `src/server.ts` composes ONE
-> worker app (atlas-style) with room's `hubPlugin` (room 0.3.1's `./server` exports the hub as a worker plugin):
+> worker app (atlas-style) with room's `hubPlugin` (room 0.3.x's `./server` exports the hub as a worker plugin):
 > `server.hub.handle` is the runtime; `server.cli.{dev,deploy}` **generate `wrangler.jsonc`**.
 
 ## Package Manager
@@ -83,7 +83,7 @@ This is a **Layer-3 consumer app** — it composes existing Moku frameworks via 
      `subscribe`/`intent`/`onLifecycle`/`qr` surface; it owns the room apps (created only in the browser).
 3. **Server — ONE `@moku-labs/worker` app composing room's `hubPlugin` (atlas-style; full app control).**
    `src/server.ts` = `createApp({ plugins: [storage, kv, d1, queues, durableObjects, hubPlugin, deploy, cli] })`
-   from `@moku-labs/worker`, where **`hubPlugin`** is imported from `@moku-labs/room/server` (room 0.3.1's
+   from `@moku-labs/worker`, where **`hubPlugin`** is imported from `@moku-labs/room/server` (room 0.3.x's
    `./server` exports the hub as a `@moku-labs/worker` plugin + the `Hub` DO — it is **not** a server core).
    `server.hub.handle` is the **runtime** fetch (signaling WS → the per-room `Hub` DO / else → `ASSETS`);
    `server.cli.{dev,deploy}` (worker) **generate `wrangler.jsonc`** + run wrangler. Only `kv` (RATE_LIMIT) +
@@ -100,13 +100,16 @@ for app shape (multiple `createApp` instances, side-by-side frameworks, folder s
 
 ## Dependency stack
 
-`@moku-labs/room@0.3.1` + `@moku-labs/web@2.3.1` + `@moku-labs/worker@0.15.1` + `preact@10.29.3` +
+`@moku-labs/room@0.3.2` + `@moku-labs/web@2.3.1` + `@moku-labs/worker@0.15.1` + `preact@10.29.3` +
 `preact-render-to-string@6.7.0`; all four frameworks pin one aligned `@moku-labs/core@1.5.0`.
-(web 2.3.1 = incremental `copyPublic` — dev rebuilds skip unchanged public assets — and worker 0.15.1's
+(room 0.3.2 = sync-wire gap heal: a unicast `sync.broadcast(peerId)` no longer bumps the shared `sSeq`
+— it re-baselines at the CURRENT seq — and a replica that detects a delta gap self-heals via the new
+`sync-resync` report → host baseline answer, so a missed frame no longer wedges a phone until reload.
+web 2.3.1 = incremental `copyPublic` — dev rebuilds skip unchanged public assets — and worker 0.15.1's
 dev watcher drops stale watch-echo batches before they reach `onChange`, ending the APFS clone-echo
 rebuild storm framework-side; `scripts/dev.ts` carries no app-side guard.)
 **`@moku-labs/worker@0.15.1` is a direct dependency** — `src/server.ts` composes ONE worker app (atlas-style)
-with room's `hubPlugin` (`@moku-labs/room/server` 0.3.1 exports the hub as a worker plugin; worker is its
+with room's `hubPlugin` (`@moku-labs/room/server` 0.3.x exports the hub as a worker plugin; worker is its
 optional peer dep). `server.hub.handle` is the runtime; `server.cli.{dev,deploy}` generate `wrangler.jsonc`.
 The **question bank** ships as build-authored JSON via @moku-labs/web's `collection` provider (new in 2.3.0):
 `app.collection.write` in `scripts/build.ts`/`dev.ts` emits `bank/{lang}/{category}.json` → `dist/client/bank/**`
