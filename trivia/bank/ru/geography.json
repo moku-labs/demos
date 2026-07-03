@@ -1,19 +1,5 @@
 [
   {
-    "id": "4e2671599c91",
-    "category": "geography",
-    "tier": "easy",
-    "type": "text",
-    "prompt": "Какое озеро является самым глубоким в мире?",
-    "options": [
-      "Верхнее",
-      "Танганьика",
-      "Байкал",
-      "Каспийское море"
-    ],
-    "answerCheck": "fnriwix:1"
-  },
-  {
     "id": "7a4198fcf262",
     "category": "geography",
     "tier": "easy",
@@ -180,20 +166,6 @@
       "Красное"
     ],
     "answerCheck": "ckhnc1:0"
-  },
-  {
-    "id": "359c0787fad1",
-    "category": "geography",
-    "tier": "easy",
-    "type": "text",
-    "prompt": "Какие горы принято считать границей между Европой и Азией?",
-    "options": [
-      "Карпаты",
-      "Уральские горы",
-      "Альпы",
-      "Кавказ"
-    ],
-    "answerCheck": "lnth09u:0"
   },
   {
     "id": "9b9ac0c42acd",

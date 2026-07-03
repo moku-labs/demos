@@ -98,20 +98,6 @@
     "answerCheck": "vjl9cx4:3"
   },
   {
-    "id": "d7e26ae72a0e",
-    "category": "strange",
-    "tier": "hard",
-    "type": "text",
-    "prompt": "Загадка перевала Дятлова (1959): группа туристов погибла при невыясненных обстоятельствах. В каких горах?",
-    "options": [
-      "Северный Урал",
-      "Кавказ",
-      "Алтай",
-      "Памир"
-    ],
-    "answerCheck": "03r:3"
-  },
-  {
     "id": "d247fe870f85",
     "category": "strange",
     "tier": "hard",

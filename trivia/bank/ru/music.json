@@ -112,20 +112,6 @@
     "answerCheck": "hfvt:0"
   },
   {
-    "id": "cfb1885c0db1",
-    "category": "music",
-    "tier": "hard",
-    "type": "text",
-    "prompt": "Сколько струн у классической балалайки?",
-    "options": [
-      "Три",
-      "Шесть",
-      "Четыре",
-      "Пять"
-    ],
-    "answerCheck": "hqr:3"
-  },
-  {
     "id": "a9961f280f89",
     "category": "music",
     "tier": "easy",

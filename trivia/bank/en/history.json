@@ -140,20 +140,6 @@
     "answerCheck": "n1xhg:3"
   },
   {
-    "id": "f057bc8b3b45",
-    "category": "history",
-    "tier": "hard",
-    "type": "text",
-    "prompt": "Which 19th-century conflict is most often called 'the first modern war' for its use of railways, telegraphs, and trench warfare?",
-    "options": [
-      "The American Civil War",
-      "The Boer War",
-      "The Crimean War",
-      "The Franco-Prussian War"
-    ],
-    "answerCheck": "6yb:3"
-  },
-  {
     "id": "e94f75059bc6",
     "category": "history",
     "tier": "hard",

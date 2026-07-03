@@ -448,20 +448,6 @@
     "answerCheck": "m0vz6i:1"
   },
   {
-    "id": "d9aab081f118",
-    "category": "space",
-    "tier": "easy",
-    "type": "text",
-    "prompt": "Кто стал первой женщиной в космосе?",
-    "options": [
-      "Светлана Савицкая",
-      "Валентина Терешкова",
-      "Елена Кондакова",
-      "Салли Райд"
-    ],
-    "answerCheck": "sxc8rs:3"
-  },
-  {
     "id": "86a38b147815",
     "category": "space",
     "tier": "easy",

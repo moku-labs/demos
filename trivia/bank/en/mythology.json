@@ -406,20 +406,6 @@
     "answerCheck": "1vor51:2"
   },
   {
-    "id": "b213ada5e628",
-    "category": "mythology",
-    "tier": "hard",
-    "type": "text",
-    "prompt": "In Slavic folklore, the witch Baba Yaga is famously said to live in a hut that stands on what?",
-    "options": [
-      "A floating cloud",
-      "Giant chicken legs",
-      "A pillar of bone",
-      "The back of a turtle"
-    ],
-    "answerCheck": "t7ckqg3:0"
-  },
-  {
     "id": "1e15c34c1e21",
     "category": "mythology",
     "tier": "hard",

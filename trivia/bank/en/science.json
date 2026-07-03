@@ -70,20 +70,6 @@
     "answerCheck": "yslqc04:2"
   },
   {
-    "id": "fc3e73b37e17",
-    "category": "science",
-    "tier": "medium",
-    "type": "text",
-    "prompt": "In Pavlov's famous experiment, what did the dogs learn to salivate at?",
-    "options": [
-      "The ringing of a bell",
-      "The smell of food",
-      "The sight of meat",
-      "A flashing light"
-    ],
-    "answerCheck": "jbnvk:1"
-  },
-  {
     "id": "cb38ca014e89",
     "category": "science",
     "tier": "medium",

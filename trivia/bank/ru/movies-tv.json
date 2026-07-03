@@ -84,20 +84,6 @@
     "answerCheck": "2hssa:2"
   },
   {
-    "id": "c6ba517aac22",
-    "category": "movies-tv",
-    "tier": "hard",
-    "type": "text",
-    "prompt": "Какой фильм Андрея Тарковского — научная фантастика по роману Станислава Лема?",
-    "options": [
-      "«Зеркало»",
-      "«Сталкер»",
-      "«Андрей Рублёв»",
-      "«Солярис»"
-    ],
-    "answerCheck": "u788pn:1"
-  },
-  {
     "id": "968304264b2d",
     "category": "movies-tv",
     "tier": "hard",
