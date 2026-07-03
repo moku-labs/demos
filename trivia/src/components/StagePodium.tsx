@@ -4,7 +4,7 @@
  * host-read end stats. Rendered by the stage island's render layer for `phase === "final"`.
  */
 import type { JSX } from "preact";
-import { rank } from "../lib/leaderboard";
+import { boardRows } from "../lib/leaderboard";
 import type { TriviaState } from "../lib/types";
 import { findPlayer, formatScore } from "../lib/view";
 import type { EndStats } from "../plugins/scoring/types";
@@ -30,9 +30,11 @@ export type StagePodiumProps = {
  * ```
  */
 export function StagePodium({ s, endStats }: StagePodiumProps): JSX.Element {
-  const ranked = rank(s.scores);
-  const podium = ranked.slice(0, 3);
-  const alsoRans = ranked.slice(3);
+  // The SAME resolved ranking as the scoreboard/phone card (spec §1/§5): unique places, ties broken
+  // by "first to reach defends it" — the podium can never contradict the last interstitial board.
+  const rows = boardRows(s.players, s.scores);
+  const podium = rows.slice(0, 3);
+  const alsoRans = rows.slice(3);
   const order: Array<{ place: 1 | 2 | 3; index: number }> = [
     { place: 2, index: 1 },
     { place: 1, index: 0 },
@@ -48,25 +50,25 @@ export function StagePodium({ s, endStats }: StagePodiumProps): JSX.Element {
       <h1 data-title>🎉 Game Over! ♪</h1>
       <div data-podium-stage>
         {order.map(({ place, index }) => {
-          const entry = podium[index];
-          const player = entry && findPlayer(s.players, entry.peerId);
-          if (!entry || !player) return null;
+          const row = podium[index];
+          if (!row) return null;
           return (
-            <PodiumBlock key={player.peerId} place={place} player={player} score={entry.total} />
+            <PodiumBlock
+              key={row.player.peerId}
+              place={place}
+              player={row.player}
+              score={row.entry.total}
+            />
           );
         })}
       </div>
       {alsoRans.length > 0 && (
         <div data-also-rans>
-          {alsoRans.map(entry => {
-            const player = findPlayer(s.players, entry.peerId);
-            if (!player) return null;
-            return (
-              <span key={entry.peerId} data-also-ran>
-                {player.avatar} {player.name} {formatScore(entry.total)}
-              </span>
-            );
-          })}
+          {alsoRans.map(row => (
+            <span key={row.entry.peerId} data-also-ran>
+              {row.player.avatar} {row.player.name} {formatScore(row.entry.total)}
+            </span>
+          ))}
         </div>
       )}
       {endStats && (steals || streak) && (

@@ -4,13 +4,7 @@
  * match the spec (roster/join order = declaration order).
  */
 import { describe, expect, it } from "vitest";
-import {
-  type BoardRow,
-  boardRows,
-  competitionLabels,
-  maxClimb,
-  rank
-} from "../../src/lib/leaderboard";
+import { type BoardRow, boardRows, maxClimb } from "../../src/lib/leaderboard";
 import type { PlayerProfile, ScoreEntry } from "../../src/lib/types";
 
 /** Build a score entry — only `total`/`delta` matter to the derivation (rank fields are ignored). */
@@ -47,40 +41,28 @@ function expectUniqueSlots(rows: readonly BoardRow[]): void {
   expect(rows.map(row => row.prevPosition).toSorted((a, b) => a - b)).toEqual(slots);
 }
 
-describe("leaderboard.rank (podium view — unchanged)", () => {
-  it("sorts by total descending and assigns 1-based position ranks", () => {
-    const ranked = rank([entry("a", 200), entry("b", 500), entry("c", 100)]);
-    expect(ranked.map(e => e.peerId)).toEqual(["b", "a", "c"]);
-    expect(ranked.map(e => e.rank)).toEqual([1, 2, 3]);
+describe("boardRows — unique resolved ranks (§I2/§I4, product decision 2026-07-03)", () => {
+  it("labels are ALWAYS unique 1..N — a tie never shows a shared number", () => {
+    const players = [player("a"), player("b"), player("c"), player("d")];
+    const tieShapes: ScoreEntry[][] = [
+      [entry("a", 400), entry("b", 400), entry("c", 400), entry("d", 400)], // all tied
+      [entry("a", 500), entry("b", 400), entry("c", 400), entry("d", 100)], // middle tie group
+      [entry("a", 0), entry("b", 0), entry("c", 0), entry("d", 0)] // all-zero start
+    ];
+    for (const scores of tieShapes) {
+      const rows = boardRows(players, scores);
+      expect(rows.map(r => r.rankLabel)).toEqual([1, 2, 3, 4]);
+      expect(new Set(rows.map(r => r.prevRankLabel)).size).toBe(rows.length);
+    }
   });
 
-  it("keeps ties in their incoming order (stable) and does not mutate the input", () => {
-    const input = [entry("x", 100), entry("y", 100)];
-    const ranked = rank(input);
-    expect(ranked.map(e => e.peerId)).toEqual(["x", "y"]);
-    expect(input[0]?.rank).toBe(0); // input untouched
-  });
-
-  it("handles an empty board", () => {
-    expect(rank([])).toEqual([]);
-  });
-});
-
-describe("leaderboard.competitionLabels (§I4)", () => {
-  it("shares labels on ties and skips past the tie group (1, 2, 2, 4)", () => {
-    expect(competitionLabels([500, 400, 400, 100])).toEqual([1, 2, 2, 4]);
-  });
-
-  it("labels an all-equal board 1, 1, 1", () => {
-    expect(competitionLabels([200, 200, 200])).toEqual([1, 1, 1]);
-  });
-
-  it("labels a strictly-descending board by position", () => {
-    expect(competitionLabels([300, 200, 100])).toEqual([1, 2, 3]);
-  });
-
-  it("handles an empty list", () => {
-    expect(competitionLabels([])).toEqual([]);
+  it("first to reach a score DEFENDS the rank: the incumbent stays ahead of a later tier", () => {
+    // A held 400 before the round; B (+300) reaches 400 this round → A keeps rank 1, B ranks 2.
+    const rows = boardRows([player("a"), player("b")], [entry("a", 400), entry("b", 400, 300)]);
+    expect(rows.map(r => [r.entry.peerId, r.rankLabel])).toEqual([
+      ["a", 1],
+      ["b", 2]
+    ]);
   });
 });
 
@@ -116,10 +98,10 @@ describe("boardRows — the case matrix (spec §4)", () => {
 
   it("S4 tie formed — the EXCEED rule (§I2): reaching a score never passes it (the overlap bug case)", () => {
     const rows = boardRows(abc.slice(0, 2), [entry("a", 400), entry("b", 400, 300)]);
-    expect(order(rows)).toEqual(["a", "b"]); // B tied A but does NOT pass
+    expect(order(rows)).toEqual(["a", "b"]); // B tied A but does NOT pass — A defends
     expectUniqueSlots(rows); // …and the two rows NEVER share a slot
     for (const row of rows) expect(row.position).toBe(row.prevPosition);
-    expect(rows.map(r => r.rankLabel)).toEqual([1, 1]); // honest shared label
+    expect(rows.map(r => r.rankLabel)).toEqual([1, 2]); // unique resolved ranks — never "1, 1"
     expect(rows.map(r => r.prevRankLabel)).toEqual([1, 2]);
   });
 
@@ -130,12 +112,12 @@ describe("boardRows — the case matrix (spec §4)", () => {
     expect(rows.find(r => r.entry.peerId === "b")).toMatchObject({ prevPosition: 1, position: 0 });
   });
 
-  it("S6 multi-way tie: distinct slots, shared labels, zero motion", () => {
+  it("S6 multi-way tie: distinct slots, unique resolved labels, zero motion", () => {
     const rows = boardRows(abc, [entry("a", 200), entry("b", 200), entry("c", 200)]);
-    expect(order(rows)).toEqual(["a", "b", "c"]); // join order
+    expect(order(rows)).toEqual(["a", "b", "c"]); // the carried-forward tie order
     expectUniqueSlots(rows);
     for (const row of rows) expect(row.position).toBe(row.prevPosition);
-    expect(rows.map(r => r.rankLabel)).toEqual([1, 1, 1]);
+    expect(rows.map(r => r.rankLabel)).toEqual([1, 2, 3]);
   });
 
   it("S7 multi-mover round (open steal): B and C cross A together, slots distinct throughout", () => {
@@ -158,7 +140,7 @@ describe("boardRows — the case matrix (spec §4)", () => {
     const rows = boardRows(abc, [entry("a", 400), entry("b", 400), entry("c", 400, 250)]);
     expect(order(rows)).toEqual(["a", "b", "c"]);
     for (const row of rows) expect(row.position).toBe(row.prevPosition);
-    expect(rows.map(r => r.rankLabel)).toEqual([1, 1, 1]);
+    expect(rows.map(r => r.rankLabel)).toEqual([1, 2, 3]); // C reached 400 last → ranks 3rd
     expect(rows.find(r => r.entry.peerId === "c")?.prevRankLabel).toBe(3);
   });
 

@@ -4,7 +4,7 @@
  * Rendered for the `final` phase.
  */
 import type { JSX } from "preact";
-import { competitionLabels, rank } from "../lib/leaderboard";
+import { boardRows } from "../lib/leaderboard";
 import type { ScoreEntry, TriviaState } from "../lib/types";
 import { categoryMeta, findPlayer, formatScore } from "../lib/view";
 import { ClayButton } from "./ClayButton";
@@ -60,13 +60,12 @@ export type PhoneFinalProps = {
  */
 export function PhoneFinal({ s, onPlayAgain, onLeaveOpen }: PhoneFinalProps): JSX.Element {
   const self = findPlayer(s.players, s.self);
-  const ranked = rank(s.scores);
-  // Competition place (spec/scoreboard-animation.md §5): tied totals share the placement, so two
-  // players who finish level BOTH see "You came 1st!" — never an arbitrary 1st/2nd split.
-  const labels = competitionLabels(ranked.map(e => e.total));
-  const selfIndex = ranked.findIndex(e => e.peerId === s.self);
-  const entry = selfIndex >= 0 ? ranked[selfIndex] : undefined;
-  const place = selfIndex >= 0 ? ((labels[selfIndex] ?? selfIndex + 1) as number) : ranked.length;
+  // The SAME resolved ranking every surface uses (spec §1/§5): unique places, ties broken by the
+  // "first to reach defends it" rule — this card can never disagree with the TV board or podium.
+  const rows = boardRows(s.players, s.scores);
+  const selfRow = rows.find(row => row.entry.peerId === s.self);
+  const entry = selfRow?.entry;
+  const place = selfRow?.rankLabel ?? rows.length;
   const medal = place === 1 ? "🥇" : place === 2 ? "🥈" : place === 3 ? "🥉" : "🎖";
   const ordinal = place === 1 ? "1st" : place === 2 ? "2nd" : place === 3 ? "3rd" : `${place}th`;
   const stats = finalStats(entry);

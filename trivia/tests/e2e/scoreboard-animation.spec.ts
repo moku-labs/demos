@@ -322,9 +322,10 @@ test.describe("Scoreboard animation — §I1 regression guard (the reported over
     // The two positions must be a permutation of 0..1 — never the same slot.
     expect(tiles.map(t => t.position).toSorted()).toEqual([0, 1]);
 
-    // §I4/§2 label choreography, value-asserted: during the delta hold the labels are the PRE-round
-    // competition ranks (1, 2 — Pixel had not yet tied), and once settled they are the POST-round
-    // ranks (1, 1 — the honest shared label for equal totals).
+    // §I4/§2 label choreography, value-asserted: ranks are UNIQUE and resolved (product decision
+    // 2026-07-03 — never a shared "1, 1"). During the delta hold the labels are the pre-round ranks
+    // (1, 2 — Pixel had not yet tied), and once settled they REMAIN 1, 2: Mochi reached 400 first
+    // and defends the rank; Pixel tied it but did not exceed it (§I2).
     expect(tiles.map(t => t.rankLabel)).toEqual(["1", "2"]);
     await expect(page.locator("[data-component='stage-scoreboard']")).toHaveAttribute(
       "data-choreography",
@@ -332,6 +333,6 @@ test.describe("Scoreboard animation — §I1 regression guard (the reported over
       { timeout: 4000 }
     );
     const settledTiles = await readTiles(page);
-    expect(settledTiles.map(t => t.rankLabel)).toEqual(["1", "1"]);
+    expect(settledTiles.map(t => t.rankLabel)).toEqual(["1", "2"]);
   });
 });

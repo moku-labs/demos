@@ -34,10 +34,13 @@ Derivation (pure, in `src/lib/leaderboard.ts` → `boardRows()`):
 5. **`prevPosition`** := index in sort by `(preTotal desc, identity asc)` — the slot the row held
    **before** the round. Unique 0-based.
 6. **`position`** := index in sort by `(total desc, prevPosition asc)` — the slot **after** the
-   round. Unique 0-based. Tiebreak by `prevPosition` is the **exceed rule**: equal totals never
-   reorder — you must *pass* a score to pass the player (§I2).
-7. **`rankLabel` / `prevRankLabel`** := *competition* ranks (ties share the number: 1, 2, 2, 4)
-   over the post/pre orderings. Labels are display-only — **layout never uses them**.
+   round. Unique 0-based. The `prevPosition` tiebreak is the **official tie ranking** (product
+   decision 2026-07-03): **first to reach a score defends the higher rank** — a challenger must
+   *exceed* to pass (§I2). Equal totals therefore never reorder, and every tie has a decided,
+   persistent winner (grounded, for the all-zero start, in roster join order).
+7. **`rankLabel` / `prevRankLabel`** := the **unique** 1-based ranks `position + 1` /
+   `prevPosition + 1`. Ties are resolved, never shared — two players never show the same number
+   (no "1, 1"; §I4).
 8. `climb := prevPosition − position` (positive = moved up).
 
 The FLIP itself measures real DOM geometry (per-tile heights + the list's row gap), computes each
@@ -64,12 +67,13 @@ including when the preference flips **mid-flight** (transforms snap, never stick
 - **I1 — no overlap, ever.** `position` and `prevPosition` are each a permutation of `0..N−1`;
   at any instant of any phase, no two tiles occupy the same slot. (The reported critical bug,
   made impossible by construction.)
-- **I2 — exceed rule.** Equal totals never swap: a challenger who *ties* a score does not pass
-  the player; within a tie group the pre-round order persists (initially: join order).
+- **I2 — exceed rule (the official tie ranking).** Equal totals never swap: whoever reached the
+  score first defends the higher rank, and a challenger who *ties* it does not pass — they must
+  exceed it. Within a tie group the pre-round order persists (grounded in join order at 0–0).
 - **I3 — derived memory.** `prevPosition` comes from `total − delta`, not stored state — the
   overtake animates identically after a TV refresh, a reconnect, or a late remount.
-- **I4 — honest labels.** Rank numbers use competition ranking (tied players share the number);
-  the label flips `prevRankLabel → rankLabel` exactly when the row starts moving.
+- **I4 — unique labels.** Rank numbers are unique `1..N` (ties resolved per §I2 — never a shared
+  "1, 1"); the label flips `prevRankLabel → rankLabel` exactly when the row starts moving.
 - **I5 — single settle.** Each round plays the choreography once: seed → slide → rest. Skip
   paths (reduced-motion flip, phase re-entry, unmount) always end with explicit
   `transform: translateY(0)` / `transition: none` — no stuck transforms.
@@ -88,11 +92,11 @@ Player shorthand: `A, B, C…` in roster (join) order. Each case lists the synce
 | S1 | Single overtake | A 300(0), B 400(200), C 100(0) | A,B,C | B,A,C | B slides 2→1; A slips 1→2; badge "▲ overtook A" on B |
 | S2 | Multi-slot climb | A 300(0), B 250(0), C 500(400) | A,B,C | C,A,B | C slides 3→1 (two slots); A,B each slip one |
 | S3 | Gain, no change | A 500(100), B 300(0) | A,B | A,B | no motion; A shows +100 & count-up only |
-| S4 | **Tie formed — no swap** | A 400(0), B 400(300) | A,B | A,B | **no motion, no overlap**; labels become 1,1 (exceed rule: tie ≠ pass) |
+| S4 | **Tie formed — no swap** | A 400(0), B 400(300) | A,B | A,B | **no motion, no overlap**; labels stay unique 1, 2 — A reached 400 first and defends the rank (§I2) |
 | S5 | Tie broken | A 400(0), B 500(100) — were tied 400=400 | A,B | B,A | B slides 2→1 past former tie partner |
-| S6 | Multi-way tie board | A 200(0), B 200(0), C 200(0) | A,B,C | A,B,C | zero motion; three distinct slots; labels 1,1,1 |
+| S6 | Multi-way tie board | A 200(0), B 200(0), C 200(0) | A,B,C | A,B,C | zero motion; three distinct slots; labels 1, 2, 3 (tie order carried forward from when the scores were reached; §I2) |
 | S7 | Multi-mover (open steal) | A 100(0), B 240(140), C 180(80), D 60(60) | A,B,C,D* | B,C,A,D | B & C climb past A simultaneously; distinct slots throughout; **both** badges read "▲ overtook A" (a badge names a player actually passed — never a fellow climber) |
-| S8 | Climb *into* a tie group | A 400(0), B 400(0), C 400(250) | A,B,C | A,B,C | no motion (C reached, not exceeded); labels 1,1,1 |
+| S8 | Climb *into* a tie group | A 400(0), B 400(0), C 400(250) | A,B,C | A,B,C | no motion (C reached, not exceeded); labels 1, 2, 3 — C ranks 3rd, having reached 400 last (§I2) |
 | S9 | Movement above zero rows | A 0(0), B 200(200), C 0(0) | A,B,C | B,A,C | B climbs out of the all-zero group; zero rows keep relative order |
 | S10 | Nobody scored | A 300(0), B 200(0) | A,B | A,B | fully static board (no chips, no motion) |
 | S11 | Mid-match joiner | A 300(0), B 100(0), J zero-row | A,B,J | A,B,J | J appears at the bottom with **no phantom slide** |
@@ -112,9 +116,9 @@ bounding boxes (I1), rank labels (I4), and badge visibility (§2).
 - The scoreboard-entry overtake whoosh (`lib/sound/director.ts`) pitches by the **same derived
   climb** (`maxClimb` over `boardRows`), so audio matches what the eye sees — including multi-award
   steal rounds where the synced `prevRank` field only reflected the last award.
-- The phone final card (A15) shows the **competition** place ("You came 1st!" for both tied
-  leaders) via the same labels helper. The podium (A8) remains positional (three physical
-  blocks; tie display there is out of scope).
+- The phone final card (A15) and the podium (A8) rank via the **same `boardRows` derivation** —
+  the unique resolved place (§I2), so neither can ever disagree with the last interstitial board
+  (no arbitrary slice-order podium on ties).
 - The synced `rank`/`prevRank` fields still exist on the wire (the host publishes them;
   nothing on the TV board consumes them anymore).
 

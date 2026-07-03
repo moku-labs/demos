@@ -1,8 +1,13 @@
 /**
- * @file Pure helpers — the scoreboard's board-view derivation (display order, FLIP motion inputs,
- * rank labels). No plugin context and **no client-side memory**: everything derives from one synced
- * snapshot (`players` + `scores`) per `spec/scoreboard-animation.md` §1, so the board renders — and
- * animates — identically on every device, after any refresh or reconnect (§I3/§I6).
+ * @file Pure helpers — the ONE ranking derivation every surface uses (TV scoreboard, phone final
+ * card, podium): display order, FLIP motion inputs, rank labels. No plugin context and **no
+ * client-side memory**: everything derives from one synced snapshot (`players` + `scores`) per
+ * `spec/scoreboard-animation.md` §1, so the board renders — and animates — identically on every
+ * device, after any refresh or reconnect (§I3/§I6).
+ *
+ * Ties are RESOLVED, never shared (product decision 2026-07-03): ranks are unique 1..N — "first to
+ * reach a score defends it", a challenger must EXCEED to pass (§I2). No two players ever show the
+ * same rank number.
  *
  * The synced `rank`/`prevRank` fields are deliberately **not** consumed here: the host recomputes
  * them at every award (already final by scoreboard time) and they share numbers on ties — both
@@ -24,58 +29,11 @@ export type BoardRow = {
   position: number;
   /** The 0-based display slot BEFORE the round — unique per row, derived from `total − delta` (§1.5). */
   prevPosition: number;
-  /** Competition rank label after the round — tied totals share a number (1, 2, 2, 4; §1.7). */
+  /** The unique 1-based rank after the round (`position + 1` — ties resolved, never shared; §1.7). */
   rankLabel: number;
-  /** Competition rank label before the round (same scheme over pre-round totals). */
+  /** The unique 1-based rank before the round (`prevPosition + 1`). */
   prevRankLabel: number;
 };
-
-/**
- * Rank entries by total (desc), assigning a fresh 1-based `rank` by position and carrying each
- * entry's previous `rank` into `prevRank`. Ties keep their incoming relative order (V8's sort is
- * stable). Kept for the **podium** (three positional blocks) and phone final ordering — the TV
- * scoreboard uses `boardRows()` instead.
- *
- * @param entries - The current score entries (any order).
- * @returns A new array sorted by `total` descending, each with `rank` = position+1 and
- *   `prevRank` = the entry's incoming `rank`.
- * @example
- * ```ts
- * rank([
- *   { peerId: "a", total: 200, delta: 0, rank: 2, prevRank: 2 },
- *   { peerId: "b", total: 500, delta: 0, rank: 1, prevRank: 1 }
- * ]);
- * // → [{ peerId: "b", …, rank: 1 }, { peerId: "a", …, rank: 2 }]
- * ```
- */
-export function rank(entries: readonly ScoreEntry[]): readonly ScoreEntry[] {
-  return entries
-    .toSorted((first, second) => second.total - first.total)
-    .map((entry, index) => ({ ...entry, prevRank: entry.rank, rank: index + 1 }));
-}
-
-/**
- * Competition rank labels for an already-sorted (descending) list of totals: equal neighbours share
- * a label, and the label after a tie group skips to the group's end position (1, 2, 2, 4 — spec
- * §I4). Display-only — layout must never use these (they collide on ties by design).
- *
- * @param totalsDesc - Totals sorted descending (the order the rows are displayed in).
- * @returns One 1-based label per input, in the same order.
- * @example
- * ```ts
- * competitionLabels([500, 400, 400, 100]); // [1, 2, 2, 4]
- * ```
- */
-export function competitionLabels(totalsDesc: readonly number[]): readonly number[] {
-  const labels: number[] = [];
-
-  for (const [index, total] of totalsDesc.entries()) {
-    const tiedWithAbove = index > 0 && total === totalsDesc[index - 1];
-    labels.push(tiedWithAbove ? (labels[index - 1] as number) : index + 1);
-  }
-
-  return labels;
-}
 
 /**
  * The full derived board for the TV scoreboard — every scored player PLUS every connected player
@@ -134,19 +92,18 @@ export function boardRows(
       (previousPositionOf.get(a.entry.peerId) ?? 0) - (previousPositionOf.get(b.entry.peerId) ?? 0)
   );
 
-  // Competition labels over both orderings (display-only; §1.7).
-  const previousLabels = competitionLabels(preSorted.map(row => preTotal(row.entry)));
-  const postLabels = competitionLabels(postSorted.map(row => row.entry.total));
-
-  return postSorted.map((row, position) => ({
-    entry: row.entry,
-    player: row.player,
-    position,
-    prevPosition: previousPositionOf.get(row.entry.peerId) ?? position,
-    rankLabel: (postLabels[position] ?? position + 1) as number,
-    prevRankLabel: (previousLabels[previousPositionOf.get(row.entry.peerId) ?? position] ??
-      position + 1) as number
-  }));
+  // Unique 1-based rank labels straight off the resolved slots (ties never share a number; §1.7).
+  return postSorted.map((row, position) => {
+    const previousPosition = previousPositionOf.get(row.entry.peerId) ?? position;
+    return {
+      entry: row.entry,
+      player: row.player,
+      position,
+      prevPosition: previousPosition,
+      rankLabel: position + 1,
+      prevRankLabel: previousPosition + 1
+    };
+  });
 }
 
 /**
