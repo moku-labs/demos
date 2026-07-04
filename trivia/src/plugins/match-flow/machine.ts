@@ -192,6 +192,7 @@ function closedSteal(): StealSlice {
     deadlineTs: null,
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (armedTs null, not undefined)
     armedTs: null,
+    armed: false,
     answeredPeers: []
   };
 }
@@ -336,6 +337,9 @@ export function resolveAnswer(deps: ResolveAnswerDeps): boolean {
       const now = Date.now();
       const armedTs = now + stealLeadMs;
       const deadline = armedTs + stealMs;
+      // A zero/negative lead-in (test tuning) is armed immediately — no beat to wait through. In real
+      // play `stealLeadMs > 0`, so the grid opens disabled and the clock flips `armed` at `armedTs`.
+      const armed = stealLeadMs <= 0;
 
       mutate("question", () => ({
         id: question.id,
@@ -354,6 +358,7 @@ export function resolveAnswer(deps: ResolveAnswerDeps): boolean {
         stealPeers: eligible,
         deadlineTs: deadline,
         armedTs,
+        armed,
         answeredPeers: []
       }));
       return true;

@@ -25,7 +25,7 @@ import {
 } from "./cache";
 import type { IntentDeps, LanguageDeps, QuestionBankDeps, ScoringDeps, SyncDeps } from "./handlers";
 import { handleLeaveGame, resolveAnswer } from "./machine";
-import type { Config, MatchSlice, Phase, PlayersSlice, State } from "./types";
+import type { Config, MatchSlice, Phase, PlayersSlice, State, StealSlice } from "./types";
 
 // ─── Slice registration ─────────────────────────────────────────────────────────
 
@@ -99,6 +99,7 @@ function registerSlices(sync: SyncDeps, baseRounds: number): void {
     deadlineTs: null,
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
     armedTs: null,
+    armed: false,
     answeredPeers: []
   });
 
@@ -491,12 +492,18 @@ export function initMatchFlow(
       !state.tried.has(meta.peerId);
     if (!isActiveAnswerer && !isEligibleStealer) return;
 
-    const steal = cachedSteal() ?? makeIdleSteal();
+    // Read the steal slice LIVE (`readSlice`, NOT the host-clock cache which lags a tick): right after
+    // the arming tick flips `armed`, a cached `armed:false` would spuriously drop a valid lock — the same
+    // live-read discipline the join lock uses for the match phase (a cached slice leaks a stale gate).
+    const steal = (readSlice("steal") as StealSlice | undefined) ?? makeIdleSteal();
 
-    // Enforce the steal lead-in host-side: a tap that lands before the "get ready" beat unlocks is
-    // dropped, so no device (the host's included) can answer before the others have rendered the grid.
-    // The UI also disables the grid during the lead-in — this is the authoritative backstop.
-    if (isEligibleStealer && steal.armedTs !== null && Date.now() < steal.armedTs) return;
+    // Structural fair-start gate: a stealer may lock only once the host has ARMED the grid (the SAME
+    // authoritative boolean the phone gates its taps on) — never a wall-clock compare against `armedTs`,
+    // which the phone raced with ITS own clock. A phone clock running ahead unlocked the grid early and
+    // the host silently dropped the tap: the "tap fast → not accepted, wait a beat → fine" bug. The phone
+    // can only tap after it SEES `armed:true`, and the host sets that only once its clock passes `armedTs`,
+    // so every tap the phone is able to send now arrives inside the host's accept window.
+    if (isEligibleStealer && steal.armed !== true) return;
 
     const { correctSlot, correct } = questionBank.grade(question.id, slot);
 

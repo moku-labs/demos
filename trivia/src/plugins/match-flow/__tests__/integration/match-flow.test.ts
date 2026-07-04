@@ -974,8 +974,14 @@ describe("match-flow plugin integration", () => {
       },
       { timeout: 9000 }
     );
-    // Move past the "get ready" lead-in so stealer locks are honoured (the armedTs fair-start guard).
+    // Move past the "get ready" lead-in; a clock tick flips the steal's `armed` gate, and only then are
+    // stealer locks honoured. Both the phone (enable taps) and the host (accept a lock) gate on THIS synced
+    // boolean — never a wall-clock compare against `armedTs` that each device races with its own clock
+    // (the fast-tap-during-steal drop bug). The host live-reads `armed`, not the tick-lagging slice cache.
+    // (The tiny test lead-in arms almost immediately, so we assert the armed END state, which is stable —
+    // the unit tests pin "opens disabled" + "armStealIfDue flips at armedTs" deterministically.)
     await vi.advanceTimersByTimeAsync(200);
+    expect(host.sync.read("steal")?.armed).toBe(true);
 
     const [first, second] = controllers.filter(c => c.session.self().selfId !== answeringPeer);
     const firstPeer = first?.session.self().selfId;

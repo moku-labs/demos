@@ -176,5 +176,12 @@ export type StealSlice = {
   stealPeers: PeerId[];
   deadlineTs: number | null;
   armedTs: number | null;
+  /**
+   * Host-authoritative fair-start gate — flipped `true` by the clock once the lead-in expires. BOTH the
+   * phone (enable taps) and the host (accept a lock) gate on THIS boolean, never on a wall-clock compare
+   * against `armedTs` (which each device races with its own drifting clock — a phone clock running ahead
+   * unlocked the grid early and the host silently dropped the tap). `armedTs` stays for the countdown only.
+   */
+  armed: boolean;
   answeredPeers: PeerId[];
 };

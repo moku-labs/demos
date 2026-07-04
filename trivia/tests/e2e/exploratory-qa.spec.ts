@@ -70,6 +70,8 @@ const PHONE_PHASE: Record<PhonePhaseKey, string> = {
   answerLocked: "question",
   stealAnswer: "question",
   stealLeadIn: "question",
+  stealClockSkew: "question",
+  stealArmedEarly: "question",
   leaveModal: "question",
   midJoin: "question",
   // Non-active player watcher screens

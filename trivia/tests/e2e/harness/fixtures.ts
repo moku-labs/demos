@@ -20,7 +20,7 @@
  *
  * ### Phone / Controller (`PhonePhaseKey`)
  * `final` | `reveal` | `revealWrong` | `waiting` | `categoryPick` | `categoryReveal` | `categoryLoading`
- * | `answer` | `answerLocked` | `leaveModal` | `midJoin`
+ * | `answer` | `answerLocked` | `leaveModal` | `midJoin` | `stealClockSkew` | `stealArmedEarly`
  */
 
 import { TRIVIA } from "../../../src/config";
@@ -133,6 +133,18 @@ export type PhonePhaseKey =
   | "stealAnswer"
   // Open steal lead-in: the grid is rendered but DISABLED with a "get ready" countdown (fair start).
   | "stealLeadIn"
+  // REGRESSION FIXTURE (the clock-skew fast-tap bug): `armedTs` is in the PAST (the lead-in already
+  // elapsed on ANY clock) but the host-authoritative `armed` boolean is still `false`. On the OLD
+  // buggy gate (`arming = now < armedTs`) this fixture would render the grid ENABLED — reproducing
+  // "the phone unlocked and let a tap through the host still rejects". On the fix (`arming =
+  // !s.steal.armed`) it must render DISABLED. This is the discriminating case: `stealLeadIn` (future
+  // armedTs, armed:false) and `stealAnswer`/`steal` (past armedTs, armed:true) both already agree
+  // between the two gate formulas, so neither can catch a regression back to the wall-clock compare.
+  | "stealClockSkew"
+  // Mirror of `stealClockSkew`: `armedTs` is in the FUTURE (the cosmetic countdown would still read
+  // seconds remaining) but `armed` is already `true` — the boolean wins and the grid is ENABLED. Proves
+  // the gate is `armed`-only in both directions, not just "armed wins when armedTs also agrees".
+  | "stealArmedEarly"
   | "leaveModal"
   | "midJoin"
   // Non-active player watcher screens (user request: intermediate screens between rounds/actions)
@@ -202,6 +214,8 @@ const PHONE_PHASE_KEYS = new Set<PhonePhaseKey>([
   "answerLocked",
   "stealAnswer",
   "stealLeadIn",
+  "stealClockSkew",
+  "stealArmedEarly",
   "leaveModal",
   "midJoin",
   "languageVoteWatcher",
@@ -472,7 +486,14 @@ function triviaState(
     players: PLAYERS,
     question: QUESTION,
     reveal: REVEAL_CORRECT,
-    steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] },
+    steal: {
+      active: false,
+      stealPeers: [],
+      deadlineTs: null,
+      armedTs: null,
+      armed: false,
+      answeredPeers: []
+    },
     scores: SCORES,
     bank: { status: "ready", lang: "en", error: null },
     categories: CATEGORIES,
@@ -510,6 +531,7 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
           deadlineTs: FIXED_NOW + 6_000,
           // Already armed (lead-in over): the grid is tappable and the window is running.
           armedTs: FIXED_NOW - 100,
+          armed: true,
           answeredPeers: ["p3"]
         }
       }),
@@ -536,6 +558,7 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
           stealPeers: ["p2", "p3", "p4", "p5"],
           deadlineTs: FIXED_NOW + 8_800,
           armedTs: FIXED_NOW + 800,
+          armed: false,
           answeredPeers: []
         }
       }),
@@ -818,7 +841,14 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
     return {
       s: triviaState("reveal", null, {
         reveal: REVEAL_WRONG_STEAL,
-        steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] }
+        steal: {
+          active: false,
+          stealPeers: [],
+          deadlineTs: null,
+          armedTs: null,
+          armed: false,
+          answeredPeers: []
+        }
       }),
       qr: null,
       code: "TRIV1234",
@@ -832,7 +862,14 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
     return {
       s: triviaState("reveal", null, {
         reveal: REVEAL_TIMEOUT,
-        steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] }
+        steal: {
+          active: false,
+          stealPeers: [],
+          deadlineTs: null,
+          armedTs: null,
+          armed: false,
+          answeredPeers: []
+        }
       }),
       qr: null,
       code: "TRIV1234",
@@ -849,7 +886,14 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
         reveal: REVEAL_STOLEN,
         // p3 fastest correct (+100), p2 slower correct (+60), everyone else 0 this round.
         scores: SCORES.map(e => ({ ...e, delta: STEAL_DELTAS[e.peerId] ?? 0 })),
-        steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] }
+        steal: {
+          active: false,
+          stealPeers: [],
+          deadlineTs: null,
+          armedTs: null,
+          armed: false,
+          answeredPeers: []
+        }
       }),
       qr: null,
       code: "TRIV1234",
@@ -867,7 +911,14 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
         question: QUESTION_LONG,
         reveal: REVEAL_STOLEN,
         scores: SCORES.map(e => ({ ...e, delta: STEAL_DELTAS[e.peerId] ?? 0 })),
-        steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] }
+        steal: {
+          active: false,
+          stealPeers: [],
+          deadlineTs: null,
+          armedTs: null,
+          armed: false,
+          answeredPeers: []
+        }
       }),
       qr: null,
       code: "TRIV1234",
@@ -885,7 +936,14 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
         question: QUESTION_FLAG,
         reveal: REVEAL_STOLEN,
         scores: SCORES.map(e => ({ ...e, delta: STEAL_DELTAS[e.peerId] ?? 0 })),
-        steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] }
+        steal: {
+          active: false,
+          stealPeers: [],
+          deadlineTs: null,
+          armedTs: null,
+          armed: false,
+          answeredPeers: []
+        }
       }),
       qr: null,
       code: "TRIV1234",
@@ -983,7 +1041,14 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
   return {
     s: triviaState(matchPhase, null, {
       reveal: phase === "reveal" ? REVEAL_CORRECT : REVEAL_WRONG,
-      steal: { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] }
+      steal: {
+        active: false,
+        stealPeers: [],
+        deadlineTs: null,
+        armedTs: null,
+        armed: false,
+        answeredPeers: []
+      }
     }),
     qr: null,
     code: "TRIV1234",
@@ -1198,6 +1263,7 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
           deadlineTs: FIXED_NOW + 6_000,
           // Already armed (lead-in over): the grid is tappable and the window is running.
           armedTs: FIXED_NOW - 100,
+          armed: true,
           answeredPeers: ["p3"]
         }
       }),
@@ -1229,6 +1295,81 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
           stealPeers: ["p2", "p3", "p4", "p5"],
           deadlineTs: FIXED_NOW + 8_800,
           armedTs: FIXED_NOW + 800,
+          armed: false,
+          answeredPeers: []
+        }
+      }),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      joinToken: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: false,
+      connection: "ok"
+    };
+  }
+
+  // REGRESSION FIXTURE — the clock-skew fast-tap bug: `armedTs` is 5s in the PAST (the lead-in is over
+  // on ANY device's clock, however skewed) but the host-authoritative `armed` boolean is still `false`
+  // (the host clock tick that flips it hasn't run yet — e.g. the tick interval simply hasn't landed).
+  // `arming` MUST gate on `!s.steal.armed` alone: the OLD code (`now < armedTs`) would read `now` (5_000
+  // ahead of armedTs) and compute `arming = false` — grid ENABLED, reproducing "tap fast → the host
+  // silently drops it because ITS clock/armed state hadn't caught up". The fix must render DISABLED here.
+  if (phase === "stealClockSkew") {
+    return {
+      s: triviaState("question", "p2", {
+        question: {
+          ...QUESTION,
+          answeringPeer: "p1",
+          mode: "steal",
+          deadlineTs: FIXED_NOW + 6_000
+        },
+        steal: {
+          active: true,
+          stealPeers: ["p2", "p3", "p4", "p5"],
+          deadlineTs: FIXED_NOW + 6_000,
+          // In the past on ANY clock — the OLD wall-clock gate would already read this as "unlocked".
+          armedTs: FIXED_NOW - 5_000,
+          // The host has NOT armed it yet — the fixed gate must keep the grid disabled regardless.
+          armed: false,
+          answeredPeers: []
+        }
+      }),
+      now: FIXED_NOW,
+      code: "TRIV1234",
+      joinedProfile: null,
+      joinToken: null,
+      lockedSlot: null,
+      lockedQid: null,
+      leaving: false,
+      left: false,
+      connection: "ok"
+    };
+  }
+
+  // Mirror of `stealClockSkew`: `armedTs` is in the FUTURE (the cosmetic "get ready" countdown would
+  // still show seconds remaining) but the host has ALREADY armed it (`armed: true`) — the boolean wins
+  // and the grid must be ENABLED. Proves the gate tracks `armed` in both directions, not just the
+  // direction the pre-existing `stealLeadIn`/`stealAnswer` fixtures happen to agree on.
+  if (phase === "stealArmedEarly") {
+    return {
+      s: triviaState("question", "p2", {
+        question: {
+          ...QUESTION,
+          answeringPeer: "p1",
+          mode: "steal",
+          deadlineTs: FIXED_NOW + 8_800
+        },
+        steal: {
+          active: true,
+          stealPeers: ["p2", "p3", "p4", "p5"],
+          deadlineTs: FIXED_NOW + 8_800,
+          // Still in the future — the OLD wall-clock gate would read this as "still arming".
+          armedTs: FIXED_NOW + 800,
+          // The host has already armed it — the fix must enable the grid regardless of armedTs.
+          armed: true,
           answeredPeers: []
         }
       }),

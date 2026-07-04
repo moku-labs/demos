@@ -51,6 +51,7 @@ export function makeIdleSteal(): StealSlice {
     deadlineTs: null,
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell (armedTs null, not undefined)
     armedTs: null,
+    armed: false,
     answeredPeers: []
   };
 }

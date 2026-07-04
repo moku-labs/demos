@@ -144,6 +144,12 @@ export type StealView = {
   stealPeers: PeerId[];
   deadlineTs: number | null;
   armedTs: number | null;
+  /**
+   * Host-authoritative fair-start gate: the phone enables answer taps ONLY when this is `true` (the host
+   * flips it when the lead-in expires) — never on a compare of `armedTs` against the phone's own clock,
+   * which drifts from the host's and let a fast phone tap into a window the host still rejected.
+   */
+  armed: boolean;
   answeredPeers: PeerId[];
 };
 

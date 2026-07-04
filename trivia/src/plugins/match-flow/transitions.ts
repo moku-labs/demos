@@ -194,6 +194,34 @@ export function resolveQuestionTimeout(
 }
 
 /**
+ * Steal lead-in arm: flip `steal.armed` to `true` once the "get ready" beat (`armedTs`) has passed on
+ * the HOST clock. This is the authoritative fair-start signal — the phone enables answer taps and the
+ * host accepts a steal lock ONLY when this boolean is set, so neither side ever compares `armedTs`
+ * against its own drifting wall clock. A phone whose clock ran ahead can no longer unlock its grid
+ * before the host has armed (the "tap fast → not accepted, wait → fine" bug); by the time it sees
+ * `armed:true`, the host's clock is already past `armedTs`, so any tap it sends is accepted.
+ *
+ * Idempotent + a no-op outside an unarmed-but-active steal, so it is safe to call every question tick.
+ *
+ * @param stage - The stage facade (mutate).
+ * @param steal - The current steal slice (or undefined when none is open).
+ * @param now - The current timestamp (the host clock's tick time).
+ * @example
+ * ```ts
+ * armStealIfDue(stage, steal, Date.now()); // in the question-phase tick, before the timeout check
+ * ```
+ */
+export function armStealIfDue(
+  stage: Pick<StageApi, "mutate">,
+  steal: StealSlice | undefined,
+  now: number
+): void {
+  if (steal?.active !== true || steal.armed === true) return;
+  if (steal.armedTs === null || now < steal.armedTs) return;
+  stage.mutate("steal", draft => (draft.armed === true ? draft : { ...draft, armed: true }));
+}
+
+/**
  * reveal auto-advance: once the reveal hold expires, move to the scoreboard interstitial.
  *
  * @param stage - The stage facade (mutate).
@@ -338,6 +366,7 @@ export function advanceFromFinal(
     deadlineTs: null,
     // eslint-disable-next-line unicorn/no-null -- nullable JSON slice cell
     armedTs: null,
+    armed: false,
     answeredPeers: []
   }));
   stage.mutate("reveal", () => ({

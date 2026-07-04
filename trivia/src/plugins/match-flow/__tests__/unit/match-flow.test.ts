@@ -15,6 +15,7 @@ import {
   rotationPeer
 } from "../../machine";
 import { createMatchFlowState } from "../../state";
+import { armStealIfDue } from "../../transitions";
 import type { MatchSlice, PlayersSlice, QuestionSlice, State, StealSlice } from "../../types";
 
 // ---------------------------------------------------------------------------
@@ -63,6 +64,7 @@ function makeStealSlice(overrides: Partial<StealSlice> = {}): StealSlice {
     deadlineTs: null,
     // eslint-disable-next-line unicorn/no-null
     armedTs: null,
+    armed: false,
     answeredPeers: [],
     ...overrides
   };
@@ -122,6 +124,7 @@ function resolveDeps(overrides: {
   question?: Partial<QuestionSlice>;
   steal?: Partial<StealSlice>;
   players?: PlayersSlice["entries"];
+  stealLeadMs?: number;
   mutate: (ns: string, recipe: (draft: Record<string, unknown>) => Record<string, unknown>) => void;
   award: (peerId: string, opts: AwardOpts) => void;
 }) {
@@ -140,7 +143,7 @@ function resolveDeps(overrides: {
     revealMs: 8000,
     revealFastMs: 4000,
     stealMs: 8000,
-    stealLeadMs: 1000,
+    stealLeadMs: overrides.stealLeadMs ?? 1000,
     stealSpeedTiers: SPEED_TIERS
   };
 }
@@ -270,6 +273,9 @@ describe("resolveAnswer — answer mode", () => {
     expect(typeof steal?.result.armedTs).toBe("number");
     // The window starts only AFTER the lead-in (deadline is later than armedTs).
     expect(steal?.result.deadlineTs as number).toBeGreaterThan(steal?.result.armedTs as number);
+    // The steal opens NOT armed: the grid is disabled until the host clock flips `armed` at the
+    // lead-in — the structural fair-start gate both phone + host key on (no wall-clock skew race).
+    expect(steal?.result.armed).toBe(false);
     expect(steal?.result.answeredPeers).toEqual([]);
 
     // Question republished in steal mode; the active player stays the answeringPeer.
@@ -281,6 +287,27 @@ describe("resolveAnswer — answer mode", () => {
     expect(calls.find(c => c.ns === "reveal")).toBeUndefined();
     expect(calls.find(c => c.ns === "match")).toBeUndefined();
     expect(scoring.award).not.toHaveBeenCalled();
+  });
+
+  it("a zero lead-in opens the steal already armed (no dead beat to wait through)", () => {
+    const state = createMatchFlowState();
+    const { mutate, calls } = makeMockMutate();
+
+    resolveAnswer(
+      resolveDeps({
+        state,
+        answerer: "p1",
+        correct: false,
+        pickedSlot: 1,
+        stealLeadMs: 0,
+        mutate,
+        award: vi.fn()
+      })
+    );
+
+    // With no lead-in, the grid is live immediately — `armed:true` on open (config-driven; real play
+    // uses stealLeadMs > 0 so it opens disabled and the clock arms it).
+    expect(calls.find(c => c.ns === "steal")?.result.armed).toBe(true);
   });
 
   it("active-timeout → opens the steal, activePick stays null", () => {
@@ -801,5 +828,54 @@ describe("createMatchFlowHandlers — connectivity recovery", () => {
   it("does NOT expose a network-warning handler", () => {
     const { hooks } = makeRecoveryDeps({ match: { paused: false } });
     expect("room:network-warning" in hooks).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// armStealIfDue — the steal fair-start gate (regression: the fast-tap-during-steal drop)
+// ---------------------------------------------------------------------------
+
+/**
+ * Drive `armStealIfDue` with a mock stage and return the mutate calls it made (empty = no-op). The arm
+ * signal is authoritative: the host clock flips `steal.armed` when the lead-in passes, and BOTH the phone
+ * (enable taps) and the host (accept a lock) gate on this boolean — never a wall-clock compare against
+ * `armedTs`, which each device raced with its own drifting clock (a phone clock running ahead unlocked its
+ * grid early and the host silently dropped the tap: the "tap fast → not accepted" bug).
+ *
+ * @param steal - The steal slice to feed the transition.
+ * @param now - The host-clock tick time.
+ * @returns The `mutate` calls the transition made (empty array when it was a no-op).
+ * @example
+ * ```ts
+ * expect(runArm(makeStealSlice({ active: true, armedTs: 1000, armed: false }), 1000)).toHaveLength(1);
+ * ```
+ */
+function runArm(steal: StealSlice, now: number): MutateResult[] {
+  const { mutate, calls } = makeMockMutate({ steal: { ...steal } });
+  armStealIfDue({ mutate } as unknown as Parameters<typeof armStealIfDue>[0], steal, now);
+  return calls;
+}
+
+describe("armStealIfDue (steal fair-start gate)", () => {
+  it("flips armed:true once the lead-in has passed (now >= armedTs)", () => {
+    const steal = makeStealSlice({ active: true, armedTs: 1000, armed: false, stealPeers: ["p2"] });
+    const calls = runArm(steal, 1000);
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.result.armed).toBe(true);
+  });
+
+  it("does NOT arm before the lead-in passes (now < armedTs) — the grid stays disabled", () => {
+    const steal = makeStealSlice({ active: true, armedTs: 1000, armed: false, stealPeers: ["p2"] });
+    expect(runArm(steal, 999)).toEqual([]);
+  });
+
+  it("is a no-op when already armed (idempotent across every question tick)", () => {
+    const steal = makeStealSlice({ active: true, armedTs: 1000, armed: true, stealPeers: ["p2"] });
+    expect(runArm(steal, 5000)).toEqual([]);
+  });
+
+  it("is a no-op for an inactive/closed steal", () => {
+    const steal = makeStealSlice({ active: false, armedTs: 1000, armed: false });
+    expect(runArm(steal, 5000)).toEqual([]);
   });
 });

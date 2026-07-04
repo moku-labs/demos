@@ -154,8 +154,10 @@ function StealStrip({ s, now }: { s: TriviaState; now: number }) {
     .filter((p): p is PlayerProfile => p !== undefined);
   // Lead-in gate: the grid on every phone is disabled until `armedTs`, so the strip counts that "get
   // ready" beat down first, then flips to the live steal window (fairness — no device answers first).
+  // Gate on the host-authoritative `armed` boolean (the strip only mounts while the steal is active, so
+  // `!armed` === still in the lead-in) — consistent with the phone + host, not a local wall-clock compare.
   const armedTs = s.steal.armedTs;
-  const arming = armedTs !== null && now < armedTs;
+  const arming = !s.steal.armed;
   const leadSecs = armedTs !== null ? Math.max(0, Math.ceil((armedTs - now) / 1000)) : 0;
   const secs = secondsLeft(s.steal.deadlineTs, now);
   const stealPct = Math.max(0, Math.min(100, (secs / (TRIVIA.timers.stealMs / 1000)) * 100));

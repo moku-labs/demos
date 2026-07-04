@@ -96,7 +96,14 @@ function defaultReveal(): RevealView {
  * ```
  */
 function defaultSteal(): StealView {
-  return { active: false, stealPeers: [], deadlineTs: null, armedTs: null, answeredPeers: [] };
+  return {
+    active: false,
+    stealPeers: [],
+    deadlineTs: null,
+    armedTs: null,
+    armed: false,
+    answeredPeers: []
+  };
 }
 
 /**
@@ -196,7 +203,14 @@ export function mergeState(read: SliceReader, self: PeerId | null | undefined): 
       stealResults: reveal.stealResults ?? [],
       answerMs: reveal.answerMs ?? null
     },
-    steal: { ...steal, answeredPeers: steal.answeredPeers ?? [], armedTs: steal.armedTs ?? null },
+    steal: {
+      ...steal,
+      answeredPeers: steal.answeredPeers ?? [],
+      armedTs: steal.armedTs ?? null,
+      // Default `armed` to false (an older replica / pre-migration frame missing it reads as "not yet
+      // armed" — the grid stays disabled, the safe direction; the host always sets it in live play).
+      armed: steal.armed ?? false
+    },
     scores,
     bank: (read("bank") as unknown as BankView | undefined) ?? defaultBank(),
     categories,

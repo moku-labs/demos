@@ -50,8 +50,11 @@ export function PhoneAnswer({
   // Pre-steal lead-in: the grid renders on EVERY eligible phone at the same time but stays disabled until
   // `armedTs`, so no device (the host's included) can tap before the others have rendered. It unlocks for
   // everyone together, then speed decides the reward.
+  // `arming` gates on the host-authoritative `armed` boolean, NOT a compare of `armedTs` against this
+  // phone's own clock (which drifts from the host's and let a fast phone tap into a window the host still
+  // rejected — the "tap fast → not accepted" bug). `armedTs` drives only the cosmetic countdown below.
   const armedTs = s.steal.armedTs;
-  const arming = isSteal && armedTs !== null && now < armedTs;
+  const arming = isSteal && !s.steal.armed;
   const leadSecs = armedTs !== null ? Math.max(0, Math.ceil((armedTs - now) / 1000)) : 0;
   const totalMs = isSteal ? TRIVIA.timers.stealMs : TRIVIA.timers.answerMs;
   const pct = Math.max(0, Math.min(100, ((question.deadlineTs - now) / totalMs) * 100));

@@ -26,6 +26,7 @@ import {
   advanceFromReveal,
   advanceFromScoreboard,
   advanceRoundIntro,
+  armStealIfDue,
   resolveQuestionTimeout
 } from "./transitions";
 import type { Config, MatchSlice, PlayersSlice, QuestionSlice, State, StealSlice } from "./types";
@@ -83,6 +84,9 @@ function runTick(deps: ClockDeps): void {
   } else if (phase === "categoryReveal" && deadlinePassed) {
     advanceFromCategoryReveal(stage, state, config.answerMs, scoring);
   } else if (phase === "question" && question) {
+    // Flip the steal's authoritative `armed` gate once the lead-in passes (before the timeout check, so
+    // an armed steal is immediately lockable this same tick). The host + phone both gate on this boolean.
+    armStealIfDue(stage, steal, now);
     resolveQuestionTimeout(
       { stage, config, state, questionBank, scoring, readSlice },
       match,
