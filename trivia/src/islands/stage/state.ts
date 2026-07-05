@@ -22,6 +22,8 @@ export function initState(): StageState {
     code: "",
     now: Date.now(),
     // eslint-disable-next-line unicorn/no-null -- end stats are null until the match reaches final
-    endStats: null
+    endStats: null,
+    // eslint-disable-next-line unicorn/no-null -- null until `/build-info.json` is fetched in onMount
+    buildInfo: null
   };
 }

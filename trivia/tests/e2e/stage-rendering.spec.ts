@@ -174,14 +174,20 @@ test.describe("TV Stage — visual baselines", () => {
     // Small wait for any transition to settle
     await page.waitForTimeout(500);
 
+    // The build-version badge loads async (fetched after the room boots), so wait for it — its masked
+    // region must be consistently present in the baseline (it's masked because the git commit changes).
+    await expect(page.locator("[data-build-badge]")).toBeVisible({ timeout: 10_000 });
+
     await expect(page).toHaveScreenshot("tv-lobby.png", {
       fullPage: false,
       animations: "disabled",
       // Mask dynamic elements: the room code badge changes every run (different room ID),
-      // and the QR block encodes the room code — both must be masked to get a stable baseline.
+      // the QR block encodes the room code, and the build-version badge shows the live git commit
+      // (which changes every build) — all must be masked to get a stable baseline.
       mask: [
         page.locator("[data-component='room-code-badge']"),
-        page.locator("[data-component='qr-block']")
+        page.locator("[data-component='qr-block']"),
+        page.locator("[data-build-badge]")
       ]
     });
   });

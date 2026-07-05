@@ -6,6 +6,7 @@
 import type { QrMatrix } from "@moku-labs/room";
 import type { JSX } from "preact";
 import { TRIVIA } from "../config";
+import type { BuildInfo } from "../lib/build-info";
 import type { TriviaState } from "../lib/types";
 import { PlayerTile } from "./PlayerTile";
 import { QrBlock } from "./QrBlock";
@@ -19,6 +20,11 @@ export type StageLobbyProps = {
   qr: QrMatrix | null;
   /** The room code (from the descriptor). */
   code: string;
+  /**
+   * The running build's git identity (commit + subject + date), shown as a small corner badge so the
+   * deployed version is identifiable at a glance. Omitted/`null` → the badge is hidden.
+   */
+  buildInfo?: BuildInfo | null | undefined;
   /** Regenerate the room (new code + QR). When omitted, the reset control is hidden. */
   onReset?: () => void;
 };
@@ -33,7 +39,7 @@ export type StageLobbyProps = {
  * <StageLobby s={s} qr={qr} code={code} onReset={resetRoom} />
  * ```
  */
-export function StageLobby({ s, qr, code, onReset }: StageLobbyProps): JSX.Element {
+export function StageLobby({ s, qr, code, buildInfo, onReset }: StageLobbyProps): JSX.Element {
   const joined = s.players.filter(p => p.connected).length;
   const slots = Math.max(TRIVIA.players.max, s.players.length);
   const empties = Math.max(0, slots - s.players.length);
@@ -73,6 +79,13 @@ export function StageLobby({ s, qr, code, onReset }: StageLobbyProps): JSX.Eleme
           {joined} / {TRIVIA.players.max} players joined · Waiting for host to start…
         </p>
       </div>
+      {buildInfo ? (
+        <footer data-build-badge>
+          <code data-build-commit>{buildInfo.commit}</code>
+          {buildInfo.subject ? <span data-build-msg>{buildInfo.subject}</span> : null}
+          {buildInfo.date ? <time data-build-date>{buildInfo.date.slice(0, 10)}</time> : null}
+        </footer>
+      ) : null}
     </div>
   );
 }

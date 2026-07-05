@@ -5,6 +5,7 @@
  */
 @scope ([data-component="stage-lobby"]) {
   :scope {
+    position: relative;
     display: flex;
     flex: 1;
     min-height: 0;
@@ -14,6 +15,45 @@
     /* Collapse to vertical stack on very small viewports (< 540px) — the TV is designed for 16:9 but
        the code can also be opened on a small browser tab or laptop. Stacking keeps it usable. */
     flex-wrap: wrap;
+  }
+
+  /* Build-version footer (corner strip): which build this device is running, at a glance. Deliberately
+     faint + non-interactive so it never competes with the room code / QR, but readable up close. */
+  [data-build-badge] {
+    position: absolute;
+    right: 0;
+    bottom: calc(-1 * var(--space-2));
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    max-width: min(70%, 720px);
+    color: var(--ink-dim);
+    font-family: var(--font-body);
+    font-size: 12px;
+    line-height: 1.4;
+    opacity: 0.5;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  [data-build-commit] {
+    flex: none;
+    font-family: var(--font-mono, ui-monospace, SFMono-Regular, "SF Mono", monospace);
+    font-weight: 700;
+  }
+
+  /* The commit subject can be long — clip it with an ellipsis so the badge never wraps or pushes layout. */
+  [data-build-msg] {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  [data-build-date] {
+    flex: none;
+    opacity: 0.75;
   }
 
   /* On narrow viewports let the join column center itself and fill available width. */

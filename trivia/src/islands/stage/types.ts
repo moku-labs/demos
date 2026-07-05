@@ -4,6 +4,7 @@
  */
 import type { QrMatrix } from "@moku-labs/room";
 import type { Spa } from "@moku-labs/web/browser";
+import type { BuildInfo } from "../../lib/build-info";
 import type { TriviaState } from "../../lib/types";
 import type { EndStats } from "../../plugins/scoring/types";
 
@@ -22,6 +23,12 @@ export type StageState = {
   now: number;
   /** End-of-match stats for the podium (host-read; `null` until final). */
   endStats: EndStats | null;
+  /**
+   * The running build's git identity (commit + subject + date), fetched once from `/build-info.json` for
+   * the lobby version badge. `null`/absent until fetched, or when the build emitted no info. Optional so
+   * the e2e fixtures set it only for the lobby screen.
+   */
+  buildInfo?: BuildInfo | null;
 };
 
 /** The stage island context (typed per-instance state). */

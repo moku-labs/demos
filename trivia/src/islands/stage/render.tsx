@@ -53,9 +53,10 @@ function endCountdownSeconds(s: TriviaState, now: number): number {
 
 /** Pick the screen body component for the current phase. */
 function screenFor(state: StageState): JSX.Element {
-  const { s, now, qr, code, endStats } = state;
+  const { s, now, qr, code, endStats, buildInfo } = state;
   const phase = s.match.phase;
-  if (phase === "lobby") return <StageLobby s={s} qr={qr} code={code} onReset={resetRoom} />;
+  if (phase === "lobby")
+    return <StageLobby s={s} qr={qr} code={code} buildInfo={buildInfo} onReset={resetRoom} />;
   if (phase === "languageVote") return <StageLanguage s={s} now={now} />;
   if (phase === "categoryPick" || phase === "categoryReveal") return <StageCategory s={s} />;
   if (phase === "question") return <StageQuestion s={s} now={now} revealing={false} />;
@@ -72,7 +73,7 @@ function screenFor(state: StageState): JSX.Element {
       </Fragment>
     );
   }
-  return <StageLobby s={s} qr={qr} code={code} onReset={resetRoom} />;
+  return <StageLobby s={s} qr={qr} code={code} buildInfo={buildInfo} onReset={resetRoom} />;
 }
 
 /**

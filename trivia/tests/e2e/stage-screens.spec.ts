@@ -94,6 +94,13 @@ test.describe("TV Stage — lobby (A1)", () => {
     await expect(page.locator("[data-lobby-players]")).toBeVisible();
     // Fixture: 3 players joined (player-tile components, excluding empty slots)
     await expect(page.locator("[data-component='player-tile']:not([data-empty])")).toHaveCount(3);
+    // Build-version badge: the fixture's git identity (commit + subject + short date) — so the running
+    // build is identifiable at a glance on the lobby.
+    const badge = page.locator("[data-build-badge]");
+    await expect(badge).toBeVisible();
+    await expect(badge.locator("[data-build-commit]")).toHaveText("abc1234");
+    await expect(badge.locator("[data-build-msg]")).toContainText("steal lead-in");
+    await expect(badge.locator("[data-build-date]")).toHaveText("2026-07-05");
   });
 });
 

@@ -10,12 +10,18 @@
  * `wrangler.jsonc`'s `assets.directory` points at this `dist/client`. Run via `bun run build`.
  */
 import { app } from "../src/app";
+import { gitBuildInfo } from "./lib/build-info";
 import { readBankShards } from "./lib/bank-shards";
 
 const result = await app.cli.build();
 const bank = await app.collection.write(await readBankShards(), { outDir: result.outDir });
 
-const summary = `web client → ${result.outDir} · ${result.pageCount} page(s) · ${Math.round(result.durationMs)}ms · bank ${bank.fileCount} shards`;
+// Emit the git build identity the TV lobby fetches (`/build-info.json`) — so a deployed device's exact
+// build is identifiable at a glance. A static asset alongside the bank shards; regenerated every build.
+const build = gitBuildInfo();
+await Bun.write(`${result.outDir}/build-info.json`, JSON.stringify(build));
+
+const summary = `web client → ${result.outDir} · ${result.pageCount} page(s) · ${Math.round(result.durationMs)}ms · bank ${bank.fileCount} shards · build ${build.commit}`;
 
 // eslint-disable-next-line no-console -- build-script progress feedback
 console.log(summary); // @log-sink -- node-only CLI progress feedback

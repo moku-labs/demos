@@ -2,6 +2,7 @@
  * @file stage island — onMount: boot the room stage role and wire the live subscriptions. DOM glue only;
  * the host clock + all authoritative game logic live in the room plugins — this island reads + displays.
  */
+import { fetchBuildInfo } from "../../lib/build-info";
 import { qr, startStage, stats, subscribe } from "../../lib/room";
 import { startSoundDirector } from "../../lib/sound";
 import type { StageContext } from "./types";
@@ -40,4 +41,10 @@ export async function startStageIsland(ctx: StageContext): Promise<void> {
   } catch {
     // A boot/connect failure surfaces through the reconnect-strip island.
   }
+
+  // Fetch the running build's git identity for the lobby version badge — AFTER the room boot so it never
+  // delays it. `fetchBuildInfo` resolves `null` (never rejects) if `/build-info.json` is absent/unreachable,
+  // so the badge simply stays hidden and this never throws.
+  const buildInfo = await fetchBuildInfo();
+  if (buildInfo) ctx.set({ buildInfo });
 }

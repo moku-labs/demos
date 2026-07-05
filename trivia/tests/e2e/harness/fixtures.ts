@@ -701,7 +701,13 @@ export function stageFixtureState(phase: StagePhaseKey): HarnessStageState {
       qr: null,
       code: "TRIV1234",
       now: FIXED_NOW,
-      endStats: null
+      endStats: null,
+      // A deterministic build identity so the corner version badge renders in the baseline.
+      buildInfo: {
+        commit: "abc1234",
+        subject: "fix(trivia): steal lead-in — phone times the beat locally",
+        date: "2026-07-05T12:00:00Z"
+      }
     };
   }
 

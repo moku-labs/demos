@@ -13,6 +13,7 @@
  */
 import { app as web } from "../src/app";
 import { server } from "../src/server";
+import { gitBuildInfo } from "./lib/build-info";
 import { readBankShards } from "./lib/bank-shards";
 
 // Dev port + stage come straight from the CLI args — explicit, no hidden framework resolution.
@@ -31,6 +32,8 @@ await server.cli.dev({
   webBuild: async () => {
     const result = await web.cli.build();
     await web.collection.write(await readBankShards(), { outDir: result.outDir });
+    // Emit the git build identity the lobby fetches (`/build-info.json`) — same as production build.
+    await Bun.write(`${result.outDir}/build-info.json`, JSON.stringify(gitBuildInfo()));
     return result;
   },
   onChange: changes => web.cli.update(changes)
