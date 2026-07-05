@@ -40,7 +40,7 @@ let tick: ReturnType<typeof setInterval> | undefined;
 
 /** Deps closed over by the clock interval, built inline from ctx in index.ts. */
 export type ClockDeps = {
-  stage: Pick<StageApi, "mutate" | "roster">;
+  stage: Pick<StageApi, "mutate" | "roster" | "broadcast">;
   config: Config;
   state: State;
   questionBank: QuestionBankDeps;
@@ -85,7 +85,8 @@ function runTick(deps: ClockDeps): void {
     advanceFromCategoryReveal(stage, state, config.answerMs, scoring);
   } else if (phase === "question" && question) {
     // Flip the steal's authoritative `armed` gate once the lead-in passes (before the timeout check, so
-    // an armed steal is immediately lockable this same tick). The host + phone both gate on this boolean.
+    // an armed steal is immediately lockable this same tick), then re-baseline replicas while a stealer
+    // is still unanswered so a phone that dropped the lone `armed:true` frame recovers without a reload.
     armStealIfDue(stage, steal, now);
     resolveQuestionTimeout(
       { stage, config, state, questionBank, scoring, readSlice },

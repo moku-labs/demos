@@ -836,46 +836,95 @@ describe("createMatchFlowHandlers — connectivity recovery", () => {
 // ---------------------------------------------------------------------------
 
 /**
- * Drive `armStealIfDue` with a mock stage and return the mutate calls it made (empty = no-op). The arm
- * signal is authoritative: the host clock flips `steal.armed` when the lead-in passes, and BOTH the phone
- * (enable taps) and the host (accept a lock) gate on this boolean — never a wall-clock compare against
- * `armedTs`, which each device raced with its own drifting clock (a phone clock running ahead unlocked its
- * grid early and the host silently dropped the tap: the "tap fast → not accepted" bug).
+ * Drive `armStealIfDue` with a mock stage and return the `mutate` calls + `broadcast` (re-baseline) count.
+ * Two jobs are under test: the authoritative host clock flips `steal.armed` when the lead-in passes (BOTH
+ * the phone and the host gate on this boolean, never a wall-clock compare against `armedTs`, the "tap fast
+ * → not accepted" skew bug), AND — while an eligible stealer is still unanswered — it re-baselines every
+ * replica so a phone that dropped the lone `armed:true` delta recovers instead of sitting stranded on the
+ * disabled "get ready" grid until a reload (the reported steal-lock regression).
  *
  * @param steal - The steal slice to feed the transition.
  * @param now - The host-clock tick time.
- * @returns The `mutate` calls the transition made (empty array when it was a no-op).
+ * @returns The `mutate` calls the transition made + how many times it re-baselined (`broadcast`).
  * @example
  * ```ts
- * expect(runArm(makeStealSlice({ active: true, armedTs: 1000, armed: false }), 1000)).toHaveLength(1);
+ * const { calls, broadcasts } = runArm(makeStealSlice({ active: true, armedTs: 1000, armed: false }), 1000);
  * ```
  */
-function runArm(steal: StealSlice, now: number): MutateResult[] {
+function runArm(steal: StealSlice, now: number): { calls: MutateResult[]; broadcasts: number } {
   const { mutate, calls } = makeMockMutate({ steal: { ...steal } });
-  armStealIfDue({ mutate } as unknown as Parameters<typeof armStealIfDue>[0], steal, now);
-  return calls;
+  let broadcasts = 0;
+  const broadcast = (): void => {
+    broadcasts += 1;
+  };
+  armStealIfDue(
+    { mutate, broadcast } as unknown as Parameters<typeof armStealIfDue>[0],
+    steal,
+    now
+  );
+  return { calls, broadcasts };
 }
 
-describe("armStealIfDue (steal fair-start gate)", () => {
-  it("flips armed:true once the lead-in has passed (now >= armedTs)", () => {
+describe("armStealIfDue (steal fair-start gate + delivery heal)", () => {
+  it("flips armed:true AND re-baselines once the lead-in has passed (now >= armedTs)", () => {
     const steal = makeStealSlice({ active: true, armedTs: 1000, armed: false, stealPeers: ["p2"] });
-    const calls = runArm(steal, 1000);
+    const { calls, broadcasts } = runArm(steal, 1000);
     expect(calls).toHaveLength(1);
     expect(calls[0]?.result.armed).toBe(true);
+    // The flip is a lone sync delta; the same tick re-baselines so a phone that drops it still converges.
+    expect(broadcasts).toBe(1);
   });
 
-  it("does NOT arm before the lead-in passes (now < armedTs) — the grid stays disabled", () => {
+  it("does NOT arm or re-baseline before the lead-in passes (now < armedTs) — the grid stays disabled", () => {
     const steal = makeStealSlice({ active: true, armedTs: 1000, armed: false, stealPeers: ["p2"] });
-    expect(runArm(steal, 999)).toEqual([]);
+    const { calls, broadcasts } = runArm(steal, 999);
+    expect(calls).toEqual([]);
+    expect(broadcasts).toBe(0);
   });
 
-  it("is a no-op when already armed (idempotent across every question tick)", () => {
-    const steal = makeStealSlice({ active: true, armedTs: 1000, armed: true, stealPeers: ["p2"] });
-    expect(runArm(steal, 5000)).toEqual([]);
+  it("re-baselines every later tick while a stealer is unanswered, WITHOUT re-flipping armed (delivery heal)", () => {
+    // Already armed, lead-in long past: no re-mutate (idempotent), but it must keep re-baselining so a
+    // stealer whose replica missed the terminal armed:true delta recovers — the reported reload-to-fix bug.
+    const steal = makeStealSlice({
+      active: true,
+      armedTs: 1000,
+      armed: true,
+      stealPeers: ["p2"],
+      answeredPeers: []
+    });
+    const { calls, broadcasts } = runArm(steal, 5000);
+    expect(calls).toEqual([]);
+    expect(broadcasts).toBe(1);
   });
 
-  it("is a no-op for an inactive/closed steal", () => {
+  it("stops re-baselining once every eligible stealer has answered (self-terminating)", () => {
+    const steal = makeStealSlice({
+      active: true,
+      armedTs: 1000,
+      armed: true,
+      stealPeers: ["p2"],
+      answeredPeers: ["p2"]
+    });
+    const { calls, broadcasts } = runArm(steal, 5000);
+    expect(calls).toEqual([]);
+    expect(broadcasts).toBe(0);
+  });
+
+  it("still re-baselines while only SOME eligible stealers have answered", () => {
+    const steal = makeStealSlice({
+      active: true,
+      armedTs: 1000,
+      armed: true,
+      stealPeers: ["p2", "p3"],
+      answeredPeers: ["p3"]
+    });
+    expect(runArm(steal, 5000).broadcasts).toBe(1);
+  });
+
+  it("is a no-op (no arm, no re-baseline) for an inactive/closed steal", () => {
     const steal = makeStealSlice({ active: false, armedTs: 1000, armed: false });
-    expect(runArm(steal, 5000)).toEqual([]);
+    const { calls, broadcasts } = runArm(steal, 5000);
+    expect(calls).toEqual([]);
+    expect(broadcasts).toBe(0);
   });
 });

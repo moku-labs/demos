@@ -194,16 +194,27 @@ export function resolveQuestionTimeout(
 }
 
 /**
- * Steal lead-in arm: flip `steal.armed` to `true` once the "get ready" beat (`armedTs`) has passed on
- * the HOST clock. This is the authoritative fair-start signal — the phone enables answer taps and the
- * host accepts a steal lock ONLY when this boolean is set, so neither side ever compares `armedTs`
- * against its own drifting wall clock. A phone whose clock ran ahead can no longer unlock its grid
- * before the host has armed (the "tap fast → not accepted, wait → fine" bug); by the time it sees
- * `armed:true`, the host's clock is already past `armedTs`, so any tap it sends is accepted.
+ * Steal lead-in arm + delivery heal — two host-clock jobs during an open steal, both keyed to `armedTs`:
  *
- * Idempotent + a no-op outside an unarmed-but-active steal, so it is safe to call every question tick.
+ * 1. **Arm** (once): flip `steal.armed` to `true` when the "get ready" beat (`armedTs`) passes on the
+ *    HOST clock. This is the authoritative fair-start signal — the phone enables answer taps and the host
+ *    accepts a steal lock ONLY when this boolean is set, so neither side ever compares `armedTs` against
+ *    its own drifting wall clock (the "tap fast → not accepted, wait → fine" skew bug). By the time a
+ *    phone sees `armed:true`, the host's clock is already past `armedTs`, so any tap it sends is accepted.
  *
- * @param stage - The stage facade (mutate).
+ * 2. **Re-deliver** (every tick while a stealer is still unanswered): force a full authoritative snapshot
+ *    re-baseline (`stage.broadcast()`). The arm above is a LONE sync delta, and when the sole stealer is
+ *    stuck no later steal delta ever follows to reveal the gap — so a replica that dropped that one frame
+ *    never auto-resyncs (contracts §4.3 resync fires only on a DETECTED gap) and the phone has no manual
+ *    resync API. Without this, a single lost `armed:true` frame strands that phone on the disabled "get
+ *    ready" grid until a manual reload (the reported "steal locks before I choose, reload fixes it" bug —
+ *    a regression the boolean gate introduced by replacing the phone's self-sufficient wall-clock unlock).
+ *    The re-baseline reconverges the replica within a tick and self-terminates once every eligible stealer
+ *    is in `answeredPeers` (they demonstrably hold the armed state) or the steal closes (`active:false`).
+ *
+ * Safe to call every question tick: a no-op outside an active, lead-in-elapsed steal; the flip is idempotent.
+ *
+ * @param stage - The stage facade (`mutate` to flip the gate, `broadcast` to re-baseline replicas).
  * @param steal - The current steal slice (or undefined when none is open).
  * @param now - The current timestamp (the host clock's tick time).
  * @example
@@ -212,13 +223,22 @@ export function resolveQuestionTimeout(
  * ```
  */
 export function armStealIfDue(
-  stage: Pick<StageApi, "mutate">,
+  stage: Pick<StageApi, "mutate" | "broadcast">,
   steal: StealSlice | undefined,
   now: number
 ): void {
-  if (steal?.active !== true || steal.armed === true) return;
+  // Only during an OPEN steal whose "get ready" lead-in has elapsed on the host clock.
+  if (steal?.active !== true) return;
   if (steal.armedTs === null || now < steal.armedTs) return;
-  stage.mutate("steal", draft => (draft.armed === true ? draft : { ...draft, armed: true }));
+
+  // Flip the authoritative fair-start gate once (idempotent — no re-mutate when already armed).
+  if (steal.armed !== true) {
+    stage.mutate("steal", draft => (draft.armed === true ? draft : { ...draft, armed: true }));
+  }
+
+  // Re-baseline every replica while an eligible stealer still hasn't answered, so a phone that missed the
+  // single `armed:true` delta converges instead of sitting stranded on the disabled grid until a reload.
+  if (steal.answeredPeers.length < steal.stealPeers.length) stage.broadcast();
 }
 
 /**
