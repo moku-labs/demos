@@ -16,7 +16,11 @@ import type { AnswerButtonProps } from "./types";
  * @param props.shape - The slot shape glyph (▲◆●■).
  * @param props.hex - The fixed slot colour hex (the button fill), passed inline as `--slot`.
  * @param props.state - Post-lock visual state: `idle` (default), `locked` (this pick), `dim` (others).
- * @param props.onPick - Fired once when the player taps the button.
+ * @param props.onPick - Fired once when the player taps the button. Omit to render the tile
+ *   **inert**: with no handler the button is natively `disabled`, so it leaves the tab order and
+ *   reports its unavailable state to assistive tech (WCAG 4.1.2 Name/Role/Value) rather than posing
+ *   as a live button that silently no-ops. Used for the steal lead-in ("arming") and the dimmed
+ *   non-pick tiles after a lock-in.
  * @returns The oversized answer button element.
  * @example
  * ```tsx
@@ -40,6 +44,7 @@ export function AnswerButton({
       data-state={state}
       style={{ "--slot": hex }}
       onClick={onPick}
+      disabled={!onPick}
       aria-label={`Answer ${letter}`}
     >
       <span data-shape aria-hidden="true">

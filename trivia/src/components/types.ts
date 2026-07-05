@@ -185,6 +185,7 @@ export type AnswerButtonProps = {
   hex: string;
   /** Post-lock state: locked (this pick) or dim (the others). */
   state?: "idle" | "locked" | "dim";
+  /** Tap handler. Omit to render the tile inert — it becomes natively `disabled` (WCAG 4.1.2). */
   onPick?: (() => void) | undefined;
 };
 

@@ -32,6 +32,20 @@
     box-shadow: var(--shadow-pressed);
   }
 
+  /* Inert tiles (no `onPick` — the steal lead-in, or a non-picked tile after lock-in) render
+   * natively `disabled`, so they leave the tab order and report their unavailable state to
+   * assistive tech (WCAG 4.1.2). Appearance stays owned entirely by `data-state`, so the browser's
+   * default `:disabled` treatment (greyed fill / not-allowed cursor) is neutralised here. The `dim`
+   * state sets its own faded opacity below, so opacity is only reset on the non-dim (locked) tile. */
+  :scope:disabled {
+    color: #fff;
+    cursor: default;
+  }
+
+  :scope:disabled:not([data-state="dim"]) {
+    opacity: 1;
+  }
+
   [data-shape] {
     font-size: 46px;
     line-height: 1;
