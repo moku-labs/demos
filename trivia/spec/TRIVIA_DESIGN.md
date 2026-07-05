@@ -44,7 +44,7 @@ Rule of thumb: **if it's information for everyone, it lives on the TV. If it's a
 Set at join:
 
 - **Name** (3–12 chars, the player types it).
-- **Color** (auto-assigned from a palette of 5–6 distinct hues; can be swapped if free).
+- **Color** (a palette of 5–6 distinct hues; any is pickable — duplicates are allowed, a shared colour never blocks a join).
 - **Avatar** (pick from a grid of emoji-style icons — animal, fruit, monster, etc.).
 
 This trio (name + color + avatar) is the player's signature in every UI from then on.
@@ -105,10 +105,10 @@ After scanning the QR (or entering the room code on a landing page).
 
 - **Step A — Name:** big input, large keyboard, "What's your name?" One field, one Next button.
 - **Step B — Avatar:** a grid of emoji-style avatars. Tapping one selects it (animated scale + ring). The chosen one floats up to a preview card at the top.
-- **Step C — Color:** a row of color swatches; greyed-out swatches are already taken. Tap to claim.
+- **Step C — Color:** a row of color swatches; every swatch is selectable (colours another player already picked included — sharing a colour is allowed). The default lands on an unused hue so the lobby stays varied, but any colour can be tapped.
 - **Confirm:** the preview card (avatar + name + color background) animates into a "You're in!" state and transitions to the waiting room.
 
-Vibe: fast, three taps, done. No forms, no validation noise. If a name/color clashes, suggest a free one inline.
+Vibe: fast, three taps, done. No forms, no validation noise. Players have full freedom over name, avatar, and colour — duplicates never block a join.
 
 ### 3. Waiting room (Phone)
 

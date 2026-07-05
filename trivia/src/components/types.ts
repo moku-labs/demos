@@ -216,8 +216,12 @@ export type JoinWizardProps = {
   avatars: readonly string[];
   /** Colour choices (name + hex). */
   colors: readonly { name: string; hex: string }[];
-  /** Hexes already taken by other players (greyed, unselectable). */
-  takenColors: readonly string[];
+  /**
+   * Colours already chosen by seated players. Used ONLY to pick a non-colliding default selection so
+   * the lobby stays varied — it never greys out, disables, or blocks a swatch. Every colour stays
+   * selectable, so players are free to share a colour (dupes never block a join).
+   */
+  usedColors: readonly string[];
   /** The room code (shown on the connecting card). */
   roomCode?: string | undefined;
   /**

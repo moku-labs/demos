@@ -26,6 +26,17 @@ export type JoinPhoneOptions = {
    * so headroom here adds no false-green risk.
    */
   connectTimeout?: number;
+  /**
+   * Avatar emoji to tap on wizard step 2 (e.g. `"🦊"`). Omit to keep the pre-selected default. Used by
+   * the full-freedom join test to force two phones onto the SAME avatar and prove a duplicate is allowed.
+   */
+  avatar?: string;
+  /**
+   * Colour NAME to tap on wizard step 3 (the `TRIVIA.playerColors` name, e.g. `"amber"`). Omit to keep
+   * the default (first unused hue). Used to force two phones onto the SAME colour — a duplicate that
+   * must never block a join now that the wizard greys out nothing.
+   */
+  color?: string;
 };
 
 /**
@@ -87,12 +98,23 @@ async function joinPhoneOnce(
 
   if (await nameInput.count()) {
     await nameInput.fill(name);
-    // Three taps of "Next ▸" / "Join Game ▸" (avatar + colour pre-selected). Each click is
-    // time-boxed: Playwright's default actionTimeout is UNLIMITED, so a click on a never-enabled
-    // button would hang the test instead of failing this attempt into joinPhone's recovery re-goto.
-    await phone.locator("button[data-next]").click({ timeout: 15_000 });
-    await phone.locator("button[data-next]").click({ timeout: 15_000 });
-    await phone.locator("button[data-next]").click({ timeout: 15_000 });
+    // Drive the three steps. Each "Next ▸" / "Join Game ▸" click is time-boxed: Playwright's default
+    // actionTimeout is UNLIMITED, so a click on a never-enabled button would hang the test instead of
+    // failing this attempt into joinPhone's recovery re-goto. Avatar + colour are pre-selected unless
+    // options force a specific one (the full-freedom test taps a deliberate duplicate on each phone).
+    await phone.locator("button[data-next]").click({ timeout: 15_000 }); // step 1 → 2
+    if (options.avatar !== undefined) {
+      await phone
+        .locator(`button[data-avatar-cell][aria-label="Avatar ${options.avatar}"]`)
+        .click({ timeout: 15_000 });
+    }
+    await phone.locator("button[data-next]").click({ timeout: 15_000 }); // step 2 → 3
+    if (options.color !== undefined) {
+      await phone
+        .locator(`button[data-swatch][aria-label="Colour ${options.color}"]`)
+        .click({ timeout: 15_000 });
+    }
+    await phone.locator("button[data-next]").click({ timeout: 15_000 }); // step 3 → Join
   }
 
   // Wait for the lobby. Deliberately a plain wait — NOT an in-test Retry-click loop: driving the

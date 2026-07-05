@@ -122,7 +122,7 @@ test.describe("Phone controller — join wizard steps (A9 visual baselines)", ()
       animations: "disabled"
     });
 
-    // Step 3 — colour swatches (first free colour pre-selected; taken ones greyed).
+    // Step 3 — colour swatches (default = first unused hue; every swatch stays selectable, dupes allowed).
     await page.locator("button[data-next]").click();
     await page.waitForSelector("[data-step='color']");
     await settleForShot(page);

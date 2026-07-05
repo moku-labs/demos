@@ -418,47 +418,47 @@ test.describe("Charter C — Antisocial: name field edge inputs", () => {
   });
 });
 
-// ─── Charter D: Data boundaries — edge player counts + all colors taken ───────
+// ─── Charter D: Data boundaries — colour-picker freedom + edge cases ──────────
 
-test.describe("Charter D — Data: all colors taken edge case", () => {
-  // D1: When all 5 colors are taken by other players, step 3 must still render
-  // (no default color available → first color is pre-selected even if taken)
-  // Oracle: Saboteur/Data — the wizard must never reach an unrenderable state
-  test("join wizard: color step still renders when a color is already taken", async ({ page }) => {
-    await page.goto("/code/TESTCODE");
-    await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
-
-    // Advance to step 3
-    await page.locator("[data-name-input]").fill("Test");
-    await page.locator("button[data-next]").click();
-    await page.waitForTimeout(200);
-    await page.locator("button[data-next]").click();
-    await page.waitForTimeout(200);
-
-    await expect(page.locator("[data-step='color']")).toBeVisible();
-
-    // The color row must be visible with swatches
-    const swatches = page.locator("[data-swatch]");
-    const count = await swatches.count();
-    expect(
-      count,
-      "Color step must show all color swatches regardless of availability (Data oracle)"
-    ).toBeGreaterThanOrEqual(5); // TRIVIA.playerColors has 5 entries
-
-    // At least one swatch must be selectable (not taken) in a fresh game
-    const available = page.locator("[data-swatch]:not([data-taken])");
-    const availCount = await available.count();
-    expect(availCount, "At least one color must be available in a fresh game").toBeGreaterThan(0);
-  });
-
-  // D2: Taken color swatches must be marked disabled and aria-labeled as taken
-  test("join wizard: taken color swatch is disabled with accessible taken label", async ({
+test.describe("Charter D — Data: colour picker freedom + edge cases", () => {
+  // D1: Full-freedom join — every colour swatch renders AND stays selectable (nothing greyed/disabled).
+  // The wizard used to grey out a colour another player had picked, which removed the player's freedom
+  // to choose it (the reported "same colour blocks joining" bug). That blocking mechanism is now gone.
+  // Oracle: Data/Saboteur — no colour choice may ever be blocked.
+  test("join wizard: every colour swatch is selectable — none greyed out or disabled", async ({
     page
   }) => {
-    // Use the fixture controller URL where takenColors would be present.
-    // In a real game, the first color (amber) is taken by Mochi.
-    // In the fresh test URL (TESTCODE) no colors are taken — so we verify the
-    // aria-label pattern for an available color (not taken).
+    await page.goto("/code/TESTCODE");
+    await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
+
+    // Advance to step 3 (colour)
+    await page.locator("[data-name-input]").fill("Test");
+    await page.locator("button[data-next]").click();
+    await page.waitForTimeout(200);
+    await page.locator("button[data-next]").click();
+    await page.waitForTimeout(200);
+    await expect(page.locator("[data-step='color']")).toBeVisible();
+
+    const swatches = page.locator("[data-swatch]");
+    expect(
+      await swatches.count(),
+      "All colour swatches must render (TRIVIA.playerColors has 5)"
+    ).toBeGreaterThanOrEqual(5);
+
+    // The blocking mechanism is gone: NO swatch may be greyed-out (data-taken) or natively disabled.
+    expect(
+      await page.locator("[data-swatch][data-taken]").count(),
+      "No swatch may be marked taken (full-freedom join)"
+    ).toBe(0);
+    expect(
+      await page.locator("[data-swatch][disabled]").count(),
+      "No swatch may be disabled (full-freedom join)"
+    ).toBe(0);
+  });
+
+  // D2: Any colour can actually be picked — tapping EACH swatch selects it, and no aria-label lies
+  // about a colour being "(taken)". Oracle: WCAG 4.1.2 (name/role/value) + behaviour.
+  test("join wizard: any colour swatch can be selected (full freedom)", async ({ page }) => {
     await page.goto("/code/TESTCODE");
     await page.waitForSelector("[data-component='join-wizard']", { timeout: 20_000 });
 
@@ -467,18 +467,19 @@ test.describe("Charter D — Data: all colors taken edge case", () => {
     await page.waitForTimeout(200);
     await page.locator("button[data-next]").click();
     await page.waitForTimeout(200);
-
     await expect(page.locator("[data-step='color']")).toBeVisible();
 
-    // Each swatch must have an aria-label
     const swatches = page.locator("[data-swatch]");
-    const firstSwatch = swatches.first();
-    const ariaLabel = await firstSwatch.getAttribute("aria-label");
-    expect(
-      ariaLabel,
-      "Color swatch must have an aria-label (WCAG 4.1.2 — name, role, value)"
-    ).not.toBeNull();
-    expect((ariaLabel ?? "").length).toBeGreaterThan(0);
+    const n = await swatches.count();
+    for (let i = 0; i < n; i++) {
+      const swatch = swatches.nth(i);
+      const ariaLabel = await swatch.getAttribute("aria-label");
+      expect(ariaLabel, "Colour swatch must have an aria-label (WCAG 4.1.2)").toBeTruthy();
+      expect(ariaLabel ?? "", "aria-label must not claim a colour is taken").not.toContain("taken");
+      await swatch.click();
+      await expect(swatch).toHaveAttribute("data-selected", "true");
+      await expect(swatch).toHaveAttribute("aria-pressed", "true");
+    }
   });
 
   // D3: Category-exhausted: exhausted card must be visually distinct and still render

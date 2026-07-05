@@ -10,11 +10,14 @@ const STEPS = [1, 2, 3] as const;
  *
  * Owns its own `useState` for the current step and the draft profile (name / avatar / colour). A 3-dot
  * progress indicator sits on top (the active dot is an elongated lemon pill, inactive dots are dim).
- * Step 1 is a large centred name input; step 2 a grid of `avatars`; step 3 a row of colour swatches
- * where any hex in `takenColors` renders at 30% opacity and is not selectable. Each step has a lemon
- * "Next ▸" (which on step 3 reads "Join Game ▸" and emits `onJoin`) plus a "← Back" ghost link from
- * step 2 on. "Next" is blocked from step 1 while the name is empty; avatar/colour default to the first
- * available option. Once `submitted` is true the dots hide and an honest **"Joining…"** connecting
+ * Step 1 is a large centred name input; step 2 a grid of `avatars`; step 3 a row of colour swatches —
+ * EVERY swatch is always selectable, including a colour another player already picked. Players have
+ * full freedom to share a colour (just as two players may already share an avatar or a name), and a
+ * duplicate choice NEVER blocks a join. Each step has a lemon "Next ▸" (which on step 3 reads "Join
+ * Game ▸" and emits `onJoin`) plus a "← Back" ghost link from step 2 on. "Next" is blocked from step 1
+ * only while the name is empty; the avatar defaults to the first choice and the colour to the first one
+ * no one has taken yet (a non-colliding *default* only — the player may still pick any colour, dupes
+ * included). Once `submitted` is true the dots hide and an honest **"Joining…"** connecting
  * card renders — NOT a success claim: the phone has only sent its profile, not been confirmed on the
  * TV's roster. The genuine "you're in" moment is the seated lobby card (the player's own name +
  * "Waiting for the host to start"), which the controller shows only once its seat appears in the
@@ -24,7 +27,8 @@ const STEPS = [1, 2, 3] as const;
  * @param props - The wizard props.
  * @param props.avatars - The avatar emoji choices (step 2 grid).
  * @param props.colors - The colour choices as `{ name, hex }` (step 3 swatches).
- * @param props.takenColors - Hexes already claimed by other players (greyed, unselectable).
+ * @param props.usedColors - Colours already chosen by seated players. Biases ONLY the default
+ *   selection so the lobby stays varied — it never greys out or disables a swatch; all stay selectable.
  * @param props.roomCode - The room code shown on the connecting card.
  * @param props.submitted - When true, render the "Joining…" connecting card instead of the wizard.
  * @param props.joinedAvatar - The chosen avatar to show on the connecting card.
@@ -36,7 +40,7 @@ const STEPS = [1, 2, 3] as const;
  * <JoinWizard
  *   avatars={TRIVIA.avatars}
  *   colors={TRIVIA.playerColors}
- *   takenColors={["#F59E0B"]}
+ *   usedColors={["#F59E0B"]}
  *   roomCode="4F2K"
  *   onJoin={(p) => start(p)}
  * />
@@ -45,7 +49,7 @@ const STEPS = [1, 2, 3] as const;
 export function JoinWizard({
   avatars,
   colors,
-  takenColors,
+  usedColors,
   roomCode,
   submitted,
   joinedAvatar,
@@ -53,12 +57,14 @@ export function JoinWizard({
   onJoin
 }: JoinWizardProps): JSX.Element {
   const firstAvatar = avatars[0] ?? "🦊";
-  const firstFree = colors.find(c => !takenColors.includes(c.hex)) ?? colors[0];
+  // A non-colliding DEFAULT so the lobby stays colourful — but every swatch below is still selectable,
+  // so a player is free to override this to any colour, including one another player already picked.
+  const defaultColor = colors.find(c => !usedColors.includes(c.hex)) ?? colors[0];
 
   const [step, setStep] = useState<number>(1);
   const [name, setName] = useState<string>("");
   const [avatar, setAvatar] = useState<string>(firstAvatar);
-  const [color, setColor] = useState<string>(firstFree?.hex ?? "#F59E0B");
+  const [color, setColor] = useState<string>(defaultColor?.hex ?? "#F59E0B");
 
   const nameReady = name.trim().length > 0;
   const isLast = step === 3;
@@ -165,25 +171,18 @@ export function JoinWizard({
           <div data-step="color">
             <h2 data-heading>Pick your color</h2>
             <div data-color-row>
-              {colors.map(c => {
-                const taken = takenColors.includes(c.hex);
-                return (
-                  <button
-                    key={c.hex}
-                    type="button"
-                    data-swatch
-                    data-selected={c.hex === color ? "true" : undefined}
-                    data-taken={taken ? "true" : undefined}
-                    disabled={taken}
-                    style={{ "--swatch": c.hex }}
-                    aria-label={`Colour ${c.name}${taken ? " (taken)" : ""}`}
-                    aria-pressed={c.hex === color}
-                    onClick={() => {
-                      if (!taken) setColor(c.hex);
-                    }}
-                  />
-                );
-              })}
+              {colors.map(c => (
+                <button
+                  key={c.hex}
+                  type="button"
+                  data-swatch
+                  data-selected={c.hex === color ? "true" : undefined}
+                  style={{ "--swatch": c.hex }}
+                  aria-label={`Colour ${c.name}`}
+                  aria-pressed={c.hex === color}
+                  onClick={() => setColor(c.hex)}
+                />
+              ))}
             </div>
           </div>
         )}

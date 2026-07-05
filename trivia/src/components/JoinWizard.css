@@ -174,12 +174,6 @@
       inset 0 2px 0 rgba(255, 255, 255, 0.4);
   }
 
-  [data-swatch][data-taken="true"] {
-    opacity: 0.3;
-    cursor: not-allowed;
-    transform: none;
-  }
-
   /* ── Nav row ── */
   [data-nav] {
     display: flex;

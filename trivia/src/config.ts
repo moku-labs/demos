@@ -106,7 +106,7 @@ export const TRIVIA = {
   ],
   /** Avatar choices in the join wizard (A9 step 2). */
   avatars: ["🦊", "🦄", "🐙", "🐯", "🐸", "🦁", "🐬", "🦋"],
-  /** Signature colour choices in the join wizard (A9 step 3) — first-come; taken ones grey out. */
+  /** Signature colour choices in the join wizard (A9 step 3) — pick any; duplicates are allowed. */
   playerColors: [
     { name: "amber", hex: "#F59E0B" },
     { name: "violet", hex: "#8B5CF6" },

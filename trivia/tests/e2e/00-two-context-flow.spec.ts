@@ -400,4 +400,97 @@ test.describe("two-context WebRTC flow", () => {
       await phoneContext.close();
     }
   });
+
+  test("full freedom: two phones sharing a colour + avatar + name both join (no block)", async ({
+    browser
+  }) => {
+    // Regression for the reported "same colour/avatar blocks joining" bug. The join wizard used to
+    // grey out a colour another player had already picked, so a second player could not choose it.
+    // Colour/avatar/name are now unrestricted — a duplicate must NEVER block a join. Prove it live:
+    // two phones both pick amber + the 🦊 avatar + the same name, and BOTH must reach the TV roster.
+    const tvContext = await browser.newContext({ colorScheme: "dark", reducedMotion: "reduce" });
+    const phoneAContext = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      colorScheme: "dark",
+      reducedMotion: "reduce"
+    });
+    const phoneBContext = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      colorScheme: "dark",
+      reducedMotion: "reduce"
+    });
+
+    const tvPage = await tvContext.newPage();
+    const phoneAPage = await phoneAContext.newPage();
+    const phoneBPage = await phoneBContext.newPage();
+
+    try {
+      await tvPage.goto("/");
+      await tvPage.waitForSelector("[data-stage][data-phase='lobby']", { timeout: 20_000 });
+
+      let roomCode = "";
+      for (let attempt = 0; attempt < 20; attempt++) {
+        const codeEl = tvPage.locator("[data-code]").first();
+        if (await codeEl.count()) {
+          const text = (await codeEl.textContent()) ?? "";
+          if (text && text !== "····" && text.trim().length >= 6) {
+            roomCode = text.trim();
+            break;
+          }
+        }
+        await tvPage.waitForTimeout(1000);
+      }
+
+      if (!roomCode || roomCode === "····") {
+        test.skip(
+          true,
+          "Room code not available — Hub DO may not be accessible in this environment"
+        );
+        return;
+      }
+
+      // Both phones deliberately pick the SAME identity: name "Robin", 🦊 avatar, amber colour.
+      // (Sequential joins so the second one sees the first's amber already on the roster — exactly
+      // the state that used to grey the swatch out.)
+      await joinPhone(phoneAPage, roomCode, "Robin", {
+        avatar: "🦊",
+        color: "amber",
+        connectTimeout: CONNECTION_TIMEOUT
+      });
+      await joinPhone(phoneBPage, roomCode, "Robin", {
+        avatar: "🦊",
+        color: "amber",
+        connectTimeout: CONNECTION_TIMEOUT
+      });
+
+      // Neither phone was blocked — BOTH reach the seated lobby card.
+      await expect(phoneAPage.locator("[data-controller][data-phase='lobby']")).toBeVisible({
+        timeout: 10_000
+      });
+      await expect(phoneBPage.locator("[data-controller][data-phase='lobby']")).toBeVisible({
+        timeout: 10_000
+      });
+
+      // The TV roster shows BOTH players — the duplicate choice added a real second seat.
+      const filledTiles = tvPage.locator(
+        "[data-player-grid] [data-component='player-tile']:not([data-empty])"
+      );
+      await expect(filledTiles).toHaveCount(2, { timeout: CONNECTION_TIMEOUT });
+
+      // Both seats carry the SAME amber signature colour — the shared pick was accepted verbatim,
+      // never silently reassigned to keep colours unique.
+      const sigColors = await tvPage
+        .locator("[data-player-grid] [data-component='player-tile']:not([data-empty]) [data-dot]")
+        .evaluateAll(dots =>
+          dots.map(dot => (dot as HTMLElement).style.getPropertyValue("--sig").trim().toLowerCase())
+        );
+      expect(sigColors).toHaveLength(2);
+      expect(sigColors[0]).toBe("#f59e0b");
+      expect(sigColors[1]).toBe("#f59e0b");
+    } finally {
+      await tvContext.close();
+      await phoneAContext.close();
+      await phoneBContext.close();
+    }
+  });
 });
