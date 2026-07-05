@@ -27,6 +27,8 @@ export function initState(): ControllerState {
     lockedSlot: null,
     // eslint-disable-next-line unicorn/no-null -- null = "no locked question", never undefined
     lockedQid: null,
+    // eslint-disable-next-line unicorn/no-null -- null = "no active steal / lead-in not anchored yet"
+    stealArmAt: null,
     leaving: false,
     left: false,
     connection: "ok"

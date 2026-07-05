@@ -20,6 +20,12 @@ export type PhoneAnswerProps = {
   lockedSlot: number | null;
   /** The question id the lock applies to (so a new question clears the lock). */
   lockedQid: string | null;
+  /**
+   * Phone-clock time (ms) at which this phone's steal lead-in ends and the grid unlocks — set by the
+   * controller lifecycle when it first sees the steal open (`Date.now() + stealLeadMs`). `null`/absent =
+   * no active steal (or not yet anchored → treated as still arming, the safe default).
+   */
+  stealArmAt?: number | null | undefined;
   /** Lock an answer slot. */
   onLock: (slot: number) => void;
 };
@@ -40,6 +46,7 @@ export function PhoneAnswer({
   now,
   lockedSlot,
   lockedQid,
+  stealArmAt,
   onLock
 }: PhoneAnswerProps): JSX.Element {
   const question = s.question;
@@ -47,15 +54,19 @@ export function PhoneAnswer({
 
   const locked = lockedQid === question.id ? lockedSlot : null;
   const isSteal = question.mode === "steal";
-  // Pre-steal lead-in: the grid renders on EVERY eligible phone at the same time but stays disabled until
-  // `armedTs`, so no device (the host's included) can tap before the others have rendered. It unlocks for
-  // everyone together, then speed decides the reward.
-  // `arming` gates on the host-authoritative `armed` boolean, NOT a compare of `armedTs` against this
-  // phone's own clock (which drifts from the host's and let a fast phone tap into a window the host still
-  // rejected — the "tap fast → not accepted" bug). `armedTs` drives only the cosmetic countdown below.
-  const armedTs = s.steal.armedTs;
-  const arming = isSteal && !s.steal.armed;
-  const leadSecs = armedTs !== null ? Math.max(0, Math.ceil((armedTs - now) / 1000)) : 0;
+  // Pre-steal lead-in: the grid renders on EVERY eligible phone but stays disabled through the "get ready"
+  // beat, so no one taps before the others have rendered; it unlocks, then speed decides the reward.
+  //
+  // The phone times that beat on ITS OWN clock — a duration measured from when this phone first SAW the
+  // steal open (`stealArmAt`, set by the controller lifecycle). It does NOT wait on the host's `armed`
+  // sync frame (one best-effort frame; if it's lost on a real network the grid strands on "Get ready…"
+  // until a reload — the reported steal-lock bug) NOR compare the host's absolute `armedTs` against this
+  // phone's clock (the fast-tap skew bug). A local duration can't unlock EARLY: the phone only starts
+  // counting once it has RECEIVED the open, so its countdown always ends a hair AFTER the host's — every
+  // tap it can send lands inside the host's accept window. `null`/unset ⇒ still arming (the safe default).
+  const notAnchored = stealArmAt === null || stealArmAt === undefined;
+  const arming = isSteal && (notAnchored || now < stealArmAt);
+  const leadSecs = notAnchored ? 0 : Math.max(0, Math.ceil((stealArmAt - now) / 1000));
   const totalMs = isSteal ? TRIVIA.timers.stealMs : TRIVIA.timers.answerMs;
   const pct = Math.max(0, Math.min(100, ((question.deadlineTs - now) / totalMs) * 100));
 

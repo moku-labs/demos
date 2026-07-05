@@ -408,3 +408,164 @@ test.describe("full match — live scoreboard animation proof (motion ON)", () =
     }
   });
 });
+
+// ─── Live steal regression guard — the sole stealer's grid actually ENABLES (the stuck-grid bug) ──────
+// Reported bug: on a real steal the eligible stealer's phone stayed on "Get ready…" forever, because the
+// host's `armed` sync frame was lost and the phone waited on it. The fix times the lead-in on the phone's
+// OWN clock (src/islands/controller/steal-arm.ts → PhoneAnswer's `arming`), independent of that frame.
+// This drives a REAL 2-phone steal and asserts the sole stealer's grid goes arming → tappable → locks,
+// exercising the live lifecycle anchor end-to-end. It can't reproduce the frame LOSS on reliable localhost
+// (same reason the original bug was invisible to the suite), so the discriminating proof is the
+// deterministic phone-screens `stealClockSkew` fixture; this guards the live wiring against total breakage.
+
+/** How many rounds to attempt before giving up on ever opening a sole-stealer steal. */
+const MAX_ROUNDS_FOR_STEAL = 10;
+
+/** True once the stealer phone's REAL grid is live (no `data-arming`, at least one tappable idle tile). */
+async function stealerGridEnabled(phone: Page): Promise<boolean> {
+  const grid = phone.locator("[data-component='phone-answer']");
+  if (!(await grid.count()) || !(await grid.isVisible().catch(() => false))) return false;
+  // eslint-disable-next-line unicorn/prefer-dom-node-dataset -- Playwright Locator, not a DOM node
+  if (await grid.getAttribute("data-arming")) return false; // still on the "Get ready…" beat
+  return (await grid.locator("[data-component='answer-button'][data-state='idle']").count()) > 0;
+}
+
+test.describe("full match — live steal grid enables (the stuck-grid regression)", () => {
+  test.setTimeout(180_000);
+
+  test("a genuine steal enables the sole stealer's phone grid (arming → tappable → locks)", async ({
+    browser
+  }: {
+    browser: Browser;
+  }) => {
+    const tvCtx = await browser.newContext({ colorScheme: "dark", reducedMotion: "reduce" });
+    const phoneOpts = {
+      viewport: { width: 390, height: 844 },
+      colorScheme: "dark" as const,
+      reducedMotion: "reduce" as const,
+      hasTouch: true
+    };
+    const p1Ctx = await browser.newContext(phoneOpts);
+    const p2Ctx = await browser.newContext(phoneOpts);
+    const tv = await tvCtx.newPage();
+    const p1 = await p1Ctx.newPage();
+    const p2 = await p2Ctx.newPage();
+    const errors = [...trackErrors(tv, "tv"), ...trackErrors(p1, "p1"), ...trackErrors(p2, "p2")];
+
+    try {
+      await tv.goto("/");
+      await tv.waitForSelector("[data-stage][data-phase='lobby']", { timeout: 20_000 });
+      const code = await readRoomCode(tv);
+      if (!code) {
+        test.skip(true, "Hub DO unavailable — cannot run the live steal in this env");
+        return;
+      }
+
+      await joinPhone(p1, code, "Ari");
+      await joinPhone(p2, code, "Bo");
+      await expect(
+        tv.locator("[data-player-grid] [data-component='player-tile']:not([data-empty])")
+      ).toHaveCount(2, { timeout: CONNECT_TIMEOUT });
+
+      const startBtn = p1.locator("button").filter({ hasText: /start\s*game/i });
+      await expect(startBtn).toBeVisible({ timeout: PHASE_TIMEOUT });
+      await startBtn.click();
+      await tv.waitForSelector("[data-stage][data-phase='languageVote']", {
+        timeout: PHASE_TIMEOUT
+      });
+      for (const p of [p1, p2]) {
+        const en = p
+          .locator("button")
+          .filter({ hasText: /english/i })
+          .first();
+        if (await en.count()) await en.click().catch(() => undefined);
+      }
+
+      let stealSeen = false;
+      for (let round = 1; round <= MAX_ROUNDS_FOR_STEAL && !stealSeen; round++) {
+        await tv.waitForSelector(
+          "[data-stage][data-phase='roundIntro'], [data-stage][data-phase='categoryPick']",
+          { timeout: PHASE_TIMEOUT }
+        );
+        await tv.waitForSelector("[data-stage][data-phase='categoryPick']", {
+          timeout: PHASE_TIMEOUT
+        });
+        expect(
+          await pickCategory([p1, p2]),
+          `round ${round}: a phone should be the active category picker`
+        ).toBe(true);
+        await tv.waitForSelector("[data-stage][data-phase='question']", { timeout: PHASE_TIMEOUT });
+
+        // The active answerer's phone renders PhoneAnswer immediately; the other renders a watcher card.
+        const p1Grid = p1.locator("[data-component='phone-answer']");
+        const p2Grid = p2.locator("[data-component='phone-answer']");
+        await Promise.race([
+          p1Grid.waitFor({ timeout: PHASE_TIMEOUT }),
+          p2Grid.waitFor({ timeout: PHASE_TIMEOUT })
+        ]);
+        const activePhone = (await p1Grid.isVisible().catch(() => false)) ? p1 : p2;
+        const stealerPhone = activePhone === p1 ? p2 : p1;
+
+        // Active player taps slot 0 (~25% correct, ~75% opens a steal for the sole stealer).
+        const activeBtn = activePhone
+          .locator("[data-answer-grid-phone] [data-component='answer-button'][data-slot='0']")
+          .first();
+        await expect(activeBtn).toBeVisible({ timeout: PHASE_TIMEOUT });
+        await activeBtn.click({ timeout: 15_000 });
+
+        // Poll the STEALER's grid: it must go live (steal opened + local lead-in elapsed) before the
+        // round resolves — never the active player's grid, and phase-driven (stop when TV leaves question).
+        for (let tick = 0; tick < 40 && !stealSeen; tick++) {
+          if ((await stagePhase(tv)) !== "question") break;
+          if (await stealerGridEnabled(stealerPhone)) stealSeen = true;
+          else await tv.waitForTimeout(300);
+        }
+
+        if (stealSeen) {
+          // Prove the full transition: no longer arming, a tappable tile exists, and a real tap LOCKS
+          // (the exact interaction the bug denied — the grid stayed dim on "Get ready…" until a reload).
+          const grid = stealerPhone.locator("[data-component='phone-answer']");
+          await expect(
+            grid,
+            "the stealer grid must not be arming once enabled"
+          ).not.toHaveAttribute("data-arming", "true");
+          const idle = grid.locator("[data-component='answer-button'][data-state='idle']");
+          await expect(idle.first(), "the stealer grid must expose a tappable tile").toBeVisible();
+          await idle.first().click({ timeout: 10_000 });
+          await expect(
+            grid.locator("[data-component='answer-button'][data-state='locked']"),
+            "the stealer's tap must lock a tile — not silently no-op"
+          ).toHaveCount(1, { timeout: 5000 });
+        } else {
+          // No steal this round (active player was right, or the window closed) — drain to the next round.
+          await tv
+            .waitForSelector(
+              "[data-stage][data-phase='reveal'], [data-stage][data-phase='scoreboard'], [data-stage][data-phase='final']",
+              { timeout: PHASE_TIMEOUT }
+            )
+            .catch(() => undefined);
+          if (round < MAX_ROUNDS_FOR_STEAL) {
+            await tv
+              .waitForSelector(
+                "[data-stage][data-phase='roundIntro'], [data-stage][data-phase='categoryPick'], [data-stage][data-phase='final']",
+                { timeout: PHASE_TIMEOUT }
+              )
+              .catch(() => undefined);
+          }
+        }
+      }
+
+      expect(
+        stealSeen,
+        `no sole-stealer steal opened across ${MAX_ROUNDS_FOR_STEAL} rounds (env flakiness — the active player kept answering correctly, not necessarily a product bug)`
+      ).toBe(true);
+      expect(errors, `runtime errors during the live steal proof:\n${errors.join("\n")}`).toEqual(
+        []
+      );
+    } finally {
+      await tvCtx.close();
+      await p1Ctx.close();
+      await p2Ctx.close();
+    }
+  });
+});

@@ -39,6 +39,14 @@ export type ControllerState = {
   lockedSlot: number | null;
   /** The question id the lock applies to (so a new question clears the lock). */
   lockedQid: string | null;
+  /**
+   * Phone-clock time (ms) at which this phone's steal lead-in ends and the answer grid unlocks — set when
+   * the phone first sees the steal open (`Date.now() + stealLeadMs`), reset to `null` when it closes. The
+   * "get ready" beat is timed as a LOCAL duration on this phone's own clock (skew-free, and independent of
+   * the host's `armed` sync frame ever arriving — the steal-lock fix); `null` = no active steal. Optional
+   * so the e2e fixtures (which inject a full state) only set it for the steal screens; `initState` seeds it.
+   */
+  stealArmAt?: number | null;
   /** Whether the leave modal is open. */
   leaving: boolean;
   /** Whether this phone has left the game (terminal). */

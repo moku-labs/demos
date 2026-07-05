@@ -8,6 +8,7 @@ import { intent, onLifecycle, startController, subscribe } from "../../lib/room"
 import { startSoundDirector } from "../../lib/sound";
 import { findPlayer } from "../../lib/view";
 import { loadIdentity } from "./profile";
+import { nextStealArmAt } from "./steal-arm";
 import type { ControllerContext } from "./types";
 
 /** localStorage key for this device's cross-match no-repeat question history. */
@@ -170,7 +171,13 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
   ctx.cleanup(
     subscribe(s => {
       if (s.question?.id) rememberSeen(s.question.id);
-      ctx.set({ s });
+      // Anchor the phone-local steal lead-in: the first time THIS phone sees the steal open, start a
+      // "get ready" countdown on the phone's OWN clock. PhoneAnswer keys `arming` on it — a local
+      // DURATION, never the host's `armed` sync frame (a single best-effort frame; losing it stranded the
+      // grid on "Get ready…" until a reload — the steal-lock bug) nor a cross-clock `armedTs` compare (the
+      // fast-tap skew bug). Kept once anchored, cleared when the steal closes so the next one re-anchors.
+      const inSteal = Boolean(s.steal.active && s.question && s.question.mode === "steal");
+      ctx.set({ s, stealArmAt: nextStealArmAt(ctx.state.stealArmAt, inSteal, Date.now()) });
     })
   );
 

@@ -177,21 +177,19 @@ test.describe("Phone — open steal (item 3): eligible stealer sees answer grid 
     await expect(page.locator("[data-phone-label]")).toContainText("Get ready to steal");
   });
 
-  // ── Discriminating regression test — the clock-skew fast-tap bug ─────────────────────────
-  // Root cause: two DEVICES gated ONE absolute host timestamp (`armedTs`) with their OWN clocks. The
-  // phone enabled taps at `now >= armedTs` (ITS clock); the host silently dropped a lock while ITS OWN
-  // clock hadn't reached `armedTs` yet. A phone clock running ahead unlocked the grid before the host
-  // was ready to accept — "tap fast → locked but not accepted; wait a beat → fine". The fix replaces
-  // BOTH sides' wall-clock compare with one host-authoritative `armed` boolean: the phone/TV gate on
-  // `!s.steal.armed` alone; `armedTs` survives only for the cosmetic "get ready N" countdown text.
+  // ── Discriminating regression test — the reported steal-lock ("Get ready…" never clears) bug ──────
+  // Root cause: the phone's gate waited on the host's `armed` sync frame (one best-effort frame, sent
+  // ~1s into the steal). On a real network that single frame can be lost, and a lone stealer produces no
+  // later steal frame to reveal the gap — so the grid stayed disabled on "Get ready…" until a reload.
+  // The fix: the phone times the lead-in on ITS OWN clock (`stealArmAt`), never on the host's frame.
   //
-  // This fixture is the ONE case that can tell the two gate formulas apart: `armedTs` is 5s in the past
-  // (so `now < armedTs` is false on ANY clock, however skewed) while `armed` is still `false`.
-  //   - OLD code (`arming = now < armedTs`)         → arming=false → grid ENABLED (the bug).
-  //   - FIXED code (`arming = isSteal && !s.steal.armed`) → arming=true  → grid DISABLED (correct).
-  // The pre-existing `stealLeadIn` (future armedTs, armed:false) and `stealAnswer`/`steal` (past
-  // armedTs, armed:true) fixtures do NOT discriminate — both gate formulas already agree on those.
-  test("stealClockSkew (regression): armedTs in the PAST + armed:false MUST still render the grid DISABLED", async ({
+  // This fixture is the discriminating case: the host's frame NEVER arrived (`armed:false`), but this
+  // phone's LOCAL countdown (`stealArmAt`) has already elapsed.
+  //   - OLD code (`arming = isSteal && !s.steal.armed`) → arming=true  → grid DISABLED forever (the bug).
+  //   - FIXED code (`arming = now < stealArmAt`)         → arming=false → grid ENABLED (correct).
+  // `stealLeadIn` (future stealArmAt) + `stealAnswer` (past stealArmAt) do NOT discriminate — both
+  // formulas agree there; only this armed:false + elapsed-stealArmAt case tells them apart.
+  test("stealClockSkew (regression): armed frame LOST (armed:false) + local lead-in elapsed MUST render the grid ENABLED", async ({
     page
   }) => {
     await gotoPhone(page, "stealClockSkew");
@@ -199,41 +197,27 @@ test.describe("Phone — open steal (item 3): eligible stealer sees answer grid 
     await expect(grid).toBeVisible();
     await expect(page.locator("[data-component='answer-button']")).toHaveCount(4);
 
-    // The authoritative signal: `data-arming="true"` must be present DESPITE armedTs already having
-    // elapsed. A regression back to `now < armedTs` would drop this attribute entirely (arming=false).
-    await expect(grid).toHaveAttribute("data-arming", "true");
-
-    // Every tile is `dim` (disabled) — none `idle` (tappable) — and CSS backs that with pointer-events:
-    // none, so a real tap physically cannot land. `onPick` is never wired to a disabled tile either
-    // (PhoneAnswer passes `onPick={!arming && locked === null ? … : undefined}`), so there is no handler
-    // to fire even if a synthetic event bypassed the CSS gate.
-    await expect(page.locator("[data-component='answer-button'][data-state='dim']")).toHaveCount(4);
+    // The phone's LOCAL countdown has elapsed → NOT arming, even though the host's `armed` frame never
+    // arrived. A regression back to `!s.steal.armed` would keep `data-arming="true"` and strand the grid.
+    await expect(grid).not.toHaveAttribute("data-arming", "true");
     await expect(page.locator("[data-component='answer-button'][data-state='idle']")).toHaveCount(
-      0
+      4
     );
-    await expect(page.locator("[data-component='answer-button']").first()).toHaveCSS(
-      "pointer-events",
-      "none"
-    );
+    await expect(page.locator("[data-component='answer-button'][data-state='dim']")).toHaveCount(0);
+    await expect(page.locator("[data-phone-label]")).toContainText("Steal it — tap fast!");
 
-    // The cosmetic countdown still reads the (already-elapsed) armedTs — proving `armedTs` is used ONLY
-    // for display text, never as the enable/disable gate itself (it reads 0, not a negative countdown).
-    await expect(page.locator("[data-phone-label]")).toContainText("Get ready to steal");
-
-    // A real tap on the (CSS-disabled) first tile must NOT lock it — no `data-state='locked'` appears
-    // and the grid stays fully dim. `force: true` bypasses Playwright's actionability check (which would
-    // otherwise refuse the click on a `pointer-events:none` element) so this proves the DISABLED state
-    // itself is what blocks the interaction, not merely that Playwright declined to click.
-    await page.locator("[data-component='answer-button']").first().click({ force: true });
+    // A real tap LOCKS — the grid is genuinely live (the exact interaction the bug denied until a reload).
+    await page.locator("[data-component='answer-button']").first().click();
     await expect(page.locator("[data-component='answer-button'][data-state='locked']")).toHaveCount(
-      0
+      1
     );
-    await expect(page.locator("[data-component='answer-button'][data-state='dim']")).toHaveCount(4);
   });
 
-  // Mirror case: armed:true wins even while armedTs is still in the future — proves the gate is
-  // `armed`-only in BOTH directions (not "armed happens to agree with armedTs" on the discriminating case).
-  test("stealArmedEarly (mirror): armed:true + armedTs in the FUTURE renders the grid ENABLED", async ({
+  // Mirror case: the host has ALREADY armed (`armed:true`) but this phone's LOCAL lead-in is still
+  // counting down (`stealArmAt` in the future) — the grid MUST stay DISABLED. Proves the phone gates on
+  // its OWN countdown, never the host's `armed`/`armedTs`, so it can never unlock before its own beat
+  // ends (which always lands just after the host's accept window opens — the fast-tap skew can't recur).
+  test("stealArmedEarly (mirror): host armed but local lead-in still running MUST render the grid DISABLED", async ({
     page
   }) => {
     await gotoPhone(page, "stealArmedEarly");
@@ -241,13 +225,19 @@ test.describe("Phone — open steal (item 3): eligible stealer sees answer grid 
     await expect(grid).toBeVisible();
     await expect(page.locator("[data-component='answer-button']")).toHaveCount(4);
 
-    // No `data-arming` attribute at all (PhoneAnswer only sets it when `arming` is truthy) — the boolean
-    // wins over the still-future armedTs, so the grid renders live, not in the lead-in state.
-    await expect(grid).not.toHaveAttribute("data-arming", "true");
+    // Still arming on THIS phone's clock, regardless of the host's `armed:true`.
+    await expect(grid).toHaveAttribute("data-arming", "true");
+    await expect(page.locator("[data-component='answer-button'][data-state='dim']")).toHaveCount(4);
     await expect(page.locator("[data-component='answer-button'][data-state='idle']")).toHaveCount(
-      4
+      0
     );
-    await expect(page.locator("[data-phone-label]")).toContainText("Steal it — tap fast!");
+    await expect(page.locator("[data-phone-label]")).toContainText("Get ready to steal");
+
+    // Force-tapping a disabled tile must NOT lock it (the lead-in genuinely blocks interaction).
+    await page.locator("[data-component='answer-button']").first().click({ force: true });
+    await expect(page.locator("[data-component='answer-button'][data-state='locked']")).toHaveCount(
+      0
+    );
   });
 });
 

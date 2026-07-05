@@ -133,17 +133,16 @@ export type PhonePhaseKey =
   | "stealAnswer"
   // Open steal lead-in: the grid is rendered but DISABLED with a "get ready" countdown (fair start).
   | "stealLeadIn"
-  // REGRESSION FIXTURE (the clock-skew fast-tap bug): `armedTs` is in the PAST (the lead-in already
-  // elapsed on ANY clock) but the host-authoritative `armed` boolean is still `false`. On the OLD
-  // buggy gate (`arming = now < armedTs`) this fixture would render the grid ENABLED — reproducing
-  // "the phone unlocked and let a tap through the host still rejects". On the fix (`arming =
-  // !s.steal.armed`) it must render DISABLED. This is the discriminating case: `stealLeadIn` (future
-  // armedTs, armed:false) and `stealAnswer`/`steal` (past armedTs, armed:true) both already agree
-  // between the two gate formulas, so neither can catch a regression back to the wall-clock compare.
+  // REGRESSION FIXTURE (the reported steal-lock bug): the host's `armed` sync frame NEVER reached this
+  // phone (`armed: false`) but this phone's LOCAL lead-in countdown (`stealArmAt`) has already elapsed.
+  // On the OLD gate (`arming = !s.steal.armed`) this rendered DISABLED forever — stranded on "Get
+  // ready…" until a reload (the bug). On the fix (`arming = now < stealArmAt`) it must render ENABLED.
+  // The discriminating case: `stealLeadIn` (future stealArmAt) and `stealAnswer` (past stealArmAt) agree
+  // between the two gate formulas, so neither catches a regression back to waiting on the host's frame.
   | "stealClockSkew"
-  // Mirror of `stealClockSkew`: `armedTs` is in the FUTURE (the cosmetic countdown would still read
-  // seconds remaining) but `armed` is already `true` — the boolean wins and the grid is ENABLED. Proves
-  // the gate is `armed`-only in both directions, not just "armed wins when armedTs also agrees".
+  // Mirror of `stealClockSkew`: the host has ALREADY armed (`armed: true`) but this phone's LOCAL lead-in
+  // is still counting down (`stealArmAt` in the future) — the grid must stay DISABLED. Proves the phone
+  // gates on its OWN countdown in both directions, never on the host's `armed`/`armedTs`.
   | "stealArmedEarly"
   | "leaveModal"
   | "midJoin"
@@ -1273,14 +1272,16 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
+      // This phone's LOCAL lead-in already elapsed (past) → the grid is enabled/tappable.
+      stealArmAt: FIXED_NOW - 100,
       leaving: false,
       left: false,
       connection: "ok"
     };
   }
 
-  // open steal lead-in: Pixel (p2) is eligible but the grid is DISABLED (armedTs in the future) with a
-  // "Get ready to steal…" countdown — so no device (the host's included) can tap before the others.
+  // open steal lead-in: Pixel (p2) is eligible but the grid is DISABLED (its LOCAL countdown is still
+  // running) with a "Get ready to steal…" countdown — so no device can tap before the others.
   if (phase === "stealLeadIn") {
     return {
       s: triviaState("question", "p2", {
@@ -1305,18 +1306,19 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
+      // This phone's LOCAL lead-in has 0.8s left (future) → the grid is DISABLED with the countdown.
+      stealArmAt: FIXED_NOW + 800,
       leaving: false,
       left: false,
       connection: "ok"
     };
   }
 
-  // REGRESSION FIXTURE — the clock-skew fast-tap bug: `armedTs` is 5s in the PAST (the lead-in is over
-  // on ANY device's clock, however skewed) but the host-authoritative `armed` boolean is still `false`
-  // (the host clock tick that flips it hasn't run yet — e.g. the tick interval simply hasn't landed).
-  // `arming` MUST gate on `!s.steal.armed` alone: the OLD code (`now < armedTs`) would read `now` (5_000
-  // ahead of armedTs) and compute `arming = false` — grid ENABLED, reproducing "tap fast → the host
-  // silently drops it because ITS clock/armed state hadn't caught up". The fix must render DISABLED here.
+  // REGRESSION FIXTURE — the reported steal-lock bug: the host's `armed` sync frame NEVER reached this
+  // phone (`armed: false`), but this phone's LOCAL lead-in countdown has already elapsed (`stealArmAt`
+  // in the PAST). The phone MUST enable the grid anyway — it no longer waits on the host's frame; it
+  // times the beat on its own clock. On the OLD gate (`arming = !s.steal.armed`) this rendered DISABLED
+  // forever (stranded on "Get ready…" until a reload — the bug). The fix must render ENABLED here.
   if (phase === "stealClockSkew") {
     return {
       s: triviaState("question", "p2", {
@@ -1330,9 +1332,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
           active: true,
           stealPeers: ["p2", "p3", "p4", "p5"],
           deadlineTs: FIXED_NOW + 6_000,
-          // In the past on ANY clock — the OLD wall-clock gate would already read this as "unlocked".
           armedTs: FIXED_NOW - 5_000,
-          // The host has NOT armed it yet — the fixed gate must keep the grid disabled regardless.
+          // The host's armed frame was LOST on the wire — the phone must NOT depend on it.
           armed: false,
           answeredPeers: []
         }
@@ -1343,16 +1344,18 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
+      // This phone's LOCAL lead-in elapsed 5s ago → ENABLED, regardless of the never-arrived armed frame.
+      stealArmAt: FIXED_NOW - 5_000,
       leaving: false,
       left: false,
       connection: "ok"
     };
   }
 
-  // Mirror of `stealClockSkew`: `armedTs` is in the FUTURE (the cosmetic "get ready" countdown would
-  // still show seconds remaining) but the host has ALREADY armed it (`armed: true`) — the boolean wins
-  // and the grid must be ENABLED. Proves the gate tracks `armed` in both directions, not just the
-  // direction the pre-existing `stealLeadIn`/`stealAnswer` fixtures happen to agree on.
+  // Mirror of `stealClockSkew`: the host has ALREADY armed (`armed: true`) but this phone's LOCAL lead-in
+  // is still counting down (`stealArmAt` in the FUTURE) — the grid MUST stay DISABLED. Proves the phone
+  // gates on its OWN countdown, never the host's `armed`/`armedTs`; it only enables once its own beat ends
+  // (which always lands just after the host's, so a tap can never precede the host's accept window).
   if (phase === "stealArmedEarly") {
     return {
       s: triviaState("question", "p2", {
@@ -1366,9 +1369,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
           active: true,
           stealPeers: ["p2", "p3", "p4", "p5"],
           deadlineTs: FIXED_NOW + 8_800,
-          // Still in the future — the OLD wall-clock gate would read this as "still arming".
           armedTs: FIXED_NOW + 800,
-          // The host has already armed it — the fix must enable the grid regardless of armedTs.
+          // The host has already armed it — but the phone gates on its OWN countdown, not this.
           armed: true,
           answeredPeers: []
         }
@@ -1379,6 +1381,8 @@ export function controllerFixtureState(phase: PhonePhaseKey): ControllerState {
       joinToken: null,
       lockedSlot: null,
       lockedQid: null,
+      // This phone's LOCAL lead-in still has 0.8s left → DISABLED, even though the host already armed.
+      stealArmAt: FIXED_NOW + 800,
       leaving: false,
       left: false,
       connection: "ok"

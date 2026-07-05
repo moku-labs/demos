@@ -219,6 +219,7 @@ function joinedScreen(
           now={state.now}
           lockedSlot={state.lockedSlot}
           lockedQid={state.lockedQid}
+          stealArmAt={state.stealArmAt}
           onLock={handlers.onLock}
         />
       );
