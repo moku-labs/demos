@@ -21,7 +21,8 @@ import {
   durableObjectsPlugin,
   kvPlugin,
   queuesPlugin,
-  storagePlugin
+  storagePlugin,
+  turnPlugin
 } from "@moku-labs/worker";
 
 /**
@@ -42,6 +43,7 @@ export const server = createApp({
     d1Plugin,
     queuesPlugin,
     durableObjectsPlugin,
+    turnPlugin,
     hubPlugin,
     deployPlugin,
     cliPlugin
@@ -49,6 +51,9 @@ export const server = createApp({
   pluginConfigs: {
     // Rate-limit KV the hub reads on the signaling-join path (`env.RATE_LIMIT`).
     kv: { rateLimit: { name: "trivia-ratelimit", binding: "RATE_LIMIT" } },
+    // The Cloudflare TURN key (internet play) — provisioned at deploy like any other resource;
+    // the hub's /api/ice mints relay credentials from its two bound secrets (default names).
+    turn: { relay: { name: "trivia-turn" } },
     // The per-room signaling DO — `Hub` (room) is re-exported from `cloudflare/worker.ts`; SQLite-backed.
     durableObjects: { hub: { binding: "ROOM_HUB", className: "Hub" } },
     deploy: {

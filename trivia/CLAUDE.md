@@ -14,12 +14,13 @@ then [`spec/design-context.md`](./spec/design-context.md) (authoritative). The a
 plugin list, and risks are in [`.planning/context-trivia.md`](./.planning/context-trivia.md) (the
 brainstorm output). **Planner/builder: reference `spec/` — do not re-search for the design.**
 
-> **Stack (settled 2026-06-26; room→0.7.0 2026-07-08; web→2.3.1 + worker→0.15.1 2026-07-03):** **@moku-labs/room@0.7.0** (a standalone
+> **Stack (settled 2026-06-26; room→0.8.0 + worker→0.16.0 2026-07-08; web→2.3.1 2026-07-03):** **@moku-labs/room@0.8.0** (a standalone
 > `@moku-labs/core` framework — NOT the old 0.1.x plugin-pack), **@moku-labs/web@2.3.1**, **preact@10.29.3**. The app
 > is **one `@moku-labs/web` SPA whose role is chosen by the URL** (`/` = TV/stage, `/controller/:code` =
 > phone) + per-role room `createApp`s (`src/lib/room/`) + **one** `@moku-labs/room/server` Hub-DO worker
-> (`src/server.ts` + `src/cloudflare/worker.ts`) that serves the SPA via `ASSETS` and brokers
-> `serverSignaling`. **`@moku-labs/worker@0.15.1` is a direct dependency** — `src/server.ts` composes ONE
+> (`src/server.ts` + `src/cloudflare/worker.ts`) that serves the SPA via `ASSETS`, brokers
+> `serverSignaling`, AND serves `GET /api/ice` (room 0.8: internet play is framework-owned — the app has
+> **zero ICE code**). **`@moku-labs/worker@0.16.0` is a direct dependency** — `src/server.ts` composes ONE
 > worker app (atlas-style) with room's `hubPlugin` (room 0.3+'s `./server` exports the hub as a worker plugin):
 > `server.hub.handle` is the runtime; `server.cli.{dev,deploy}` **generate `wrangler.jsonc`**.
 
@@ -100,15 +101,21 @@ for app shape (multiple `createApp` instances, side-by-side frameworks, folder s
 
 ## Dependency stack
 
-`@moku-labs/room@0.7.0` + `@moku-labs/web@2.3.1` + `@moku-labs/worker@0.15.1` + `preact@10.29.3` +
+`@moku-labs/room@0.8.0` + `@moku-labs/web@2.3.1` + `@moku-labs/worker@0.16.0` + `preact@10.29.3` +
 `preact-render-to-string@6.7.0`; all four frameworks pin one aligned `@moku-labs/core@1.5.0`.
-(room 0.7.0 = internet-play transport knobs (0.6.0/0.7.0 are content-identical twin tags of the same
-commit — a release-dispatch race; 0.7.0 is npm `latest`): `TransportConfig.iceServers` also accepts a LAZY async
-provider — room invokes it at `connect()` in parallel with the signaling join and resolves it just
-before the first `RTCPeerConnection`, taking the `/api/ice` mint off the boot critical path — plus an
-`iceTransportPolicy` passthrough (`"relay"` = the `?ice=relay` force-relay diagnostic). The app wires
-both in `src/lib/room/{index,stage,controller}.ts`; the bridge also queues pre-boot controller intents
-and flushes them on join, so a fast wizard submit is never dropped.
+(room 0.8.0 + worker 0.16.0 = ZERO-CONFIG internet play — the app-side ICE layer (`src/lib/ice/`, the
+bridge's iceProvider/forcedIcePolicy wiring, the worker's `/api/ice` branch) was DELETED, superseded
+by the frameworks: room's hub serves `GET /api/ice` (fail-open TURN credential mint — quiet empty 200
+without secrets, per-IP rate-limited via RATE_LIMIT), worker's `turnPlugin` provisions the TURN key
+as a FIRST-CLASS RESOURCE (declared in `src/server.ts` next to the KV: `turn: { relay: { name:
+"trivia-turn" } }` — every `bun run deploy` idempotently creates/binds the secrets with
+CLOUDFLARE_API_TOKEN, needs Calls: Edit; otherwise ONE instruction line, deploy continues), and
+transport's `iceServers: "auto"` default sentinel resolves to a lazy fail-open fetch of the hub's
+`/api/ice` under `serverSignaling` (2 s bound, parallel with the signaling join) with the
+`?ice=relay` force-relay diagnostic honored on the default policy. The bridge still queues pre-boot
+controller intents and flushes them on join, so a fast wizard submit is never dropped.
+room 0.7.0 shipped the transport knobs this replaced (0.6.0/0.7.0 = content-identical twin tags of a
+release-dispatch race).
 room 0.4.0 = at-least-once intents: the host receipt-acks every intent frame and the controller
 retransmits the same `cSeq` until acked — ~15 s budget, then the terminal `room:intent-undeliverable`
 event, which the phone maps to its connection-lost banner. A dropped one-shot intent no longer needs
@@ -118,8 +125,9 @@ unicast `sync.broadcast(peerId)` re-baselines at the CURRENT seq, and a replica 
 gap self-heals via `sync-resync` → host baseline answer, so a missed frame no longer wedges a phone.
 web 2.3.1 = incremental `copyPublic` — dev rebuilds skip unchanged public assets — and worker 0.15.1's
 dev watcher drops stale watch-echo batches before they reach `onChange`, ending the APFS clone-echo
-rebuild storm framework-side; `scripts/dev.ts` carries no app-side guard.)
-**`@moku-labs/worker@0.15.1` is a direct dependency** — `src/server.ts` composes ONE worker app (atlas-style)
+rebuild storm framework-side; `scripts/dev.ts` carries no app-side guard. worker 0.16.0 = the
+`turnPlugin` resource — TURN keys provisioned by the deploy pipeline like kv/d1/r2.)
+**`@moku-labs/worker@0.16.0` is a direct dependency** — `src/server.ts` composes ONE worker app (atlas-style)
 with room's `hubPlugin` (`@moku-labs/room/server` 0.3+ exports the hub as a worker plugin; worker is its
 optional peer dep). `server.hub.handle` is the runtime; `server.cli.{dev,deploy}` generate `wrangler.jsonc`.
 The **question bank** ships as build-authored JSON via @moku-labs/web's `collection` provider (new in 2.3.0):
