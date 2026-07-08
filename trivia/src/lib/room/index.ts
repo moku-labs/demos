@@ -20,7 +20,7 @@
 import type { JsonValue, QrMatrix, RoomDescriptor, Signaling } from "@moku-labs/room";
 import { hardNavigate } from "@moku-labs/web/browser";
 import type { EndStats } from "../../plugins/scoring/types";
-import { fetchIceServers } from "../ice/client";
+import { fetchIceServers, forcedIcePolicy } from "../ice/client";
 import { keepAwake } from "../keep-awake";
 import type { IntentName, IntentPayload, PeerId, TriviaState } from "../types";
 import { createControllerApp } from "./controller";
@@ -44,6 +44,18 @@ let descriptor: RoomDescriptor | null = null;
 /** In-flight boot promises (memoize so repeated start calls are no-ops). */
 let stageBoot: Promise<RoomDescriptor> | null = null;
 let controllerBoot: Promise<void> | null = null;
+
+/**
+ * Controller→host intents issued BEFORE the controller finished booting + joining. The join wizard is
+ * interactive from its first paint while `bootController` (ICE provisioning + `joinRoom`) is still in
+ * flight, so a fast "Join" tap can outrun the boot — those intents are queued in issue order and
+ * flushed the moment the join completes (dropped if it fails; the wizard's failure path owns that UX).
+ * This makes delivery a structural guarantee of the bridge contract, not a timing bet on the join
+ * self-heal watchdog re-sending ~10 s later.
+ */
+const pendingIntents: Array<{ name: IntentName; payload: JsonValue }> = [];
+/** True once the controller app has started AND joined — the point queued intents can flow. */
+let controllerReady = false;
 
 /**
  * Render subscribers (the islands) + lifecycle subscribers. The underlying per-slice subscriptions
@@ -120,6 +132,23 @@ function emitLifecycle(event: RoomLifecycle): void {
 
 // ─── Boot (idempotent) ──────────────────────────────────────────────────────────
 
+/**
+ * The lazy ICE provider handed to room's transport (`iceServers` provider form): room invokes it at
+ * `connect()` — in parallel with the signaling join — and resolves it just before the first
+ * `RTCPeerConnection`. Wraps {@link fetchIceServers} so its optional `fetchImpl` test parameter never
+ * leaks into the provider signature. Fail-open all the way down: `undefined` (endpoint down, no
+ * secrets, timeout, garbage) keeps room's public-STUN default.
+ *
+ * @returns The minted ICE servers, or `undefined` to keep the transport's STUN default.
+ * @example
+ * ```ts
+ * createStageApp(emitLifecycle, undefined, iceProvider, forcedIcePolicy());
+ * ```
+ */
+function iceProvider(): Promise<readonly RTCIceServer[] | undefined> {
+  return fetchIceServers();
+}
+
 /** Substring of the room session plugin's host-reentry localStorage keys (`moku.room.reentry.{code}`). */
 const REENTRY_KEY_INFIX = ".reentry.";
 
@@ -164,10 +193,17 @@ function clearHostReentry(): void {
  */
 async function bootStage(signaling?: Signaling): Promise<RoomDescriptor> {
   clearHostReentry(); // every TV load = a fresh room (no stale-code reclaim, no createRoom() throw)
-  // Provision the ICE relay rung (fail-open TURN credentials) — skipped when a signaling override is
-  // injected (tests pair in-process; there is no worker to ask and no real network to traverse).
-  const iceServers = signaling ? undefined : await fetchIceServers();
-  const app = createStageApp(emitLifecycle, signaling, iceServers);
+  // Provision the ICE relay rung (fail-open TURN credentials) via room's LAZY provider form: room
+  // invokes it at connect() so the `/api/ice` fetch runs in parallel with the signaling join and is
+  // resolved only at pairing time — a slow or hung endpoint can no longer delay room-open (the old
+  // serial `await fetchIceServers()` cost up to ICE_FETCH_TIMEOUT_MS on this boot path). Skipped when
+  // a signaling override is injected (tests pair in-process; there is no worker to ask).
+  const app = createStageApp(
+    emitLifecycle,
+    signaling,
+    signaling ? undefined : iceProvider,
+    forcedIcePolicy()
+  );
   await app.start();
   const opened = app.stage.createRoom();
   stageApp = app;
@@ -200,10 +236,15 @@ async function bootStage(signaling?: Signaling): Promise<RoomDescriptor> {
  * ```
  */
 async function bootController(code: string, signaling?: Signaling): Promise<void> {
-  // Same fail-open ICE provisioning as the stage — both sides holding relay candidates maximizes
-  // pairing success on hostile NATs (CGNAT phones on LTE are the common case).
-  const iceServers = signaling ? undefined : await fetchIceServers();
-  const app = createControllerApp(emitLifecycle, signaling, iceServers);
+  // Same lazy fail-open ICE provisioning as the stage — both sides holding relay candidates maximizes
+  // pairing success on hostile NATs (CGNAT phones on LTE are the common case). Off the join critical
+  // path: a hung `/api/ice` no longer widens the join race window.
+  const app = createControllerApp(
+    emitLifecycle,
+    signaling,
+    signaling ? undefined : iceProvider,
+    forcedIcePolicy()
+  );
   await app.start();
   controllerApp = app;
   role = "controller";
@@ -214,6 +255,9 @@ async function bootController(code: string, signaling?: Signaling): Promise<void
     // lock and resync when the phone returns to the foreground (so a backgrounded phone recovers).
     keepAwake(notify);
   } catch (error) {
+    // Queued pre-boot intents can never be delivered on this boot — drop them so a retry (a fresh
+    // page load / re-entered wizard) starts clean instead of replaying a stale submit.
+    pendingIntents.length = 0;
     emitLifecycle({
       kind: "network-warning",
       reason: error instanceof Error ? error.message : "join-failed"
@@ -221,7 +265,28 @@ async function bootController(code: string, signaling?: Signaling): Promise<void
     throw error;
   }
   for (const ns of SLICES) app.controller.on(ns, notify);
+  // Open the intent gate and flush anything the wizard submitted during boot — a fast join tap lands
+  // as soon as the room is up, instead of stranding on "Joining…" until the self-heal watchdog.
+  controllerReady = true;
+  flushPendingIntents();
   notify();
+}
+
+/**
+ * Deliver every queued pre-boot intent in issue order. Called exactly once, from `bootController`,
+ * after the join succeeded (`controllerReady` is already true, so re-entrant `intent()` calls from
+ * any handler these trigger go straight to the wire, not back into the queue).
+ *
+ * @example
+ * ```ts
+ * controllerReady = true;
+ * flushPendingIntents();
+ * ```
+ */
+function flushPendingIntents(): void {
+  for (const item of pendingIntents.splice(0)) {
+    controllerApp?.controller.intent(item.name, item.payload);
+  }
 }
 
 /**
@@ -294,7 +359,11 @@ export function subscribe(fn: (state: TriviaState) => void): () => void {
 
 /**
  * Send a controller→host intent over the Wire. A no-op on the TV (the stage is a pure display and
- * never sends intents).
+ * never sends intents). Before the controller has booted AND joined, the intent is QUEUED and flushed
+ * once the join completes — never silently dropped. (The join wizard is interactive from first paint
+ * while `bootController` is still awaiting ICE provisioning / `joinRoom`, so a fast "Join" tap lands
+ * here pre-boot; queueing encodes delivery in the bridge contract instead of leaning on the join
+ * self-heal watchdog's ~10 s re-send.)
  *
  * @param name - The intent name.
  * @param payload - The typed payload.
@@ -304,9 +373,12 @@ export function subscribe(fn: (state: TriviaState) => void): () => void {
  * ```
  */
 export function intent<K extends IntentName>(name: K, payload: IntentPayload[K]): void {
-  if (role === "controller" && controllerApp) {
+  if (role === "stage") return;
+  if (controllerReady && controllerApp) {
     controllerApp.controller.intent(name, payload as JsonValue);
+    return;
   }
+  pendingIntents.push({ name, payload: payload as JsonValue });
 }
 
 /**

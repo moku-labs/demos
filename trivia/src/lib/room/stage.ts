@@ -2,7 +2,13 @@
  * @file Room STAGE (host) app composition — created only in the browser. Engines are room core
  * defaults; this adds the host facade, the four game plugins, and the lifecycle observer.
  */
-import { createApp, type Signaling, serverSignaling, stagePlugin } from "@moku-labs/room";
+import {
+  createApp,
+  type IceServersProvider,
+  type Signaling,
+  serverSignaling,
+  stagePlugin
+} from "@moku-labs/room";
 import { TRIVIA } from "../../config";
 import { languagePlugin, matchFlowPlugin, questionBankPlugin, scoringPlugin } from "../../plugins";
 import { createRoomObserver } from "./observer";
@@ -29,9 +35,13 @@ function defaultSignaling(): Signaling {
  * @param onLifecycle - The bridge's `room:*` sink (wired through the observer plugin).
  * @param signaling - Optional signaling override; tests inject a shared `inMemory()` so a stage +
  *   controller pair connect in-process. Defaults to the deployed hub at `location.origin`.
- * @param iceServers - Optional ICE servers (STUN + minted TURN relay) from `/api/ice`; omitted, the
+ * @param iceServers - Optional ICE servers (STUN + minted TURN relay) — an array, or the lazy async
+ *   provider form (`fetchIceServers`) room resolves just before the first `RTCPeerConnection`, so the
+ *   `/api/ice` fetch runs in parallel with the boot instead of on its critical path. Omitted, the
  *   transport keeps its public-STUN default (LAN + friendly-NAT internet). ICE itself races
  *   local/STUN/relay candidate pairs — this only provisions the relay rung.
+ * @param iceTransportPolicy - Optional `RTCPeerConnection` policy; `"relay"` forces TURN-only pairs
+ *   (the `?ice=relay` diagnostic toggle for proving the relay rung end-to-end). Omitted = `"all"`.
  * @returns The composed (unstarted) stage app.
  * @example
  * ```ts
@@ -43,7 +53,8 @@ function defaultSignaling(): Signaling {
 export function createStageApp(
   onLifecycle: (event: RoomLifecycle) => void,
   signaling?: Signaling,
-  iceServers?: readonly RTCIceServer[]
+  iceServers?: readonly RTCIceServer[] | IceServersProvider,
+  iceTransportPolicy?: RTCIceTransportPolicy
 ) {
   return createApp({
     plugins: [
@@ -57,7 +68,8 @@ export function createStageApp(
     pluginConfigs: {
       transport: {
         signaling: signaling ?? defaultSignaling(),
-        ...(iceServers ? { iceServers } : {})
+        ...(iceServers ? { iceServers } : {}),
+        ...(iceTransportPolicy ? { iceTransportPolicy } : {})
       },
       session: {
         codeLength: TRIVIA.codeLength,

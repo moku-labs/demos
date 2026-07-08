@@ -7,7 +7,7 @@
 /* eslint-disable unicorn/no-null -- deliberately exercises `null` inputs: JSON bodies and array
    entries arrive as literal `null` off the wire, and the normalizer must reject exactly that. */
 import { describe, expect, it } from "vitest";
-import { fetchIceServers } from "../../src/lib/ice/client";
+import { fetchIceServers, forcedIcePolicy } from "../../src/lib/ice/client";
 import { ICE_PATH, normalizeIceServers } from "../../src/lib/ice/shared";
 
 /** A minimal fetch stub resolving with the given status/body. */
@@ -101,5 +101,25 @@ describe("normalizeIceServers (untrusted shape normalizer)", () => {
     expect(normalizeIceServers("nope")).toBeUndefined();
     expect(normalizeIceServers([])).toBeUndefined();
     expect(normalizeIceServers([null, "x", { urls: 7 }])).toBeUndefined();
+  });
+});
+
+describe("forcedIcePolicy (?ice=relay diagnostic toggle)", () => {
+  it("returns 'relay' only for ?ice=relay", () => {
+    expect(forcedIcePolicy("?ice=relay")).toBe("relay");
+    expect(forcedIcePolicy("?code=K7M2QX&ice=relay")).toBe("relay");
+  });
+
+  it("ignores every other value (default transport policy stays 'all')", () => {
+    expect(forcedIcePolicy("")).toBeUndefined();
+    expect(forcedIcePolicy("?ice=all")).toBeUndefined();
+    expect(forcedIcePolicy("?ice=")).toBeUndefined();
+    expect(forcedIcePolicy("?ice=RELAY")).toBeUndefined();
+    expect(forcedIcePolicy("?relay=1")).toBeUndefined();
+  });
+
+  it("is DOM-safe: no explicit search + no location yields undefined (headless/tests)", () => {
+    // Vitest's node environment has no `location`; the default-parameter path must not throw.
+    expect(forcedIcePolicy()).toBeUndefined();
   });
 });

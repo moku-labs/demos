@@ -14,7 +14,7 @@ then [`spec/design-context.md`](./spec/design-context.md) (authoritative). The a
 plugin list, and risks are in [`.planning/context-trivia.md`](./.planning/context-trivia.md) (the
 brainstorm output). **Planner/builder: reference `spec/` — do not re-search for the design.**
 
-> **Stack (settled 2026-06-26; room→0.4.0 2026-07-03; web→2.3.1 + worker→0.15.1 2026-07-03):** **@moku-labs/room@0.4.0** (a standalone
+> **Stack (settled 2026-06-26; room→0.7.0 2026-07-08; web→2.3.1 + worker→0.15.1 2026-07-03):** **@moku-labs/room@0.7.0** (a standalone
 > `@moku-labs/core` framework — NOT the old 0.1.x plugin-pack), **@moku-labs/web@2.3.1**, **preact@10.29.3**. The app
 > is **one `@moku-labs/web` SPA whose role is chosen by the URL** (`/` = TV/stage, `/controller/:code` =
 > phone) + per-role room `createApp`s (`src/lib/room/`) + **one** `@moku-labs/room/server` Hub-DO worker
@@ -100,9 +100,16 @@ for app shape (multiple `createApp` instances, side-by-side frameworks, folder s
 
 ## Dependency stack
 
-`@moku-labs/room@0.4.0` + `@moku-labs/web@2.3.1` + `@moku-labs/worker@0.15.1` + `preact@10.29.3` +
+`@moku-labs/room@0.7.0` + `@moku-labs/web@2.3.1` + `@moku-labs/worker@0.15.1` + `preact@10.29.3` +
 `preact-render-to-string@6.7.0`; all four frameworks pin one aligned `@moku-labs/core@1.5.0`.
-(room 0.4.0 = at-least-once intents: the host receipt-acks every intent frame and the controller
+(room 0.7.0 = internet-play transport knobs (0.6.0/0.7.0 are content-identical twin tags of the same
+commit — a release-dispatch race; 0.7.0 is npm `latest`): `TransportConfig.iceServers` also accepts a LAZY async
+provider — room invokes it at `connect()` in parallel with the signaling join and resolves it just
+before the first `RTCPeerConnection`, taking the `/api/ice` mint off the boot critical path — plus an
+`iceTransportPolicy` passthrough (`"relay"` = the `?ice=relay` force-relay diagnostic). The app wires
+both in `src/lib/room/{index,stage,controller}.ts`; the bridge also queues pre-boot controller intents
+and flushes them on join, so a fast wizard submit is never dropped.
+room 0.4.0 = at-least-once intents: the host receipt-acks every intent frame and the controller
 retransmits the same `cSeq` until acked — ~15 s budget, then the terminal `room:intent-undeliverable`
 event, which the phone maps to its connection-lost banner. A dropped one-shot intent no longer needs
 an app-side re-send watchdog; `answer-lock` additionally stays qid-pinned (host drops a lock for a

@@ -425,7 +425,6 @@ const MAX_ROUNDS_FOR_STEAL = 10;
 async function stealerGridEnabled(phone: Page): Promise<boolean> {
   const grid = phone.locator("[data-component='phone-answer']");
   if (!(await grid.count()) || !(await grid.isVisible().catch(() => false))) return false;
-  // eslint-disable-next-line unicorn/prefer-dom-node-dataset -- Playwright Locator, not a DOM node
   if (await grid.getAttribute("data-arming")) return false; // still on the "Get ready…" beat
   return (await grid.locator("[data-component='answer-button'][data-state='idle']").count()) > 0;
 }
