@@ -11,7 +11,7 @@
   "dependencies": {
     "@moku-labs/room": "^0.8.0",
     "@moku-labs/web": "2.3.1",
-    "@moku-labs/worker": "0.16.0",
+    "@moku-labs/worker": "0.17.0",
     "preact": "10.29.3",
     "preact-render-to-string": "6.7.0",
     "qrcode": "1.5.4"
