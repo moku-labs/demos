@@ -51,6 +51,7 @@ const PHONE_ONLY_SPECS = ["**/phone-screens.spec.ts", "**/controller-rendering.s
 const LIVE_ROOM_SPECS = [
   "**/00-two-context-flow.spec.ts",
   "**/01-full-match.spec.ts",
+  "**/ice-provisioning-live.spec.ts",
   "**/lobby-new-code.spec.ts"
 ];
 

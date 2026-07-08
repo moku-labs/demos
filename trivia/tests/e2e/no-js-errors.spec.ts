@@ -108,6 +108,18 @@ test.describe("boot guard — no JS errors", () => {
     }
   });
 
+  test("GET /api/ice answers a quiet no-store 200 {} with no secrets configured (local dev)", async ({
+    page
+  }) => {
+    // Internet-play ICE provisioning (Phase 1): local dev carries no TURN secrets, so the worker
+    // answers an empty 200 (never a 5xx — a real failure status would console-spam every boot) and
+    // the client fails open onto the room transport's public-STUN default.
+    const resp = await page.goto("/api/ice");
+    expect(resp?.status()).toBe(200);
+    expect(resp?.headers()["cache-control"]).toBe("no-store");
+    expect(await resp?.json()).toEqual({});
+  });
+
   test("bank shards contain valid JSON with questions", async ({ page }) => {
     const en = await page.goto("/bank/en/animals.json");
     expect(en?.status()).toBe(200);

@@ -20,6 +20,7 @@
 import type { JsonValue, QrMatrix, RoomDescriptor, Signaling } from "@moku-labs/room";
 import { hardNavigate } from "@moku-labs/web/browser";
 import type { EndStats } from "../../plugins/scoring/types";
+import { fetchIceServers } from "../ice/client";
 import { keepAwake } from "../keep-awake";
 import type { IntentName, IntentPayload, PeerId, TriviaState } from "../types";
 import { createControllerApp } from "./controller";
@@ -163,7 +164,10 @@ function clearHostReentry(): void {
  */
 async function bootStage(signaling?: Signaling): Promise<RoomDescriptor> {
   clearHostReentry(); // every TV load = a fresh room (no stale-code reclaim, no createRoom() throw)
-  const app = createStageApp(emitLifecycle, signaling);
+  // Provision the ICE relay rung (fail-open TURN credentials) — skipped when a signaling override is
+  // injected (tests pair in-process; there is no worker to ask and no real network to traverse).
+  const iceServers = signaling ? undefined : await fetchIceServers();
+  const app = createStageApp(emitLifecycle, signaling, iceServers);
   await app.start();
   const opened = app.stage.createRoom();
   stageApp = app;
@@ -196,7 +200,10 @@ async function bootStage(signaling?: Signaling): Promise<RoomDescriptor> {
  * ```
  */
 async function bootController(code: string, signaling?: Signaling): Promise<void> {
-  const app = createControllerApp(emitLifecycle, signaling);
+  // Same fail-open ICE provisioning as the stage — both sides holding relay candidates maximizes
+  // pairing success on hostile NATs (CGNAT phones on LTE are the common case).
+  const iceServers = signaling ? undefined : await fetchIceServers();
+  const app = createControllerApp(emitLifecycle, signaling, iceServers);
   await app.start();
   controllerApp = app;
   role = "controller";

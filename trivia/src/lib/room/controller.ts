@@ -27,6 +27,8 @@ function defaultSignaling(): Signaling {
  * @param onLifecycle - The bridge's `room:*` sink (wired through the observer plugin).
  * @param signaling - Optional signaling override; tests inject the SAME `inMemory()` the stage uses
  *   so the two apps pair in-process. Defaults to the deployed hub at `location.origin`.
+ * @param iceServers - Optional ICE servers (STUN + minted TURN relay) from `/api/ice`; omitted, the
+ *   transport keeps its public-STUN default. Mirrors the stage so both sides hold relay candidates.
  * @returns The composed (unstarted) controller app.
  * @example
  * ```ts
@@ -37,12 +39,16 @@ function defaultSignaling(): Signaling {
  */
 export function createControllerApp(
   onLifecycle: (event: RoomLifecycle) => void,
-  signaling?: Signaling
+  signaling?: Signaling,
+  iceServers?: readonly RTCIceServer[]
 ) {
   return createApp({
     plugins: [controllerPlugin, createRoomObserver(onLifecycle)],
     pluginConfigs: {
-      transport: { signaling: signaling ?? defaultSignaling() },
+      transport: {
+        signaling: signaling ?? defaultSignaling(),
+        ...(iceServers ? { iceServers } : {})
+      },
       session: {
         codeLength: TRIVIA.codeLength,
         joinUrlBase: "",
