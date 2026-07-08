@@ -29,6 +29,9 @@ function defaultSignaling(): Signaling {
  * @param onLifecycle - The bridge's `room:*` sink (wired through the observer plugin).
  * @param signaling - Optional signaling override; tests inject a shared `inMemory()` so a stage +
  *   controller pair connect in-process. Defaults to the deployed hub at `location.origin`.
+ * @param iceServers - Optional ICE servers (STUN + minted TURN relay) from `/api/ice`; omitted, the
+ *   transport keeps its public-STUN default (LAN + friendly-NAT internet). ICE itself races
+ *   local/STUN/relay candidate pairs — this only provisions the relay rung.
  * @returns The composed (unstarted) stage app.
  * @example
  * ```ts
@@ -37,7 +40,11 @@ function defaultSignaling(): Signaling {
  * const { code } = app.stage.createRoom();
  * ```
  */
-export function createStageApp(onLifecycle: (event: RoomLifecycle) => void, signaling?: Signaling) {
+export function createStageApp(
+  onLifecycle: (event: RoomLifecycle) => void,
+  signaling?: Signaling,
+  iceServers?: readonly RTCIceServer[]
+) {
   return createApp({
     plugins: [
       stagePlugin,
@@ -48,7 +55,10 @@ export function createStageApp(onLifecycle: (event: RoomLifecycle) => void, sign
       createRoomObserver(onLifecycle)
     ],
     pluginConfigs: {
-      transport: { signaling: signaling ?? defaultSignaling() },
+      transport: {
+        signaling: signaling ?? defaultSignaling(),
+        ...(iceServers ? { iceServers } : {})
+      },
       session: {
         codeLength: TRIVIA.codeLength,
         joinUrlBase: "",

@@ -24,6 +24,14 @@
     gap: var(--space-3);
   }
 
+  /* Design-context §5 + A11: "a full-height vertical stack" of "equal-height buttons" that "fills
+     available space" — without this, the 6 buttons size to content and leave a large dead zone at
+     the bottom of the viewport (visible on any phone taller than the prototype's fixed 580px frame,
+     e.g. 390x844). Each button grows equally to fill the list's available height. */
+  [data-category-list] [data-component="category-button"] {
+    flex: 1 1 0;
+  }
+
   /* Landscape: 6 stacked buttons overflow the short height → reflow to a 2-column grid (3 rows). */
   @media (orientation: landscape) {
     [data-category-list] {
