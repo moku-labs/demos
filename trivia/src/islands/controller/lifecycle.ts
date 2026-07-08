@@ -243,9 +243,10 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
     // Re-claim our seat with the stable token so the host re-binds our slot/score/turn instead of
     // seating us as a new player (and so the mid-match join lock lets us — a returning player — back in).
     if (saved) intent("join-profile", { ...saved.profile, playerToken: saved.token });
-    // Join self-heal (armed only once the room boot succeeded — before that, intents cannot flow and
-    // the pre-join failure path below owns the UX): if the submitted join never lands in the synced
-    // players slice, re-send it; escalate to the connection-lost banner when re-sends go unanswered.
+    // Join self-heal (armed only once the room boot succeeded — pre-boot submits are QUEUED by the
+    // bridge and flushed at join, and the pre-join failure path below owns failure UX): if the
+    // submitted join never lands in the synced players slice (wire loss AFTER delivery became
+    // possible), re-send it; escalate to the connection-lost banner when re-sends go unanswered.
     ctx.cleanup(armJoinSelfHeal(ctx));
   } catch {
     // A failed join (full / not-found / room gone after a "New code" reset / unreachable): roll back the
