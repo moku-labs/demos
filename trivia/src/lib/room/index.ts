@@ -20,7 +20,6 @@
 import type { JsonValue, QrMatrix, RoomDescriptor, Signaling } from "@moku-labs/room";
 import { hardNavigate } from "@moku-labs/web/browser";
 import type { EndStats } from "../../plugins/scoring/types";
-import { fetchIceServers, forcedIcePolicy } from "../ice/client";
 import { keepAwake } from "../keep-awake";
 import type { IntentName, IntentPayload, PeerId, TriviaState } from "../types";
 import { createControllerApp } from "./controller";
@@ -133,23 +132,6 @@ function emitLifecycle(event: RoomLifecycle): void {
 
 // ─── Boot (idempotent) ──────────────────────────────────────────────────────────
 
-/**
- * The lazy ICE provider handed to room's transport (`iceServers` provider form): room invokes it at
- * `connect()` — in parallel with the signaling join — and resolves it just before the first
- * `RTCPeerConnection`. Wraps {@link fetchIceServers} so its optional `fetchImpl` test parameter never
- * leaks into the provider signature. Fail-open all the way down: `undefined` (endpoint down, no
- * secrets, timeout, garbage) keeps room's public-STUN default.
- *
- * @returns The minted ICE servers, or `undefined` to keep the transport's STUN default.
- * @example
- * ```ts
- * createStageApp(emitLifecycle, undefined, iceProvider, forcedIcePolicy());
- * ```
- */
-function iceProvider(): Promise<readonly RTCIceServer[] | undefined> {
-  return fetchIceServers();
-}
-
 /** Substring of the room session plugin's host-reentry localStorage keys (`moku.room.reentry.{code}`). */
 const REENTRY_KEY_INFIX = ".reentry.";
 
@@ -194,17 +176,11 @@ function clearHostReentry(): void {
  */
 async function bootStage(signaling?: Signaling): Promise<RoomDescriptor> {
   clearHostReentry(); // every TV load = a fresh room (no stale-code reclaim, no createRoom() throw)
-  // Provision the ICE relay rung (fail-open TURN credentials) via room's LAZY provider form: room
-  // invokes it at connect() so the `/api/ice` fetch runs in parallel with the signaling join and is
-  // resolved only at pairing time — a slow or hung endpoint can no longer delay room-open (the old
-  // serial `await fetchIceServers()` cost up to ICE_FETCH_TIMEOUT_MS on this boot path). Skipped when
-  // a signaling override is injected (tests pair in-process; there is no worker to ask).
-  const app = createStageApp(
-    emitLifecycle,
-    signaling,
-    signaling ? undefined : iceProvider,
-    forcedIcePolicy()
-  );
+  // ICE provisioning is now the FRAMEWORK's (room 0.8+): with the default serverSignaling adapter,
+  // transport lazily fetches fail-open TURN credentials from the hub's own /api/ice (parallel with
+  // the signaling join) and honors the ?ice=relay force-relay diagnostic — zero wiring here. Tests
+  // inject an in-process signaling override, which carries no ICE endpoint (nothing to fetch).
+  const app = createStageApp(emitLifecycle, signaling);
   await app.start();
   const opened = app.stage.createRoom();
   stageApp = app;
@@ -237,15 +213,9 @@ async function bootStage(signaling?: Signaling): Promise<RoomDescriptor> {
  * ```
  */
 async function bootController(code: string, signaling?: Signaling): Promise<void> {
-  // Same lazy fail-open ICE provisioning as the stage — both sides holding relay candidates maximizes
-  // pairing success on hostile NATs (CGNAT phones on LTE are the common case). Off the join critical
-  // path: a hung `/api/ice` no longer widens the join race window.
-  const app = createControllerApp(
-    emitLifecycle,
-    signaling,
-    signaling ? undefined : iceProvider,
-    forcedIcePolicy()
-  );
+  // Same framework-owned ICE provisioning as the stage — both sides holding relay candidates
+  // maximizes pairing success on hostile NATs (CGNAT phones on LTE are the common case).
+  const app = createControllerApp(emitLifecycle, signaling);
   await app.start();
   controllerApp = app;
   role = "controller";

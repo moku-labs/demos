@@ -1,21 +1,24 @@
 /**
- * @file Live-room regression for internet-play ICE provisioning (`src/lib/ice/` + room 0.7.0).
+ * @file Live-room regression for internet-play ICE provisioning (room 0.8+ — FRAMEWORK-owned).
  *
  * ORIGIN (human-QA Saboteur tour, Phase 1): `bootController` used to `await fetchIceServers()` — the
- * same-origin `/api/ice` fetch bounded by `ICE_FETCH_TIMEOUT_MS` (2 s) — serially BEFORE creating the
- * controller app / calling `joinRoom`, while the join wizard is interactive from the very first paint
- * (`ctx.set({ code })` fires synchronously in `startControllerIsland`, before any await). A player who
- * completed the wizard fast could submit "Join" while boot was still in flight. TWO structural fixes
- * since (Phase 2): (1) the fetch left the boot critical path — `fetchIceServers` is now handed to room
- * 0.7.0 as its LAZY `iceServers` provider, primed in parallel with the signaling join and resolved just
- * before the first `RTCPeerConnection`; (2) the bridge's `intent()` (`src/lib/room/index.ts`) QUEUES
- * intents issued while the first controller boot settles and flushes them the moment the join
- * completes. (Before those fixes, a fast submit was dropped and only the `armJoinSelfHeal` watchdog in
- * `src/islands/controller/lifecycle.ts` recovered it — empirically ~12 s under a permanently-hung
- * `/api/ice`, vs. <1 s with a healthy one.) This spec pins BOTH halves in a REAL two-context WebRTC
- * room (not just the unit-level fetch mocks in `tests/unit/ice-client.test.ts`): the fail-open ICE
- * timeout keeps the join alive, and the intent queue lands it promptly — strictly faster than the
- * watchdog's first re-send, so a regression back to drop-and-heal fails the timing bound.
+ * same-origin `/api/ice` fetch bounded by a 2 s budget — serially BEFORE creating the controller app /
+ * calling `joinRoom`, while the join wizard is interactive from the very first paint (`ctx.set({ code })`
+ * fires synchronously in `startControllerIsland`, before any await). A player who completed the wizard
+ * fast could submit "Join" while boot was still in flight. TWO structural fixes since (Phase 2):
+ * (1) the fetch left the boot critical path — as of room 0.8 the whole `/api/ice` fetch IS the
+ * framework's: transport's default lazy `iceServers` provider (under `serverSignaling`) primes it in
+ * parallel with the signaling join and resolves it just before the first `RTCPeerConnection` — the app
+ * carries zero ICE code (the former `src/lib/ice/` layer is deleted); (2) the bridge's `intent()`
+ * (`src/lib/room/index.ts`) QUEUES intents issued while the first controller boot settles and flushes
+ * them the moment the join completes. (Before those fixes, a fast submit was dropped and only the
+ * `armJoinSelfHeal` watchdog in `src/islands/controller/lifecycle.ts` recovered it — empirically ~12 s
+ * under a permanently-hung `/api/ice`, vs. <1 s with a healthy one.) This spec pins BOTH halves in a
+ * REAL two-context WebRTC room, purely by BEHAVIOR (a Playwright route stall on `/api/ice` + timing
+ * bounds), so
+ * it survived the app→framework migration unchanged below this header: the fail-open ICE timeout keeps
+ * the join alive, and the intent queue lands it promptly — strictly faster than the watchdog's first
+ * re-send, so a regression back to drop-and-heal fails the timing bound.
  */
 import { expect, test } from "@playwright/test";
 
