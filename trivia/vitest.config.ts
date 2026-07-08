@@ -39,6 +39,12 @@ export default defineConfig({
         "src/lib/sound/index.ts",
         "src/lib/sound/engine.ts",
         "src/lib/sound/loader.ts",
+        // Browser-only surface glue (same rationale): keep-awake holds the Screen Wake Lock via
+        // navigator.wakeLock + visibilitychange + a re-acquire timer (no pure core), and the
+        // src/components/use-* Preact hooks are rAF / DOM-measurement animation glue for the .tsx
+        // islands excluded above. All exercised via the e2e gate.
+        "src/lib/keep-awake.ts",
+        "src/components/use-*.ts",
         "src/islands/**",
         "src/app.ts",
         "src/server.ts",
