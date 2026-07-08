@@ -47,9 +47,10 @@ let controllerBoot: Promise<void> | null = null;
 
 /**
  * Controller→host intents issued BEFORE the controller finished booting + joining. The join wizard is
- * interactive from its first paint while `bootController` (ICE provisioning + `joinRoom`) is still in
- * flight, so a fast "Join" tap can outrun the boot — those intents are queued in issue order and
- * flushed the moment the join completes (dropped if it fails; the wizard's failure path owns that UX).
+ * interactive from its first paint while `bootController` (`app.start()` + `joinRoom`; ICE credentials
+ * resolve in parallel via room's lazy provider) is still in flight, so a fast "Join" tap can outrun
+ * the boot — those intents are queued in issue order and flushed the moment the join completes
+ * (dropped if it fails; the wizard's failure path owns that UX).
  * This makes delivery a structural guarantee of the bridge contract, not a timing bet on the join
  * self-heal watchdog re-sending ~10 s later.
  */
@@ -358,12 +359,14 @@ export function subscribe(fn: (state: TriviaState) => void): () => void {
 }
 
 /**
- * Send a controller→host intent over the Wire. A no-op on the TV (the stage is a pure display and
- * never sends intents). Before the controller has booted AND joined, the intent is QUEUED and flushed
- * once the join completes — never silently dropped. (The join wizard is interactive from first paint
- * while `bootController` is still awaiting ICE provisioning / `joinRoom`, so a fast "Join" tap lands
- * here pre-boot; queueing encodes delivery in the bridge contract instead of leaning on the join
- * self-heal watchdog's ~10 s re-send.)
+ * Send a controller→host intent over the Wire. A no-op on pure-display tabs: the TV (`role`
+ * `"stage"`), and any tab where no controller boot is even underway — queueing there would strand
+ * the intent forever. While the FIRST controller boot is settling, the intent is QUEUED and flushed
+ * once the join completes, so a fast wizard tap is never dropped by the boot race. (The join wizard
+ * is interactive from first paint while `bootController` is still starting/joining; queueing encodes
+ * delivery in the bridge contract instead of leaning on the join self-heal watchdog's ~10 s re-send.)
+ * If that memoized join ultimately FAILS, the queue is dropped with it and later taps strand — the
+ * wizard's failure path owns that UX, unchanged from before the queue existed.
  *
  * @param name - The intent name.
  * @param payload - The typed payload.
@@ -373,7 +376,7 @@ export function subscribe(fn: (state: TriviaState) => void): () => void {
  * ```
  */
 export function intent<K extends IntentName>(name: K, payload: IntentPayload[K]): void {
-  if (role === "stage") return;
+  if (role === "stage" || (role === null && !controllerBoot)) return;
   if (controllerReady && controllerApp) {
     controllerApp.controller.intent(name, payload as JsonValue);
     return;

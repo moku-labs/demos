@@ -1,16 +1,16 @@
 /**
- * @file Live-room regression for internet-play ICE provisioning (Phase 1 — `src/lib/ice/`).
+ * @file Live-room regression for internet-play ICE provisioning (`src/lib/ice/` + room 0.7.0).
  *
- * Human-QA finding (Saboteur tour — slow/dead network on the ICE mint endpoint): `bootController`
- * (`src/lib/room/index.ts`) `await`s `fetchIceServers()` — a same-origin `/api/ice` fetch bounded by
- * `ICE_FETCH_TIMEOUT_MS` (2 s) — BEFORE creating the controller app / calling `joinRoom`. The join
- * wizard, however, is interactive from the very first paint (`ctx.set({ code })` fires synchronously
- * in `startControllerIsland`, before any await) — so a player who completes the wizard fast (a
- * saved/one-tap profile, or simply a quick typer) CAN submit "Join" while boot is still in flight.
- *
- * The bridge's contract for that race (`intent()` in `src/lib/room/index.ts`): a pre-boot intent is
- * QUEUED and flushed the moment the join completes — never silently dropped. (Before that fix, the
- * submit was dropped and only the `armJoinSelfHeal` watchdog in
+ * ORIGIN (human-QA Saboteur tour, Phase 1): `bootController` used to `await fetchIceServers()` — the
+ * same-origin `/api/ice` fetch bounded by `ICE_FETCH_TIMEOUT_MS` (2 s) — serially BEFORE creating the
+ * controller app / calling `joinRoom`, while the join wizard is interactive from the very first paint
+ * (`ctx.set({ code })` fires synchronously in `startControllerIsland`, before any await). A player who
+ * completed the wizard fast could submit "Join" while boot was still in flight. TWO structural fixes
+ * since (Phase 2): (1) the fetch left the boot critical path — `fetchIceServers` is now handed to room
+ * 0.7.0 as its LAZY `iceServers` provider, primed in parallel with the signaling join and resolved just
+ * before the first `RTCPeerConnection`; (2) the bridge's `intent()` (`src/lib/room/index.ts`) QUEUES
+ * intents issued while the first controller boot settles and flushes them the moment the join
+ * completes. (Before those fixes, a fast submit was dropped and only the `armJoinSelfHeal` watchdog in
  * `src/islands/controller/lifecycle.ts` recovered it — empirically ~12 s under a permanently-hung
  * `/api/ice`, vs. <1 s with a healthy one.) This spec pins BOTH halves in a REAL two-context WebRTC
  * room (not just the unit-level fetch mocks in `tests/unit/ice-client.test.ts`): the fail-open ICE
