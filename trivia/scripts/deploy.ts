@@ -21,7 +21,7 @@ const ci = process.argv.includes("--ci");
 const deleteFlag = process.argv.includes("--delete");
 
 const stageFlag = process.argv.indexOf("--stage");
-const stage = stageFlag === -1 ? "production" : (process.argv[stageFlag + 1] ?? "production");
+const stage = stageFlag === -1 ? "demo" : (process.argv[stageFlag + 1] ?? "demo");
 
 await server.cli.deploy({
   ci,
