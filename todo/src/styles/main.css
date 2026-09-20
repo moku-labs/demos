@@ -1,0 +1,184 @@
+/**
+ * main.css — the single stylesheet the build plugin bundles, content-hashes and injects as a
+ * <link>. Cascade-layer order first, then the per-component sheets via the aggregator (each
+ * co-located sheet is layer-agnostic; this import assigns its layer). Two token layers: raw
+ * primitives, then semantic aliases built on light-dark() so the app follows the OS theme on the
+ * web, on macOS and on iOS without a single theme branch in code.
+ */
+@layer reset, tokens, base, components, utilities;
+
+@import "./components.css" layer(components);
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html,
+  body {
+    min-height: 100%;
+  }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    background: var(--surface-page);
+    -webkit-font-smoothing: antialiased;
+    text-size-adjust: 100%;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    /* iOS taps feel native without the grey flash and the double-tap zoom. */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input {
+    font: inherit;
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+@layer tokens {
+  :root {
+    color-scheme: light dark;
+
+    /* ── Primitives ─────────────────────────────────────────────── */
+    --color-white: #fff;
+    --color-slate-50: #f8fafc;
+    --color-slate-100: #f1f5f9;
+    --color-slate-200: #e2e8f0;
+    --color-slate-400: #94a3b8;
+    --color-slate-500: #64748b;
+    --color-slate-700: #334155;
+    --color-slate-800: #1e293b;
+    --color-slate-900: #0f172a;
+    --color-slate-950: #020617;
+    --color-pink-400: #f472b6;
+    --color-pink-500: #ec4899;
+    --color-green-500: #22c55e;
+    --color-green-400: #4ade80;
+    --color-red-500: #ef4444;
+    --color-red-400: #f87171;
+
+    /* ── Semantic ───────────────────────────────────────────────── */
+    --surface-page: light-dark(var(--color-slate-50), var(--color-slate-950));
+    --surface-card: light-dark(var(--color-white), var(--color-slate-900));
+    --surface-sunken: light-dark(var(--color-slate-100), var(--color-slate-800));
+    --text-primary: light-dark(var(--color-slate-900), var(--color-slate-100));
+    --text-muted: light-dark(var(--color-slate-500), var(--color-slate-400));
+    --border-default: light-dark(var(--color-slate-200), var(--color-slate-700));
+    --border-strong: light-dark(var(--color-slate-400), var(--color-slate-500));
+    --accent: light-dark(var(--color-pink-500), var(--color-pink-400));
+    --accent-soft: light-dark(#fbcfe8, #831843);
+    --accent-ink: light-dark(var(--color-white), var(--color-slate-950));
+    --danger: light-dark(var(--color-red-500), var(--color-red-400));
+    --status-ok: light-dark(var(--color-green-500), var(--color-green-400));
+    --status-muted: var(--text-muted);
+
+    /* Type — 16px on inputs is what stops iOS Safari zooming on focus. */
+    --font-body:
+      system-ui, -apple-system, "Segoe UI", roboto, helvetica, arial, sans-serif;
+    --fs-input: 16px;
+    --fs-body: 16px;
+    --fs-small: 13px;
+    --fs-title: clamp(24px, 6vw, 30px);
+
+    /* Space */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+
+    /* Radii */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-pill: 999px;
+
+    /* The smallest comfortable touch target on iOS. */
+    --tap-target: 44px;
+
+    /* Column */
+    --column-max: 640px;
+  }
+}
+
+@layer base {
+  /* The page shell. `viewport-fit=cover` in index.html lets the layout reach under the status
+     bar and the home indicator; these insets are what push the content back out of them. */
+  [data-layout="todo"] {
+    display: block;
+    min-height: 100dvh;
+    padding:
+      max(var(--space-5), env(safe-area-inset-top))
+      max(var(--space-4), env(safe-area-inset-right))
+      max(var(--space-6), env(safe-area-inset-bottom))
+      max(var(--space-4), env(safe-area-inset-left));
+  }
+
+  [data-island="todo-app"] {
+    display: block;
+    max-width: var(--column-max);
+    margin-inline: auto;
+  }
+
+  [data-todo-app] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  [data-region="header"] h1 {
+    font-size: var(--fs-title);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  [data-region="header"] [data-tagline] {
+    margin-block-start: var(--space-1);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  [data-notice] {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    background: var(--surface-sunken);
+    border-radius: var(--radius-sm);
+  }
+}
+
+@layer utilities {
+  [hidden] {
+    display: none !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}

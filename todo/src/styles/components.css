@@ -1,0 +1,11 @@
+/**
+ * components.css — the aggregator that pulls in every per-component sheet. main.css imports this
+ * under layer(components), so each co-located sheet stays layer-agnostic and its @scope rules land
+ * in the components layer. Add a component = create Foo.tsx + Foo.css, then add one @import here.
+ */
+@import "../components/CapabilityRow.css";
+@import "../components/Filters.css";
+@import "../components/SystemPanel.css";
+@import "../components/TodoInput.css";
+@import "../components/TodoItem.css";
+@import "../components/TodoList.css";
