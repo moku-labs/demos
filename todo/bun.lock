@@ -5,7 +5,7 @@
     "": {
       "name": "todo",
       "dependencies": {
-        "@moku-labs/system": "file:../../.local-packages/moku-labs-system-0.1.0.tgz",
+        "@moku-labs/system": "0.2.0",
         "@moku-labs/web": "2.3.2",
         "@tauri-apps/api": "2.11.1",
         "@tauri-apps/plugin-clipboard-manager": "2.3.3",
@@ -17,7 +17,7 @@
       },
       "devDependencies": {
         "@biomejs/biome": "2.4.16",
-        "@moku-labs/native": "file:../../.local-packages/moku-labs-native-0.1.0.tgz",
+        "@moku-labs/native": "0.2.0",
         "@types/bun": "1.3.14",
         "@vitest/coverage-istanbul": "4.0.18",
         "eslint": "9.39.3",
@@ -186,9 +186,9 @@
 
     "@moku-labs/core": ["@moku-labs/core@1.5.0", "", {}, "sha512-CPQmvFvLTo/NpQBeoyLFXNcfuNIxtuSuFXkGwCpvuS0KmWwzkd8ObnN1s3xpzQ8J681t2NsrdDr+Fhc6DuFBvQ=="],
 
-    "@moku-labs/native": ["@moku-labs/native@../../.local-packages/moku-labs-native-0.1.0.tgz", { "dependencies": { "@moku-labs/common": "0.3.0", "@moku-labs/core": "1.5.0", "@tauri-apps/cli": "^2" } }, "sha512-9shE9ff5diFxJfzb3dYZGu6tPwH3Iir3vwTdklMnE63xBrygdwk47xEFco7s3ZrCyFpyZLUWS0StZqrdE4i9yA=="],
+    "@moku-labs/native": ["@moku-labs/native@0.2.0", "", { "dependencies": { "@moku-labs/common": "0.3.0", "@moku-labs/core": "1.5.0", "@tauri-apps/cli": "^2" } }, "sha512-Ix/F1hwPaIkWjcMQW2lknnX00l2OjdIvpZIjJyznaQQ04T0fcYFJe/Z9kS7HNw2v1cQVcxC9hHHLqzsTw5ygMQ=="],
 
-    "@moku-labs/system": ["@moku-labs/system@../../.local-packages/moku-labs-system-0.1.0.tgz", { "dependencies": { "@moku-labs/common": "0.3.0", "@moku-labs/core": "1.5.0", "idb-keyval": "6.3.0" }, "peerDependencies": { "@tauri-apps/api": "^2.11.0", "@tauri-apps/plugin-clipboard-manager": "^2.3.0", "@tauri-apps/plugin-deep-link": "^2.4.0", "@tauri-apps/plugin-notification": "^2.3.0", "@tauri-apps/plugin-store": "^2.4.0" }, "optionalPeers": ["@tauri-apps/api", "@tauri-apps/plugin-clipboard-manager", "@tauri-apps/plugin-deep-link", "@tauri-apps/plugin-notification", "@tauri-apps/plugin-store"] }, "sha512-VEJmu9h52fPfAtyU1w89MPPQGLnpX2icvLeXbO89JU9wPTTN0cnQytYzmDPcvxfRPJ5SUEodu27WYw6Z80HSsA=="],
+    "@moku-labs/system": ["@moku-labs/system@0.2.0", "", { "dependencies": { "@moku-labs/common": "0.3.0", "@moku-labs/core": "1.5.0", "idb-keyval": "6.3.0" }, "peerDependencies": { "@tauri-apps/api": "^2.11.0", "@tauri-apps/plugin-clipboard-manager": "^2.3.0", "@tauri-apps/plugin-deep-link": "^2.4.0", "@tauri-apps/plugin-notification": "^2.3.0", "@tauri-apps/plugin-store": "^2.4.0" }, "optionalPeers": ["@tauri-apps/api", "@tauri-apps/plugin-clipboard-manager", "@tauri-apps/plugin-deep-link", "@tauri-apps/plugin-notification", "@tauri-apps/plugin-store"] }, "sha512-fYIWfrZbeh3IF1jhNvdWJT4q9Z2zBXLxhi2so2BnAKPpQo8KfHxuIW3DsA+y0F3LwxDXipkt7CIVAqzf6y8hOg=="],
 
     "@moku-labs/web": ["@moku-labs/web@2.3.2", "", { "dependencies": { "@moku-labs/common": "0.2.1", "@moku-labs/core": "1.5.0", "@resvg/resvg-js": "2.6.2", "@shikijs/rehype": "3.22.0", "feed": "5.2.0", "gray-matter": "4.0.3", "hast-util-sanitize": "5.0.2", "p-limit": "6.2.0", "reading-time": "1.5.0", "rehype-raw": "7.0.0", "rehype-sanitize": "6.0.0", "rehype-stringify": "10.0.1", "remark-directive": "4.0.0", "remark-frontmatter": "5.0.0", "remark-gfm": "4.0.1", "remark-parse": "11.0.0", "remark-rehype": "11.1.2", "satori": "0.19.1", "shiki": "3.22.0", "unified": "11.0.5", "unist-util-visit": "5.1.0" }, "peerDependencies": { "mermaid-isomorphic": "^3.0.0", "preact": "^10.29.2", "preact-render-to-string": "^6.6.0" }, "optionalPeers": ["mermaid-isomorphic"] }, "sha512-RYM61P1JtRjtR2KP/SpT7igBLVCclxhoe6f9DEwYytS9wSTSB4mkkj0UrTmSL30I5HtSO67m3VZ2E93Bvd04cA=="],
 

@@ -70,10 +70,9 @@ permission surface from it. Change capabilities there, nowhere else.
 
 Only the scaffold exists today; these folders are created by the build step when first needed.
 
-### Local packages
+### Package versions
 
-`@moku-labs/system` and `@moku-labs/native` install from tarballs in `../../.local-packages/`
-(the npm versions are old and broken). Switch both to npm versions once they are released.
+`@moku-labs/system` and `@moku-labs/native` need `0.2.0` or newer.
 
 ## Testing
 
