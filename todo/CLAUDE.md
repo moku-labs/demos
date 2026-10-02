@@ -65,8 +65,22 @@ permission surface from it. Change capabilities there, nowhere else.
 - `src/components/` — flat Preact components, each with a co-located `.css`
 - `src/islands/` — `createIsland(...)` surfaces + `index.ts` registry
 - `src/layouts/`, `src/pages/` — route layouts and pages
-- `src/styles/` — `main.css` (layers, tokens) + `components.css` aggregator
+- `src/styles/` — `main.css` is the entry and holds imports only. `layers.css` (layer order),
+  `reset.css`, `tokens.css`, `base.css` (page shell), `components.css` (aggregator: every
+  component sheet plus `todo-app.css`, the island's screen), `utilities.css`
 - `src/plugins/` — Layer-3 plugins, each with its own `__tests__/`
+
+### Style scope roots
+
+- A pure component scopes its sheet on `data-component="<name>"`, not `data-island`. It has no
+  behaviour. `data-island` marks only the element an island mounts on, so a selector shows at a
+  glance whether behaviour is attached.
+- The one island, `todo-app`, owns no CSS. Its screen rules live in `src/styles/todo-app.css`
+  under `@scope ([data-island="todo-app"])`, in the `components` layer.
+- The build only finds the entry as `src/styles/main.css`, so it is not called `index.css`.
+- The layer order sits in `layers.css`, imported first. Bun's CSS bundler moves an `@layer`
+  statement in the entry to the end of the bundle, which would reorder the layers.
+- Every `src/components/*.css` must be imported in `components.css`. A unit test checks it.
 
 Only the scaffold exists today; these folders are created by the build step when first needed.
 
