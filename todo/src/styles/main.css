@@ -1,0 +1,12 @@
+/**
+ * main.css — the stylesheet entry. The build plugin finds it by this name, bundles it,
+ * content-hashes it and injects it as a <link>. It holds imports only: the layer order first
+ * (layers.css), then each sheet in its layer. Every imported sheet is layer-agnostic; its
+ * import here assigns the layer.
+ */
+@import "./layers.css";
+@import "./reset.css" layer(reset);
+@import "./tokens.css" layer(tokens);
+@import "./base.css" layer(base);
+@import "./components.css" layer(components);
+@import "./utilities.css" layer(utilities);

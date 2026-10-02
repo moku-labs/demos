@@ -1,0 +1,64 @@
+/* One line per capability on every screen width: name, provider and the last answer on the left,
+   cut with an ellipsis when long, and the 44px probe button on the right. */
+@scope ([data-component="capability-row"]) {
+  :scope {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+  }
+
+  [data-name],
+  [data-provider],
+  [data-result] {
+    overflow: hidden;
+    font-size: var(--fs-small);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  [data-name] {
+    flex: 0 0 4.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  [data-provider] {
+    flex: 0 0 2.5rem;
+    color: var(--text-muted);
+  }
+
+  [data-result] {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--text-muted);
+  }
+
+  button {
+    flex: 0 0 auto;
+    min-width: var(--tap-target);
+    min-height: var(--tap-target);
+    padding: 0 var(--space-3);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+  }
+
+  :scope[data-status="ok"] [data-result] {
+    color: var(--status-ok);
+  }
+
+  :scope[data-status="unsupported"] [data-result],
+  :scope[data-status="unavailable"] [data-result] {
+    color: var(--status-muted);
+  }
+
+  :scope[data-status="denied"] [data-result],
+  :scope[data-status="error"] [data-result] {
+    color: var(--danger);
+  }
+}

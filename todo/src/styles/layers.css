@@ -1,0 +1,8 @@
+/**
+ * layers.css — the cascade-layer order, lowest first. main.css imports it before anything else.
+ * It lives in its own file because Bun's CSS bundler moves an @layer statement written in the
+ * entry to the end of the bundle, after the imported sheets: the order would then come from
+ * whichever sheet appeared first. `animations` has no sheet yet; naming it here keeps its
+ * place between components and utilities.
+ */
+@layer reset, tokens, base, components, animations, utilities;

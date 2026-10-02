@@ -1,0 +1,68 @@
+@scope ([data-component="todo-item"]) {
+  :scope {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+  }
+
+  [data-action="toggle"] {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+    min-height: var(--tap-target);
+    text-align: start;
+    color: var(--text-primary);
+  }
+
+  [data-box] {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    font-size: 15px;
+    line-height: 1;
+    color: var(--accent-ink);
+    border: 2px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+  }
+
+  [data-title] {
+    overflow: hidden;
+    font-size: var(--fs-body);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  [data-action="remind"],
+  [data-action="remove"] {
+    flex: 0 0 auto;
+    min-height: var(--tap-target);
+    padding: 0 var(--space-3);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+  }
+
+  [data-action="remove"] {
+    color: var(--danger);
+  }
+
+  :scope[data-done] [data-box] {
+    color: var(--accent-ink);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  :scope[data-done] [data-title] {
+    color: var(--text-muted);
+    text-decoration: line-through;
+  }
+}

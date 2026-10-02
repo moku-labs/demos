@@ -1,0 +1,43 @@
+/**
+ * todo-app.css — the screen the todo-app island renders around its components: the column,
+ * the header and the notice. The island owns no CSS; components.css imports this sheet into
+ * the `components` layer, and the @scope keeps every rule inside the island host.
+ */
+@scope ([data-island="todo-app"]) {
+  :scope {
+    display: block;
+    max-width: var(--column-max);
+    margin-inline: auto;
+  }
+
+  [data-todo-app] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  [data-region="header"] h1 {
+    font-size: var(--fs-title);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  [data-region="header"] [data-tagline] {
+    margin-block-start: var(--space-1);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  [data-notice] {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    background: var(--surface-sunken);
+    border-radius: var(--radius-sm);
+  }
+
+  /* The notice is a live region that is always rendered; with nothing to say it takes no room. */
+  [data-notice]:empty {
+    display: none;
+  }
+}

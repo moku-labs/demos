@@ -1,0 +1,16 @@
+/**
+ * base.css — the page shell, imported by main.css into the `base` layer. The screen inside it
+ * belongs to the todo-app island and is styled in todo-app.css.
+ */
+
+/* `viewport-fit=cover` in index.html lets the layout reach under the status bar and the home
+   indicator; these insets are what push the content back out of them. */
+[data-layout="todo"] {
+  display: block;
+  min-height: 100dvh;
+  padding:
+    max(var(--space-5), env(safe-area-inset-top))
+    max(var(--space-4), env(safe-area-inset-right))
+    max(var(--space-6), env(safe-area-inset-bottom))
+    max(var(--space-4), env(safe-area-inset-left));
+}
