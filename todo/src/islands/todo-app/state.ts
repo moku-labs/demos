@@ -23,6 +23,7 @@ export function initState(): TodoAppState {
     runtimePlatform: "",
     notice: "",
     ready: false,
+    loadFailed: false,
     panelOpen: true,
     system: undefined
   };

@@ -32,7 +32,7 @@ export type DeepLinkCommand =
   | {
       /** Discriminant: add one todo. */
       kind: "add";
-      /** The title the link carried, trimmed. */
+      /** The title the link carried, normalised by {@link normalizeTitle}. */
       title: string;
     }
   | {
@@ -49,8 +49,20 @@ const DEEP_LINK_ADD = "add";
 /** Deep-link host that runs the headless diagnostics probe. */
 const DEEP_LINK_PROBE = "probe";
 
+/** Query and hash parameter a web page uses to hand the app its launch deep link. */
+const LAUNCH_PARAMETER = "deeplink";
+
+/** The longest title a todo keeps, in characters — the same limit the input field has. */
+export const MAX_TITLE_LENGTH = 200;
+
+/** The most todos one paste adds; the rest of a long clipboard is left out. */
+export const MAX_PASTE_LINES = 50;
+
 /** Checklist and bullet markers stripped when a pasted line becomes a todo title. */
 const LINE_MARKER = /^\s*(?:[-*•]\s*)?(?:\[[\sxX]?\]\s*)?/;
+
+/** Any run of whitespace, line breaks and tabs included. */
+const WHITESPACE_RUN = /\s+/g;
 
 /**
  * Append a todo built from a title and a caller-minted stamp. A blank title is ignored.
@@ -162,8 +174,29 @@ export function toChecklist(todos: readonly Todo[]): string {
 }
 
 /**
+ * Make outside text fit to be a title: every run of whitespace becomes one space, the ends
+ * are trimmed, and the result is capped at {@link MAX_TITLE_LENGTH} characters. The cap
+ * counts characters, not UTF-16 units, so an emoji is never cut in half.
+ *
+ * @param text - Raw text from a deep link or a pasted line.
+ * @returns The title; an empty string when nothing but whitespace was given.
+ * @example
+ * ```ts
+ * normalizeTitle("  Buy \n oat\tmilk "); // "Buy oat milk"
+ * ```
+ */
+export function normalizeTitle(text: string): string {
+  const collapsed = text.replaceAll(WHITESPACE_RUN, " ").trim();
+  const characters = [...collapsed];
+  if (characters.length <= MAX_TITLE_LENGTH) return collapsed;
+
+  return characters.slice(0, MAX_TITLE_LENGTH).join("").trimEnd();
+}
+
+/**
  * Read todo titles out of pasted text — one per non-empty line, checklist and bullet
- * markers stripped, so a checklist copied from this app pastes straight back in.
+ * markers stripped, so a checklist copied from this app pastes straight back in. Each
+ * title is normalised, and one paste adds at most {@link MAX_PASTE_LINES} todos.
  *
  * @param text - The pasted clipboard text.
  * @returns The titles, in the order they appeared.
@@ -175,8 +208,9 @@ export function toChecklist(todos: readonly Todo[]): string {
 export function fromLines(text: string): string[] {
   return text
     .split(/\r?\n/)
-    .map(line => line.replace(LINE_MARKER, "").trim())
-    .filter(line => line.length > 0);
+    .map(line => normalizeTitle(line.replace(LINE_MARKER, "")))
+    .filter(line => line.length > 0)
+    .slice(0, MAX_PASTE_LINES);
 }
 
 /**
@@ -202,9 +236,39 @@ export function parseDeepLink(url: unknown): DeepLinkCommand | undefined {
   if (action === DEEP_LINK_PROBE) return { kind: "probe" };
   if (action !== DEEP_LINK_ADD) return undefined;
 
-  const title = parsed.searchParams.get("title")?.trim() ?? "";
+  const title = normalizeTitle(parsed.searchParams.get("title") ?? "");
 
   return title.length > 0 ? { kind: "add", title } : undefined;
+}
+
+/**
+ * The page URL without its `?deeplink=` / `#deeplink=` launch parameter. The web hands the
+ * app a launch link through that parameter; once the link is answered it is taken out of
+ * the address bar, so a reload does not answer it a second time.
+ *
+ * @param href - The current page URL.
+ * @returns The URL to put in place, or `undefined` when there is nothing to take out.
+ * @example
+ * ```ts
+ * withoutLaunchLink("https://todo.test/?deeplink=mokutodo%3A%2F%2Fprobe"); // "https://todo.test/"
+ * ```
+ */
+export function withoutLaunchLink(href: string): string | undefined {
+  const url = toUrl(href);
+  if (!url) return undefined;
+
+  const hash = new URLSearchParams(url.hash.slice(1));
+  const inQuery = url.searchParams.has(LAUNCH_PARAMETER);
+  const inHash = hash.has(LAUNCH_PARAMETER);
+  if (!inQuery && !inHash) return undefined;
+
+  if (inQuery) url.searchParams.delete(LAUNCH_PARAMETER);
+  if (inHash) {
+    hash.delete(LAUNCH_PARAMETER);
+    url.hash = hash.toString();
+  }
+
+  return url.href;
 }
 
 /**

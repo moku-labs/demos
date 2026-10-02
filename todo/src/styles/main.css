@@ -166,6 +166,11 @@
     background: var(--surface-sunken);
     border-radius: var(--radius-sm);
   }
+
+  /* The notice is a live region that is always rendered; with nothing to say it takes no room. */
+  [data-notice]:empty {
+    display: none;
+  }
 }
 
 @layer utilities {

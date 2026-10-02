@@ -22,8 +22,10 @@ export type TodoAppState = {
   runtimePlatform: string;
   /** The last thing that happened, shown under the toolbar; empty when there is nothing to say. */
   notice: string;
-  /** Whether the first store read has come back. */
+  /** Whether the first store read has come back. Nothing is persisted before it has. */
   ready: boolean;
+  /** Whether that read failed. The stored list is then left alone: changes stay on screen only. */
+  loadFailed: boolean;
   /** Whether the System panel is expanded. */
   panelOpen: boolean;
   /** The running system app; `undefined` until the island has booted it. */

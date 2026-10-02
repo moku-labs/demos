@@ -24,7 +24,7 @@ export function TodoItem({ todo }: TodoItemProps): JSX.Element {
         data-action="toggle"
         data-id={todo.id}
         aria-pressed={todo.done}
-        aria-label={todo.done ? `Mark "${todo.title}" as active` : `Mark "${todo.title}" as done`}
+        aria-label={`Done: ${todo.title}`}
       >
         <span data-box aria-hidden="true">
           {todo.done ? "✓" : ""}

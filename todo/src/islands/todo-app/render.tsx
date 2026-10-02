@@ -47,11 +47,10 @@ export function render(state: Readonly<TodoAppState>): Spa.RenderResult {
         doneCount={state.todos.length - activeCount}
       />
 
-      {state.notice.length > 0 ? (
-        <p data-notice role="status">
-          {state.notice}
-        </p>
-      ) : undefined}
+      {/* Always in the DOM: a live region only announces changes once it already exists. */}
+      <p data-notice role="status">
+        {state.notice}
+      </p>
 
       <TodoList todos={visible} emptyText={EMPTY_TEXT[state.filter]} />
 

@@ -35,7 +35,9 @@ import { initState } from "./state";
 import type { TodoAppState } from "./types";
 
 /**
- * Boot the island: one system app per mount, stopped again when the island is destroyed.
+ * Boot the island: one system app per mount, stopped again when the island is destroyed. The
+ * stop waits for the boot to settle, so an island destroyed mid-boot never stops an app that is
+ * still starting.
  *
  * @param ctx - The island context.
  * @returns Resolves once the first store read, the launch deep link and the tray have answered.
@@ -46,12 +48,13 @@ import type { TodoAppState } from "./types";
  */
 async function mountTodoApp(ctx: Spa.IslandContext<TodoAppState>): Promise<void> {
   const system = createSystemApp();
+  const booted = bootTodoApp(ctx, system);
   ctx.cleanup(function stopSystem(): void {
     // Teardown is fire-and-forget: the screen is already gone by the time stop() settles.
-    system.stop().catch(ignoreStopFailure);
+    booted.finally(() => system.stop()).catch(ignoreStopFailure);
   });
 
-  await bootTodoApp(ctx, system);
+  await booted;
 }
 
 /**

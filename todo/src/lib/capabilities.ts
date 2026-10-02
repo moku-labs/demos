@@ -101,11 +101,17 @@ const TODOS_KEY = "todos";
 /** Store key holding the last diagnostics report. */
 const DIAGNOSTICS_KEY = "diagnostics";
 
-/** The harmless value every probe writes and reads back. */
+/** The harmless key and value the store probe writes, reads back and deletes. */
 const PROBE_VALUE = "moku-todo-probe";
 
 /** Title every notification this app shows carries. */
 const NOTIFY_TITLE = "Moku Todo";
+
+/** What a probe reports when a capability answers with something other than what it was given. */
+const READ_BACK_MISMATCH = "read-back mismatch";
+
+/** What the notify probe and a reminder report when permission is not granted. */
+const NOTIFY_NOT_GRANTED = "notification permission was not granted";
 
 /**
  * The starting rows — one per capability, nothing called yet.
@@ -160,11 +166,12 @@ export function setRow(rows: readonly CapabilityRow[], row: CapabilityRow): Capa
 
 /**
  * Run the harmless probe for one capability: a store round trip, the notify permission
- * question, a clipboard round trip, a tray tooltip write, or the launch deep link.
+ * question, a clipboard round trip, a tray tooltip write, or the launch deep link. A round
+ * trip only counts as `ok` when the value read back is the value written.
  *
  * @param system - The composed system app.
  * @param name - The capability to probe.
- * @returns The capability's own result, untouched.
+ * @returns The capability's own result, or an `error` when a round trip read back something else.
  * @example
  * ```ts
  * const result = await probeCapability(system, "store");
@@ -176,7 +183,7 @@ export async function probeCapability(
 ): Promise<SystemResult<unknown>> {
   if (name === "store") return probeStore(system);
   if (name === "clipboard") return probeClipboard(system);
-  if (name === "notify") return system.notify.isPermissionGranted();
+  if (name === "notify") return probeNotify(system);
   if (name === "tray") return system.tray.setTooltip(`${NOTIFY_TITLE}: ready`);
 
   return system.deepLink.getCurrent();
@@ -351,9 +358,7 @@ export async function remind(system: SystemSurface, title: string): Promise<Syst
   if (!granted.value) {
     const requested = await system.notify.requestPermission();
     if (!requested.ok) return requested;
-    if (!requested.value) {
-      return err(requested.provider, "denied", "notification permission was not granted");
-    }
+    if (!requested.value) return err(requested.provider, "denied", NOTIFY_NOT_GRANTED);
   }
 
   return system.notify.show({ title: NOTIFY_TITLE, body: title });
@@ -422,10 +427,11 @@ function toResult(rows: readonly CapabilityRow[], name: CapabilityName): Diagnos
 }
 
 /**
- * Write, read back, and clean up a probe key — enough to prove the store round-trips.
+ * Write, read back, and clean up a probe key — the store only counts as working when the
+ * value it hands back is the value it was given.
  *
  * @param system - The composed system app.
- * @returns The read-back result, or the write failure that stopped it.
+ * @returns The read-back result, the failure that stopped it, or an `error` on a mismatch.
  * @example
  * ```ts
  * await probeStore(system);
@@ -437,23 +443,50 @@ async function probeStore(system: SystemSurface): Promise<SystemResult<unknown>>
 
   const read = await system.store.get(PROBE_VALUE);
   await system.store.delete(PROBE_VALUE);
+  if (!read.ok) return read;
 
-  return read;
+  return read.value === PROBE_VALUE ? read : err(read.provider, "error", READ_BACK_MISMATCH);
 }
 
 /**
- * Write and read back a probe string — enough to prove the clipboard round-trips.
+ * Ask whether notifications may be shown, and say so honestly: `ok` only when permission is
+ * granted, `denied` when it is not. The probe never prompts — that stays a user action.
  *
  * @param system - The composed system app.
- * @returns The read-back result, or the write failure that stopped it.
+ * @returns The granted answer, the permission failure, or `denied`.
+ * @example
+ * ```ts
+ * await probeNotify(system);
+ * ```
+ */
+async function probeNotify(system: SystemSurface): Promise<SystemResult<unknown>> {
+  const granted = await system.notify.isPermissionGranted();
+  if (!granted.ok) return granted;
+
+  return granted.value ? granted : err(granted.provider, "denied", NOTIFY_NOT_GRANTED);
+}
+
+/**
+ * Round-trip the user's own clipboard text: read it, write the same text back, read again.
+ * The probe never puts anything of its own on the clipboard, so whatever the user copied
+ * is still there afterwards.
+ *
+ * @param system - The composed system app.
+ * @returns The read-back result, the failure that stopped it, or an `error` on a mismatch.
  * @example
  * ```ts
  * await probeClipboard(system);
  * ```
  */
 async function probeClipboard(system: SystemSurface): Promise<SystemResult<unknown>> {
-  const written = await system.clipboard.writeText(PROBE_VALUE);
+  const before = await system.clipboard.readText();
+  if (!before.ok) return before;
+
+  const written = await system.clipboard.writeText(before.value);
   if (!written.ok) return written;
 
-  return system.clipboard.readText();
+  const after = await system.clipboard.readText();
+  if (!after.ok) return after;
+
+  return after.value === before.value ? after : err(after.provider, "error", READ_BACK_MISMATCH);
 }

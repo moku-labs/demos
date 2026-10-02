@@ -20,9 +20,22 @@ import {
   toRow
 } from "../../lib/capabilities";
 import type { Todo, TodoStamp } from "../../lib/todos";
-import { addTodo, countActive, parseDeepLink, quickTodoTitle } from "../../lib/todos";
+import {
+  addTodo,
+  countActive,
+  parseDeepLink,
+  quickTodoTitle,
+  withoutLaunchLink
+} from "../../lib/todos";
 import type { SystemApp } from "../../system-app";
 import type { TodoAppContext } from "./types";
+
+/** What the notice says when the stored list could not be read on boot. */
+const LOAD_FAILED_NOTICE =
+  "Your saved list could not be loaded. Changes stay on this screen and are not saved.";
+
+/** Random bytes in a fallback id — as many as a UUID carries. */
+const FALLBACK_ID_BYTES = 16;
 
 /**
  * Mint identity and creation time for a new todo — the impure half of `addTodo`, kept here so
@@ -35,7 +48,7 @@ import type { TodoAppContext } from "./types";
  * ```
  */
 export function mintStamp(): TodoStamp {
-  return { id: crypto.randomUUID(), createdAt: Date.now() };
+  return { id: crypto.randomUUID?.() ?? randomHexId(), createdAt: Date.now() };
 }
 
 /**
@@ -58,8 +71,9 @@ export function recordResult(
 }
 
 /**
- * Boot the island: start the system app, read the stored list, answer the launch deep link,
- * subscribe to runtime deliveries, and publish the first tray state.
+ * Boot the island: subscribe to runtime deep links, start the system app, read the stored list,
+ * answer the launch deep link, and publish the first tray state. The subscription comes first,
+ * so a link the OS delivers during boot is not lost; it waits until the stored list is on screen.
  *
  * @param ctx - The island context.
  * @param system - The system app to run against.
@@ -70,28 +84,25 @@ export function recordResult(
  * ```
  */
 export async function bootTodoApp(ctx: TodoAppContext, system: SystemApp): Promise<void> {
-  await system.start();
-  ctx.set({
-    system,
-    runtimeKind: system.runtime.kind,
-    runtimePlatform: system.runtime.platform
-  });
-
-  const loaded = await loadTodos(system);
-  recordResult(ctx, "store", loaded);
-  ctx.set({ todos: loaded.ok ? loaded.value : [], ready: true });
+  const listLoaded = startAndLoad(ctx, system);
+  ctx.cleanup(system.deepLink.onOpen(createDeepLinkListener(ctx, listLoaded)));
+  await listLoaded;
 
   const launch = await launchLink(system);
   recordResult(ctx, "deepLink", launch);
-  if (launch.ok && launch.value) await applyDeepLink(ctx, launch.value);
-
-  ctx.cleanup(system.deepLink.onOpen(createDeepLinkListener(ctx)));
+  if (launch.ok && launch.value) {
+    await applyDeepLink(ctx, launch.value);
+    forgetLaunchLink();
+  }
 
   await refreshTray(ctx);
 }
 
 /**
  * Make the list the new truth: show it, write it to the store, then bring the tray in step.
+ * Nothing happens before the stored list has loaded, because a save then would overwrite a
+ * list nobody has seen. After a failed load the list is shown but not written, for the same
+ * reason.
  *
  * @param ctx - The island context.
  * @param todos - The list to persist.
@@ -102,21 +113,22 @@ export async function bootTodoApp(ctx: TodoAppContext, system: SystemApp): Promi
  * ```
  */
 export async function persistTodos(ctx: TodoAppContext, todos: Todo[]): Promise<void> {
-  ctx.set({ todos });
-
   const system = ctx.state.system;
-  if (!system) return;
+  if (!system || !ctx.state.ready) return;
 
-  recordResult(ctx, "store", await saveTodos(system, todos));
+  ctx.set({ todos });
+  if (!ctx.state.loadFailed) recordResult(ctx, "store", await saveTodos(system, todos));
+
   await refreshTray(ctx);
 }
 
 /**
  * Publish the current count to the tray tooltip and menu. On the web and on iOS this answers
- * `unsupported`, which is shown as such and changes nothing else.
+ * `unsupported`, which is shown as such and changes nothing else. Once the tray has said so, it
+ * is not asked again: `unsupported` is a fact about the platform, not a passing failure.
  *
  * @param ctx - The island context.
- * @returns Resolves once the tray has answered.
+ * @returns Resolves once the tray has answered, or at once when it is unsupported.
  * @example
  * ```ts
  * await refreshTray(ctx);
@@ -124,7 +136,8 @@ export async function persistTodos(ctx: TodoAppContext, todos: Todo[]): Promise<
  */
 export async function refreshTray(ctx: TodoAppContext): Promise<void> {
   const system = ctx.state.system;
-  if (!system) return;
+  const tray = ctx.state.rows.find(row => row.name === "tray");
+  if (!system || tray?.status === "unsupported") return;
 
   const result = await syncTray(system, {
     activeCount: countActive(ctx.state.todos),
@@ -242,17 +255,105 @@ function createQuickAdd(ctx: TodoAppContext): () => void {
 }
 
 /**
- * Bind the deep-link effect to this island, for the capability's delivery channel to call.
+ * Start the system app and put the stored list on screen. A failed read leaves an empty screen
+ * that says so, and marks the list as not loaded so nothing is saved over it.
  *
  * @param ctx - The island context.
+ * @param system - The system app to start.
+ * @returns Resolves once the list is on screen and changes may be persisted.
+ * @example
+ * ```ts
+ * await startAndLoad(ctx, system);
+ * ```
+ */
+async function startAndLoad(ctx: TodoAppContext, system: SystemApp): Promise<void> {
+  await system.start();
+  ctx.set({
+    system,
+    runtimeKind: system.runtime.kind,
+    runtimePlatform: system.runtime.platform
+  });
+
+  const loaded = await loadTodos(system);
+  recordResult(ctx, "store", loaded);
+  if (loaded.ok) {
+    ctx.set({ todos: loaded.value, ready: true });
+    return;
+  }
+
+  ctx.set({ todos: [], ready: true, loadFailed: true, notice: LOAD_FAILED_NOTICE });
+}
+
+/**
+ * Take the answered launch link out of the address bar, so a reload does not answer it again.
+ * Only a browser page carries one; where there is no `history`, there is nothing to rewrite.
+ *
+ * @example
+ * ```ts
+ * forgetLaunchLink();
+ * ```
+ */
+function forgetLaunchLink(): void {
+  if (typeof history === "undefined" || typeof location === "undefined") return;
+
+  const href = withoutLaunchLink(location.href);
+  if (href) history.replaceState(history.state, "", href);
+}
+
+/**
+ * A random id for a context without `crypto.randomUUID` — a page served over plain http.
+ * `getRandomValues` is there in every context, so the id is as random as a UUID.
+ *
+ * @returns 32 hex characters.
+ * @example
+ * ```ts
+ * randomHexId(); // "9f1c…"
+ * ```
+ */
+function randomHexId(): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(FALLBACK_ID_BYTES));
+
+  return Array.from(bytes, byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * Bind the deep-link effect to this island, for the capability's delivery channel to call. A
+ * link that arrives before the stored list is on screen waits for it.
+ *
+ * @param ctx - The island context.
+ * @param listLoaded - Settles once the stored list is on screen.
  * @returns The subscriber handed to `deepLink.onOpen`.
  * @example
  * ```ts
- * system.deepLink.onOpen(createDeepLinkListener(ctx));
+ * system.deepLink.onOpen(createDeepLinkListener(ctx, listLoaded));
  * ```
  */
-function createDeepLinkListener(ctx: TodoAppContext): (payload: { url: string }) => void {
+function createDeepLinkListener(
+  ctx: TodoAppContext,
+  listLoaded: Promise<void>
+): (payload: { url: string }) => void {
   return function onDeepLink(payload: { url: string }): void {
-    void applyDeepLink(ctx, payload.url);
+    void applyOnceLoaded(ctx, listLoaded, payload.url);
   };
+}
+
+/**
+ * Run a delivered deep link once the stored list is on screen.
+ *
+ * @param ctx - The island context.
+ * @param listLoaded - Settles once the stored list is on screen.
+ * @param url - The delivered URL.
+ * @returns Resolves once the link's command has run.
+ * @example
+ * ```ts
+ * await applyOnceLoaded(ctx, listLoaded, "mokutodo://add?title=Buy%20milk");
+ * ```
+ */
+async function applyOnceLoaded(
+  ctx: TodoAppContext,
+  listLoaded: Promise<void>,
+  url: string
+): Promise<void> {
+  await listLoaded;
+  await applyDeepLink(ctx, url);
 }

@@ -39,16 +39,34 @@ function tracked(calls: string[], label: string, result: unknown) {
   };
 }
 
+/** What the user had on the clipboard before any probe ran. */
+const USER_CLIPBOARD = "- [ ] Buy milk";
+
 /** Builds a fully stubbed system surface plus an ordered call log. */
 function fakeSystem() {
   const calls: string[] = [];
   const track = (label: string, result: unknown) => tracked(calls, label, result);
 
+  // The store and the clipboard keep what is written, so a read-back check sees a real echo.
+  const stored = new Map<string, unknown>();
+  let clipboardText = USER_CLIPBOARD;
+
   const surface = {
     store: {
-      get: vi.fn(track("store.get", ok(undefined, "web"))),
-      set: vi.fn(track("store.set", ok(undefined, "web"))),
-      delete: vi.fn(track("store.delete", ok(undefined, "web"))),
+      get: vi.fn((key: string): Promise<unknown> => {
+        calls.push(`store.get:${key}`);
+        return Promise.resolve(ok(stored.get(key), "web"));
+      }),
+      set: vi.fn((key: string, value: unknown): Promise<unknown> => {
+        calls.push(`store.set:${key}`);
+        stored.set(key, value);
+        return Promise.resolve(ok(undefined, "web"));
+      }),
+      delete: vi.fn((key: string): Promise<unknown> => {
+        calls.push(`store.delete:${key}`);
+        stored.delete(key);
+        return Promise.resolve(ok(undefined, "web"));
+      }),
       keys: vi.fn(track("store.keys", ok([], "web"))),
       clear: vi.fn(track("store.clear", ok(undefined, "web")))
     },
@@ -58,8 +76,15 @@ function fakeSystem() {
       show: vi.fn(track("notify.show", ok(undefined, "web")))
     },
     clipboard: {
-      readText: vi.fn(track("clipboard.readText", ok("moku-todo-probe", "web"))),
-      writeText: vi.fn(track("clipboard.writeText", ok(undefined, "web")))
+      readText: vi.fn((): Promise<unknown> => {
+        calls.push("clipboard.readText");
+        return Promise.resolve(ok(clipboardText, "web"));
+      }),
+      writeText: vi.fn((text: string): Promise<unknown> => {
+        calls.push(`clipboard.writeText:${text}`);
+        clipboardText = text;
+        return Promise.resolve(ok(undefined, "web"));
+      })
     },
     tray: {
       setMenu: vi.fn(track("tray.setMenu", ok(undefined, "web"))),
@@ -149,6 +174,25 @@ describe("probeCapability", () => {
     expect(surface.store.get).not.toHaveBeenCalled();
   });
 
+  it("reports a store that reads back another value as an error", async () => {
+    const { system, surface } = fakeSystem();
+    surface.store.get.mockResolvedValue(ok("something else", "tauri"));
+
+    const result = await probeCapability(system, "store");
+
+    expect(result).toEqual(err("tauri", "error", "read-back mismatch"));
+    expect(surface.store.delete).toHaveBeenCalledWith("moku-todo-probe");
+  });
+
+  it("returns the store read failure as it came", async () => {
+    const { system, surface } = fakeSystem();
+    surface.store.get.mockResolvedValue(err("web", "unavailable", "no indexeddb"));
+
+    expect(await probeCapability(system, "store")).toEqual(
+      err("web", "unavailable", "no indexeddb")
+    );
+  });
+
   it("asks notify for the current permission", async () => {
     const { system, calls } = fakeSystem();
     await probeCapability(system, "notify");
@@ -156,12 +200,55 @@ describe("probeCapability", () => {
     expect(calls).toEqual(["notify.isPermissionGranted"]);
   });
 
-  it("round-trips the probe text through the clipboard", async () => {
+  it("reports ok for notify only when permission is granted", async () => {
+    const { system } = fakeSystem();
+
+    expect(await probeCapability(system, "notify")).toEqual(ok(true, "web"));
+  });
+
+  it("reports a notify permission that is not granted as denied", async () => {
+    const { system, surface } = fakeSystem();
+    surface.notify.isPermissionGranted.mockResolvedValue(ok(false, "tauri"));
+
+    const result = await probeCapability(system, "notify");
+
+    expect(toRow("notify", result).status).toBe("denied");
+    expect(result).toEqual(err("tauri", "denied", "notification permission was not granted"));
+  });
+
+  it("returns the notify permission failure as it came", async () => {
+    const { system, surface } = fakeSystem();
+    surface.notify.isPermissionGranted.mockResolvedValue(err("web", "unsupported"));
+
+    expect(await probeCapability(system, "notify")).toEqual(err("web", "unsupported"));
+  });
+
+  it("round-trips the user's own clipboard text and leaves it in place", async () => {
     const { system, calls } = fakeSystem();
     const result = await probeCapability(system, "clipboard");
 
-    expect(result.ok).toBe(true);
-    expect(calls).toEqual(["clipboard.writeText:moku-todo-probe", "clipboard.readText"]);
+    expect(result).toEqual(ok(USER_CLIPBOARD, "web"));
+    expect(calls).toEqual([
+      "clipboard.readText",
+      `clipboard.writeText:${USER_CLIPBOARD}`,
+      "clipboard.readText"
+    ]);
+  });
+
+  it("never writes the probe value over the user's clipboard", async () => {
+    const { system, surface } = fakeSystem();
+    await probeCapability(system, "clipboard");
+
+    expect(surface.clipboard.writeText).not.toHaveBeenCalledWith("moku-todo-probe");
+    expect(await readClipboard(system)).toEqual(ok(USER_CLIPBOARD, "web"));
+  });
+
+  it("returns the first clipboard read failure without writing", async () => {
+    const { system, surface } = fakeSystem();
+    surface.clipboard.readText.mockResolvedValue(err("web", "denied"));
+
+    expect(await probeCapability(system, "clipboard")).toEqual(err("web", "denied"));
+    expect(surface.clipboard.writeText).not.toHaveBeenCalled();
   });
 
   it("returns the clipboard write failure without reading back", async () => {
@@ -169,7 +256,29 @@ describe("probeCapability", () => {
     surface.clipboard.writeText.mockResolvedValue(err("web", "denied"));
 
     expect(await probeCapability(system, "clipboard")).toEqual(err("web", "denied"));
-    expect(surface.clipboard.readText).not.toHaveBeenCalled();
+    expect(surface.clipboard.readText).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns the clipboard read-back failure as it came", async () => {
+    const { system, surface } = fakeSystem();
+    surface.clipboard.readText
+      .mockResolvedValueOnce(ok(USER_CLIPBOARD, "web"))
+      .mockResolvedValueOnce(err("web", "error", "pasteboard busy"));
+
+    expect(await probeCapability(system, "clipboard")).toEqual(
+      err("web", "error", "pasteboard busy")
+    );
+  });
+
+  it("reports a clipboard that reads back another value as an error", async () => {
+    const { system, surface } = fakeSystem();
+    surface.clipboard.readText
+      .mockResolvedValueOnce(ok(USER_CLIPBOARD, "tauri"))
+      .mockResolvedValueOnce(ok("changed meanwhile", "tauri"));
+
+    expect(await probeCapability(system, "clipboard")).toEqual(
+      err("tauri", "error", "read-back mismatch")
+    );
   });
 
   it("sets the tray tooltip", async () => {
