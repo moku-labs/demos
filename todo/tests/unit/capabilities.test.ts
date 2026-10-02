@@ -235,6 +235,24 @@ describe("probeCapability", () => {
     ]);
   });
 
+  it("probes an empty clipboard with a marker and clears it again", async () => {
+    const { system, surface, calls } = fakeSystem();
+    surface.clipboard.readText.mockImplementationOnce(() => {
+      calls.push("clipboard.readText");
+      return Promise.resolve(err("web", "error", "Clipboard is empty"));
+    });
+
+    const result = await probeCapability(system, "clipboard");
+
+    expect(result).toEqual(ok("", "web"));
+    expect(calls).toEqual([
+      "clipboard.readText",
+      "clipboard.writeText:moku-todo-probe",
+      "clipboard.readText",
+      "clipboard.writeText:"
+    ]);
+  });
+
   it("never writes the probe value over the user's clipboard", async () => {
     const { system, surface } = fakeSystem();
     await probeCapability(system, "clipboard");

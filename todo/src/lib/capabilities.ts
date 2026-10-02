@@ -4,7 +4,15 @@
  * small mapping that turns a result into the diagnostics row the System panel renders. Components
  * render what a row says; they never ask where they are running.
  */
-import type { Clipboard, DeepLink, Notify, Store, SystemResult, Tray } from "@moku-labs/system";
+import type {
+  Clipboard,
+  DeepLink,
+  Notify,
+  Store,
+  SystemErr,
+  SystemResult,
+  Tray
+} from "@moku-labs/system";
 import { err, ok } from "@moku-labs/system";
 import type { Todo } from "./todos";
 import { parseTodos } from "./todos";
@@ -466,10 +474,51 @@ async function probeNotify(system: SystemSurface): Promise<SystemResult<unknown>
   return granted.value ? granted : err(granted.provider, "denied", NOTIFY_NOT_GRANTED);
 }
 
+/** Tauri reports an empty clipboard as a failure; the message is the only signal. */
+const EMPTY_CLIPBOARD_PATTERN = /empty/i;
+
+/**
+ * Whether a clipboard read failed only because nothing is on the clipboard.
+ *
+ * @param result - A failed clipboard read.
+ * @returns True when the failure says the clipboard is empty.
+ * @example
+ * ```ts
+ * isEmptyClipboard(err("tauri", "error", "Clipboard is empty")); // true
+ * ```
+ */
+function isEmptyClipboard(result: SystemErr): boolean {
+  return result.reason === "error" && EMPTY_CLIPBOARD_PATTERN.test(result.message ?? "");
+}
+
+/**
+ * Round-trip a value through the clipboard and confirm it reads back unchanged.
+ *
+ * @param system - The composed system app.
+ * @param value - The text to write and read back.
+ * @returns The read-back result, the failure that stopped it, or an `error` on a mismatch.
+ * @example
+ * ```ts
+ * await roundTripClipboard(system, "hello");
+ * ```
+ */
+async function roundTripClipboard(
+  system: SystemSurface,
+  value: string
+): Promise<SystemResult<string>> {
+  const written = await system.clipboard.writeText(value);
+  if (!written.ok) return written;
+
+  const after = await system.clipboard.readText();
+  if (!after.ok) return after;
+
+  return after.value === value ? after : err(after.provider, "error", READ_BACK_MISMATCH);
+}
+
 /**
  * Round-trip the user's own clipboard text: read it, write the same text back, read again.
- * The probe never puts anything of its own on the clipboard, so whatever the user copied
- * is still there afterwards.
+ * The probe never leaves anything of its own on the clipboard. An empty clipboard is
+ * probed with a marker that is cleared again, and reports an empty string as its value.
  *
  * @param system - The composed system app.
  * @returns The read-back result, the failure that stopped it, or an `error` on a mismatch.
@@ -480,13 +529,13 @@ async function probeNotify(system: SystemSurface): Promise<SystemResult<unknown>
  */
 async function probeClipboard(system: SystemSurface): Promise<SystemResult<unknown>> {
   const before = await system.clipboard.readText();
-  if (!before.ok) return before;
+  if (before.ok) return roundTripClipboard(system, before.value);
+  if (!isEmptyClipboard(before)) return before;
 
-  const written = await system.clipboard.writeText(before.value);
-  if (!written.ok) return written;
+  // Nothing to echo: prove the round trip with a marker, then leave the clipboard empty again.
+  const marker = await roundTripClipboard(system, PROBE_VALUE);
+  if (!marker.ok) return marker;
 
-  const after = await system.clipboard.readText();
-  if (!after.ok) return after;
-
-  return after.value === before.value ? after : err(after.provider, "error", READ_BACK_MISMATCH);
+  const cleared = await system.clipboard.writeText("");
+  return cleared.ok ? ok("", marker.provider) : cleared;
 }
