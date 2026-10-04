@@ -104,7 +104,7 @@ bun run migrate:local   # = wrangler d1 migrations apply DB --local
 2. **Deploy** — `bun run deploy` (guided; prompts on a TTY). Add `--ci` for non-interactive automation.
 3. **Migrate + seed in one go** — `bun run deploy --seed` applies the remote D1 migrations and loads `db/seed.sql` (then resets the cached board index) **as part of the deploy**. These post-deploy steps run only after the worker actually goes live and are **skipped on an aborted deploy** (e.g. a first run before the token exists) — so a first `deploy --seed` with no credentials no longer falls through to a raw `wrangler … --remote` auth error. Use `--migration` alone to migrate without seeding. (The standalone `bun run seed:remote` / `migrate:remote` scripts still work for ad-hoc runs against an already-deployed worker.)
 
-CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) validates every PR (typecheck · lint · test+coverage · web build · worker dry-run) and deploys to Cloudflare on push to `main` — **once** the repo has the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets. Until then the deploy job is inert.
+CI ([.github/workflows/ci.yml](../.github/workflows/ci.yml), at the repo root) validates every PR (typecheck · lint · test+coverage · web build · worker dry-run) and deploys to Cloudflare on push to `main` — **once** the repo has the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets and the repo variable `TRACKER_DEPLOY` is `true`. Until then the deploy job is skipped.
 
 ## Testing
 

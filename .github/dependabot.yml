@@ -1,0 +1,17 @@
+# One grouped PR a day per demo, for @moku-labs/* only. Each demo has its own lockfile.
+version: 2
+updates:
+  - package-ecosystem: "bun"
+    directories:
+      - "/atlas"
+      - "/todo"
+      - "/tracker"
+      - "/trivia"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-name: "@moku-labs/*"
+    groups:
+      moku:
+        patterns:
+          - "@moku-labs/*"
