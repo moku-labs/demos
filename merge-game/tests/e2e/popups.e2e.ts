@@ -430,7 +430,8 @@ describe("timber-popups — the look of a popup board", () => {
       // 150 units tall, centred on the top edge: half of it above the board, half on it.
       expect(plaque.h, header).toBe(150);
       expect(plaque.y + plaque.h / 2, header).toBe(panel.y);
-      expect(plaque.x + plaque.w / 2, header).toBe(panel.x + panel.w / 2);
+      // Yoga lays out on whole units: an odd width in an even box sits half a unit off.
+      expect(Math.abs(plaque.x + plaque.w / 2 - (panel.x + panel.w / 2)), header).toBeLessThanOrEqual(0.5);
       // As wide as its title and 80 units on each side, never under 420.
       expect(plaque.w, header).toBeGreaterThanOrEqual(420);
       expect(plaque.w, header).toBe(Math.max(420, rectOf(game, `${board}Title`).w + 160));
