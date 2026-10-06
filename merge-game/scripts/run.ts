@@ -9,16 +9,22 @@
  * - a version (`0.8.0`) or a pkg.pr.new URL: installed for this run. Locally package.json and
  *   bun.lock are put back afterwards; in CI (`CI=true`) they stay.
  * - a path to a working tree: the engine runs from its `src/` (vitest alias, Bun preload, dev page
- *   plugin and a generated tsconfig under `.moku/`); the editor runs its built bin from there.
+ *   plugin and a generated tsconfig under `.moku/`); the editor runs its built bin from there, and
+ *   the editor scenarios import its built entries (vitest alias, dev page plugin).
  *
  * `MOKU_ENGINE` and `MOKU_EDITOR` give the same inputs when the flags are left out. The rest of
  * the arguments go to the command: `bun run test:visual --no-pixels`, `bun run dev --port 0`.
+ *
+ * `test:editor` runs the editor scenarios on vitest. `--e2e` adds the Playwright specs, which drive
+ * the editor in a browser for about 20 minutes; they run locally only (before an editor release, or
+ * on request), never in CI, where a slow runner breaks their timing checks. With `--e2e` the rest
+ * goes to Playwright: `bun run test:editor --e2e --project chromium-desktop -g pick`.
  */
 import { spawn } from "node:child_process";
-import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { createBrandConsole } from "@moku-labs/common/cli";
-import { demoRoot, ENGINE_SRC_ENV, engineEntries, entrySource } from "./engine";
+import { demoRoot, EDITOR_ROOT_ENV, ENGINE_SRC_ENV, engineEntries, entrySource } from "./engine";
 
 /** Where an engine or an editor comes from for one run. */
 type Source = { kind: "pin" } | { kind: "package"; spec: string } | { kind: "path"; root: string };
@@ -44,8 +50,8 @@ const COMMANDS = [
   "build"
 ];
 
-/** The folder the editor scenarios of `test:editor` live in. */
-const EDITOR_SCENARIOS = path.join(demoRoot, "tests/editor");
+/** The Playwright config of the editor e2e specs of `test:editor`. */
+const EDITOR_E2E_CONFIG = "tests/editor/e2e/playwright.config.ts";
 
 const ui = createBrandConsole();
 
@@ -286,15 +292,44 @@ function engineTsconfig(root: string): string {
 }
 
 /**
- * Lists the editor scenarios, `*.editor.ts` anywhere under `tests/editor/`.
+ * Runs the editor scenarios: the vitest project `editor`, then the Playwright specs, both on the
+ * editor and the engine of this run. An editor working tree also hands its root to vitest and to
+ * the dev page plugin, so the scenarios import its build.
  *
- * @returns Their paths, empty when there are none yet.
+ * @param invocation - The command line, read.
+ * @param env - The engine variables of this run.
+ * @returns The exit code: the first that failed, else 0.
  */
-function editorScenarios(): string[] {
-  if (!existsSync(EDITOR_SCENARIOS)) return [];
+async function runEditorScenarios(
+  invocation: Invocation,
+  env: Record<string, string>
+): Promise<number> {
+  const { editor } = invocation;
+  const editorEnv = {
+    ...env,
+    MOKU_EDITOR_BIN: editorBin(editor),
+    ...(editor.kind === "path" ? { [EDITOR_ROOT_ENV]: editor.root } : {})
+  };
+  const vitest = await exec(
+    "bun",
+    ["--bun", "vitest", "run", "--project", "editor"],
+    editorEnv
+  );
 
-  return readdirSync(EDITOR_SCENARIOS, { recursive: true, encoding: "utf8" }).filter(file =>
-    file.endsWith(".editor.ts")
+  if (vitest !== 0 || !invocation.rest.includes("--e2e")) return vitest;
+
+  // The specs and their screenshots belong to the Chromium of @playwright/test, which can be
+  // newer than the playwright-core the visual tests use. In CI it is installed here.
+  if (process.env.CI === "true") {
+    const installed = await exec("bun", ["x", "playwright", "install", "chromium"]);
+
+    if (installed !== 0) return installed;
+  }
+
+  return exec(
+    "bun",
+    ["x", "playwright", "test", "-c", EDITOR_E2E_CONFIG, ...invocation.rest.filter(arg => arg !== "--e2e")],
+    editorEnv
   );
 }
 
@@ -327,20 +362,8 @@ async function runCommand(invocation: Invocation): Promise<number> {
       );
     case "test:visual":
       return exec("bun", ["tests/visual/run.ts", ...rest], env);
-    case "test:editor": {
-      if (editorScenarios().length === 0) {
-        ui.info("no editor scenarios yet (step A4): tests/editor holds no *.editor.ts. Skipped.");
-
-        return 0;
-      }
-
-      const bin = editorBin(invocation.editor);
-
-      return exec("bun", ["--bun", "vitest", "run", "--project", "editor", ...rest], {
-        ...env,
-        MOKU_EDITOR_BIN: bin
-      });
-    }
+    case "test:editor":
+      return runEditorScenarios(invocation, env);
     case "typecheck": {
       const project =
         invocation.engine.kind === "path" ? ["-p", engineTsconfig(invocation.engine.root)] : [];

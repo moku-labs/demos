@@ -21,7 +21,10 @@ a local working tree. With no flag the pins of package.json run.
 - `bun run test` — vitest: the game's unit tests and the headless e2e tests (`tests/e2e/`).
 - `bun run test:visual` — the visual tests (`tests/visual/`): headless state checks, plus pixels
   on macOS. It serves the page itself. `--no-pixels`, `--update`, `--only <name>`.
-- `bun run test:editor` — the editor scenarios (`tests/editor/`, step A4). Skipped while empty.
+- `bun run test:editor` — the editor scenarios: the vitest project `editor`
+  (`tests/editor/*.editor.ts`). `--e2e` adds the Playwright specs (`tests/editor/e2e/`, about
+  20 min, local only, never in CI); then extra arguments go to Playwright. They need the Chromium of
+  `@playwright/test`: `bunx playwright install chromium`.
 - `bun run typecheck` — `tsc --noEmit`.
 - `bun run pack` — packs the assets into `dist/assets/`.
 - `bun run build` — pack, then the static page into `dist/web/`.
@@ -32,9 +35,11 @@ a local working tree. With no flag the pins of package.json run.
 - **No hardcoded local path.** A local engine or editor is only ever a command-line parameter:
   `bun run test --engine <path>`. Never write a machine path (a user's home folder) or a
   `../sibling` default into a tracked file. CI fails on them.
-- The runner writes `.moku/` for a `--engine <path>` typecheck. It is gitignored.
+- The runner writes `.moku/` for a `--engine <path>` typecheck, and the editor e2e copies the
+  game into `.moku/editor-e2e/`. It is gitignored.
 - A test imports the engine through its public entries only (`@moku-labs/game`, `/testing`,
-  `/visual`, `/inspect`, `/control`). Never reach into `node_modules/@moku-labs/game/dist` or the
+  `/visual`, `/inspect`, `/control`), and the editor through its public entries only
+  (`@moku-labs/editor`, `/agent`, `/server`, `/tools`). Never reach into `node_modules/@moku-labs/game/dist` or the
   engine's `src/`. A browser API the engine takes through a seam gets a fake in `tests/helpers/`.
 - Visual baselines live in `tests/visual/baselines/<test>/<checkpoint>/`. Pixels are shot on macOS.
 
@@ -44,6 +49,7 @@ a local working tree. With no flag the pins of package.json run.
 - `features/`, `flows/`, `nodes/`, `rules/`, `view/` — the game, as in the engine before the move.
 - `web/` — the dev page, its server and the static build.
 - `tests/helpers/` — what the e2e tests share. `tests/e2e/` — headless e2e. `tests/visual/` — the
-  visual tests. `tests/editor/` — editor scenarios (step A4).
+  visual tests. `tests/editor/` — editor scenarios: `*.editor.ts` and `helpers/` for vitest,
+  `e2e/` for Playwright (its specs, config, page entry and screenshots).
 - `scripts/` — the runner and the engine-from-source glue (vitest alias, Bun preload, dev page
   plugin).

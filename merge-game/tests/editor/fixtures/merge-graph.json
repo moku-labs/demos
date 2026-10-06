@@ -1,0 +1,439 @@
+{
+  "main": "main",
+  "flows": {
+    "main": {
+      "nodes": {
+        "boot": {
+          "flow": "main",
+          "node": "boot",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["ready"]
+        },
+        "splash": {
+          "flow": "main",
+          "node": "splash",
+          "rest": true,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["progress", "loaded", "failed", "retry"],
+          "scene": "splash"
+        },
+        "setLoading": {
+          "flow": "main",
+          "node": "setLoading",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done"]
+        },
+        "loadFailed": {
+          "flow": "main",
+          "node": "loadFailed",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done"]
+        },
+        "retryLoading": {
+          "flow": "main",
+          "node": "retryLoading",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done"]
+        },
+        "home": {
+          "flow": "main",
+          "node": "home",
+          "rest": true,
+          "over": false,
+          "checkpoint": true,
+          "barrier": false,
+          "outcomes": ["play", "gift", "openSettings", "back"],
+          "scene": "home"
+        },
+        "dailyGift": {
+          "flow": "main",
+          "node": "dailyGift",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["claim", "close"]
+        },
+        "leaveGame": {
+          "flow": "main",
+          "node": "leaveGame",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["leave", "stay"]
+        },
+        "settings": {
+          "flow": "main",
+          "node": "settings",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["closed"],
+          "subFlow": "settingsPopup"
+        },
+        "board": {
+          "flow": "main",
+          "node": "board",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["orderComplete", "left"],
+          "subFlow": "board"
+        },
+        "afterOrder": {
+          "flow": "main",
+          "node": "afterOrder",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done"],
+          "slot": "afterOrder"
+        }
+      },
+      "start": "boot",
+      "edges": {
+        "boot": {
+          "ready": "splash"
+        },
+        "splash": {
+          "progress": "setLoading",
+          "loaded": "home",
+          "failed": "loadFailed",
+          "retry": "retryLoading"
+        },
+        "setLoading": {
+          "done": "splash"
+        },
+        "loadFailed": {
+          "done": "splash"
+        },
+        "retryLoading": {
+          "done": "splash"
+        },
+        "home": {
+          "play": "board",
+          "gift": "dailyGift",
+          "openSettings": "settings",
+          "back": "leaveGame"
+        },
+        "dailyGift": {
+          "claim": "home",
+          "close": "home"
+        },
+        "leaveGame": {
+          "leave": "home",
+          "stay": "home"
+        },
+        "settings": {
+          "closed": "home"
+        },
+        "board": {
+          "orderComplete": "afterOrder",
+          "left": "home"
+        },
+        "afterOrder": {
+          "done": "board"
+        }
+      }
+    },
+    "settingsPopup": {
+      "nodes": {
+        "enter": {
+          "flow": "settingsPopup",
+          "node": "enter",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done"]
+        },
+        "open": {
+          "flow": "settingsPopup",
+          "node": "open",
+          "rest": true,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["volume", "setLocale", "rename", "reset", "close"]
+        },
+        "setVolume": {
+          "flow": "settingsPopup",
+          "node": "setVolume",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done"]
+        },
+        "setLocale": {
+          "flow": "settingsPopup",
+          "node": "setLocale",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done"]
+        },
+        "rename": {
+          "flow": "settingsPopup",
+          "node": "rename",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["saved", "kept"]
+        },
+        "confirm": {
+          "flow": "settingsPopup",
+          "node": "confirm",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["reset", "cancel"]
+        }
+      },
+      "start": "enter",
+      "edges": {
+        "enter": {
+          "done": "open"
+        },
+        "open": {
+          "volume": "setVolume",
+          "setLocale": "setLocale",
+          "rename": "rename",
+          "reset": "confirm",
+          "close": "exit:closed"
+        },
+        "setVolume": {
+          "done": "open"
+        },
+        "setLocale": {
+          "done": "open"
+        },
+        "rename": {
+          "saved": "open",
+          "kept": "open"
+        },
+        "confirm": {
+          "cancel": "open",
+          "reset": "exit:closed"
+        }
+      }
+    },
+    "board": {
+      "nodes": {
+        "awaitIntent": {
+          "flow": "board",
+          "node": "awaitIntent",
+          "rest": true,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": [
+            "tap",
+            "select",
+            "merge",
+            "give",
+            "deliver",
+            "openSettings",
+            "leave",
+            "elapsed"
+          ],
+          "scene": "board"
+        },
+        "tapGenerator": {
+          "flow": "board",
+          "node": "tapGenerator",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done", "noEnergy", "boardFull", "rejected"]
+        },
+        "select": {
+          "flow": "board",
+          "node": "select",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done"]
+        },
+        "merge": {
+          "flow": "board",
+          "node": "merge",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done", "rejected"]
+        },
+        "giveToOrder": {
+          "flow": "board",
+          "node": "giveToOrder",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done", "orderComplete", "rejected"]
+        },
+        "deliver": {
+          "flow": "board",
+          "node": "deliver",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done", "orderComplete", "rejected"]
+        },
+        "catchUp": {
+          "flow": "board",
+          "node": "catchUp",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done"]
+        },
+        "energy": {
+          "flow": "board",
+          "node": "energy",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["watch", "later"]
+        },
+        "toast": {
+          "flow": "board",
+          "node": "toast",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done"]
+        },
+        "settings": {
+          "flow": "board",
+          "node": "settings",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["closed"],
+          "subFlow": "settingsPopup"
+        }
+      },
+      "start": "awaitIntent",
+      "edges": {
+        "awaitIntent": {
+          "tap": "tapGenerator",
+          "select": "select",
+          "merge": "merge",
+          "give": "giveToOrder",
+          "deliver": "deliver",
+          "openSettings": "settings",
+          "leave": "exit:left",
+          "elapsed": "catchUp"
+        },
+        "tapGenerator": {
+          "done": "awaitIntent",
+          "noEnergy": "energy",
+          "boardFull": "toast",
+          "rejected": "awaitIntent"
+        },
+        "select": {
+          "done": "awaitIntent"
+        },
+        "energy": {
+          "watch": "awaitIntent",
+          "later": "awaitIntent"
+        },
+        "toast": {
+          "done": "awaitIntent"
+        },
+        "merge": {
+          "done": "awaitIntent",
+          "rejected": "awaitIntent"
+        },
+        "giveToOrder": {
+          "done": "awaitIntent",
+          "orderComplete": "exit:orderComplete",
+          "rejected": "awaitIntent"
+        },
+        "deliver": {
+          "done": "awaitIntent",
+          "orderComplete": "exit:orderComplete",
+          "rejected": "awaitIntent"
+        },
+        "catchUp": {
+          "done": "awaitIntent"
+        },
+        "settings": {
+          "closed": "awaitIntent"
+        }
+      }
+    },
+    "rewardPopup": {
+      "nodes": {
+        "show": {
+          "flow": "rewardPopup",
+          "node": "show",
+          "rest": false,
+          "over": true,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["claim"],
+          "owner": "reward"
+        },
+        "grant": {
+          "flow": "rewardPopup",
+          "node": "grant",
+          "rest": false,
+          "over": false,
+          "checkpoint": false,
+          "barrier": false,
+          "outcomes": ["done"],
+          "owner": "reward"
+        }
+      },
+      "start": "show",
+      "edges": {
+        "show": {
+          "claim": "grant"
+        },
+        "grant": {
+          "done": "exit:done"
+        }
+      }
+    }
+  },
+  "slots": {
+    "afterOrder": [
+      {
+        "feature": "reward",
+        "flow": "rewardPopup",
+        "order": 10
+      }
+    ]
+  }
+}
