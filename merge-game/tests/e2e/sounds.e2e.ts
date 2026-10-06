@@ -1,7 +1,7 @@
 /**
  * @file What the player of Timber Town hears, headless. The game is composed with its screen but
  * without `audio`, so this file owns the `sfx` kind and writes down every sound the game asks
- * for: the click of every control (the sounds plugin), and never of a panel or a disabled
+ * for: the click of every control (the ui-sounds plugin), and never of a panel or a disabled
  * control; the merge, the sawmill pop and the coins; and the one music track of Home and the
  * board.
  */
@@ -17,7 +17,7 @@ import { boardScene } from "../../features/board/screens/scene";
 import { homeScene } from "../../features/home/screens/scene";
 import { splashScene } from "../../features/splash/screens/scene";
 import { mainFlow, screenPlugins, startMoment } from "../../game";
-import { isControl, soundsPlugin } from "../../plugins/ui-sounds";
+import { isControl, uiSoundsPlugin } from "../../plugins/ui-sounds";
 import { booted, folderIo, player, withItems } from "../helpers/game";
 
 /** Yields the microtask queue to the loop, the way a test waits without a timer. */
@@ -275,6 +275,6 @@ describe("timber-sounds — the music and the composition", () => {
   });
 
   it("composes the click plugin with the screen", () => {
-    expect(screenPlugins).toContain(soundsPlugin);
+    expect(screenPlugins).toContain(uiSoundsPlugin);
   });
 });

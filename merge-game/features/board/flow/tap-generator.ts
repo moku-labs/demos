@@ -8,9 +8,8 @@
  */
 import { play, schedule, sfx, type } from "@moku-labs/game";
 import { defineNode } from "@core/kit";
-import { applyRules } from "@core/state";
 import { tables } from "@core/tables";
-import { nextDue } from "@shared/rules";
+import { applyRules, nextDue } from "@shared/rules";
 import { refuseShake, sawmillTap } from "../motion/animations";
 import { rules } from "../rules";
 

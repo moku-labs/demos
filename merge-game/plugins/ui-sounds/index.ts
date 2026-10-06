@@ -1,6 +1,6 @@
 /**
- * @file The click of every control (design §4). One small plugin hears every tap and plays
- * `ui.click` when the tapped view is a control: it carries `Tappable` (it names an intent) or
+ * @file The click of every control (design §4). One small plugin hears every tap and plays the
+ * click when the tapped view is a control: it carries `Tappable` (it names an intent) or
  * `LocalWrite` (it writes local state, like a settings tab). A panel that only swallows the tap
  * carries `Touchable` alone, and so does a disabled control: both stay silent. The sound goes
  * through `flow.fx`, so no node plays a click and a game without `audio` hears nothing.
@@ -15,7 +15,12 @@ import {
   Tappable,
   worldPlugin
 } from "@moku-labs/game";
+import type { UiSoundsConfig } from "./types";
 
+export type * from "./types";
+
+/** The click of the shared layer. */
+const defaultConfig: UiSoundsConfig = { click: "ui.click" };
 
 /**
  * Whether a tapped view is a control, which clicks when it is tapped.
@@ -32,14 +37,16 @@ export function isControl(ecs: World.EcsApi, entity: World.Entity): boolean {
  * The click of every control: on start it adds one `input.onTap` listener, which runs before the
  * tap is answered. `input` drops its listeners when it stops.
  */
-export const soundsPlugin = createPlugin("sounds", {
+export const uiSoundsPlugin = createPlugin("uiSounds", {
   depends: [flowPlugin, inputPlugin, worldPlugin],
+  config: defaultConfig,
   onStart: ctx => {
     const { ecs } = ctx.require(worldPlugin);
     const flow = ctx.require(flowPlugin);
+    const { click } = ctx.config;
 
     ctx.require(inputPlugin).onTap(entity => {
-      if (isControl(ecs, entity)) flow.fx.dispatch(sfx("ui.click"));
+      if (isControl(ecs, entity)) flow.fx.dispatch(sfx(click));
     });
   }
 });

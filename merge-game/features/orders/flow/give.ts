@@ -9,9 +9,9 @@
  */
 import type { Anim } from "@moku-labs/game";
 import type { Player } from "@core/state";
-import { applyRules } from "@core/state";
 import { tables } from "@core/tables";
 import type { GiveInput, Rng } from "@core/types";
+import { applyRules } from "@shared/rules";
 import { giveToOrder } from "../rules/orders";
 import { cardKey } from "../views/order-card";
 

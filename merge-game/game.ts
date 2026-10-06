@@ -20,7 +20,6 @@ import type { Player } from "@core/state";
 import { startingPlayer, startingSession } from "@core/state";
 import {
   boardFlow,
-  boardLookPlugin,
   boardFeature,
   boot,
   dailyGift,
@@ -41,7 +40,7 @@ import {
   splash,
   splashFeature
 } from "@features";
-import { leaveExitPlugin, loadingPlugin, settingsLocalePlugin, soundsPlugin } from "@plugins";
+import { exitPlugin, loadingPlugin, localePlugin, uiSoundsPlugin } from "@plugins";
 import { sharedFeature } from "@shared";
 
 /**
@@ -185,10 +184,10 @@ export function createGame(options: GameOptions = {}): Game {
  * The plugins of the game with its screen: the nine screen plugins, `audio`, `effects` and
  * `platform`, which are opt-in and `platform` last of them, the shared layer (the feature
  * `shared`), every feature — the splash, Home, the board, the reward, the HUD, the orders, the
- * settings, the energy, the daily gift and the Leave popup — and the five plugins the game writes:
- * the loading of the splash, the language switch, the way out of the Leave popup (the four of
- * `plugins/`), the look of the board under the pointer (the board's own) and the click of every
- * control. Without a provider `platform` is inert; the web page and the native app pass the
+ * settings, the energy, the daily gift and the Leave popup — and the four plugins of `plugins/`:
+ * the language switch (`locale`), the way out of the Leave popup (`exit`), the loading of the
+ * splash (`loading`) and the click of every control (`uiSounds`). The look of the board under the
+ * pointer is a system of the board feature. Without a provider `platform` is inert; the web page and the native app pass the
  * bridge of `platform-bridge.ts`.
  */
 export const screenPlugins = [
@@ -207,11 +206,10 @@ export const screenPlugins = [
   energyFeature,
   giftFeature,
   leaveFeature,
-  settingsLocalePlugin,
-  leaveExitPlugin,
+  localePlugin,
+  exitPlugin,
   loadingPlugin,
-  boardLookPlugin,
-  soundsPlugin
+  uiSoundsPlugin
 ];
 
 /** The game with its screen and the two seams a test holds on to. */
@@ -282,7 +280,12 @@ export function createScreenGame(options: ScreenGameOptions = {}): ScreenGame {
       clock: { source: clock },
       flow: { mainFlow, safeNode: "home" },
       platform: { provider: options.platform },
-      leaveExit: { exit: () => options.platform?.exit() },
+      exit: { exit: () => options.platform?.exit() },
+      loading: {
+        bundles: ["home", "board", "orders"],
+        retry: { node: "splash", outcome: "retry" }
+      },
+      uiSounds: { click: "ui.click" },
       renderer: options.renderer ?? {},
       assets: { manifest: options.manifest, io: options.io },
       text: { fonts: { body: "ui.font-body", digits: "ui.font-display" } },

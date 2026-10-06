@@ -1,11 +1,12 @@
 /**
- * @file The one plugin this game writes: the handler of the `locale` effect. A node cannot call
- * `i18n` — its context is the save and the effects — so the feature that owns the language owns
- * the one line that switches it.
+ * @file The handler of the `locale` effect. A node cannot call `i18n` — its context is the save and
+ * the effects — so this plugin owns the one line that switches the language.
  */
 import type { Flow } from "@moku-labs/game";
 import { createPlugin, flowPlugin, i18nPlugin } from "@moku-labs/game";
+import type { LocalePayload } from "./types";
 
+export type * from "./types";
 
 /**
  * Reads the locale out of the descriptor the node awaited.
@@ -14,7 +15,7 @@ import { createPlugin, flowPlugin, i18nPlugin } from "@moku-labs/game";
  * @returns The locale, or `undefined` when the payload carries none.
  */
 function localeOf(descriptor: Flow.Descriptor): string | undefined {
-  const payload = descriptor.payload as { locale?: string } | undefined;
+  const payload = descriptor.payload as LocalePayload | undefined;
 
   return typeof payload?.locale === "string" ? payload.locale : undefined;
 }
@@ -24,7 +25,7 @@ function localeOf(descriptor: Flow.Descriptor): string | undefined {
  * the handler exists before the graph runs; a composition without it — the headless game — sees
  * the effect resolve at once and plays on.
  */
-export const settingsLocalePlugin = createPlugin("settingsLocale", {
+export const localePlugin = createPlugin("locale", {
   depends: [flowPlugin, i18nPlugin],
   onStart: ctx => {
     ctx.require(flowPlugin).fx.handle("locale", async descriptor => {

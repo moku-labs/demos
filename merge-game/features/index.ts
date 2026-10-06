@@ -6,7 +6,7 @@
  */
 
 // ─── Feature Instances ───────────────────────────────
-export { boardFeature, boardFlow, boardLookPlugin } from "./board";
+export { boardFeature, boardFlow } from "./board";
 export { energyFeature } from "./energy";
 export { dailyGift, giftFeature } from "./gift";
 export { boot, home, homeFeature } from "./home";

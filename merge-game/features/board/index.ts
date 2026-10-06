@@ -1,8 +1,7 @@
 /**
  * @file The screen half of the board feature: what the game brings to the screen plugins. The
  * logic half — the flows and the nodes — is composed through `flow.mainFlow` and does not change
- * because this feature exists. The look of the board under the pointer is `boardLookPlugin`, which
- * the game composes next to this feature.
+ * because this feature exists.
  */
 import { defineFeature } from "@core/kit";
 import { sparkles, stars } from "@shared";
@@ -30,13 +29,13 @@ import { boardItems } from "./world/projections/items";
 import { boardSelection } from "./world/projections/selection";
 import { glowCells } from "./world/systems/glow-cells";
 import { highlightLegal } from "./world/systems/highlight-legal";
+import { hoverLook } from "./world/systems/hover-look";
 
 export { boardFlow } from "./flow";
-export { boardLookPlugin } from "./plugins/look";
 export type * from "./types";
 
 /**
- * The board on the screen: one scene, its eight projections, two systems, four components, the
+ * The board on the screen: one scene, its eight projections, three systems, four components, the
  * animations of the board, the three particle effects, and the bundle that carries their pictures.
  * A game composes it next to `...screen` and `effectsPlugin`; a headless test leaves it out and the
  * same graph plays on.
@@ -57,7 +56,7 @@ export const boardFeature = defineFeature("boardScreen", {
     boardSteam,
     hud
   ],
-  systems: [highlightLegal, glowCells],
+  systems: [highlightLegal, glowCells, hoverLook],
   components: [Item, Highlighted, Generator, Glow],
   animations: [
     toastBoardFull,
