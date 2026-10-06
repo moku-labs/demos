@@ -1,0 +1,52 @@
+name: Demos
+
+# Runs the full tier of moku-labs/ci `demos.yml` (unit + headless e2e, visual baselines on macOS,
+# editor scenarios) for every demo a pull request changes. A demo is a top-level folder whose
+# package.json has `"moku": { "demo": true }`. Each demo runs its pinned engine and editor.
+
+on:
+  pull_request:
+
+concurrency:
+  group: demos-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  changed:
+    name: Changed demos
+    runs-on: ubuntu-latest
+    outputs:
+      demos: ${{ steps.diff.outputs.demos }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Demos the pull request touches
+        id: diff
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          demos="$(git diff --name-only "$BASE...$HEAD" | cut -d/ -f1 | sort -u | while read -r folder; do
+            if [ -f "$folder/package.json" ] && jq -e '.moku.demo == true' "$folder/package.json" >/dev/null; then
+              echo "$folder"
+            fi
+          done | jq -R . | jq -cs .)"
+          echo "Changed demos: $demos"
+          echo "demos=$demos" >> "$GITHUB_OUTPUT"
+
+  demos:
+    needs: changed
+    if: needs.changed.outputs.demos != '[]'
+    # TODO: switch @feat/demos-workflow to @v1 once moku-labs/ci is tagged.
+    uses: moku-labs/ci/.github/workflows/demos.yml@feat/demos-workflow
+    with:
+      tier: full
+      only: ${{ needs.changed.outputs.demos }}
+      # The demos of this pull request, not main: demos.yml checks out moku-labs/demos at this ref.
+      demos_ref: ${{ github.event.pull_request.head.sha }}

@@ -1,0 +1,70 @@
+# merge-game
+
+**Timber Town** — the merge puzzle of [`@moku-labs/game`](https://github.com/moku-labs/game), as a
+standalone demo. Tap the sawmill for twigs, merge them into planks and logs, deliver the orders.
+PixiJS v8 on WebGPU, the editor on top.
+
+The engine and the editor run this demo's tests on every pull request (`moku-labs/ci`
+`demos.yml`), so a change that breaks a real game shows on its own PR.
+
+## Run it
+
+```bash
+bun install
+bun run dev        # the game in the browser, prints the URL
+bun run editor     # the editor on the game
+bun run test       # unit + headless e2e
+```
+
+## Scripts
+
+| Script | What it does |
+|---|---|
+| `dev` | Serves the dev page (`web/serve.ts`) and prints its URL. `--port 0` picks a free port. |
+| `editor` | Starts `@moku-labs/editor` on this demo. |
+| `test` | Vitest: the game's unit tests and `tests/e2e/`. Fails on an empty test set. |
+| `test:visual` | `tests/visual/`: headless state checks, pixels on macOS. Serves the page itself. |
+| `test:editor` | `tests/editor/` scenarios. Skipped while the folder is empty (step A4). |
+| `typecheck` | `tsc --noEmit`. |
+| `pack` | Packs the assets into `dist/assets/`. |
+| `build` | `pack`, then the static page into `dist/web/`. |
+
+## Another engine or editor
+
+Every script runs through `scripts/run.ts` and takes the same two inputs:
+
+```bash
+bun run test --engine 0.8.0                                       # a release
+bun run test --engine https://pkg.pr.new/@moku-labs/game@<sha>    # a PR preview
+bun run test --engine <path-to-engine-working-tree>               # local source, no build
+bun run editor --engine <engine-path> --editor <editor-path>      # local editor build
+```
+
+`MOKU_ENGINE` and `MOKU_EDITOR` do the same as the flags.
+
+- **Version or URL:** installed for this run. Locally `package.json` and `bun.lock` go back to
+  their pins afterwards. In CI (`CI=true`) they stay.
+- **Engine path:** no install and no build. Vitest aliases every entry to the tree's `src/` and
+  dedupes Pixi, core and common. A Bun preload does the same for scripts, the dev page bundles
+  from source, and `typecheck` uses a generated tsconfig in `.moku/` (gitignored).
+- **Editor path:** runs the editor's built bin from that tree. Build it there first.
+
+A path is always a parameter. No default path is written anywhere.
+
+The runner lives in this demo because demos share no root code. It moves into the engine CLI
+later.
+
+## Tests
+
+| Folder | Runs in | What |
+|---|---|---|
+| `__tests__/`, `rules/__tests__/`, `features/**/__tests__/` | `test` | The game's own unit tests. |
+| `tests/e2e/` | `test` | Headless e2e: the game with its screen, played through taps and routes. Moved from the engine. |
+| `tests/visual/` | `test:visual` | Seven visual tests, baselines in `tests/visual/baselines/`. |
+| `tests/editor/` | `test:editor` | Editor scenarios (step A4). |
+
+Rewrite the visual baselines with `bun run test:visual --update` on a Mac.
+
+## Native
+
+`bun native.ts ios --simulator` builds the Tauri app with `@moku-labs/native`.
