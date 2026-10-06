@@ -18,5 +18,5 @@
     "jsxImportSource": "@moku-labs/game"
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist", ".moku"]
+  "exclude": ["node_modules", "dist", ".moku", "tests/editor/e2e/game"]
 }
