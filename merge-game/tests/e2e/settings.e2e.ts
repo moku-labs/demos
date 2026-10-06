@@ -6,13 +6,12 @@
  * lays the same rects out as it would in the browser.
  */
 
-import { readFile } from "node:fs/promises";
-import type { Assets, Ui } from "@moku-labs/game";
+import type { Ui } from "@moku-labs/game";
 import { Text } from "@moku-labs/game";
 import { describe, expect, it } from "vitest";
-import { createScreenGame } from "../../game";
 import type { Player } from "../../state";
 import { startingPlayer } from "../../state";
+import { booted, createDiskGame } from "../helpers/game";
 
 /** A board that already carries the level-3 item the first order asks for. */
 const readyPlayer: Player = {
@@ -40,17 +39,6 @@ const yieldToLoad = (): Promise<void> =>
   new Promise(resolve => {
     setTimeout(resolve, 0);
   });
-
-/**
- * Reads the committed manifest, the file the dev server hands the browser.
- *
- * @returns The parsed manifest.
- */
-async function readManifest(): Promise<Assets.Manifest> {
-  const text = await readFile(new URL("../../manifest.json", import.meta.url), "utf8");
-
-  return JSON.parse(text) as Assets.Manifest;
-}
 
 /** The game with its interface, as this file drives it. */
 type Interface = Awaited<ReturnType<typeof startBoard>>;
@@ -84,15 +72,15 @@ async function stepUntil(game: Interface, done: () => boolean): Promise<void> {
 }
 
 /**
- * Starts the game with its interface and walks it onto the board: the loading plugin lets the
- * splash through to Home at once (headless, every bundle counts as loaded), and Home answers
- * `play`.
+ * Starts the game with its interface over the files on disk and walks it onto the board: the
+ * splash lets it through to Home once every bundle landed, the fonts of `ui` among them, and Home
+ * answers `play`.
  *
  * @param player - The player a new save starts from.
  * @returns The started game, resting on `board/awaitIntent`.
  */
 async function startBoard(player: Player) {
-  const game = createScreenGame({ player, manifest: await readManifest() });
+  const game = await createDiskGame({ player });
   const loop: { failure?: unknown } = {};
 
   await game.app.start();
@@ -103,6 +91,7 @@ async function startBoard(player: Player) {
 
   if (loop.failure !== undefined) throw loop.failure;
 
+  await booted(game.app.assets);
   expect(game.app.flow.state().path).toBe("home");
   expect(game.app.flow.gate.answer({ intent: "play" })).toBe(true);
   await tick();

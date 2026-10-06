@@ -20,7 +20,7 @@ import type { Player } from "../../state";
 import { startingSession } from "../../state";
 import { generatorId } from "../../tables";
 import { boardScene } from "../../view/scene";
-import { player, withItems } from "../helpers/game";
+import { booted, folderIo, player, withItems } from "../helpers/game";
 
 /** Yields the microtask queue to the loop, the way a test waits without a timer. */
 const tick = async (times = 40): Promise<void> => {
@@ -39,7 +39,8 @@ async function readManifest(): Promise<Assets.Manifest> {
 }
 
 /**
- * Creates the game with its screen and without `audio`.
+ * Creates the game with its screen and without `audio`, over the files on disk, so the fonts of
+ * the `ui` bundle are real.
  *
  * @param start - The player a new save starts from.
  * @param manifest - The committed manifest.
@@ -58,7 +59,7 @@ function createQuietApp(start: Player, manifest: Assets.Manifest) {
       },
       clock: { source: fakeClock(startMoment) },
       flow: { mainFlow, safeNode: "home" },
-      assets: { manifest },
+      assets: { manifest, io: folderIo(new URL("../../", import.meta.url)).io },
       text: { fonts: { body: "ui.font-body", digits: "ui.font-display" } },
       i18n: { locale: "ru", fallback: "ru" }
     }
@@ -97,6 +98,7 @@ async function startOnHome(start: Player): Promise<QuietGame> {
   await app.start();
   app.flow.run().catch(() => undefined);
   await tick();
+  await booted(app.assets);
 
   const game = { app, heard };
 

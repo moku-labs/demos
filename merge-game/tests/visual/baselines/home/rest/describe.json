@@ -315,7 +315,7 @@
                         "children": [],
                         "key": "playLabel",
                         "rect": {
-                          "h": 132,
+                          "h": 131,
                           "w": 404,
                           "x": 338,
                           "y": 1441
@@ -711,7 +711,7 @@
                             "children": [],
                             "key": "giftBadgeCount",
                             "rect": {
-                              "h": 42,
+                              "h": 41,
                               "w": 18,
                               "x": 1012,
                               "y": 217
@@ -992,7 +992,7 @@
     {
       "components": {
         "Box": {
-          "h": 42,
+          "h": 41,
           "w": 18,
           "x": 1012,
           "y": 217
@@ -1004,12 +1004,12 @@
         "Transform": {
           "pivot": {
             "x": 9,
-            "y": 21
+            "y": 20.5
           },
           "rotation": 0,
           "scale": 1,
           "x": 26,
-          "y": 26
+          "y": 25.5
         }
       },
       "key": "giftBadgeCount",
@@ -1913,7 +1913,7 @@
     {
       "components": {
         "Box": {
-          "h": 132,
+          "h": 131,
           "w": 404,
           "x": 338,
           "y": 1441
@@ -1925,12 +1925,12 @@
         "Transform": {
           "pivot": {
             "x": 202,
-            "y": 66
+            "y": 65.5
           },
           "rotation": 0,
           "scale": 1,
           "x": 440,
-          "y": 110
+          "y": 109.5
         }
       },
       "key": "playLabel",

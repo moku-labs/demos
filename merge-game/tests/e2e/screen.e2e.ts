@@ -16,6 +16,7 @@ import { startingPlayer } from "../../state";
 import { generatorId } from "../../tables";
 import { Item } from "../../view/components";
 import { cellBox } from "../../view/layout";
+import { booted, createDiskGame } from "../helpers/game";
 
 /** One entity of `world.ecs.snapshot()`, as far as this test reads it. */
 type WorldEntity = {
@@ -117,15 +118,15 @@ function countByLayer(snapshot: Model.Json): Record<string, number> {
 }
 
 /**
- * Starts the game live with the screen composed and walks it onto the board. Headless, every
- * bundle counts as loaded at once, so the loading plugin posts `loaded` at start and the splash
- * lets the graph through to Home; there the test answers `play`.
+ * Starts the game live with the screen composed over the files on disk and walks it onto the
+ * board. Once every bundle landed, the fonts of `ui` among them, the loading plugin posts `loaded`
+ * and the splash lets the graph through to Home; there the test answers `play`.
  *
  * @param player - The player a new save starts from.
  * @returns The started game, resting on `board/awaitIntent`.
  */
 async function startBoard(player: Player) {
-  const game = createScreenGame({ player, manifest: await readManifest() });
+  const game = await createDiskGame({ player });
   const loop: { failure?: unknown } = {};
 
   await game.app.start();
@@ -136,6 +137,7 @@ async function startBoard(player: Player) {
 
   if (loop.failure !== undefined) throw loop.failure;
 
+  await booted(game.app.assets);
   expect(game.app.flow.state().path).toBe("home");
   expect(game.app.flow.gate.answer({ intent: "play" })).toBe(true);
   await tick();

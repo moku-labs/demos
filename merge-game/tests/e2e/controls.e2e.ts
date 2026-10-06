@@ -228,7 +228,8 @@ describe("timber-controls — the HUD row", () => {
 
     // A bound text is measured by the string it shows, so the rect has width.
     expect(counter.w).toBeGreaterThan(0);
-    expect(counter.x + counter.w / 2 - coins.x).toBe(175);
+    // Yoga lays out on whole units: an odd width in an even box sits half a unit off.
+    expect(Math.abs(counter.x + counter.w / 2 - coins.x - 175)).toBeLessThanOrEqual(0.5);
     expect(counter.y + counter.h / 2 - coins.y).toBe(38);
 
     await game.app.stop();

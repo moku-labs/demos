@@ -24,7 +24,7 @@
   "dependencies": {
     "@moku-labs/common": "0.3.4",
     "@moku-labs/core": "1.7.1",
-    "@moku-labs/game": "https://pkg.pr.new/@moku-labs/game@df1490c",
+    "@moku-labs/game": "0.8.0",
     "@moku-labs/native": "0.3.0",
     "@moku-labs/system": "0.3.0",
     "@tauri-apps/api": "2.12.1",
