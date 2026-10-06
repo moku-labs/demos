@@ -219,16 +219,17 @@ describe("project index: where code lives", () => {
       const { tools } = await indexStack({ game: { board: true } });
       const { link } = tools.app;
 
-      // features/settings/nodes.ts holds every node of settingsPopup; `open` is not its own file.
+      // `open` of settingsPopup lives in the settings feature's flow/ folder; the index finds it
+      // by its binding in the flow table, not by a rule on its name or its path.
       const flow = await codeTabOf(tools, "settingsPopup/open");
       await until(
-        () => codeAt(flow) === "features/settings/nodes.ts:106",
+        () => codeAt(flow) === "features/settings/flow/open.ts:17",
         "the Code tab at settingsPopup/open"
       );
       const [found] = await link.files.find("node:settingsPopup/open");
       expect(found).toMatchObject({
-        path: "features/settings/nodes.ts",
-        line: 106,
+        path: "features/settings/flow/open.ts",
+        line: 17,
         binding: "open"
       });
       expect(unhandled?.list).toEqual([]);
@@ -242,10 +243,10 @@ describe("project index: where code lives", () => {
       const { tools, root } = await indexStack({ game: { board: true } });
       const { link } = tools.app;
       const flow = await codeTabOf(tools, "board/merge");
-      await until(() => codeAt(flow) === "nodes/merge.ts:17", "the Code tab at board/merge");
+      await until(() => codeAt(flow) === "features/board/flow/merge.ts:17", "the Code tab at board/merge");
 
       // An agent puts three lines above the node.
-      const file = path.join(root, "nodes/merge.ts");
+      const file = path.join(root, "features/board/flow/merge.ts");
       const text = await readFile(file, "utf8");
       const at = text.indexOf("export const merge ");
       const edited = `${text.slice(0, at)}// one\n// two\n// three\n${text.slice(at)}`;
@@ -253,12 +254,12 @@ describe("project index: where code lives", () => {
 
       // `find` reads the line from disk at the call, before any batch.
       const [found] = await link.files.find("node:board/merge");
-      expect(found).toMatchObject({ path: "nodes/merge.ts", line: 20 });
+      expect(found).toMatchObject({ path: "features/board/flow/merge.ts", line: 20 });
       expect(found?.hash).toBe(new Bun.CryptoHasher("sha1").update(edited).digest("hex"));
 
       // The batch arrives as link:project; the Code tab reads its node again.
-      await until(() => batchChanged(tools, "nodes/merge.ts"), "the batch of the edit", FOLLOW_MS);
-      await until(() => codeAt(flow) === "nodes/merge.ts:20", "the Code tab at line 20", FOLLOW_MS);
+      await until(() => batchChanged(tools, "features/board/flow/merge.ts"), "the batch of the edit", FOLLOW_MS);
+      await until(() => codeAt(flow) === "features/board/flow/merge.ts:20", "the Code tab at line 20", FOLLOW_MS);
       expect(unhandled?.list).toEqual([]);
     },
     TIMEOUT_MS
@@ -269,40 +270,45 @@ describe("project index: where code lives", () => {
     async () => {
       const { tools, root } = await indexStack({ game: { board: true } });
       const { workspace, filesView } = tools.app;
-      await filesView.open("nodes/catch-up.ts");
+      await filesView.open("features/board/flow/catch-up.ts");
       await until(() => filesView.tabs().at(-1)?.status === "ready", "the catch-up tab");
-      expect(filesView.usedBy("nodes/catch-up.ts").nodes).toEqual([
+      expect(filesView.usedBy("features/board/flow/catch-up.ts").nodes).toEqual([
         { flow: "board", node: "catchUp" }
       ]);
 
-      // An agent moves the node one folder down and fixes the imports, in one go.
-      const from = path.join(root, "nodes/catch-up.ts");
-      const to = path.join(root, "nodes/board/catch-up.ts");
-      const board = path.join(root, "flows/board.ts");
+      // An agent moves the node one folder down and fixes the import of the flow, in one go. The
+      // node imports through the layer aliases only, so its own text does not change.
+      const from = path.join(root, "features/board/flow/catch-up.ts");
+      const to = path.join(root, "features/board/flow/time/catch-up.ts");
+      const board = path.join(root, "features/board/flow/index.ts");
       const node = await readFile(from, "utf8");
       const flowText = await readFile(board, "utf8");
       await mkdir(path.dirname(to), { recursive: true });
-      await writeFile(to, node.replaceAll('from "../', 'from "../../'));
-      await writeFile(board, flowText.replace('"../nodes/catch-up"', '"../nodes/board/catch-up"'));
+      await writeFile(to, node);
+      await writeFile(board, flowText.replace('"./catch-up"', '"./time/catch-up"'));
       await rm(from);
 
       await until(
-        () => filesView.active() === "nodes/board/catch-up.ts",
+        () => filesView.active() === "features/board/flow/time/catch-up.ts",
         "the tab to follow the move",
         FOLLOW_MS
       );
-      expect(filesView.tabs().map(tab => tab.path)).not.toContain("nodes/catch-up.ts");
+      expect(filesView.tabs().map(tab => tab.path)).not.toContain(
+        "features/board/flow/catch-up.ts"
+      );
       expect(filesView.tabs().at(-1)).toMatchObject({ status: "ready", modified: false });
       const files = workspace.host("files");
       await until(
-        () => files.textContent.includes("Moved from nodes/catch-up.ts"),
+        () => files.textContent.includes("Moved from features/board/flow/catch-up.ts"),
         "the moved note"
       );
-      expect(filesView.fileOf({ flow: "board", node: "catchUp" })).toBe("nodes/board/catch-up.ts");
-      expect(filesView.usedBy("nodes/board/catch-up.ts")).toEqual({
+      expect(filesView.fileOf({ flow: "board", node: "catchUp" })).toBe(
+        "features/board/flow/time/catch-up.ts"
+      );
+      expect(filesView.usedBy("features/board/flow/time/catch-up.ts")).toEqual({
         flows: [],
         nodes: [{ flow: "board", node: "catchUp" }],
-        usedIn: ["flows/board.ts"]
+        usedIn: ["features/board/flow/index.ts"]
       });
       expect(unhandled?.list).toEqual([]);
     },
@@ -317,7 +323,7 @@ describe("project index: where code lives", () => {
       });
       const { link, gameView, workspace } = tools.app;
 
-      // The settings popup: its backdrop is styled by backdropStyle of features/ui/popup.tsx.
+      // The settings popup: its backdrop is styled by backdropStyle of shared/layouts/popup-screen.tsx.
       await link.run("game.answer", { intent: "openSettings" });
       await until(() => steppedTo(game, SETTINGS_OPEN), SETTINGS_OPEN);
       let backdrop: Parameters<typeof gameView.select>[0] | undefined;
@@ -336,18 +342,18 @@ describe("project index: where code lives", () => {
       const alphaUp = `${card} [data-field="alpha"] button[aria-label="Increase alpha"]`;
       await until(() => host.querySelector(alphaUp) !== null, "the backdrop style card");
       const where = elementIn(host, `${card} [data-part="where"]`).textContent;
-      expect(where).toMatch(/^features\/ui\/popup\.tsx:\d+$/);
+      expect(where).toMatch(/^shared\/layouts\/popup-screen\.tsx:\d+$/);
 
-      // An agent leaves popup.tsx unparseable; the index says so and the card shows it.
-      const file = path.join(root, "features/ui/popup.tsx");
+      // An agent leaves popup-screen.tsx unparseable; the index says so and the card shows it.
+      const file = path.join(root, "shared/layouts/popup-screen.tsx");
       await appendFile(file, "\nexport const broken = ;\n");
       const bytes = await readFile(file, "utf8");
       await until(
         () => {
           const project = link.project();
-          return project?.state === "on" && Object.hasOwn(project.broken, "features/ui/popup.tsx");
+          return project?.state === "on" && Object.hasOwn(project.broken, "shared/layouts/popup-screen.tsx");
         },
-        "popup.tsx broken in the index",
+        "popup-screen.tsx broken in the index",
         FOLLOW_MS
       );
       await until(() => host.textContent.includes(BROKEN_TEXT), "the broken text on the card");
@@ -356,7 +362,7 @@ describe("project index: where code lives", () => {
       const checks = (): number =>
         server.tap
           .requests("tools", "find", "files")
-          .filter(message => paramsOf(message)?.key === "style:features/ui/popup.tsx#backdropStyle")
+          .filter(message => paramsOf(message)?.key === "style:shared/layouts/popup-screen.tsx#backdropStyle")
           .length;
       const checksBefore = checks();
       const writesBefore = server.tap.requests("tools", "write", "files").length;
@@ -364,7 +370,7 @@ describe("project index: where code lives", () => {
       await until(() => checks() > checksBefore, "the broken check of the write");
       await until(() => host.textContent.includes(BROKEN_TEXT), "the broken text after the step");
       expect(server.tap.requests("tools", "write", "files").length).toBe(writesBefore);
-      expect(server.written.some(entry => entry.path === "features/ui/popup.tsx")).toBe(false);
+      expect(server.written.some(entry => entry.path === "shared/layouts/popup-screen.tsx")).toBe(false);
       expect(await readFile(file, "utf8")).toBe(bytes);
       expect(unhandled?.list).toEqual([]);
     },
@@ -376,7 +382,7 @@ describe("project index: where code lives", () => {
     async () => {
       const { tools, root } = await indexStack();
       const { link } = tools.app;
-      const file = "nodes/merge.ts";
+      const file = "features/board/flow/merge.ts";
       const read = await link.files.read(file);
 
       // An agent writes between the editor's read and its write.
@@ -387,7 +393,7 @@ describe("project index: where code lives", () => {
       );
       expect(stale.code).toBe(errorCode.versionConflict);
       expect(await readFile(path.join(root, file), "utf8")).toBe(agentText);
-      const names = await readdir(path.join(root, "nodes"));
+      const names = await readdir(path.join(root, "features/board/flow"));
       expect(names.filter(name => name.includes(".tmp"))).toEqual([]);
 
       // From the version on disk the write goes through, and the index hears it in a batch.
@@ -429,7 +435,7 @@ describe("project index: where code lives", () => {
       await until(() => flow.querySelector(placeholder)?.textContent === off, "the Code tab note");
 
       // Files: the Used by row of a node file.
-      await filesView.open("nodes/merge.ts");
+      await filesView.open("features/board/flow/merge.ts");
       const files = workspace.host("files");
       await until(
         () => files.querySelector('[data-part="used-by"]')?.textContent === `Used by · ${off}`,

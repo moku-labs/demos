@@ -4,11 +4,10 @@
  * the top popup and Enter taps the focused one. Keys go in through `app.input.pressKey`, the same
  * listeners a `keydown` on the page reaches.
  */
-
 import type { Ui } from "@moku-labs/game";
 import { describe, expect, it } from "vitest";
-import type { Player } from "../../state";
-import { generatorId } from "../../tables";
+import type { Player } from "../../core/state";
+import { generatorId } from "../../core/tables";
 import type { Game } from "../helpers/game";
 import {
   frames,

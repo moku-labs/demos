@@ -1,0 +1,33 @@
+/**
+ * @file Transit node `deliver`: the Deliver button of an order card was pressed. The same body as
+ * a drag onto an order; the click of the button is the sounds plugin's. When the give finishes the
+ * order, the item flies into the card and the "Готово!" stamp hits it before the board is left for
+ * the reward popup.
+ */
+import { play, type } from "@moku-labs/game";
+import { defineNode } from "@core/kit";
+import type { GiveInput } from "@core/types";
+import { deliverStamp } from "../motion/animations";
+import { applyGive, deliveredItemOf, orderCardOf } from "./give";
+
+export const deliver = defineNode({
+  input: type<GiveInput>(),
+  outcomes: {
+    done: type(),
+    orderComplete: type<{ rewardId: string }>(),
+    rejected: type<{ reason: string }>()
+  },
+  run: async ({ input, player, rng, fx, out }) => {
+    const card = orderCardOf(player, input.order);
+    const result = applyGive(player, input, rng.stream("orders"));
+
+    if (result.kind === "rejected") return out.rejected({ reason: result.reason });
+    if (result.kind === "done") return out.done();
+
+    // The item flies into the card and the stamp hits it while the give is still a draft: the
+    // edge commits it, and the item leaves the board from the card.
+    await fx(play(deliverStamp, { item: deliveredItemOf(input), card }));
+
+    return out.orderComplete({ rewardId: result.rewardId });
+  }
+});

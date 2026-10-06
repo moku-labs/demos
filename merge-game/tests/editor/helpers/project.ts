@@ -39,7 +39,8 @@ async function put(root: string, relative: string, text: string): Promise<void> 
 /**
  * Creates a project root in a fresh temp folder (its real path): a copy of the demo's game files,
  * so writes never touch the demo. What only the demo has (its tooling, tests and outputs) stays
- * behind, so the copy holds the same files as the game folder the editor tests were written on.
+ * behind. `tsconfig.json` goes with the game: its `paths` name the layer aliases (`@core/*`,
+ * `@shared`, `@features/*`) that the project index follows.
  *
  * @param kind - Which project: the merge game.
  * @returns The absolute real path of the root.
@@ -63,7 +64,6 @@ const NOT_GAME = new Set([
   "package.json",
   "scripts",
   "tests",
-  "tsconfig.json",
   "vitest.config.ts"
 ]);
 

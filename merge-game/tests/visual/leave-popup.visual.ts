@@ -4,7 +4,7 @@
  * "Выйти из игры?" with the wood Leave and the green Stay, which glows (V6 `Glow` on WebGL too).
  */
 import { defineVisualTest } from "@moku-labs/game/visual";
-import { atHome } from "./fixture";
+import { atHome } from "../helpers/visual/fixture";
 
 export const leavePopup = defineVisualTest("leave-popup", {
   start: atHome,

@@ -5,21 +5,19 @@
  * control; the merge, the sawmill pop and the coins; and the one music track of Home and the
  * board.
  */
-
-import { readFile } from "node:fs/promises";
 import type { Assets, Flow } from "@moku-labs/game";
 import { audioPlugin, createApp, LocalWrite, Tappable, Touchable } from "@moku-labs/game";
 import { fakeClock, memory } from "@moku-labs/game/testing";
+import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
-import { homeScene } from "../../features/home/scene";
-import { splashScene } from "../../features/splash/scene";
-import { isControl, soundsPlugin } from "../../features/ui/sounds";
-import { mainFlow } from "../../flows/main";
-import { screenPlugins, startMoment } from "../../game";
-import type { Player } from "../../state";
-import { startingSession } from "../../state";
-import { generatorId } from "../../tables";
-import { boardScene } from "../../view/scene";
+import type { Player } from "../../core/state";
+import { startingSession } from "../../core/state";
+import { generatorId } from "../../core/tables";
+import { boardScene } from "../../features/board/screens/scene";
+import { homeScene } from "../../features/home/screens/scene";
+import { splashScene } from "../../features/splash/screens/scene";
+import { mainFlow, screenPlugins, startMoment } from "../../game";
+import { isControl, soundsPlugin } from "../../plugins/ui-sounds";
 import { booted, folderIo, player, withItems } from "../helpers/game";
 
 /** Yields the microtask queue to the loop, the way a test waits without a timer. */

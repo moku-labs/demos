@@ -15,8 +15,18 @@
     "skipLibCheck": true,
     "types": ["bun"],
     "jsx": "react-jsx",
-    "jsxImportSource": "@moku-labs/game"
+    "jsxImportSource": "@moku-labs/game",
+    "paths": {
+      "@core/*": ["./core/*"],
+      "@shared": ["./shared/index.ts"],
+      "@shared/rules": ["./shared/rules/index.ts"],
+      "@features": ["./features/index.ts"],
+      "@features/*": ["./features/*/index.ts"],
+      "@plugins": ["./plugins/index.ts"],
+      "@generated/*": ["./generated/*"],
+      "@tests/*": ["./tests/*"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist", ".moku", "tests/editor/e2e/game"]
+  "exclude": ["node_modules", "dist", ".moku", "tests/browser/game"]
 }

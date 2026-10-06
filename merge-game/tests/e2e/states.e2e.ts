@@ -19,10 +19,10 @@ import {
   Transform
 } from "@moku-labs/game";
 import { describe, expect, it } from "vitest";
+import type { Player } from "../../core/state";
+import { generatorId } from "../../core/tables";
+import { cellBox } from "../../features/board/world/layout/grid";
 import { startMoment } from "../../game";
-import type { Player } from "../../state";
-import { generatorId } from "../../tables";
-import { cellBox } from "../../view/layout";
 import type { Game } from "../helpers/game";
 import {
   elementOf,

@@ -8,10 +8,9 @@
  * their art, the icon hanging over the left end (design §6 B1, F4). A control drawn shorter than
  * 44 pt on the smallest phone takes its taps on a taller, invisible box around unchanged art.
  */
-
 import { NineSlice, PointerOver, Pressed, Shape, Tappable, Transform } from "@moku-labs/game";
 import { describe, expect, it } from "vitest";
-import { TAP_MIN } from "../../features/ui/kit";
+import { TAP_MIN } from "../../shared/styles/tokens";
 import type { Game } from "../helpers/game";
 import {
   elementOf,

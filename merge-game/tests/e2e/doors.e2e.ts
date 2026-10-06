@@ -5,15 +5,15 @@
  * files behind the assets seam and the fake audio context of `tests/helpers/fake-audio.ts`,
  * unlocked by a first pointer event.
  */
-import { readFile } from "node:fs/promises";
 import type { Assets } from "@moku-labs/game";
 import { commands, run } from "@moku-labs/game/control";
 import { read, sources } from "@moku-labs/game/inspect";
 import type { Repro } from "@moku-labs/game/testing";
+import { readFile } from "node:fs/promises";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { Player } from "../../core/state";
+import { startingSession } from "../../core/state";
 import { createScreenGame, startMoment } from "../../game";
-import type { Player } from "../../state";
-import { startingSession } from "../../state";
 import { scenarios } from "../../web/scenarios";
 import { createFakeContext, installFakeWindow } from "../helpers/fake-audio";
 import type { Game } from "../helpers/game";

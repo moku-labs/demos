@@ -6,7 +6,7 @@
  * The ready order card and its green Deliver glow, so the test also runs in the WebGL leg.
  */
 import { defineVisualTest } from "@moku-labs/game/visual";
-import { atHome } from "./fixture";
+import { atHome } from "../helpers/visual/fixture";
 
 export const boardMerge = defineVisualTest("board-merge", {
   start: atHome,

@@ -198,14 +198,14 @@
       "files": [
         {
           "key": "ui.badge-level",
-          "path": "features/ui/assets/badge-level.webp",
+          "path": "shared/assets/badge-level.webp",
           "width": 96,
           "height": 96,
           "mb": 0.035
         },
         {
           "key": "ui.bar-fill",
-          "path": "features/ui/assets/bar-fill{nine=24,24,24,24}.webp",
+          "path": "shared/assets/bar-fill{nine=24,24,24,24}.webp",
           "width": 480,
           "height": 50,
           "mb": 0.092,
@@ -218,7 +218,7 @@
         },
         {
           "key": "ui.bar-track",
-          "path": "features/ui/assets/bar-track{nine=32,28,32,28}.webp",
+          "path": "shared/assets/bar-track{nine=32,28,32,28}.webp",
           "width": 480,
           "height": 65,
           "mb": 0.119,
@@ -231,7 +231,7 @@
         },
         {
           "key": "ui.button-berry",
-          "path": "features/ui/assets/button-berry{nine=32,40,32,40}.webp",
+          "path": "shared/assets/button-berry{nine=32,40,32,40}.webp",
           "width": 360,
           "height": 93,
           "mb": 0.128,
@@ -244,7 +244,7 @@
         },
         {
           "key": "ui.button-disabled",
-          "path": "features/ui/assets/button-disabled{nine=36,40,36,40}.webp",
+          "path": "shared/assets/button-disabled{nine=36,40,36,40}.webp",
           "width": 360,
           "height": 94,
           "mb": 0.129,
@@ -257,7 +257,7 @@
         },
         {
           "key": "ui.button-green",
-          "path": "features/ui/assets/button-green{nine=36,40,36,40}.webp",
+          "path": "shared/assets/button-green{nine=36,40,36,40}.webp",
           "width": 360,
           "height": 94,
           "mb": 0.129,
@@ -270,7 +270,7 @@
         },
         {
           "key": "ui.button-wood",
-          "path": "features/ui/assets/button-wood{nine=36,36,36,36}.webp",
+          "path": "shared/assets/button-wood{nine=36,36,36,36}.webp",
           "width": 360,
           "height": 94,
           "mb": 0.129,
@@ -283,87 +283,87 @@
         },
         {
           "key": "ui.click",
-          "path": "features/ui/assets/click.mp3",
+          "path": "shared/assets/click.mp3",
           "kind": "audio",
           "mb": 0.002
         },
         {
           "key": "ui.coin-spin-0",
-          "path": "features/ui/assets/coin-spin-0.webp",
+          "path": "shared/assets/coin-spin-0.webp",
           "width": 160,
           "height": 160,
           "mb": 0.098
         },
         {
           "key": "ui.coin-spin-1",
-          "path": "features/ui/assets/coin-spin-1.webp",
+          "path": "shared/assets/coin-spin-1.webp",
           "width": 160,
           "height": 160,
           "mb": 0.098
         },
         {
           "key": "ui.coin-spin-2",
-          "path": "features/ui/assets/coin-spin-2.webp",
+          "path": "shared/assets/coin-spin-2.webp",
           "width": 160,
           "height": 160,
           "mb": 0.098
         },
         {
           "key": "ui.coin-spin-3",
-          "path": "features/ui/assets/coin-spin-3.webp",
+          "path": "shared/assets/coin-spin-3.webp",
           "width": 160,
           "height": 160,
           "mb": 0.098
         },
         {
           "key": "ui.coin-spin-4",
-          "path": "features/ui/assets/coin-spin-4.webp",
+          "path": "shared/assets/coin-spin-4.webp",
           "width": 160,
           "height": 160,
           "mb": 0.098
         },
         {
           "key": "ui.coin-spin-5",
-          "path": "features/ui/assets/coin-spin-5.webp",
+          "path": "shared/assets/coin-spin-5.webp",
           "width": 160,
           "height": 160,
           "mb": 0.098
         },
         {
           "key": "ui.coin-spin-6",
-          "path": "features/ui/assets/coin-spin-6.webp",
+          "path": "shared/assets/coin-spin-6.webp",
           "width": 160,
           "height": 160,
           "mb": 0.098
         },
         {
           "key": "ui.coins",
-          "path": "features/ui/assets/coins.mp3",
+          "path": "shared/assets/coins.mp3",
           "kind": "audio",
           "mb": 0.005
         },
         {
           "key": "ui.decor-clothespin",
-          "path": "features/ui/assets/decor-clothespin.webp",
+          "path": "shared/assets/decor-clothespin.webp",
           "width": 40,
           "height": 96,
           "mb": 0.015
         },
         {
           "key": "ui.decor-sprig",
-          "path": "features/ui/assets/decor-sprig.webp",
+          "path": "shared/assets/decor-sprig.webp",
           "width": 177,
           "height": 192,
           "mb": 0.13
         },
         {
           "key": "ui.font-body",
-          "path": "features/ui/assets/font-body.fnt",
+          "path": "shared/assets/font-body.fnt",
           "kind": "font",
           "mb": 1,
           "pages": [
             {
-              "path": "features/ui/assets/font-body.png",
+              "path": "shared/assets/font-body.png",
               "width": 512,
               "height": 512,
               "mb": 1
@@ -372,12 +372,12 @@
         },
         {
           "key": "ui.font-display",
-          "path": "features/ui/assets/font-display.fnt",
+          "path": "shared/assets/font-display.fnt",
           "kind": "font",
           "mb": 1,
           "pages": [
             {
-              "path": "features/ui/assets/font-display.png",
+              "path": "shared/assets/font-display.png",
               "width": 512,
               "height": 512,
               "mb": 1
@@ -386,42 +386,42 @@
         },
         {
           "key": "ui.fx-leaf",
-          "path": "features/ui/assets/fx-leaf.webp",
+          "path": "shared/assets/fx-leaf.webp",
           "width": 58,
           "height": 64,
           "mb": 0.014
         },
         {
           "key": "ui.fx-puff",
-          "path": "features/ui/assets/fx-puff.webp",
+          "path": "shared/assets/fx-puff.webp",
           "width": 128,
           "height": 118,
           "mb": 0.058
         },
         {
           "key": "ui.fx-rays",
-          "path": "features/ui/assets/fx-rays.webp",
+          "path": "shared/assets/fx-rays.webp",
           "width": 504,
           "height": 512,
           "mb": 0.984
         },
         {
           "key": "ui.fx-sparkle",
-          "path": "features/ui/assets/fx-sparkle.webp",
+          "path": "shared/assets/fx-sparkle.webp",
           "width": 85,
           "height": 96,
           "mb": 0.031
         },
         {
           "key": "ui.fx-star",
-          "path": "features/ui/assets/fx-star.webp",
+          "path": "shared/assets/fx-star.webp",
           "width": 96,
           "height": 93,
           "mb": 0.034
         },
         {
           "key": "ui.header-plank",
-          "path": "features/ui/assets/header-plank{nine=52,52,52,52}.webp",
+          "path": "shared/assets/header-plank{nine=52,52,52,52}.webp",
           "width": 480,
           "height": 107,
           "mb": 0.196,
@@ -434,7 +434,7 @@
         },
         {
           "key": "ui.hud-pill",
-          "path": "features/ui/assets/hud-pill{nine=28,30,28,30}.webp",
+          "path": "shared/assets/hud-pill{nine=28,30,28,30}.webp",
           "width": 300,
           "height": 63,
           "mb": 0.072,
@@ -447,77 +447,77 @@
         },
         {
           "key": "ui.icon-check",
-          "path": "features/ui/assets/icon-check.webp",
+          "path": "shared/assets/icon-check.webp",
           "width": 128,
           "height": 113,
           "mb": 0.055
         },
         {
           "key": "ui.icon-close",
-          "path": "features/ui/assets/icon-close.webp",
+          "path": "shared/assets/icon-close.webp",
           "width": 128,
           "height": 127,
           "mb": 0.062
         },
         {
           "key": "ui.icon-coin",
-          "path": "features/ui/assets/icon-coin.webp",
+          "path": "shared/assets/icon-coin.webp",
           "width": 154,
           "height": 160,
           "mb": 0.094
         },
         {
           "key": "ui.icon-energy",
-          "path": "features/ui/assets/icon-energy.webp",
+          "path": "shared/assets/icon-energy.webp",
           "width": 112,
           "height": 160,
           "mb": 0.068
         },
         {
           "key": "ui.icon-gear",
-          "path": "features/ui/assets/icon-gear.webp",
+          "path": "shared/assets/icon-gear.webp",
           "width": 160,
           "height": 160,
           "mb": 0.098
         },
         {
           "key": "ui.icon-gift",
-          "path": "features/ui/assets/icon-gift.webp",
+          "path": "shared/assets/icon-gift.webp",
           "width": 181,
           "height": 192,
           "mb": 0.133
         },
         {
           "key": "ui.icon-home",
-          "path": "features/ui/assets/icon-home.webp",
+          "path": "shared/assets/icon-home.webp",
           "width": 160,
           "height": 143,
           "mb": 0.087
         },
         {
           "key": "ui.icon-music",
-          "path": "features/ui/assets/icon-music.webp",
+          "path": "shared/assets/icon-music.webp",
           "width": 121,
           "height": 128,
           "mb": 0.059
         },
         {
           "key": "ui.icon-sound",
-          "path": "features/ui/assets/icon-sound.webp",
+          "path": "shared/assets/icon-sound.webp",
           "width": 128,
           "height": 108,
           "mb": 0.053
         },
         {
           "key": "ui.link-wave",
-          "path": "features/ui/assets/link-wave.webp",
+          "path": "shared/assets/link-wave.webp",
           "width": 400,
           "height": 16,
           "mb": 0.024
         },
         {
           "key": "ui.panel-parchment",
-          "path": "features/ui/assets/panel-parchment{nine=48,48,48,48}.webp",
+          "path": "shared/assets/panel-parchment{nine=48,48,48,48}.webp",
           "width": 384,
           "height": 379,
           "mb": 0.555,
@@ -530,7 +530,7 @@
         },
         {
           "key": "ui.panel-signboard",
-          "path": "features/ui/assets/panel-signboard{nine=72,72,72,76}.webp",
+          "path": "shared/assets/panel-signboard{nine=72,72,72,76}.webp",
           "width": 512,
           "height": 505,
           "mb": 0.986,
@@ -543,20 +543,20 @@
         },
         {
           "key": "ui.popup",
-          "path": "features/ui/assets/popup.mp3",
+          "path": "shared/assets/popup.mp3",
           "kind": "audio",
           "mb": 0.005
         },
         {
           "key": "ui.rope-vertical",
-          "path": "features/ui/assets/rope-vertical.webp",
+          "path": "shared/assets/rope-vertical.webp",
           "width": 5,
           "height": 256,
           "mb": 0.005
         },
         {
           "key": "ui.tab-active",
-          "path": "features/ui/assets/tab-active{nine=20,20,20,20}.webp",
+          "path": "shared/assets/tab-active{nine=20,20,20,20}.webp",
           "width": 256,
           "height": 105,
           "mb": 0.103,
@@ -569,7 +569,7 @@
         },
         {
           "key": "ui.tab-idle",
-          "path": "features/ui/assets/tab-idle{nine=24,20,24,20}.webp",
+          "path": "shared/assets/tab-idle{nine=24,20,24,20}.webp",
           "width": 256,
           "height": 101,
           "mb": 0.099,
@@ -582,7 +582,7 @@
         },
         {
           "key": "ui.theme",
-          "path": "features/ui/assets/theme.mp3",
+          "path": "shared/assets/theme.mp3",
           "kind": "audio",
           "mb": 0.652
         }

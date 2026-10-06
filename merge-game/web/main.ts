@@ -28,10 +28,9 @@ import { backPlugin } from "@moku-labs/system/back";
 import { hapticsPlugin } from "@moku-labs/system/haptics";
 import { keepAwakePlugin } from "@moku-labs/system/keep-awake";
 import { lifecyclePlugin } from "@moku-labs/system/lifecycle";
-import { mainFlow } from "../flows/main";
-import { devLocales, screenPlugins, volumesOf } from "../game";
+import { startingSession } from "../core/state";
+import { devLocales, mainFlow, screenPlugins, volumesOf } from "../game";
 import { fromSystem } from "../platform-bridge";
-import { startingSession } from "../state";
 import { rendererFor } from "./renderer";
 import { playerFor } from "./scenarios";
 

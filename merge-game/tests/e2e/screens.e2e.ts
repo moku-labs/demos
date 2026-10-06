@@ -6,18 +6,17 @@
  * cards enable only the Deliver the rules accept, and the HUD shows the energy of the save. Plain
  * Bun: the renderer is inert and Yoga lays out the same rects as in the browser.
  */
-
-import { readFile } from "node:fs/promises";
 import type { Assets, Ui } from "@moku-labs/game";
 import { Parent, Shape, Sprite, Tappable, Text, Touchable, Transform } from "@moku-labs/game";
+import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
-import { GIFT_WOBBLE_MS } from "../../features/home/motions";
-import { GIFT_GAP } from "../../features/home/styles";
-import { fillHead, fillWidth, track } from "../../features/splash/view";
+import type { Player, Session } from "../../core/state";
+import { startingPlayer } from "../../core/state";
+import { generatorId } from "../../core/tables";
+import { GIFT_WOBBLE_MS } from "../../features/home/motion/motions";
+import { GIFT_GAP } from "../../features/home/styles/styles";
+import { fillHead, fillWidth, track } from "../../features/splash/screens/splash-screen";
 import { createScreenGame, startMoment } from "../../game";
-import type { Player, Session } from "../../state";
-import { startingPlayer } from "../../state";
-import { generatorId } from "../../tables";
 import { booted, createDiskGame } from "../helpers/game";
 
 /**

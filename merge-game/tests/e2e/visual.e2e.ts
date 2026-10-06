@@ -4,12 +4,12 @@
  * `describe.json` in `tests/visual/baselines/`. `argv: []`, so the flags vitest got never steer
  * the run; `pixels: false`, so no browser opens. The pixel leg is `bun run test:visual`.
  */
-import { fileURLToPath } from "node:url";
 import type { VisualReport } from "@moku-labs/game/visual";
 import { runVisualTests } from "@moku-labs/game/visual";
+import { fileURLToPath } from "node:url";
 import { beforeAll, describe, expect, it } from "vitest";
-import { fixtureApp } from "../visual/fixture";
-import { fixtureVisualTests } from "../visual/tests";
+import { fixtureApp } from "../helpers/visual/fixture";
+import { fixtureVisualTests } from "../helpers/visual/tests";
 
 /** The folder of the baselines. */
 const dir = fileURLToPath(new URL("../visual/baselines/", import.meta.url));

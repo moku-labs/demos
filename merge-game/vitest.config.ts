@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 import {
   EDITOR_SHARED_PACKAGES,
@@ -30,10 +31,22 @@ const editorAlias =
         find: new RegExp(`^${specifier}$`),
         replacement: file
       }));
+// The layer aliases of tsconfig.json `paths`, which vitest does not read: the same table, here.
+const at = (folder: string) => fileURLToPath(new URL(folder, import.meta.url));
+const layerAlias = [
+  { find: /^@core\/(.*)$/, replacement: `${at("./core/")}$1` },
+  { find: /^@shared$/, replacement: at("./shared/index.ts") },
+  { find: /^@shared\/rules$/, replacement: at("./shared/rules/index.ts") },
+  { find: /^@features$/, replacement: at("./features/index.ts") },
+  { find: /^@features\/([^/]+)$/, replacement: `${at("./features/")}$1/index.ts` },
+  { find: /^@plugins$/, replacement: at("./plugins/index.ts") },
+  { find: /^@generated\/(.*)$/, replacement: `${at("./generated/")}$1` },
+  { find: /^@tests\/(.*)$/, replacement: `${at("./tests/")}$1` }
+];
 const dedupe = editor === undefined ? [...SHARED_PACKAGES] : [...EDITOR_SHARED_PACKAGES];
 
 export default defineConfig({
-  resolve: { alias: [...engineAlias, ...editorAlias], dedupe },
+  resolve: { alias: [...layerAlias, ...engineAlias, ...editorAlias], dedupe },
   test: {
     projects: [
       {
@@ -42,8 +55,9 @@ export default defineConfig({
           name: "unit",
           include: [
             "__tests__/**/*.test.{ts,tsx}",
-            "rules/__tests__/**/*.test.{ts,tsx}",
-            "features/**/__tests__/**/*.test.{ts,tsx}"
+            "shared/**/__tests__/**/*.test.{ts,tsx}",
+            "features/**/__tests__/**/*.test.{ts,tsx}",
+            "plugins/**/__tests__/**/*.test.{ts,tsx}"
           ]
         }
       },
