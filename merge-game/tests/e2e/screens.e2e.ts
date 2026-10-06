@@ -18,6 +18,7 @@ import { createScreenGame, startMoment } from "../../game";
 import type { Player, Session } from "../../state";
 import { startingPlayer } from "../../state";
 import { generatorId } from "../../tables";
+import { booted, createDiskGame } from "../helpers/game";
 
 /**
  * A board that already carries the level-3 item the first order asks for, and 7 of 10 energy
@@ -163,6 +164,21 @@ async function start(game: Game): Promise<Game> {
 }
 
 /**
+ * Starts the game over the files on disk and waits for every bundle, the fonts of `ui` among
+ * them, the way the browser holds the splash.
+ *
+ * @param player - The player a new save starts from; the starting player by default.
+ * @returns The game, started, its bundles in.
+ */
+async function startBooted(player: Player = startingPlayer): Promise<Game> {
+  const game = await start(await createDiskGame({ player }));
+
+  await booted(game.app.assets);
+
+  return game;
+}
+
+/**
  * Runs frames until a condition holds, each followed by its microtasks and one task, which is
  * what a file read needs. Fails the test when the condition never holds.
  *
@@ -278,15 +294,14 @@ function childKeysOf(game: Game, key: string): string[] {
 }
 
 /**
- * Starts the headless game and walks it onto the board through the screens: the splash lets it
- * through (every bundle counts as loaded without a file seam), and the Play plank of Home is
- * tapped.
+ * Starts the game over the files on disk and walks it onto the board through the screens: the
+ * splash lets it through once every bundle landed, and the Play plank of Home is tapped.
  *
  * @param player - The player a new save starts from.
  * @returns The game, resting on `board/awaitIntent` with the board screen laid out.
  */
 async function startOnBoard(player: Player): Promise<Game> {
-  const game = await start(createScreenGame({ player, manifest: await readManifest() }));
+  const game = await startBooted(player);
 
   await frames(game);
 
@@ -446,7 +461,7 @@ describe("timber-screens — the splash", () => {
 
 describe("timber-screens — Home", () => {
   it("lays Home out as the design: the bar, the centre group under it, the small gift under the gear", async () => {
-    const game = await start(createScreenGame({ manifest: await readManifest() }));
+    const game = await startBooted();
 
     await frames(game);
 
@@ -485,7 +500,7 @@ describe("timber-screens — Home", () => {
   });
 
   it("scales the centre group down as one when the room under the bar is short", async () => {
-    const game = await start(createScreenGame({ manifest: await readManifest() }));
+    const game = await startBooted();
 
     await frames(game);
 
@@ -500,7 +515,7 @@ describe("timber-screens — Home", () => {
   });
 
   it("hangs the logo on ropes from above, stands the Play plank on its posts, and draws the bar last", async () => {
-    const game = await start(createScreenGame({ manifest: await readManifest() }));
+    const game = await startBooted();
 
     await frames(game);
 
@@ -548,7 +563,7 @@ async function wobbleOf(game: Game, count: number): Promise<number[]> {
 
 describe("timber-screens — the daily gift wobble (B6)", () => {
   it("wobbles the gift button on its middle while the gift waits, again and again", async () => {
-    const game = await start(createScreenGame({ manifest: await readManifest() }));
+    const game = await startBooted();
 
     await frames(game);
 
@@ -569,7 +584,7 @@ describe("timber-screens — the daily gift wobble (B6)", () => {
 
   it("stands the gift button still once the gift is claimed", async () => {
     const claimed: Player = { ...startingPlayer, giftClaimed: true };
-    const game = await start(createScreenGame({ player: claimed, manifest: await readManifest() }));
+    const game = await startBooted(claimed);
 
     await frames(game);
 
@@ -583,7 +598,7 @@ describe("timber-screens — the daily gift wobble (B6)", () => {
 
 describe("timber-screens — the keyboard focus ring (design §4)", () => {
   it("draws the dashed ink ring 25 units outside the focused control, over a cream halo", async () => {
-    const game = await start(createScreenGame({ manifest: await readManifest() }));
+    const game = await startBooted();
 
     await frames(game);
     expect(game.app.input.pressKey("Tab")).toBe(true);

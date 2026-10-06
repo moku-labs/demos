@@ -238,9 +238,43 @@ export async function frames(game: Game, count = 6): Promise<void> {
   }
 }
 
+/** The root of the game: the folder the paths of the manifest are relative to. */
+const gameRoot = new URL("../../", import.meta.url);
+
 /**
- * Starts the game with its screen and its graph, and waits for Home: headless, every bundle
- * counts as loaded at once, so the splash lets the graph through by itself.
+ * Creates the game with its screen over the files on disk, the way the browser loads it: the
+ * committed manifest and `folderIo`, so the fonts of the `ui` bundle are real.
+ *
+ * @param options - The seams a test pins; the manifest and the file seam are set here.
+ * @returns The game, not started.
+ */
+export async function createDiskGame(
+  options: Omit<ScreenGameOptions, "manifest" | "io"> = {}
+): Promise<Game> {
+  const manifest = await readManifest();
+
+  return createScreenGame({ ...options, manifest, io: folderIo(gameRoot).io });
+}
+
+/**
+ * Waits, without a frame, until every bundle of the manifest landed, the way the browser holds the
+ * splash: `ui` with the two fonts, and the three the splash waits for. Fails the test when one
+ * never lands.
+ *
+ * @param assets - The assets API of the running game.
+ */
+export async function booted(assets: Pick<Assets.Api, "isLoaded">): Promise<void> {
+  const names = Object.keys((await readManifest()).bundles);
+  const landed = (): boolean => names.every(name => assets.isLoaded(name));
+
+  for (let turn = 0; turn < 500 && !landed(); turn += 1) await yieldTask();
+
+  expect(landed()).toBe(true);
+  await tick();
+}
+
+/**
+ * Starts the game with its screen and its graph, waits for the boot bundles and then for Home.
  *
  * @param start - The player a new save starts from.
  * @param seams - The phone behind the game, a fake provider; none by default, as on the web page.
@@ -250,7 +284,7 @@ export async function startOnHome(
   start: Player,
   seams: Pick<ScreenGameOptions, "platform"> = {}
 ): Promise<Game> {
-  const game = createScreenGame({ ...seams, player: start, manifest: await readManifest() });
+  const game = await createDiskGame({ ...seams, player: start });
   const loop: { failure?: unknown } = {};
 
   await game.app.start();
@@ -261,6 +295,7 @@ export async function startOnHome(
 
   if (loop.failure !== undefined) throw loop.failure;
 
+  await booted(game.app.assets);
   await frames(game);
   expect(game.app.flow.state().path).toBe("home");
 
