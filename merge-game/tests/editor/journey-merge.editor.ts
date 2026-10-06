@@ -110,7 +110,7 @@ const BOARD_OUTCOMES = [
 const BOARD_SLOT = "ui:boardScreen/boardSlot";
 
 /** The text styles file flowView edits: the file with the most `textStyle:` keys in the index. */
-const STYLES_FILE = "features/ui/styles.ts";
+const STYLES_FILE = "shared/styles/text.ts";
 
 /** The toast of a reload that restored the bookmark. */
 const RESTORED = "Game reloaded · state restored from the last checkpoint";
@@ -579,15 +579,18 @@ describe("journey-merge: open the editor on merge-game", () => {
       await until(() => flow.querySelector(openFiles) !== null, "the Code tab's Open in Files");
       await click(elementIn(flow, openFiles));
       await until(() => tools.eventsOf("workspace:open-file").length === 1, "workspace:open-file");
-      const source = await linesOf(root, "nodes/merge.ts");
+      const source = await linesOf(root, "features/board/flow/merge.ts");
       const defined = source.findIndex(line => line.startsWith("export const merge ")) + 1;
       expect(tools.eventsOf("workspace:open-file")).toEqual([
-        { path: "nodes/merge.ts", line: defined }
+        { path: "features/board/flow/merge.ts", line: defined }
       ]);
       await until(() => workspace.active() === "files", "Files shown");
-      await until(() => filesView.active() === "nodes/merge.ts", "nodes/merge.ts the active tab");
+      await until(
+        () => filesView.active() === "features/board/flow/merge.ts",
+        "features/board/flow/merge.ts the active tab"
+      );
       // fileOf answers from the project index state link holds.
-      expect(filesView.fileOf({ flow: "board", node: "merge" })).toBe("nodes/merge.ts");
+      expect(filesView.fileOf({ flow: "board", node: "merge" })).toBe("features/board/flow/merge.ts");
       expect(unhandled?.list).toEqual([]);
     },
     TIMEOUT_MS
@@ -708,7 +711,7 @@ describe("journey-merge: Game and Render", () => {
       const where = '[data-part="style-card"] [data-part="where"]';
       await until(() => game.querySelector(where) !== null, "the style card of the board slot");
       const [file = "", line = "0"] = elementIn(game, where).textContent.split(":");
-      expect(file).toBe("features/board/tray.tsx");
+      expect(file).toBe("features/board/views/tray.tsx");
       const lines = await linesOf(root, file);
       expect(lines[Number(line) - 1]).toContain("defineStyle(");
       await click(buttonWith(elementIn(game, '[data-part="style-card"]'), "Open in Files"));
@@ -818,10 +821,12 @@ describe("journey-merge: edit a style", () => {
       const size = Number(/\d+/u.exec(lines[at] ?? "")?.[0]);
       const after = await readFile(path.join(root, STYLES_FILE), "utf8");
       expect(after).toBe(lines.with(at, `    size: ${String(size + 1)},`).join("\n"));
+      // The editor names a write "style" by its file name (`styles.ts`, `*.styles.ts`); the text
+      // styles of the shared layer live in `styles/text.ts`, so the write is reported as code.
       expect(server.written).toContainEqual({
         path: STYLES_FILE,
         bytes: expect.any(Number),
-        kind: "style"
+        kind: "code"
       });
 
       // The bookmark went to the old game, the restore to the new one.

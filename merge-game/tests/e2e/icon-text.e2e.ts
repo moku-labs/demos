@@ -4,10 +4,9 @@
  * fixture folder, so `text` measures with the advance tables of the real fonts, as the page does:
  * the note takes two lines, and the coin rides in the second line with its word.
  */
-
 import { describe, expect, it } from "vitest";
+import { tr } from "../../core/kit";
 import { createScreenGame } from "../../game";
-import { tr } from "../../kit";
 import { folderIo, frames, nodeOf, player, readManifest, tap, tick, until } from "../helpers/game";
 
 /** The folder of the fixture game: the dev manifest's paths are relative to it. */

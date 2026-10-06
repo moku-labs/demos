@@ -1,16 +1,20 @@
 /**
- * @file The orders feature on the screen: the reward popup, the "Готово!" stamp a finished order
- * gets, and the bundle with the card, the rope and the sound a finished order plays. The flow half
- * of the same feature is `flows/reward.ts`, which contributes the popup sub-flow to the
- * `afterOrder` slot. The cards sway by the loop motion of their element (`motions.ts`).
+ * @file The orders feature: the "Готово!" stamp a finished order gets, and the bundle with the card,
+ * the rope and the sound a finished order plays. Its nodes (`flow/give-to-order.ts`,
+ * `flow/deliver.ts`) are nodes of the board flow, and its strip of cards is drawn by the board
+ * screen. The reward popup a finished order opens is the `reward` feature's. The cards sway by the
+ * loop motion of their element (`motion/motions.ts`).
  */
-import { defineFeature } from "../../kit";
-import { deliverStamp } from "./animations";
+import { defineFeature } from "@core/kit";
 import { ordersAssets } from "./assets";
-import { RewardPopup } from "./reward";
+import { deliverStamp } from "./motion/animations";
+
+export { deliver } from "./flow/deliver";
+export { giveToOrder } from "./flow/give-to-order";
+export type { OrderCardView } from "./views/order-card";
+export { acceptedItemsOf, orderCardsOf, OrderStrip } from "./views/order-card";
 
 export const ordersFeature = defineFeature("orders", {
-  ui: [RewardPopup],
   animations: [deliverStamp],
   assets: ordersAssets
 });

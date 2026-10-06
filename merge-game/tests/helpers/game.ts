@@ -4,14 +4,14 @@
  * Bun: the renderer is inert, Yoga lays out the real rects, the flow runner and `anim` run for
  * real.
  */
-import { readFile } from "node:fs/promises";
 import type { Assets, Model, Ui } from "@moku-labs/game";
 import { Text } from "@moku-labs/game";
+import { readFile } from "node:fs/promises";
 import { expect } from "vitest";
+import type { Player } from "../../core/state";
+import { startingPlayer } from "../../core/state";
 import type { ScreenGameOptions } from "../../game";
 import { createScreenGame, startMoment } from "../../game";
-import type { Player } from "../../state";
-import { startingPlayer } from "../../state";
 
 /** The game as the Timber Town tests drive it. */
 export type Game = ReturnType<typeof createScreenGame>;

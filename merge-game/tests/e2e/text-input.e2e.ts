@@ -6,9 +6,8 @@
  * `app.ui.fill` and the keys through `app.input.pressKey`, the doors an agent and the visual tests
  * use; nothing here needs a page.
  */
-
 import { describe, expect, it } from "vitest";
-import type { Player } from "../../state";
+import type { Player } from "../../core/state";
 import type { Game } from "../helpers/game";
 import {
   elementOf,

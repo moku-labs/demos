@@ -4,18 +4,18 @@
  * the pseudo-locale en-XA is there in a dev build only. The browser half is driven by the e2e
  * station.
  */
-import { readFile } from "node:fs/promises";
 import type { Assets, Flow, Model } from "@moku-labs/game";
 import { Transform } from "@moku-labs/game";
 import { createHeadless } from "@moku-labs/game/testing";
+import { readFile } from "node:fs/promises";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { tr } from "../../core/kit";
+import type { Player } from "../../core/state";
+import { startingPlayer } from "../../core/state";
+import { generatorId } from "../../core/tables";
+import { Item } from "../../features/board/world/components/item";
+import { cellBox } from "../../features/board/world/layout/grid";
 import { createScreenGame } from "../../game";
-import { tr } from "../../kit";
-import type { Player } from "../../state";
-import { startingPlayer } from "../../state";
-import { generatorId } from "../../tables";
-import { Item } from "../../view/components";
-import { cellBox } from "../../view/layout";
 import { booted, createDiskGame } from "../helpers/game";
 
 /** One entity of `world.ecs.snapshot()`, as far as this test reads it. */

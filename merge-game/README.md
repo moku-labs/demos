@@ -27,6 +27,8 @@ bun run test:editor  # the editor scenarios on vitest; --e2e adds the Playwright
 | `test:visual` | `tests/visual/`: headless state checks, pixels on macOS. Serves the page itself. |
 | `test:editor` | `tests/editor/`: the vitest project `editor`. `--e2e` adds the Playwright specs (about 20 min, local only, not in CI); then extra arguments go to Playwright. |
 | `typecheck` | `tsc --noEmit`. |
+| `keys` | Scans the assets and strings: writes `manifest.json`, `generated/assets.ts` and `generated/strings*.ts`. `shared/` is scanned as the layer `ui` (`--layer shared=ui`), so its keys stay `ui.*`. |
+| `lint` | oxlint with the engine's rules (`@moku-labs/game/lint`): the layout rules (layers, feature doors, test suffixes) and the game rules. |
 | `pack` | Packs the assets into `dist/assets/`. |
 | `build` | `pack`, then the static page into `dist/web/`. |
 
@@ -56,18 +58,35 @@ A path is always a parameter. No default path is written anywhere.
 The runner lives in this demo because demos share no root code. It moves into the engine CLI
 later.
 
+## Layout
+
+The game is layered: `core ← shared ← features ← game.ts`. Between layers a file imports through
+the aliases of `tsconfig.json`; inside one feature, by relative path. `bun run lint` checks it.
+
+| Path | What |
+|---|---|
+| `game.ts` | The one entry: the root flow `mainFlow`, the plugins of the screen, `createGame` and `createScreenGame`. |
+| `core/` | What the game is: the definers (`kit.ts`), the save (`state.ts`), the content tables (`tables.ts`) and the domain types (`types.ts`). No logic, no feature. `@core/*`. |
+| `shared/` | The layer over the features, the feature `shared`: views, the popup layout, the popup flow helper, effects, motions, tokens and text styles, the `ui` bundle and the strings every screen shares. Its door is `@shared`; the rules more than one feature needs are behind `@shared/rules`. |
+| `features/<name>/` | One feature: `index.ts` is its only door (`@features/<name>`), next to `types.ts`. Inside, a folder per kind: `flow/`, `rules/`, `screens/`, `popups/`, `views/`, `world/`, `styles/`, `motion/`, `effects/`, `plugins/`, `assets/`, `strings/`, `__tests__/`. |
+| `features/index.ts` | The feature barrel `@features`: only `game.ts` imports it. |
+| `plugins/` | The general plugins of the game (loading, locale, exit, ui sounds), knowing no feature. The barrel `@plugins`. |
+| `generated/` | Written by `bun run keys`. `@generated/*`. |
+| `web/`, `native.ts`, `platform-bridge.ts`, `bunfig.toml` | The dev page, its server, the static build and the native app. They move into the engine CLI later. |
+
 ## Tests
 
 | Folder | Runs in | What |
 |---|---|---|
-| `__tests__/`, `rules/__tests__/`, `features/**/__tests__/` | `test` | The game's own unit tests. |
+| `features/<name>/__tests__/unit/`, `shared/__tests__/unit/`, `__tests__/` | `test` | The unit tests of one feature, of the shared layer, and of `platform-bridge.ts`. |
 | `tests/e2e/` | `test` | Headless e2e: the game with its screen, played through taps and routes. Moved from the engine. |
-| `tests/visual/` | `test:visual` | Seven visual tests, baselines in `tests/visual/baselines/`. |
+| `tests/visual/` | `test:visual` | Seven visual tests, baselines in `tests/visual/baselines/`. The runner is `tests/helpers/visual/`. |
 | `tests/editor/*.editor.ts` | `test:editor` | The editor on the merge game through its public entries: server, agent and tools over the real wire. Moved from the editor. |
-| `tests/editor/e2e/` | `test:editor --e2e` | Playwright: the editor's tools page on this game, served by the editor bin from a copy in `.moku/editor-e2e/`. Moved from the editor. |
+| `tests/browser/` | `test:editor --e2e` | Playwright (`*.browser.ts`): the editor's tools page on this game, served by the editor bin from a copy in `.moku/editor-e2e/`. Moved from the editor. |
+| `tests/helpers/` | | What the tests share: the headless game, the fake audio, the rules fixtures, the visual runner. |
 
 Rewrite the visual baselines with `bun run test:visual --update` on a Mac. The editor screenshots
-live in `tests/editor/e2e/__screenshots__/`: `bun run test:editor --e2e --update-snapshots`. The specs
+live in `tests/browser/__screenshots__/`: `bun run test:editor --e2e --update-snapshots`. The specs
 run on the Chromium of `@playwright/test`: `bunx playwright install chromium` once. In CI the
 runner installs it.
 

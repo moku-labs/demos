@@ -6,7 +6,7 @@
  * leg (`--webgl`).
  */
 import { defineVisualTest } from "@moku-labs/game/visual";
-import { atHome } from "./fixture";
+import { atHome } from "../helpers/visual/fixture";
 
 export const renamePopup = defineVisualTest("rename-popup", {
   start: atHome,

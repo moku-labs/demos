@@ -46,12 +46,14 @@ const COMMANDS = [
   "test:visual",
   "test:editor",
   "typecheck",
+  "keys",
+  "lint",
   "pack",
   "build"
 ];
 
 /** The Playwright config of the editor e2e specs of `test:editor`. */
-const EDITOR_E2E_CONFIG = "tests/editor/e2e/playwright.config.ts";
+const EDITOR_E2E_CONFIG = "tests/browser/playwright.config.ts";
 
 const ui = createBrandConsole();
 
@@ -343,7 +345,10 @@ async function runCommand(invocation: Invocation): Promise<number> {
   const env = engineEnv(invocation.engine);
   const { rest } = invocation;
   const assets = "node_modules/@moku-labs/game/bin/moku-game-assets.mjs";
-  const pack = ["--root", ".", "--keys", "generated/assets.ts", "--pack", "dist/assets"];
+  // The shared layer is scanned like a feature named `ui`, so `shared/assets/*` keeps its `ui.*` keys.
+  const scan = ["--root", ".", "--keys", "generated/assets.ts", "--layer", "shared=ui"];
+  const keys = [...scan, "--manifest", "manifest.json", "--pseudo"];
+  const pack = [...scan, "--pack", "dist/assets"];
 
   switch (invocation.command) {
     case "dev":
@@ -361,7 +366,7 @@ async function runCommand(invocation: Invocation): Promise<number> {
         env
       );
     case "test:visual":
-      return exec("bun", ["tests/visual/run.ts", ...rest], env);
+      return exec("bun", ["tests/helpers/visual/run.ts", ...rest], env);
     case "test:editor":
       return runEditorScenarios(invocation, env);
     case "typecheck": {
@@ -370,6 +375,10 @@ async function runCommand(invocation: Invocation): Promise<number> {
 
       return exec("bun", ["x", "tsc", "--noEmit", ...project, ...rest], env);
     }
+    case "lint":
+      return exec("bun", ["x", "oxlint", ...rest], env);
+    case "keys":
+      return exec("bun", [assets, ...keys, ...rest], env);
     case "pack":
       return exec("bun", [assets, ...pack, ...rest], env);
     default: {

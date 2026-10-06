@@ -5,6 +5,6 @@
  * every file of that folder into the manifest. Tier "scene" means the bundle arrives with the
  * scene that names it.
  */
-import { defineBundles } from "../../kit";
+import { defineBundles } from "@core/kit";
 
 export const boardAssets = defineBundles({ board: { tier: "scene" } });

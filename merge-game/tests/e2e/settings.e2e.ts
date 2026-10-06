@@ -5,12 +5,11 @@
  * a language switch re-resolves the labels. Plain Bun: the renderer is inert, the audio context is locked, and Yoga
  * lays the same rects out as it would in the browser.
  */
-
 import type { Ui } from "@moku-labs/game";
 import { Text } from "@moku-labs/game";
 import { describe, expect, it } from "vitest";
-import type { Player } from "../../state";
-import { startingPlayer } from "../../state";
+import type { Player } from "../../core/state";
+import { startingPlayer } from "../../core/state";
 import { booted, createDiskGame } from "../helpers/game";
 
 /** A board that already carries the level-3 item the first order asks for. */

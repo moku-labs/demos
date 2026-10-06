@@ -1,29 +1,98 @@
 /**
- * @file The composition root of the fixture merge game: two `createApp` calls, one without the
- * screen and one with it. A shipped game adds `onStart: ctx => { ctx.flow.run().catch(showFatal); }`;
- * here the headless runner owns `run()`, so a fatal error reaches the test instead of a handler.
+ * @file The one entry of the merge game: the root flow, then the composition root, two
+ * `createApp` calls, one without the screen and one with it. Features come from the `@features`
+ * barrel, plugins from `@plugins`, the shared layer from `@shared`. A shipped game adds
+ * `onStart: ctx => { ctx.flow.run().catch(showFatal); }`; here the headless runner owns `run()`,
+ * so a fatal error reaches the test instead of a handler.
  */
 import type { Assets, Audio, I18n, Model, PlatformProvider, Renderer } from "@moku-labs/game";
-import { audioPlugin, createApp, effectsPlugin, platformPlugin, screen } from "@moku-labs/game";
+import {
+  audioPlugin,
+  createApp,
+  effectsPlugin,
+  platformPlugin,
+  screen,
+  slot
+} from "@moku-labs/game";
 import { fakeClock, memory } from "@moku-labs/game/testing";
-import { energyFeature } from "./features/energy";
-import { giftFeature } from "./features/gift";
-import { homeFeature } from "./features/home";
-import { hudFeature } from "./features/hud";
-import { leaveFeature } from "./features/leave";
-import { leaveExitPlugin } from "./features/leave/plugin";
-import { ordersFeature } from "./features/orders";
-import { settingsFeature } from "./features/settings";
-import { settingsLocalePlugin } from "./features/settings/plugin";
-import { splashFeature } from "./features/splash";
-import { loadingPlugin } from "./features/splash/plugin";
-import { soundsPlugin } from "./features/ui/sounds";
-import { mainFlow } from "./flows/main";
-import { rewardFeature } from "./flows/reward";
-import type { Player } from "./state";
-import { startingPlayer, startingSession } from "./state";
-import { boardView } from "./view";
-import { boardLookPlugin } from "./view/looks";
+import { defineFlow } from "@core/kit";
+import type { Player } from "@core/state";
+import { startingPlayer, startingSession } from "@core/state";
+import {
+  boardFlow,
+  boardLookPlugin,
+  boardFeature,
+  boot,
+  dailyGift,
+  energyFeature,
+  giftFeature,
+  home,
+  homeFeature,
+  hudFeature,
+  leaveFeature,
+  leaveGame,
+  loadFailed,
+  ordersFeature,
+  retryLoading,
+  rewardFeature,
+  setLoading,
+  settingsFeature,
+  settingsFlow,
+  splash,
+  splashFeature
+} from "@features";
+import { leaveExitPlugin, loadingPlugin, settingsLocalePlugin, soundsPlugin } from "@plugins";
+import { sharedFeature } from "@shared";
+
+/**
+ * The main flow: boot, the splash that waits for the bundles and offers a retry when one of them
+ * fails, the home checkpoint with its three buttons, the board as a node, and the slot every
+ * finished order passes through. The settings sub-flow hangs off Home as it hangs off the board,
+ * because the gear is on both screens; the daily gift is a popup of Home, and so is the Leave popup
+ * that Back on Home asks first with. Each step is a feature's own flow or node, taken from the
+ * `@features` barrel; it lives here, so `core/` never imports a feature.
+ */
+export const mainFlow = defineFlow("main", {
+  nodes: {
+    boot,
+    splash,
+    setLoading,
+    loadFailed,
+    retryLoading,
+    home,
+    dailyGift,
+    leaveGame,
+    settings: settingsFlow,
+    board: boardFlow,
+    afterOrder: slot("afterOrder")
+  },
+  start: "boot",
+  edges: {
+    boot: { ready: "splash" },
+    splash: {
+      progress: "setLoading",
+      loaded: "home",
+      failed: "loadFailed",
+      retry: "retryLoading"
+    },
+    setLoading: { done: "splash" },
+    loadFailed: { done: "splash" },
+    retryLoading: { done: "splash" },
+    home: {
+      play: "board",
+      gift: "dailyGift",
+      openSettings: "settings",
+      back: "leaveGame"
+    },
+    dailyGift: { claim: "home", close: "home" },
+    leaveGame: { leave: "home", stay: "home" },
+    settings: { closed: "home" },
+    board: { orderComplete: "afterOrder", left: "home" },
+    // Back onto the board: the reward is taken there, the coins fly onto the HUD counter, and the
+    // player keeps playing. "home" is reached by leaving the board.
+    afterOrder: { done: "board" }
+  }
+});
 
 /**
  * Reads the volumes the player chose out of the committed save. `audio` calls it on every commit,
@@ -50,7 +119,7 @@ export function volumesOf(player: Model.Json): Player["settings"]["audio"] {
 export function devLocales(): Record<string, I18n.StringsLoader> {
   if (typeof __MOKU_GAME_DEV__ === "undefined" || !__MOKU_GAME_DEV__) return {};
 
-  return { "en-XA": () => import("./generated/strings.en-XA") };
+  return { "en-XA": () => import("@generated/strings.en-XA") };
 }
 
 /** The save seam, recording every call it gets. */
@@ -114,10 +183,11 @@ export function createGame(options: GameOptions = {}): Game {
 
 /**
  * The plugins of the game with its screen: the nine screen plugins, `audio`, `effects` and
- * `platform`, which are opt-in and `platform` last of them, every feature — the splash, Home, the
- * board, the reward, the HUD, the orders, the settings, the energy, the daily gift and the Leave
- * popup — and the five plugins the game writes: the loading of the splash, the language switch,
- * the way out of the Leave popup, the look of the board under the pointer and the click of every
+ * `platform`, which are opt-in and `platform` last of them, the shared layer (the feature
+ * `shared`), every feature — the splash, Home, the board, the reward, the HUD, the orders, the
+ * settings, the energy, the daily gift and the Leave popup — and the five plugins the game writes:
+ * the loading of the splash, the language switch, the way out of the Leave popup (the four of
+ * `plugins/`), the look of the board under the pointer (the board's own) and the click of every
  * control. Without a provider `platform` is inert; the web page and the native app pass the
  * bridge of `platform-bridge.ts`.
  */
@@ -129,7 +199,8 @@ export const screenPlugins = [
   rewardFeature,
   splashFeature,
   homeFeature,
-  boardView,
+  boardFeature,
+  sharedFeature,
   hudFeature,
   ordersFeature,
   settingsFeature,

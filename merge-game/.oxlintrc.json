@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": ["@moku-labs/game/lint"],
+  "ignorePatterns": ["node_modules", "dist", ".moku", "generated"],
+  "rules": {
+    "moku-game/lazy-imports": "error",
+    "moku-game/native-imports": "error",
+    "moku-game/dev-imports": "error",
+    "moku-game/no-module-state": "error",
+    "moku-game/determinism": "error",
+    "moku-game/rules-siblings": "error",
+    "moku-game/static-keys": "error",
+    "moku-game/layer-imports": "error",
+    "moku-game/feature-door": "error",
+    "moku-game/test-suffix": "error"
+  }
+}

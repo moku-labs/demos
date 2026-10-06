@@ -9,11 +9,11 @@
 import type { Ui } from "@moku-labs/game";
 import { Glow, Order, Parent, Shape, Sprite, Text, Transform } from "@moku-labs/game";
 import { describe, expect, it } from "vitest";
-import { readyCardGlow } from "../../features/orders/styles";
+import type { Player } from "../../core/state";
+import { generatorId } from "../../core/tables";
+import { cellBox, cellSize, itemSize, slot } from "../../features/board/world/layout/grid";
+import { readyCardGlow } from "../../features/orders/styles/styles";
 import { startMoment } from "../../game";
-import type { Player } from "../../state";
-import { generatorId } from "../../tables";
-import { cellBox, cellSize, itemSize, slot } from "../../view/layout";
 import type { Game } from "../helpers/game";
 import { elementOf, frames, nodeOf, player, startOnBoard, tap, until } from "../helpers/game";
 

@@ -2,13 +2,12 @@
  * @file The V1 exit criterion: the merge game, written with the engine's public API only,
  * played to the end headless.
  */
-
 import type { Flow } from "@moku-labs/game";
 import { createHeadless, runRepro } from "@moku-labs/game/testing";
 import { describe, expect, it } from "vitest";
+import { startingPlayer, startingSession } from "../../core/state";
+import { generatorId, tables } from "../../core/tables";
 import { createGame, startMoment } from "../../game";
-import { startingPlayer, startingSession } from "../../state";
-import { generatorId, tables } from "../../tables";
 
 /** Yields the microtask queue to the loop, the way a test waits without a timer. */
 const tick = async (times = 60): Promise<void> => {

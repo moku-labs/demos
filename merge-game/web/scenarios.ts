@@ -3,9 +3,9 @@
  * a phone and needs states that take many taps to reach — a full board, an empty energy bar, an
  * order ready — so each is a save the page starts from. Test code of the fixture, never shipped.
  */
-import type { Item } from "../rules";
-import type { Player } from "../state";
-import { startingPlayer } from "../state";
+import type { Player } from "../core/state";
+import { startingPlayer } from "../core/state";
+import type { Item } from "../core/types";
 
 /** The coins every prepared save shows, the number the design's screens carry. */
 const COINS = 125;

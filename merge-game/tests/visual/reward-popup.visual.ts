@@ -4,7 +4,7 @@
  * The green Claim glows, so the test also runs in the WebGL leg (`--webgl`).
  */
 import { defineVisualTest } from "@moku-labs/game/visual";
-import { atHome } from "./fixture";
+import { atHome } from "../helpers/visual/fixture";
 
 export const rewardPopup = defineVisualTest("reward-popup", {
   start: atHome,

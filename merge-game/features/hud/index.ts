@@ -1,26 +1,17 @@
 /**
- * @file The HUD as a feature: the projection of the board screen, the counter component, the
- * two coin flights, and the shared interface of the game — the text styles of every screen and the
- * boot bundle `ui` with the fonts, the 9-slice pieces, the icons and the click. A headless test
- * composes `hudFeature.logicOnly` and sees none of it.
- *
- * It also carries the compiled messages of the whole game. The compiler walks every feature's
- * `strings/` folder and writes one module per locale, so one feature registers them; the Russian
- * one is bundled, the English one is fetched when the player switches.
+ * @file The HUD as a feature: the two coin flights that land on the coin counter of the HUD row.
+ * The row itself (`views/hud-row.tsx`) is drawn by the screens that show it; the counter component
+ * and the shared interface of the game (text styles, the `ui` bundle, the strings) are the shared
+ * layer's. A headless test composes `hudFeature.logicOnly` and sees none of it.
  */
-import ruStrings from "../../generated/strings.ru";
-import { defineFeature } from "../../kit";
-import { uiAssets } from "../ui/assets";
-import { uiStyles } from "../ui/styles";
-import { coinsFlyGift, coinsFlyReward } from "./animations";
-import { Counter } from "./coins";
-import { hud } from "./view";
+import { defineFeature } from "@core/kit";
+import { coinsFlyGift, coinsFlyReward } from "./motion/animations";
+
+export { coinsFlyGift, coinsFlyReward, FLIGHT_MS } from "./motion/animations";
+export { hudRowHeight } from "./styles/styles";
+export type { EnergyView } from "./views/hud-row";
+export { HudRow } from "./views/hud-row";
 
 export const hudFeature = defineFeature("hud", {
-  projections: [hud],
-  components: [Counter],
-  animations: [coinsFlyReward, coinsFlyGift],
-  textStyles: uiStyles,
-  assets: uiAssets,
-  strings: { ru: ruStrings, en: () => import("../../generated/strings.en") }
+  animations: [coinsFlyReward, coinsFlyGift]
 });

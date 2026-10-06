@@ -6,7 +6,6 @@
  * names it, and the cards swaying on the rope, the ready one wider and glowing. Every spawned entity is
  * checked to leave with its timeline.
  */
-
 import {
   Frames,
   Glow,
@@ -19,12 +18,12 @@ import {
   Transform
 } from "@moku-labs/game";
 import { describe, expect, it } from "vitest";
-import { SWAY_MS } from "../../features/orders/motions";
-import { orderCardSize, readyCardGlow } from "../../features/orders/styles";
-import { generatorId } from "../../tables";
-import { Highlighted } from "../../view/components";
-import { cellBox } from "../../view/layout";
-import { ringFps, ringFrames, ringSize } from "../../view/ring";
+import { generatorId } from "../../core/tables";
+import { Highlighted } from "../../features/board/world/components/highlighted";
+import { cellBox } from "../../features/board/world/layout/grid";
+import { ringFps, ringFrames, ringSize } from "../../features/board/world/layout/ring";
+import { SWAY_MS } from "../../features/orders/motion/motions";
+import { orderCardSize, readyCardGlow } from "../../features/orders/styles/styles";
 import {
   elementOf,
   frames,

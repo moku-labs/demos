@@ -5,15 +5,14 @@
  * and the reward claim with the coins that fly to the counter. Plain Bun: the renderer is inert,
  * Yoga lays out the real rects, the flow runner and `anim` run for real.
  */
-
 import { NineSlice, Sprite, Tappable, Text, Transform } from "@moku-labs/game";
 import { describe, expect, it } from "vitest";
-import { TOAST_HOLD_MS } from "../../features/board/toast";
-import { hudRowHeight } from "../../features/hud/styles";
-import type { Item } from "../../rules";
-import type { Player } from "../../state";
-import { startingPlayer } from "../../state";
-import { generatorId } from "../../tables";
+import type { Player } from "../../core/state";
+import { startingPlayer } from "../../core/state";
+import { generatorId } from "../../core/tables";
+import type { Item } from "../../core/types";
+import { TOAST_HOLD_MS } from "../../features/board/motion/animations";
+import { hudRowHeight } from "../../features/hud/styles/styles";
 import {
   coinsInFlight,
   counterOf,
