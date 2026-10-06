@@ -43,8 +43,7 @@ jobs:
   demos:
     needs: changed
     if: needs.changed.outputs.demos != '[]'
-    # TODO: switch @feat/demos-workflow to @v1 once moku-labs/ci is tagged.
-    uses: moku-labs/ci/.github/workflows/demos.yml@feat/demos-workflow
+    uses: moku-labs/ci/.github/workflows/demos.yml@v1
     with:
       tier: full
       only: ${{ needs.changed.outputs.demos }}
