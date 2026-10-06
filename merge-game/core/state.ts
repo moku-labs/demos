@@ -1,6 +1,6 @@
 /**
- * @file The state of the fixture merge game: what a save holds, what one session holds, the state
- * of a new player, and the one helper that writes a rules result back into a draft.
+ * @file The state of the fixture merge game: what a save holds, what one session holds and the
+ * state of a new player. No logic: the rules that write it live with the features.
  */
 import { boardSize, generatorId, startingOrders, tables } from "./tables";
 import type { MergeState } from "./types";
@@ -71,40 +71,3 @@ export const startingPlayer: Player = {
 
 /** The session at every start. */
 export const startingSession: Session = { taps: 0, loading: 0, loadFailed: false, selected: "" };
-
-/**
- * Writes the state a rules function returned into the player draft. The rules are pure and build
- * a new tree; the node context hands out an Immer draft, so one assignment per node is all the
- * bridging a game needs.
- *
- * @param player - The player draft of the open transaction.
- * @param state - The rule state a rules function returned.
- * @example
- * ```ts
- * if (result.legal) applyRules(player, result.state);
- * ```
- */
-export function applyRules(player: Player, state: MergeState): void {
-  player.merge = state;
-}
-
-/**
- * Starts the progress over (design §6 E3): board, coins, orders, the waiting reward and the daily
- * gift go back to what a new player has. The settings and the name stay, so the volumes, the
- * language and the name the player chose survive a reset.
- *
- * @param player - The player draft of the open transaction.
- * @example
- * ```ts
- * startProgressOver(player); // player.merge is startingPlayer.merge again, player.name untouched
- * ```
- */
-export function startProgressOver(player: Player): void {
-  const fresh = structuredClone(startingPlayer);
-
-  player.merge = fresh.merge;
-  player.claimed = fresh.claimed;
-  player.pendingReward = fresh.pendingReward;
-  player.pendingCoins = fresh.pendingCoins;
-  player.giftClaimed = fresh.giftClaimed;
-}

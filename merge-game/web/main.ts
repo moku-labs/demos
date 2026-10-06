@@ -53,7 +53,12 @@ const app = createApp({
     i18n: { locale: "ru", fallback: "ru", locales: devLocales() },
     audio: { volumes: volumesOf, journal: 200 },
     platform: { provider: platform, keepAwake: true },
-    leaveExit: { exit: () => platform.exit() },
+    exit: { exit: () => platform.exit() },
+    loading: {
+      bundles: ["home", "board", "orders"],
+      retry: { node: "splash", outcome: "retry" }
+    },
+    uiSounds: { click: "ui.click" },
     input: { heldScale: 1.08 },
     // The keyboard focus ring of design §4: a dashed ink ring over a cream halo, 9 px of the
     // 390-wide design outside the control.

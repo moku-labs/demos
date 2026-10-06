@@ -4,9 +4,8 @@
  */
 import { schedule, type } from "@moku-labs/game";
 import { defineNode } from "@core/kit";
-import { applyRules } from "@core/state";
 import { tables } from "@core/tables";
-import { elapse, nextDue } from "@shared/rules";
+import { applyRules, elapse, nextDue } from "@shared/rules";
 
 export const catchUp = defineNode({
   outcomes: { done: type() },

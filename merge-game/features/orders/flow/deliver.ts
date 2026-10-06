@@ -1,8 +1,8 @@
 /**
  * @file Transit node `deliver`: the Deliver button of an order card was pressed. The same body as
- * a drag onto an order; the click of the button is the sounds plugin's. When the give finishes the
- * order, the item flies into the card and the "Готово!" stamp hits it before the board is left for
- * the reward popup.
+ * a drag onto an order; the click of the button is the uiSounds plugin's. When the give finishes
+ * the order, the item flies into the card and the "Готово!" stamp hits it before the board is left
+ * for the reward popup.
  */
 import { play, type } from "@moku-labs/game";
 import { defineNode } from "@core/kit";

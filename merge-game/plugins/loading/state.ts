@@ -1,12 +1,9 @@
 /**
- * @file What the splash waits for, as plain data and pure functions: the three bundles Home and
- * the board need, how far each one has come, the share of the whole, and the bundles that failed
- * and wait for a retry. The plugin in `index.ts` feeds it from the asset events and posts what it
+ * @file What the splash waits for, as plain data and pure functions: the bundles of the config,
+ * how far each one has come, the share of the whole, and the bundles that failed and wait for a
+ * retry. The plugin in `index.ts` feeds it from the asset events and posts what it
  * computes into the flow inbox.
  */
-
-/** The bundles the splash waits for: Home, the board and the order cards. */
-export const watchedBundles = ["home", "board", "orders"] as const;
 
 /**
  * How far the loading has come.
@@ -14,11 +11,14 @@ export const watchedBundles = ["home", "board", "orders"] as const;
  * @example
  * ```ts
  * const state: LoadingState = {
- *   shares: { home: 1, board: 0.5 }, loaded: ["home"], failed: [], posted: false, reported: 0.5
+ *   bundles: ["home", "board"], shares: { home: 1, board: 0.5 }, loaded: ["home"], failed: [],
+ *   posted: false, reported: 0.75
  * };
  * ```
  */
 export type LoadingState = {
+  /** The bundles the splash waits for, from the config. */
+  bundles: readonly string[];
   /** The share of each watched bundle that has settled, 0..1. */
   shares: Record<string, number>;
   /** The watched bundles that are loaded. */
@@ -34,28 +34,30 @@ export type LoadingState = {
 /**
  * The state of a splash that has seen nothing yet.
  *
+ * @param bundles - The bundles to wait for. None by default.
  * @returns A fresh state.
  * @example
  * ```ts
- * createLoadingState(); // { shares: {}, loaded: [], failed: [], posted: false, reported: -1 }
+ * createLoadingState(["home"]); // { bundles: ["home"], shares: {}, loaded: [], failed: [], posted: false, reported: -1 }
  * ```
  */
-export function createLoadingState(): LoadingState {
-  return { shares: {}, loaded: [], failed: [], posted: false, reported: -1 };
+export function createLoadingState(bundles: readonly string[] = []): LoadingState {
+  return { bundles, shares: {}, loaded: [], failed: [], posted: false, reported: -1 };
 }
 
 /**
  * Whether the splash watches a bundle.
  *
+ * @param state - The loading state.
  * @param bundle - The bundle an event named.
- * @returns True for `home`, `board` and `orders`.
+ * @returns True for a bundle of the config.
  * @example
  * ```ts
- * isWatched("ui"); // false
+ * isWatched(createLoadingState(["home"]), "ui"); // false
  * ```
  */
-export function isWatched(bundle: string): boolean {
-  return (watchedBundles as readonly string[]).includes(bundle);
+export function isWatched(state: LoadingState, bundle: string): boolean {
+  return state.bundles.includes(bundle);
 }
 
 /**
@@ -85,29 +87,32 @@ export function recordLoaded(state: LoadingState, bundle: string): void {
 }
 
 /**
- * The share of the whole: the mean of the three bundles, on two decimals.
+ * The share of the whole: the mean of the watched bundles, on two decimals. With no bundle to
+ * wait for, everything is in.
  *
  * @param state - The loading state.
  * @returns 0..1.
  * @example
  * ```ts
- * shareOf({ shares: { home: 1, board: 0.5 }, loaded: ["home"], failed: [], posted: false, reported: 0 }); // 0.5
+ * shareOf({ bundles: ["home", "board"], shares: { home: 1, board: 0.5 }, loaded: ["home"], failed: [], posted: false, reported: 0 }); // 0.75
  * ```
  */
 export function shareOf(state: LoadingState): number {
-  const sum = watchedBundles.reduce((total, bundle) => total + (state.shares[bundle] ?? 0), 0);
+  if (state.bundles.length === 0) return 1;
 
-  return Math.round((sum / watchedBundles.length) * 100) / 100;
+  const sum = state.bundles.reduce((total, bundle) => total + (state.shares[bundle] ?? 0), 0);
+
+  return Math.round((sum / state.bundles.length) * 100) / 100;
 }
 
 /**
  * Whether every watched bundle is loaded.
  *
  * @param state - The loading state.
- * @returns True when Home, the board and the orders are in.
+ * @returns True when every watched bundle is in, and at once when there is none.
  */
 export function isComplete(state: LoadingState): boolean {
-  return watchedBundles.every(bundle => state.loaded.includes(bundle));
+  return state.bundles.every(bundle => state.loaded.includes(bundle));
 }
 
 /**
@@ -119,7 +124,7 @@ export function isComplete(state: LoadingState): boolean {
  * @returns True when the splash has to be told.
  * @example
  * ```ts
- * recordFailed(createLoadingState(), "board"); // true
+ * recordFailed(createLoadingState(["board"]), "board"); // true
  * ```
  */
 export function recordFailed(state: LoadingState, bundle: string): boolean {
@@ -138,7 +143,7 @@ export function recordFailed(state: LoadingState, bundle: string): boolean {
  * @returns The bundles to load again.
  * @example
  * ```ts
- * const state = createLoadingState();
+ * const state = createLoadingState(["board"]);
  * recordFailed(state, "board");
  * retryFailed(state); // ["board"], and state.failed is [] again
  * ```

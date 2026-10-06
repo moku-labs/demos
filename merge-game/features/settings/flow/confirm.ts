@@ -5,11 +5,12 @@
 import type { Flow } from "@moku-labs/game";
 import { schedule, type } from "@moku-labs/game";
 import { defineNode, popup } from "@core/kit";
-import { startProgressOver } from "@core/state";
+import { startingPlayer } from "@core/state";
 import { tables } from "@core/tables";
 import { showPopup } from "@shared";
 import { nextDue } from "@shared/rules";
 import { Confirm } from "../popups/confirm-popup";
+import { startProgressOver } from "../rules/progress";
 
 /**
  * Transit node `confirmReset`: the confirm stacked on the settings. Cancel goes back to the same
@@ -25,7 +26,7 @@ export const confirmReset = defineNode({
 
     if (answered?.intent !== "reset") return out.cancel();
 
-    startProgressOver(player);
+    startProgressOver(player, startingPlayer);
     await fx(schedule(nextDue(player.merge, tables)));
 
     return out.reset();

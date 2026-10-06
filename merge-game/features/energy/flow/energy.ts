@@ -6,10 +6,9 @@
 import type { Flow } from "@moku-labs/game";
 import { schedule, type } from "@moku-labs/game";
 import { defineNode, popup } from "@core/kit";
-import { applyRules } from "@core/state";
 import { tables } from "@core/tables";
 import { showPopup } from "@shared";
-import { elapse, nextDue } from "@shared/rules";
+import { applyRules, elapse, nextDue } from "@shared/rules";
 import { OutOfEnergy } from "../popups/out-of-energy";
 import { refillIn } from "../rules/refill";
 

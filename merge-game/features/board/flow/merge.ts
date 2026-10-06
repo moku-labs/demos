@@ -8,8 +8,8 @@
  */
 import { play, sfx, type } from "@moku-labs/game";
 import { defineNode } from "@core/kit";
-import { applyRules } from "@core/state";
 import { tables } from "@core/tables";
+import { applyRules } from "@shared/rules";
 import { mergeBurst, refuseShake } from "../motion/animations";
 import { rules } from "../rules";
 import { viewAt } from "../world/layout/targets";
