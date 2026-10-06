@@ -14,7 +14,7 @@ bun install
 bun run dev        # the game in the browser, prints the URL
 bun run editor     # the editor on the game
 bun run test       # unit + headless e2e
-bun run test:editor  # the editor scenarios: vitest, then Playwright
+bun run test:editor  # the editor scenarios on vitest; --e2e adds the Playwright specs (local only)
 ```
 
 ## Scripts
@@ -25,7 +25,7 @@ bun run test:editor  # the editor scenarios: vitest, then Playwright
 | `editor` | Starts `@moku-labs/editor` on this demo. |
 | `test` | Vitest: the game's unit tests and `tests/e2e/`. Fails on an empty test set. |
 | `test:visual` | `tests/visual/`: headless state checks, pixels on macOS. Serves the page itself. |
-| `test:editor` | `tests/editor/`: the vitest project `editor`, then the Playwright specs. Extra arguments go to Playwright. |
+| `test:editor` | `tests/editor/`: the vitest project `editor`. `--e2e` adds the Playwright specs (about 20 min, local only, not in CI); then extra arguments go to Playwright. |
 | `typecheck` | `tsc --noEmit`. |
 | `pack` | Packs the assets into `dist/assets/`. |
 | `build` | `pack`, then the static page into `dist/web/`. |
@@ -64,10 +64,10 @@ later.
 | `tests/e2e/` | `test` | Headless e2e: the game with its screen, played through taps and routes. Moved from the engine. |
 | `tests/visual/` | `test:visual` | Seven visual tests, baselines in `tests/visual/baselines/`. |
 | `tests/editor/*.editor.ts` | `test:editor` | The editor on the merge game through its public entries: server, agent and tools over the real wire. Moved from the editor. |
-| `tests/editor/e2e/` | `test:editor` | Playwright: the editor's tools page on this game, served by the editor bin from a copy in `.moku/editor-e2e/`. Moved from the editor. |
+| `tests/editor/e2e/` | `test:editor --e2e` | Playwright: the editor's tools page on this game, served by the editor bin from a copy in `.moku/editor-e2e/`. Moved from the editor. |
 
 Rewrite the visual baselines with `bun run test:visual --update` on a Mac. The editor screenshots
-live in `tests/editor/e2e/__screenshots__/`: `bun run test:editor --update-snapshots`. The specs
+live in `tests/editor/e2e/__screenshots__/`: `bun run test:editor --e2e --update-snapshots`. The specs
 run on the Chromium of `@playwright/test`: `bunx playwright install chromium` once. In CI the
 runner installs it.
 

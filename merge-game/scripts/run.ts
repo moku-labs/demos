@@ -13,8 +13,12 @@
  *   the editor scenarios import its built entries (vitest alias, dev page plugin).
  *
  * `MOKU_ENGINE` and `MOKU_EDITOR` give the same inputs when the flags are left out. The rest of
- * the arguments go to the command: `bun run test:visual --no-pixels`, `bun run dev --port 0`. For
- * `test:editor` they go to Playwright: `bun run test:editor --project chromium-desktop -g pick`.
+ * the arguments go to the command: `bun run test:visual --no-pixels`, `bun run dev --port 0`.
+ *
+ * `test:editor` runs the editor scenarios on vitest. `--e2e` adds the Playwright specs, which drive
+ * the editor in a browser for about 20 minutes; they run locally only (before an editor release, or
+ * on request), never in CI, where a slow runner breaks their timing checks. With `--e2e` the rest
+ * goes to Playwright: `bun run test:editor --e2e --project chromium-desktop -g pick`.
  */
 import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
@@ -312,7 +316,7 @@ async function runEditorScenarios(
     editorEnv
   );
 
-  if (vitest !== 0) return vitest;
+  if (vitest !== 0 || !invocation.rest.includes("--e2e")) return vitest;
 
   // The specs and their screenshots belong to the Chromium of @playwright/test, which can be
   // newer than the playwright-core the visual tests use. In CI it is installed here.
@@ -324,7 +328,7 @@ async function runEditorScenarios(
 
   return exec(
     "bun",
-    ["x", "playwright", "test", "-c", EDITOR_E2E_CONFIG, ...invocation.rest],
+    ["x", "playwright", "test", "-c", EDITOR_E2E_CONFIG, ...invocation.rest.filter(arg => arg !== "--e2e")],
     editorEnv
   );
 }

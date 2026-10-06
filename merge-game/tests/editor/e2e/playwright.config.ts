@@ -29,13 +29,6 @@ const DEMO = fileURLToPath(new URL("../../../", import.meta.url));
 const OUT = ".moku/editor-e2e";
 
 const PORT = Number(process.env.PORT ?? 4417);
-
-/**
- * CI runs the desktop viewport only: these specs check the game's content, and the narrow editor
- * layouts are the editor repo's own tests. Locally all four run; `MOKU_ALL_VIEWPORTS=1` forces
- * them in CI too.
- */
-const ALL_VIEWPORTS = !process.env.CI || process.env.MOKU_ALL_VIEWPORTS === "1";
 const BASE_URL = `http://127.0.0.1:${PORT}`;
 const BIN = process.env.MOKU_EDITOR_BIN ?? "node_modules/@moku-labs/editor/dist/bin.mjs";
 const SERVE = [
@@ -116,7 +109,7 @@ export default defineConfig({
         launchOptions: { args: CHROMIUM_FLAGS }
       }
     }
-  ].filter(project => ALL_VIEWPORTS || project.name === "chromium-desktop"),
+  ],
   webServer: process.env.PW_EXTERNAL_SERVER
     ? []
     : {

@@ -43,7 +43,7 @@ jobs:
   demos:
     needs: changed
     if: needs.changed.outputs.demos != '[]'
-    uses: moku-labs/ci/.github/workflows/demos.yml@b8ed8cef9685dfa8bd4118fdb5e695f61c2e6b4c # TEMP ci fix/demos-editor-macos; back to @v1 after the tag
+    uses: moku-labs/ci/.github/workflows/demos.yml@v1
     with:
       tier: full
       only: ${{ needs.changed.outputs.demos }}

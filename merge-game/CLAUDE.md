@@ -22,9 +22,9 @@ a local working tree. With no flag the pins of package.json run.
 - `bun run test:visual` — the visual tests (`tests/visual/`): headless state checks, plus pixels
   on macOS. It serves the page itself. `--no-pixels`, `--update`, `--only <name>`.
 - `bun run test:editor` — the editor scenarios: the vitest project `editor`
-  (`tests/editor/*.editor.ts`), then the Playwright specs (`tests/editor/e2e/`). Extra arguments go
-  to Playwright. Needs the Chromium of `@playwright/test`: `bunx playwright install chromium`
-  (in CI the runner installs it).
+  (`tests/editor/*.editor.ts`). `--e2e` adds the Playwright specs (`tests/editor/e2e/`, about
+  20 min, local only, never in CI); then extra arguments go to Playwright. They need the Chromium of
+  `@playwright/test`: `bunx playwright install chromium`.
 - `bun run typecheck` — `tsc --noEmit`.
 - `bun run pack` — packs the assets into `dist/assets/`.
 - `bun run build` — pack, then the static page into `dist/web/`.
