@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+*.tsbuildinfo
+.DS_Store
+
+# Written by scripts/run.ts for a local --engine <path> run (tsconfig with the tree's paths).
+.moku
+
+# The pictures a pixel difference leaves beside its baseline.
+tests/visual/**/*.actual.webp
+tests/visual/**/*.diff.webp

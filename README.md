@@ -13,6 +13,7 @@ This is a **monorepo, not a workspace**: there is no root `package.json` and no 
 | Demo | Stack | What it shows |
 |------|-------|---------------|
 | [`tracker`](tracker/) | web + worker — D1, KV, R2, Queues, Durable Objects | Real-time kanban board; full Layer-3 web + worker composition |
+| [`merge-game`](merge-game/) | game — `@moku-labs/game` on PixiJS (WebGPU), `@moku-labs/editor` | Timber Town, the engine's reference merge puzzle; e2e and visual tests that run against any engine or editor build |
 
 ## Running a demo
 

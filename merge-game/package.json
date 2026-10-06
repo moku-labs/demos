@@ -1,0 +1,42 @@
+{
+  "name": "merge-game",
+  "version": "0.1.0",
+  "description": "Moku merge game (Timber Town) — a Layer-3 demo on @moku-labs/game: the engine's reference puzzle game, its e2e and visual tests, and the editor on it.",
+  "private": true,
+  "type": "module",
+  "moku": {
+    "demo": true
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "bun": ">=1.3.14"
+  },
+  "scripts": {
+    "dev": "bun scripts/run.ts dev",
+    "editor": "bun scripts/run.ts editor",
+    "test": "bun scripts/run.ts test",
+    "test:visual": "bun scripts/run.ts test:visual",
+    "test:editor": "bun scripts/run.ts test:editor",
+    "typecheck": "bun scripts/run.ts typecheck",
+    "pack": "bun scripts/run.ts pack",
+    "build": "bun scripts/run.ts build"
+  },
+  "dependencies": {
+    "@moku-labs/common": "0.3.4",
+    "@moku-labs/core": "1.7.1",
+    "@moku-labs/game": "https://pkg.pr.new/@moku-labs/game@df1490c",
+    "@moku-labs/native": "0.3.0",
+    "@moku-labs/system": "0.3.0",
+    "@tauri-apps/api": "2.12.1",
+    "@tauri-apps/plugin-haptics": "2.4.1",
+    "pixi.js": "8.21.0"
+  },
+  "devDependencies": {
+    "@moku-labs/editor": "0.5.0",
+    "@types/bun": "1.3.14",
+    "playwright-core": "1.60.0",
+    "sharp": "0.34.5",
+    "typescript": "6.0.3",
+    "vitest": "4.0.18"
+  }
+}
