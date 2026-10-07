@@ -330,16 +330,21 @@ async function runEditorScenarios(
   }
 
   const rest = invocation.rest.filter(arg => arg !== "--e2e");
-  const playwright = (args: string[]): Promise<number> =>
-    exec("bun", ["x", "playwright", "test", "-c", EDITOR_E2E_CONFIG, ...args], editorEnv);
+  const playwright = (args: string[], env: Record<string, string> = editorEnv): Promise<number> =>
+    exec("bun", ["x", "playwright", "test", "-c", EDITOR_E2E_CONFIG, ...args], env);
 
   if (rest.some(arg => arg.startsWith("--project"))) return playwright(rest);
 
   // One Playwright process, so one fresh bin, per project: Bun 1.3.14's dev server crashes after
-  // the hot reloads of all four projects in one process.
+  // the hot reloads of all four projects in one process. Each bin gets its own port, because the
+  // bin of the previous project can still hold its port for a moment after Playwright stops it.
+  const port = Number(process.env.PORT ?? 4417);
   let failed = 0;
-  for (const project of EDITOR_E2E_PROJECTS) {
-    const code = await playwright(["--project", project, ...rest]);
+  for (const [index, project] of EDITOR_E2E_PROJECTS.entries()) {
+    const code = await playwright(["--project", project, ...rest], {
+      ...editorEnv,
+      PORT: String(port + index)
+    });
     if (failed === 0) failed = code;
   }
 
