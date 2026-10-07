@@ -14,7 +14,8 @@ bun install
 bun run dev        # the game in the browser, prints the URL
 bun run editor     # the editor on the game
 bun run test       # unit + headless e2e
-bun run test:editor  # the editor scenarios on vitest; --e2e adds the Playwright specs (local only)
+bun run test:editor  # the editor scenarios on vitest
+bun run test:editor:e2e  # the editor Playwright specs (about 20 min, local only)
 ```
 
 ## Scripts
@@ -25,7 +26,8 @@ bun run test:editor  # the editor scenarios on vitest; --e2e adds the Playwright
 | `editor` | Starts `@moku-labs/editor` on this demo: `--root .`, the page from the engine. |
 | `test` | Vitest: the game's unit tests and `tests/e2e/`. Fails on an empty test set. |
 | `test:visual` | `tests/visual/`: headless state checks, pixels on macOS. Serves the page itself. |
-| `test:editor` | `tests/editor/`: the vitest project `editor`. `--e2e` adds the Playwright specs (about 20 min, local only, not in CI); then extra arguments go to Playwright. |
+| `test:editor` | `tests/editor/`: the vitest project `editor`. |
+| `test:editor:e2e` | `tests/browser/`: the Playwright specs, one run per project (`tests/browser/e2e.ts`). About 20 min, local only, not in CI. Arguments go to Playwright: `--project chromium-desktop -g pick`. |
 | `typecheck` | `tsc --noEmit`. |
 | `keys` | `moku-game keys`: writes `manifest.json`, `generated/assets.ts` and `generated/strings*.ts`. `shared/` is scanned as the layer `ui` (`assets.layers` in `config.ts`), so its keys stay `ui.*`. |
 | `lint` | oxlint with the engine's rules (`@moku-labs/game/lint`): the layout rules (layers, feature doors, test suffixes) and the game rules. |
@@ -35,30 +37,27 @@ bun run test:editor  # the editor scenarios on vitest; --e2e adds the Playwright
 
 ## Another engine or editor
 
-Every script runs through `scripts/run.ts` and takes the same two inputs:
+The scripts run the engine and the editor that `package.json` pins. To try another one, change
+the pin and install:
 
 ```bash
-bun run test --engine 0.8.0                                       # a release
-bun run test --engine https://pkg.pr.new/@moku-labs/game@<sha>    # a PR preview
-bun run test --engine <path-to-engine-working-tree>               # local source, no build
-bun run editor --engine <engine-path> --editor <editor-path>      # local editor build
+# a release or a PR preview: edit the pin in package.json, then
+"@moku-labs/game": "https://pkg.pr.new/@moku-labs/game@<pr>"
+bun install
+bun run test
 ```
 
-`MOKU_ENGINE` and `MOKU_EDITOR` do the same as the flags.
+A local engine or editor is packed first, then pinned as the `.tgz`:
 
-- **Version or URL:** installed for this run. Locally `package.json` and `bun.lock` go back to
-  their pins afterwards. In CI (`CI=true`) they stay.
-- **Engine path:** no install and no build. Vitest aliases every entry to the tree's `src/` and
-  dedupes Pixi, core and common (`scripts/engine.ts`). `moku-game` and the editor bin get the
-  engine's recipe, `--preload <tree>/scripts/tree/preload.ts --serve-plugin
-  <tree>/scripts/tree/bundle.ts`. `typecheck` uses a generated tsconfig in `.moku/` (gitignored).
-- **Editor path:** runs the editor's built bin from that tree. Build it there first. The editor
-  scenarios import that build too (vitest alias, dev page plugin) and dedupe the engine and preact.
+```bash
+cd <engine> && bun run build && bun pm pack
+# in package.json: "@moku-labs/game": "<engine>/moku-labs-game-<version>.tgz"
+bun install
+bun run test
+```
 
-A path is always a parameter. No default path is written anywhere.
-
-The runner lives in this demo because demos share no root code. It moves into the engine CLI
-later.
+Put the pins back before a commit: `git checkout package.json bun.lock && bun install`.
+`bun add <url>` over an installed version fails with a DependencyLoop, so edit the pin instead.
 
 ## Layout
 
@@ -85,14 +84,14 @@ the aliases of `tsconfig.json`; inside one feature, by relative path. `bun run l
 | `tests/e2e/` | `test` | Headless e2e: the game with its screen, played through taps and routes. Moved from the engine. |
 | `tests/visual/` | `test:visual` | Seven visual tests, baselines in `tests/visual/baselines/`. The runner is `tests/helpers/visual/`. |
 | `tests/editor/*.editor.ts` | `test:editor` | The editor on the merge game through its public entries: server, agent and tools over the real wire. Moved from the editor. |
-| `tests/browser/` | `test:editor --e2e` | Playwright (`*.browser.ts`): the editor's tools page on this game, served by the editor bin from a copy in `.moku/editor-e2e/`. Moved from the editor. |
+| `tests/browser/` | `test:editor:e2e` | Playwright (`*.browser.ts`): the editor's tools page on this game, served by the editor bin from a copy in `.moku/editor-e2e/`. Moved from the editor. |
 | `tests/scenarios/` | `dev` | The prepared saves of `?player=<name>`: `ready`, `full`, `empty`. |
 | `tests/helpers/` | | What the tests share: the headless game, the fake audio, the rules fixtures, the scenario builders, the visual runner. |
 
 Rewrite the visual baselines with `bun run test:visual --update` on a Mac. The editor screenshots
-live in `tests/browser/__screenshots__/`: `bun run test:editor --e2e --update-snapshots`. The specs
-run on the Chromium of `@playwright/test`: `bunx playwright install chromium` once. In CI the
-runner installs it.
+live in `tests/browser/__screenshots__/`: `bun run test:editor:e2e --update-snapshots`. The specs
+run on the Chromium of `@playwright/test`: `bunx playwright install chromium` once. In CI
+`tests/browser/e2e.ts` installs it.
 
 ## Native
 

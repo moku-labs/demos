@@ -7,7 +7,7 @@
  * The copy is the project root the bin serves, so the editor's writes (notes, layout, styles,
  * captures) land in `.moku/`, never in the demo, and every run starts from the same files. The
  * copy sits inside the demo, so every package it imports resolves from the demo's node_modules:
- * `@moku-labs/game` (the pin or `--engine <x>`), `@moku-labs/editor/agent`, `@moku-labs/system`
+ * `@moku-labs/game`, `@moku-labs/editor/agent`, `@moku-labs/system`
  * and `typescript`, which the bin's project index needs. Of `tests/` the copy takes only
  * `tests/scenarios/` and the helpers they import: the prepared saves of `?player=<name>`.
  *
@@ -39,7 +39,6 @@ const NOT_GAME = new Set([
   "dist",
   "node_modules",
   "package.json",
-  "scripts",
   "tests",
   "tsconfig.json",
   "vitest.config.ts"

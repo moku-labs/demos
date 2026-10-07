@@ -13,9 +13,10 @@ Use `bun` exclusively — never npm, yarn, or pnpm.
 
 ## Scripts
 
-Every script goes through one runner, `scripts/run.ts`. Each takes `--engine <x>` and
-`--editor <x>` (or `MOKU_ENGINE` / `MOKU_EDITOR`), where `<x>` is a version, a pkg.pr.new URL or
-a local working tree. With no flag the pins of package.json run.
+Every script is a plain command on the engine and editor that package.json pins. Another
+version or a pkg.pr.new preview: edit the pin in package.json, then `bun install`. A local engine:
+`cd <engine> && bun run build && bun pm pack`, pin the `.tgz` path, `bun install`. Put the pins
+back before a commit. `bun add <url>` over an installed version fails with a DependencyLoop.
 
 - `bun run dev` — `moku-game dev`: the page the engine writes into `.moku/`, prints its URL.
   `--port 0` picks a free port. `?player=<name>` opens a save of `tests/scenarios/`.
@@ -24,9 +25,10 @@ a local working tree. With no flag the pins of package.json run.
 - `bun run test:visual` — the visual tests (`tests/visual/`, runner in `tests/helpers/visual/`):
   headless state checks, plus pixels on macOS. It serves the page itself. `--no-pixels`, `--update`, `--only <name>`.
 - `bun run test:editor` — the editor scenarios: the vitest project `editor`
-  (`tests/editor/*.editor.ts`). `--e2e` adds the Playwright specs (`tests/browser/`, about
-  20 min, local only, never in CI); then extra arguments go to Playwright. They need the Chromium of
-  `@playwright/test`: `bunx playwright install chromium`.
+  (`tests/editor/*.editor.ts`).
+- `bun run test:editor:e2e` — the Playwright specs (`tests/browser/`, about 20 min, local only,
+  never in CI), one run per project (`tests/browser/e2e.ts`). Arguments go to Playwright. They
+  need the Chromium of `@playwright/test`: `bunx playwright install chromium`.
 - `bun run typecheck` — `tsc --noEmit`.
 - `bun run keys` — `moku-game keys`: the assets and strings into `manifest.json` and `generated/`.
   `shared/` is scanned as the layer `ui` (`assets.layers` in `config.ts`), so its keys stay `ui.*`.
@@ -37,12 +39,11 @@ a local working tree. With no flag the pins of package.json run.
 
 ## Rules
 
-- **No hardcoded local path.** A local engine or editor is only ever a command-line parameter:
-  `bun run test --engine <path>`. Never write a machine path (a user's home folder) or a
-  `../sibling` default into a tracked file. CI fails on them.
-- `moku-game` writes the dev page and the Tauri project into `.moku/`, the runner writes a
-  `--engine <path>` typecheck tsconfig there, and the editor e2e copies the game into
-  `.moku/editor-e2e/`. It is gitignored.
+- **No hardcoded local path.** A local `.tgz` pin is for trying only, never committed. Never
+  write a machine path (a user's home folder) or a `../sibling` default into a tracked file. CI
+  fails on them.
+- `moku-game` writes the dev page and the Tauri project into `.moku/`, and the editor e2e copies
+  the game into `.moku/editor-e2e/`. It is gitignored.
 - A test imports the engine through its public entries only (`@moku-labs/game`, `/app`, `/testing`,
   `/visual`, `/inspect`, `/control`), and the editor through its public entries only
   (`@moku-labs/editor`, `/agent`, `/server`, `/tools`). Never reach into `node_modules/@moku-labs/game/dist` or the
@@ -73,6 +74,4 @@ checks it.
   `tests/editor/` — editor scenarios (`*.editor.ts`, `helpers/` for vitest). `tests/browser/` —
   the Playwright specs (`*.browser.ts`, config, screenshots). `tests/scenarios/` — the prepared
   saves of `?player=<name>`. `tests/helpers/` — what the tests share.
-- `scripts/` — the runner, and the engine-from-source aliases of vitest (`scripts/engine.ts`).
-  `moku-game` takes the engine's own recipe for a working tree. Vitest gets the layer aliases from `vitest.config.ts`, which repeats `tsconfig.json`
-  `paths`.
+- Vitest gets the layer aliases from `vitest.config.ts`, which repeats `tsconfig.json` `paths`.

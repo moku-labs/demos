@@ -2,8 +2,8 @@
  * @file The visual tests of the merge game on the command line (`bun run test:visual`): the
  * headless leg, then the pixel leg in Chrome with WebGPU against the dev page. The engine's runner
  * decides the pixel leg: it runs on a Mac only. When it runs, this script serves the dev page
- * itself with `moku-game dev --port 0` and stops it at the end. On an engine working tree
- * (`MOKU_ENGINE_SRC`, set by `scripts/run.ts --engine <path>`) the bin runs with the tree's recipe. The baselines live in `tests/visual/baselines/`.
+ * itself with `moku-game dev --port 0` and stops it at the end. The baselines live in
+ * `tests/visual/baselines/`.
  *
  * - `bun run test:visual` compares with the baselines.
  * - `--url <url>` uses a page that is already served instead of starting one.
@@ -19,7 +19,6 @@ import type { ChildProcess } from "node:child_process";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { engineSrc } from "../../../scripts/engine";
 import { fixtureApp } from "./fixture";
 import { fixtureVisualTests } from "./tests";
 
@@ -48,31 +47,13 @@ function givenUrl(argv: readonly string[]): string | undefined {
 }
 
 /**
- * The arguments of `bun` that serve the dev page on a free port: the engine bin, and on an engine
- * working tree its recipe, for the bin itself and for the page.
- *
- * @returns The arguments.
- */
-function devArguments(): string[] {
-  const tree = engineSrc();
-  const dev = [GAME_BIN, "dev", "--port", "0"];
-
-  if (tree === undefined) return dev;
-
-  const preload = path.join(tree, "scripts", "tree", "preload.ts");
-  const bundle = path.join(tree, "scripts", "tree", "bundle.ts");
-
-  return [`--preload=${preload}`, ...dev, "--preload", preload, "--serve-plugin", bundle];
-}
-
-/**
  * Starts the dev page on a free port and waits for the line that names its URL.
  *
  * @returns The server and its URL, ending in `/`.
  */
 function serve(): Promise<Served> {
   // eslint-disable-next-line sonarjs/no-os-command-from-path -- the Bun on PATH runs this script.
-  const child = spawn("bun", devArguments(), { cwd: demoFolder });
+  const child = spawn("bun", [GAME_BIN, "dev", "--port", "0"], { cwd: demoFolder });
   let printed = "";
 
   return new Promise((resolve, reject) => {

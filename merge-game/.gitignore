@@ -4,8 +4,8 @@ coverage
 *.tsbuildinfo
 .DS_Store
 
-# Written by moku-game (the dev page, the Tauri project), by scripts/run.ts for a local
-# --engine <path> typecheck, and by the editor e2e (the copy of the game).
+# Written by moku-game (the dev page, the Tauri project) and by the editor e2e (the copy of
+# the game).
 .moku
 
 # The pictures a pixel difference leaves beside its baseline.
