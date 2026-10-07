@@ -192,7 +192,7 @@ function checkView(part: BadgePart, box: CellBox) {
   }
 
   return [
-    Sprite({ texture: "ui.icon-check", width: check.mark, height: check.mark, fit: "contain" }),
+    Sprite({ texture: "ui.icons.check", width: check.mark, height: check.mark, fit: "contain" }),
     Transform({ x: middle.x, y: middle.y }),
     Order({ value: depth.check + 1 })
   ];

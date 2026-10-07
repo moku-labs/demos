@@ -38,7 +38,7 @@ const signStyle = defineStyle({
   align: "center",
   justify: "center",
   padding: { top: 60, right: 72, bottom: 72, left: 72 },
-  nineSlice: "ui.panel-signboard",
+  nineSlice: "ui.panels.signboard",
   tint: walnutTint
 });
 
@@ -94,16 +94,16 @@ const sprigBottomLeft = defineStyle({
 export function LogoSign(props: { id: string }) {
   return (
     <column key={props.id} style={signStyle}>
-      <image key={`${props.id}RopeLeft`} texture="ui.rope-vertical" fit="fill" style={ropes.left} />
+      <image key={`${props.id}RopeLeft`} texture="ui.decor.rope-vertical" fit="fill" style={ropes.left} />
       <image
         key={`${props.id}RopeRight`}
-        texture="ui.rope-vertical"
+        texture="ui.decor.rope-vertical"
         fit="fill"
         style={ropes.right}
       />
       <text key={`${props.id}Name`} style="ui.logo" content={gameName} />
-      <image key={`${props.id}SprigTop`} texture="ui.decor-sprig" style={sprigTopRight} />
-      <image key={`${props.id}SprigBottom`} texture="ui.decor-sprig" style={sprigBottomLeft} />
+      <image key={`${props.id}SprigTop`} texture="ui.decor.sprig" style={sprigTopRight} />
+      <image key={`${props.id}SprigBottom`} texture="ui.decor.sprig" style={sprigBottomLeft} />
     </column>
   );
 }

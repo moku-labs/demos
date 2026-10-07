@@ -83,7 +83,7 @@ describe("timber-board — the column (p2)", () => {
     const game = await startOnBoard(oneSpent);
     const bar = nodeOf(game.app.ui.tree(), "infoBar");
 
-    expect(bar?.style.nineSlice).toBe("ui.button-wood");
+    expect(bar?.style.nineSlice).toBe("ui.buttons.wood");
     expect(game.app.world.ecs.get(elementOf(game, "infoName"), Text)).toMatchObject({
       style: "ui.tab",
       resolved: "Лесопилка"
@@ -240,7 +240,7 @@ describe("timber-board — the badges (p2)", () => {
     const disc = badgeOf(game, "check.i1.disc");
     const mark = badgeOf(game, "check.i1.mark");
 
-    expect(ecs.get(mark, Sprite)?.texture).toBe("ui.icon-check");
+    expect(ecs.get(mark, Sprite)?.texture).toBe("ui.icons.check");
     expect(ecs.get(mark, Transform)?.x).toBeGreaterThan(cell.middle.x);
     expect(ecs.get(mark, Transform)?.y).toBeLessThan(cell.middle.y);
     expect(ecs.get(disc, Order)?.value).toBeGreaterThan(ecs.get(plank, Order)?.value ?? 0);

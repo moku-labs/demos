@@ -20,7 +20,7 @@ import type { UiSoundsConfig } from "./types";
 export type * from "./types";
 
 /** The click of the shared layer. */
-const defaultConfig: UiSoundsConfig = { click: "ui.click" };
+const defaultConfig: UiSoundsConfig = { click: "ui.sounds.click" };
 
 /**
  * Whether a tapped view is a control, which clicks when it is tapped.

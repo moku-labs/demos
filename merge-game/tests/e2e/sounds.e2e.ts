@@ -107,7 +107,7 @@ function createQuietApp(start: Player, manifest: Assets.Manifest) {
       clock: { source: fakeClock(startMoment) },
       flow: { mainFlow, safeNode: "home" },
       assets: { manifest, io: folderIo(new URL("../../", import.meta.url)).io },
-      text: { fonts: { body: "ui.font-body", digits: "ui.font-display" } },
+      text: { fonts: { body: "ui.fonts.body", digits: "ui.fonts.display" } },
       i18n: { locale: "ru", fallback: "ru" }
     }
   });
@@ -210,7 +210,7 @@ describe("timber-sounds — the click of every control", () => {
 
     expect(isControl(game.app.world.ecs, elementOf(game, "play"))).toBe(true);
     expect(await tap(game, "play")).toBe(true);
-    expect(game.heard).toEqual(["ui.click"]);
+    expect(game.heard).toEqual(["ui.sounds.click"]);
 
     await game.app.stop();
   });
@@ -227,7 +227,7 @@ describe("timber-sounds — the click of every control", () => {
     expect(ecs.has(tab, Tappable)).toBe(false);
     game.app.input.tap(tab);
 
-    expect(game.heard).toEqual(["ui.click"]);
+    expect(game.heard).toEqual(["ui.sounds.click"]);
 
     await game.app.stop();
   });
@@ -267,14 +267,14 @@ describe("timber-sounds — the click of every control", () => {
     await tap(game, "giftClaim");
     await frames(game, 60);
 
-    expect(game.heard).toEqual(["ui.click", "ui.coins"]);
+    expect(game.heard).toEqual(["ui.sounds.click", "ui.sounds.coins"]);
 
     await game.app.stop();
   });
 });
 
 describe("timber-sounds — the board", () => {
-  it("plays board.merge for a legal merge and nothing for a refused one", async () => {
+  it("plays board.sounds.merge for a legal merge and nothing for a refused one", async () => {
     const game = await startOnBoard(
       withItems([
         { id: "i1", chain: "wood", level: 1, cell: "c1_0" },
@@ -296,29 +296,29 @@ describe("timber-sounds — the board", () => {
     expect(drag("i1", "i2")).toBe(true);
     await frames(game, 20);
 
-    expect(game.heard).toEqual(["board.merge"]);
+    expect(game.heard).toEqual(["board.sounds.merge"]);
 
     await game.app.stop();
   });
 
-  it("plays board.spawn when the sawmill pops a twig", async () => {
+  it("plays board.sounds.spawn when the sawmill pops a twig", async () => {
     const game = await startOnBoard(player);
     const sawmill = game.app.world.projection.entityOf("board.generators", generatorId) ?? 0;
 
     expect(game.app.input.tap(sawmill)).toBe(true);
     await frames(game, 20);
 
-    expect(game.heard).toEqual(["ui.click", "board.spawn"]);
+    expect(game.heard).toEqual(["ui.sounds.click", "board.sounds.spawn"]);
 
     await game.app.stop();
   });
 });
 
 describe("timber-sounds — the music and the composition", () => {
-  it("plays ui.theme on Home and on the board, the same key, and nothing on the splash", () => {
+  it("plays ui.music.theme on Home and on the board, the same key, and nothing on the splash", () => {
     expect([homeScene.music, boardScene.music, splashScene.music]).toEqual([
-      "ui.theme",
-      "ui.theme",
+      "ui.music.theme",
+      "ui.music.theme",
       undefined
     ]);
   });

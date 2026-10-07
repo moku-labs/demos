@@ -61,7 +61,7 @@ export const deliverStamp = defineAnimation("orders.deliverStamp", {
       spawn(
         "stampSign",
         [
-          NineSlice({ texture: "ui.button-berry", width: stamp.width, height: stamp.height }),
+          NineSlice({ texture: "ui.buttons.berry", width: stamp.width, height: stamp.height }),
           Transform({ ...pose, pivot: { x: stamp.width / 2, y: stamp.height / 2 } })
         ],
         { order: STAMP_ORDER }

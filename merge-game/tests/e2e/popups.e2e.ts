@@ -328,7 +328,7 @@ describe("timber-popups — the sawmill says why", () => {
     const hud = elementOf(game, "hudRow");
     const hudTop = game.app.world.ecs.get(hud, Transform)?.y ?? 0;
 
-    expect(game.app.world.ecs.get(sign, NineSlice)?.texture).toBe("ui.button-berry");
+    expect(game.app.world.ecs.get(sign, NineSlice)?.texture).toBe("ui.buttons.berry");
     expect(game.app.world.ecs.get(sign, Transform)?.y).toBe(hudTop + hudRowHeight / 2 + 33);
 
     await frames(game, Math.ceil((TOAST_HOLD_MS + 700) / 16));
@@ -379,7 +379,7 @@ describe("timber-popups — the reward", () => {
     expect(game.app.flow.state().path).toBe("afterOrder/show");
     expect(resolvedOf(game, "rewardCoins")).toBe("+25");
     expect(game.app.world.ecs.get(elementOf(game, "rewardPrizePicture"), Sprite)?.texture).toBe(
-      "board.item-wood-3"
+      "board.items.wood-3"
     );
 
     await tap(game, "rewardClaim");
@@ -489,7 +489,7 @@ describe("timber-popups — the look of a popup board", () => {
     const board = rectOf(game, "energyBoard");
     const watch = rectOf(game, "energyWatch");
 
-    expect(nodeOf(game.app.ui.tree(), "energyTimer")?.style.nineSlice).toBe("ui.panel-parchment");
+    expect(nodeOf(game.app.ui.tree(), "energyTimer")?.style.nineSlice).toBe("ui.panels.parchment");
     expect(nodeOf(game.app.ui.tree(), "energyTimer")?.children.map(child => child.key)).toEqual([
       "energyRefill"
     ]);
@@ -518,7 +518,7 @@ describe("timber-popups — the look of a popup board", () => {
 
     expect(reset.w).toBe(cancel.w);
     expect(reset.w).toBeGreaterThan(300);
-    expect(nodeOf(game.app.ui.tree(), "confirmBody")?.style.nineSlice).toBe("ui.panel-parchment");
+    expect(nodeOf(game.app.ui.tree(), "confirmBody")?.style.nineSlice).toBe("ui.panels.parchment");
 
     await game.app.stop();
   });
@@ -538,8 +538,8 @@ describe("timber-popups — the settings pane", () => {
     expect(open.y + open.h).toBe(pane.y + 12);
     expect(idle.y + idle.h).toBe(pane.y);
     expect(open.h).toBeGreaterThan(idle.h);
-    expect(nodeOf(game.app.ui.tree(), "tabSound")?.style.nineSlice).toBe("ui.tab-active");
-    expect(nodeOf(game.app.ui.tree(), "tabLanguage")?.style.nineSlice).toBe("ui.tab-idle");
+    expect(nodeOf(game.app.ui.tree(), "tabSound")?.style.nineSlice).toBe("ui.panels.tab-active");
+    expect(nodeOf(game.app.ui.tree(), "tabLanguage")?.style.nineSlice).toBe("ui.panels.tab-idle");
 
     await game.app.stop();
   });

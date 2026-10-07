@@ -124,7 +124,7 @@ describe("timber-motions — the Done stamp (F6)", () => {
 
     const [sign, words] = spawnedByAnim(game);
 
-    expect(game.app.world.ecs.get(sign?.id ?? 0, NineSlice)?.texture).toBe("ui.button-berry");
+    expect(game.app.world.ecs.get(sign?.id ?? 0, NineSlice)?.texture).toBe("ui.buttons.berry");
     expect(game.app.world.ecs.get(words?.id ?? 0, Text)?.resolved).toBe("Готово!");
 
     await until(game, () => shows(game, "rewardClaim"));
@@ -191,8 +191,8 @@ describe("timber-motions — the merge burst (F4)", () => {
     const pieces = spawnedByAnim(game).filter(piece => textureOf(piece) !== undefined);
 
     expect(pieces).toHaveLength(12);
-    expect(pieces.filter(piece => textureOf(piece) === "ui.fx-sparkle")).toHaveLength(6);
-    expect(pieces.filter(piece => textureOf(piece) === "ui.fx-leaf")).toHaveLength(6);
+    expect(pieces.filter(piece => textureOf(piece) === "ui.fx.fx-sparkle")).toHaveLength(6);
+    expect(pieces.filter(piece => textureOf(piece) === "ui.fx.fx-leaf")).toHaveLength(6);
     expect(pieces.every(piece => (piece.components.Layer as { name?: string }).name === "fx")).toBe(
       true
     );
@@ -550,7 +550,7 @@ describe("timber-motions — the selection (F9)", () => {
     });
     expect(resolvedOf(game, "infoName")).toBe("Доска");
     expect(resolvedOf(game, "infoLevel")).toBe("Уровень 3");
-    expect(ecs.get(elementOf(game, "infoIcon"), Sprite)?.texture).toBe("board.item-wood-3");
+    expect(ecs.get(elementOf(game, "infoIcon"), Sprite)?.texture).toBe("board.items.wood-3");
     // An item has no charges: the pips and the count of the sawmill are not drawn.
     expect(shows(game, "infoPips")).toBe(false);
     expect(shows(game, "infoCharges")).toBe(false);

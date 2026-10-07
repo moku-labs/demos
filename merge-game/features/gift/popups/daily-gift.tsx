@@ -4,7 +4,7 @@
  * Claim. It is dismissable: the backdrop answers `close`. The coins of the claim fly from the
  * prize box, keyed `giftPrize`, to the coin pill of Home.
  *
- * The note is one wrapped `ui.paragraph` line with a coin inside it, `<icon=ui.icon-coin>`: it
+ * The note is one wrapped `ui.paragraph` line with a coin inside it, `<icon=ui.icons.coin>`: it
  * breaks onto two lines, and the coin goes to the second with its word.
  */
 import { type } from "@moku-labs/game";
@@ -19,7 +19,7 @@ export const DailyGift = defineComponent("DailyGift", {
   view: (props: DailyGiftProps) => (
     <PopupScreen id="gift" dismiss="close">
       <Signboard id="giftBoard" title={tr("gift.title")} width={840} height={1120} hung>
-        <Prize id="giftPrize" picture="ui.icon-gift" look="rays" />
+        <Prize id="giftPrize" picture="ui.icons.gift" look="rays" />
         <Amount
           id="giftAmount"
           amountKey="giftReward"

@@ -12,10 +12,10 @@ import { cellSize } from "./grid";
  * 32 cream dashes of 22 px, 9 px thick, on a rounded square 8 px outside the cell.
  */
 export const ringFrames = [
-  "board.selection-ring-0",
-  "board.selection-ring-1",
-  "board.selection-ring-2",
-  "board.selection-ring-3"
+  "board.selection-ring.0",
+  "board.selection-ring.1",
+  "board.selection-ring.2",
+  "board.selection-ring.3"
 ] as const satisfies readonly AssetKey[];
 
 /** Edge of the ring picture: the cell and 14 units on every side, so the dashes lie in the gap. */

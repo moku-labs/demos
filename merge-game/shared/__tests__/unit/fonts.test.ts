@@ -13,16 +13,16 @@ const sharedFolder = new URL("../../", import.meta.url);
 const featuresFolder = new URL("../../../features/", import.meta.url);
 
 /** The two fonts of the `ui` bundle, by file stem. */
-const fontStems = ["font-display", "font-body"] as const;
+const fontStems = ["display", "body"] as const;
 
 /**
  * Reads one `.fnt` of the `ui` bundle.
  *
- * @param stem - The file name without its extension.
+ * @param stem - The file name in `fonts/` without its extension.
  * @returns The file as text.
  */
 async function fontFile(stem: string): Promise<string> {
-  return readFile(new URL(`assets/${stem}.fnt`, sharedFolder), "utf8");
+  return readFile(new URL(`assets/fonts/${stem}.fnt`, sharedFolder), "utf8");
 }
 
 /** One value of a string file: the message, or the message with a note for the translator. */

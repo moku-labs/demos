@@ -1,6 +1,6 @@
 /**
  * @file The board scene: the layers in draw order, the projections mounted into them and the
- * music that plays while it is on: `ui.theme`, the track of Home too, so it does not restart when
+ * music that plays while it is on: `ui.music.theme`, the track of Home too, so it does not restart when
  * Play opens the board. The layer names are checked against the `layer` and `lift` of
  * every projection, here and by the compiler.
  *
@@ -24,7 +24,7 @@ import { hud } from "./board-screen";
 
 export const boardScene = defineScene("board", {
   bundle: "board",
-  music: "ui.theme",
+  music: "ui.music.theme",
   layers: {
     cells: {},
     glows: {},

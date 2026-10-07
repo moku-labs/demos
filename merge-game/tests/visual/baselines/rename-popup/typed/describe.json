@@ -441,7 +441,7 @@
                   "direction": "column",
                   "justify": "center",
                   "minHeight": 200,
-                  "nineSlice": "ui.panel-parchment",
+                  "nineSlice": "ui.panels.parchment",
                   "padding": {
                     "bottom": 40,
                     "left": 40,
@@ -503,7 +503,7 @@
                   "gap": 24,
                   "height": 150,
                   "justify": "center",
-                  "nineSlice": "ui.button-green",
+                  "nineSlice": "ui.buttons.green",
                   "padding": {
                     "left": 40,
                     "right": 40
@@ -564,7 +564,7 @@
                   "height": 150,
                   "justify": "center",
                   "minWidth": 420,
-                  "nineSlice": "ui.header-plank",
+                  "nineSlice": "ui.panels.header-plank",
                   "padding": {
                     "left": 80,
                     "right": 80
@@ -669,7 +669,7 @@
               "gap": 24,
               "height": 640,
               "justify": "center",
-              "nineSlice": "ui.panel-signboard",
+              "nineSlice": "ui.panels.signboard",
               "origin": {
                 "x": 0.5,
                 "y": -0.5
@@ -1073,7 +1073,7 @@
                           "gap": 24,
                           "height": 150,
                           "justify": "center",
-                          "nineSlice": "ui.button-wood",
+                          "nineSlice": "ui.buttons.wood",
                           "padding": {
                             "left": 40,
                             "right": 40
@@ -1164,7 +1164,7 @@
                           "margin": {
                             "bottom": 12
                           },
-                          "nineSlice": "ui.tab-idle",
+                          "nineSlice": "ui.panels.tab-idle",
                           "width": 250
                         },
                         "type": "button"
@@ -1222,7 +1222,7 @@
                           "margin": {
                             "bottom": 12
                           },
-                          "nineSlice": "ui.tab-idle",
+                          "nineSlice": "ui.panels.tab-idle",
                           "width": 250
                         },
                         "type": "button"
@@ -1277,7 +1277,7 @@
                           "align": "center",
                           "height": 120,
                           "justify": "center",
-                          "nineSlice": "ui.tab-active",
+                          "nineSlice": "ui.panels.tab-active",
                           "padding": {
                             "bottom": 12
                           },
@@ -1346,7 +1346,7 @@
                   "gap": 40,
                   "grow": 1,
                   "justify": "center",
-                  "nineSlice": "ui.panel-parchment",
+                  "nineSlice": "ui.panels.parchment",
                   "padding": 48
                 },
                 "type": "column"
@@ -1491,7 +1491,7 @@
                   "height": 150,
                   "justify": "center",
                   "minWidth": 420,
-                  "nineSlice": "ui.header-plank",
+                  "nineSlice": "ui.panels.header-plank",
                   "padding": {
                     "left": 80,
                     "right": 80
@@ -1598,7 +1598,7 @@
               "gap": 24,
               "height": 1060,
               "justify": "center",
-              "nineSlice": "ui.panel-signboard",
+              "nineSlice": "ui.panels.signboard",
               "offsetY": 162,
               "origin": {
                 "x": 0.5,
@@ -1867,7 +1867,7 @@
                       "align": "center",
                       "height": 440,
                       "justify": "center",
-                      "nineSlice": "ui.panel-signboard",
+                      "nineSlice": "ui.panels.signboard",
                       "padding": {
                         "bottom": 72,
                         "left": 72,
@@ -2007,7 +2007,7 @@
                           "height": 220,
                           "justify": "center",
                           "left": 0,
-                          "nineSlice": "ui.button-green",
+                          "nineSlice": "ui.buttons.green",
                           "position": "absolute",
                           "reason": "the plank lies over its two posts",
                           "top": 0,
@@ -2230,7 +2230,7 @@
                       "margin": {
                         "left": 36
                       },
-                      "nineSlice": "ui.hud-pill",
+                      "nineSlice": "ui.panels.hud-pill",
                       "padding": {
                         "left": 84,
                         "right": 24
@@ -2779,7 +2779,7 @@
           "clip": false,
           "debug": false,
           "height": 640,
-          "texture": "ui.panel-signboard",
+          "texture": "ui.panels.signboard",
           "tint": 16777215,
           "width": 900
         },
@@ -2865,7 +2865,7 @@
           },
           "fit": "contain",
           "height": 72,
-          "texture": "ui.icon-close",
+          "texture": "ui.icons.close",
           "tint": 16777215,
           "width": 72
         },
@@ -2896,7 +2896,7 @@
           "clip": false,
           "debug": false,
           "height": 150,
-          "texture": "ui.header-plank",
+          "texture": "ui.panels.header-plank",
           "tint": 16777215,
           "width": 463
         },
@@ -2977,7 +2977,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -3015,7 +3015,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -3053,7 +3053,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -3130,7 +3130,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -3168,7 +3168,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -3206,7 +3206,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -3302,7 +3302,7 @@
           "clip": false,
           "debug": false,
           "height": 253,
-          "texture": "ui.panel-parchment",
+          "texture": "ui.panels.parchment",
           "tint": 16777215,
           "width": 756
         },
@@ -3337,7 +3337,7 @@
           "clip": false,
           "debug": false,
           "height": 150,
-          "texture": "ui.button-green",
+          "texture": "ui.buttons.green",
           "tint": 16777215,
           "width": 554
         },
@@ -3518,7 +3518,7 @@
           "clip": false,
           "debug": false,
           "height": 150,
-          "texture": "ui.button-wood",
+          "texture": "ui.buttons.wood",
           "tint": 16777215,
           "width": 710
         },
@@ -3620,7 +3620,7 @@
           "clip": false,
           "debug": false,
           "height": 1060,
-          "texture": "ui.panel-signboard",
+          "texture": "ui.panels.signboard",
           "tint": 7039851,
           "width": 950
         },
@@ -3703,7 +3703,7 @@
           },
           "fit": "contain",
           "height": 72,
-          "texture": "ui.icon-close",
+          "texture": "ui.icons.close",
           "tint": 16777215,
           "width": 72
         },
@@ -3734,7 +3734,7 @@
           "clip": false,
           "debug": false,
           "height": 150,
-          "texture": "ui.header-plank",
+          "texture": "ui.panels.header-plank",
           "tint": 16777215,
           "width": 527
         },
@@ -3815,7 +3815,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -3853,7 +3853,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -3891,7 +3891,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -3968,7 +3968,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -4006,7 +4006,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -4044,7 +4044,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -4101,7 +4101,7 @@
           "clip": false,
           "debug": false,
           "height": 607,
-          "texture": "ui.panel-parchment",
+          "texture": "ui.panels.parchment",
           "tint": 16777215,
           "width": 806
         },
@@ -4209,7 +4209,7 @@
           },
           "fit": "fill",
           "height": 16,
-          "texture": "ui.link-wave",
+          "texture": "ui.decor.link-wave",
           "tint": 16777215,
           "width": 426
         },
@@ -4320,7 +4320,7 @@
           "clip": false,
           "debug": false,
           "height": 100,
-          "texture": "ui.tab-idle",
+          "texture": "ui.panels.tab-idle",
           "tint": 16777215,
           "width": 250
         },
@@ -4382,7 +4382,7 @@
           "clip": false,
           "debug": false,
           "height": 120,
-          "texture": "ui.tab-active",
+          "texture": "ui.panels.tab-active",
           "tint": 16777215,
           "width": 250
         },
@@ -4444,7 +4444,7 @@
           "clip": false,
           "debug": false,
           "height": 100,
-          "texture": "ui.tab-idle",
+          "texture": "ui.panels.tab-idle",
           "tint": 16777215,
           "width": 250
         },
@@ -4660,7 +4660,7 @@
           },
           "fit": "contain",
           "height": 86,
-          "texture": "ui.icon-gift",
+          "texture": "ui.icons.gift",
           "tint": 16777215,
           "width": 86
         },
@@ -4894,7 +4894,7 @@
           "clip": false,
           "debug": false,
           "height": 76,
-          "texture": "ui.hud-pill",
+          "texture": "ui.panels.hud-pill",
           "tint": 16777215,
           "width": 290
         },
@@ -4936,7 +4936,7 @@
           },
           "fit": "contain",
           "height": 110,
-          "texture": "ui.icon-coin",
+          "texture": "ui.icons.coin",
           "tint": 16777215,
           "width": 110
         },
@@ -5011,7 +5011,7 @@
           "clip": false,
           "debug": false,
           "height": 440,
-          "texture": "ui.panel-signboard",
+          "texture": "ui.panels.signboard",
           "tint": 8151118,
           "width": 900
         },
@@ -5079,7 +5079,7 @@
           },
           "fit": "fill",
           "height": 916,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 18
         },
@@ -5117,7 +5117,7 @@
           },
           "fit": "fill",
           "height": 916,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 18
         },
@@ -5155,7 +5155,7 @@
           },
           "fit": "contain",
           "height": 195,
-          "texture": "ui.decor-sprig",
+          "texture": "ui.decor.sprig",
           "tint": 16777215,
           "width": 180
         },
@@ -5193,7 +5193,7 @@
           },
           "fit": "contain",
           "height": 195,
-          "texture": "ui.decor-sprig",
+          "texture": "ui.decor.sprig",
           "tint": 16777215,
           "width": 180
         },
@@ -5354,7 +5354,7 @@
           },
           "fit": "contain",
           "height": 79,
-          "texture": "ui.icon-gear",
+          "texture": "ui.icons.gear",
           "tint": 16777215,
           "width": 79
         },
@@ -5462,7 +5462,7 @@
           "clip": false,
           "debug": false,
           "height": 220,
-          "texture": "ui.button-green",
+          "texture": "ui.buttons.green",
           "tint": 16777215,
           "width": 880
         },
@@ -5657,7 +5657,7 @@
           },
           "fit": "contain",
           "height": 184,
-          "texture": "ui.decor-sprig",
+          "texture": "ui.decor.sprig",
           "tint": 16777215,
           "width": 170
         },
@@ -5695,7 +5695,7 @@
           },
           "fit": "contain",
           "height": 184,
-          "texture": "ui.decor-sprig",
+          "texture": "ui.decor.sprig",
           "tint": 16777215,
           "width": 170
         },

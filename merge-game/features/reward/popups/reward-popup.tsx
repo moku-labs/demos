@@ -21,7 +21,7 @@ export type RewardProps = { coins: number; picture: AssetKey };
  * @returns The asset key of the item's picture.
  * @example
  * ```ts
- * rewardPictureOf("planks"); // "board.item-wood-3"
+ * rewardPictureOf("planks"); // "board.items.wood-3"
  * ```
  */
 export function rewardPictureOf(rewardId: string): AssetKey {

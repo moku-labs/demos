@@ -67,7 +67,7 @@ export function Prize(props: PrizeProps) {
 
   return (
     <stack key={props.id} style={prizeStyle}>
-      <image key={`${props.id}Rays`} texture="ui.fx-rays" style={raysStyle} />
+      <image key={`${props.id}Rays`} texture="ui.fx.fx-rays" style={raysStyle} />
       <image key={`${props.id}Picture`} texture={props.picture} style={prizePictureStyle} />
     </stack>
   );

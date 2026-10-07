@@ -47,7 +47,7 @@ export default {
   "energy.watch": () => [{ kind: "text", text: `[Ŵáţçĥ & ŕéƒíļļ one two]` }],
   "gift.claim": () => [{ kind: "text", text: `[Çļáíɱ one]` }],
   "gift.coins": (p, intl) => [{ kind: "text", text: `[${(intl.plural().select((p.coins as number)) === "one" ? "çóíñ" : "çóíñš")} one]` }],
-  "gift.note": () => [{ kind: "text", text: `[Çóɱé ɓáçķ ţóɱóŕŕóŵ ƒóŕ ɱóŕé <icon=ui.icon-coin> one two three]` }],
+  "gift.note": () => [{ kind: "text", text: `[Çóɱé ɓáçķ ţóɱóŕŕóŵ ƒóŕ ɱóŕé <icon=ui.icons.coin> one two three]` }],
   "gift.title": () => [{ kind: "text", text: `[Ðáíļý ĝíƒţ one]` }],
   "home.play": () => [{ kind: "text", text: `[Þļáý one]` }],
   "hud.deliver": () => [{ kind: "text", text: `[Ðéļíṿéŕ one]` }],

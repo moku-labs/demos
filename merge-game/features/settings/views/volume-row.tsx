@@ -29,8 +29,8 @@ export const VOLUME_STEP = 1 / SEGMENTS;
 
 /** The two buses in the order they are drawn, with their icons. */
 export const buses: readonly { bus: Bus; icon: AssetKey }[] = [
-  { bus: "music", icon: "ui.icon-music" },
-  { bus: "sfx", icon: "ui.icon-sound" }
+  { bus: "music", icon: "ui.icons.music" },
+  { bus: "sfx", icon: "ui.icons.sound" }
 ];
 
 /** Every segment index, built once. */

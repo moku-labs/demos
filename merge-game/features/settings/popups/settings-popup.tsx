@@ -72,7 +72,7 @@ export const Settings = defineComponent("Settings", {
         </Parchment>
         <button key="settingsReset" intent="reset" style={linkStyle}>
           <text key="settingsResetLabel" style="ui.link" content={tr("settings.reset")} />
-          <image key="settingsResetWave" texture="ui.link-wave" fit="fill" style={linkWave} />
+          <image key="settingsResetWave" texture="ui.decor.link-wave" fit="fill" style={linkWave} />
         </button>
       </Signboard>
     </PopupScreen>

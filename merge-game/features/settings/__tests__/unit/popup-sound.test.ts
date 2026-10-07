@@ -1,5 +1,5 @@
 /**
- * @file The swing sound of a popup (design §6 F1, delta F2): `showPopup` plays `ui.popup` once and
+ * @file The swing sound of a popup (design §6 F1, delta F2): `showPopup` plays `ui.sounds.popup` once and
  * then awaits the popup, the settings sub-flow plays it once as it comes in, the settings popup
  * shown again after a volume step does not play it again, and Out of energy, Reward and Daily gift
  * each play it once as they swing in.
@@ -50,8 +50,8 @@ function bodyOf<Run>(run: Run | undefined): Run {
 const settingsPopup: Flow.Descriptor = { kind: "popup", payload: { component: "Settings" } };
 
 describe("popup sound", () => {
-  it("is the `ui.popup` sound effect", () => {
-    expect(popupSound).toMatchObject({ kind: "sfx", payload: { key: "ui.popup" } });
+  it("is the `ui.sounds.popup` sound effect", () => {
+    expect(popupSound).toMatchObject({ kind: "sfx", payload: { key: "ui.sounds.popup" } });
   });
 
   it("plays the swing sound once, then awaits the popup and hands back its answer", async () => {

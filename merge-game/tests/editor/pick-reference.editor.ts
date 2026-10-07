@@ -256,7 +256,7 @@ describe("a pick for the chat on merge-game (round 2 R2, 2b R13)", () => {
       expect(lines[0]).toMatch(/^@moku settingsBoard · panel · settingsPopup\/open · f\d+$/);
       expect(lines[1]).toBe("path: settingsScreen/settingsBoard");
       expect(lines[2]).toBe(
-        "source: features/settings/popups/settings-popup.tsx:57 · texture: ui.panel-signboard"
+        "source: features/settings/popups/settings-popup.tsx:57 · texture: ui.panels.signboard"
       );
       expect(lines[3]).toMatch(/^layout: settingsScreen \(column, padding 0\/0\/0\/0\)$/);
       expect(lines[6]).toMatch(

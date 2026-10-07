@@ -480,7 +480,7 @@ test.describe("pick · for the chat", () => {
     expect(head, block).toMatch(/^@moku settingsBoard · panel · settingsPopup\/open · f\d+$/);
     expect(pathLine).toBe("path: settingsScreen/settingsBoard");
     expect(source).toMatch(
-      /^source: features\/settings\/popups\/settings-popup\.tsx:57 · texture: ui\.panel-signboard$/
+      /^source: features\/settings\/popups\/settings-popup\.tsx:57 · texture: ui\.panels\.signboard$/
     );
     expect(layout).toMatch(/^layout: settingsScreen \(column, padding \d+\/\d+\/\d+\/\d+\)/);
     const px = [board.x, board.y, board.w, board.h].map(value => Math.round(value));

@@ -18,7 +18,7 @@ export const barStyle = defineStyle({
   height: 160,
   margin: { top: 66 },
   padding: { left: 40, right: 48, bottom: 8 },
-  nineSlice: "ui.button-wood"
+  nineSlice: "ui.buttons.wood"
 });
 
 /** The sawmill picture at the left end of the bar. */

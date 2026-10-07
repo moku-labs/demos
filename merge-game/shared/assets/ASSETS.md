@@ -13,77 +13,77 @@ key drops the tag.
 - Originals: 1024 px PNGs (1024 × 1536 for the backgrounds) with a manifest per group:
   `sprites/manifest.json`, `ui/manifest.json` and `backgrounds/manifest.json` of the design
   capture `merge-game-showcase`. The prompt of each file below is copied from those manifests.
-- Effects art of V5 (`ui.fx-star`, `ui.fx-puff`, `ui.coin-spin-0` to `ui.coin-spin-6`): drawn
+- Effects art of V5 (`ui.fx.fx-star`, `ui.fx.fx-puff`, `ui.fx.coin-spin.0` to `ui.fx.coin-spin.6`): drawn
   by Astra on 2026-10-03 as the group `v5-fx` (1024 px PNGs with `manifest.json`), converted to
   WebP with ImageMagick the same day. The prompts below are copied from that manifest.
 
-### `ui.panel-signboard`
+### `ui.panels.signboard`
 
-- File: `features/ui/assets/panel-signboard{nine=72,72,72,76}.webp`, 512 × 505 px, 9-slice left 72, top 72, right 72, bottom 76 (the nails and the thicker bottom lip stay in the corners).
+- File: `shared/assets/panels/signboard{nine=72,72,72,76}.webp`, 512 × 505 px, 9-slice left 72, top 72, right 72, bottom 76 (the nails and the thicker bottom lip stay in the corners).
 - Original: `fix1/panel-signboard.png`, 1024 × 1024 px, drawn by Astra (gpt-6-astra, codex backend) on 2026-09-23.
 - Prompt:
 
   > Create one 1024x1024 PNG with genuinely transparent alpha background. Style: hand-drawn storybook cartoon for a cozy casual mobile merge game called Timber Town, set in a forest lumber village. Confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line; flat cel colours with soft watercolor-like shading and gentle top-left light; a single small white highlight on rounded forms; subtle paper/wood grain texture. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions, strong readable silhouettes at 64 px. No text, letters, numbers, watermark, or drop shadow outside the object. No ground plane unless specifically requested below. Transparent pixels outside the object, never a checkerboard illustration. Popup panel for 9-slice scaling: one single piece of light warm wood (#efcd94 to #d8a062) with fine vertical grain that repeats evenly, NO horizontal plank seams anywhere. Thick dark-brown ink outline, softly rounded corners about 10% of the width, a light inner bevel line inset from the edge, a darker bottom lip showing thickness, and one small round iron nail head in each of the four corners inside the bevel. Outside the corner regions, edges must be perfectly uniform so they stretch cleanly. Square, front-facing, filling the canvas with about 4% transparent margin on each side. Uniform restrained texture and no central decoration.
 
-### `ui.panel-parchment`
+### `ui.panels.parchment`
 
-- File: `features/ui/assets/panel-parchment{nine=48,48,48,48}.webp`, 384 × 379 px, 9-slice left 48, top 48, right 48, bottom 48.
+- File: `shared/assets/panels/parchment{nine=48,48,48,48}.webp`, 384 × 379 px, 9-slice left 48, top 48, right 48, bottom 48.
 - Original: `ui/panel-parchment.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: stylized-concept. Create exactly one 1024x1024 PNG game UI asset with a genuinely transparent alpha background. STYLE: hand-drawn storybook cartoon for a cozy casual mobile merge game called Timber Town, set in a forest lumber village. Confident dark-brown ink outlines (#3a2212), slightly wobbly hand-inked character, flat cel colours with soft watercolor-like shading and gentle top-left light, subtle paper/wood grain texture. Chunky friendly toy-like proportions, readable at 64 px. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss #8ab84e / #557f2d, pine #2f5a3b, berry #c93b4d / #8f2334, parchment #fbeed2, sky #cfe6ee. Use only the material-relevant colors. Orthographic front view. Designed for 9-slice scaling: fixed rounded corners, perfectly straight uniform middle edges, plain stretchable center with only fine repeating texture. No text, letters, numbers, icons, watermark, center decorations, edge-middle decorations, external drop shadows, ground plane, perspective, nails, ropes, foliage or separate objects. Transparent outside the shape. Subject: one inner insert panel of warm parchment paper #fbeed2. Nearly square silhouette spanning x=41..983 and y=41..983, approximately 4% transparent margin. Thin dark-brown ink outline, softly rounded fixed corners, faint paper grain, plain uniform stretchable interior. Very subtle soft top-left shading. No curled, torn or rolled edges.
 
-### `ui.header-plank`
+### `ui.panels.header-plank`
 
-- File: `features/ui/assets/header-plank{nine=52,52,52,52}.webp`, 480 × 107 px, 9-slice left 52, top 52, right 52, bottom 52.
+- File: `shared/assets/panels/header-plank{nine=52,52,52,52}.webp`, 480 × 107 px, 9-slice left 52, top 52, right 52, bottom 52.
 - Original: `ui/header-plank.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: stylized-concept. Create exactly one 1024x1024 PNG game UI asset with a genuinely transparent alpha background. STYLE: hand-drawn storybook cartoon for a cozy casual mobile merge game called Timber Town, set in a forest lumber village. Confident dark-brown ink outlines (#3a2212), slightly wobbly hand-inked character, flat cel colours with soft watercolor-like shading and gentle top-left light, subtle paper/wood grain texture. Chunky friendly toy-like proportions, readable at 64 px. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss #8ab84e / #557f2d, pine #2f5a3b, berry #c93b4d / #8f2334, parchment #fbeed2, sky #cfe6ee. Use only the material-relevant colors. Orthographic front view. Designed for 9-slice scaling: fixed rounded corners, perfectly straight uniform middle edges, plain stretchable center with only fine repeating texture. No text, letters, numbers, icons, watermark, center decorations, edge-middle decorations, external drop shadows, ground plane, perspective, nails, ropes, foliage or separate objects. Transparent outside the shape. Subject: one honey-gold wooden title plank, width:height exactly about 4:1, centered vertically and horizontally in square canvas. Shape approximately x=41..983, y=394..630, with transparent space above and below. Rounded ends, straight parallel horizontal edges, 5-7 px dark-brown outline, restrained light top bevel and darker bottom lip, plain stretchable honey-gold center with very fine repeating wood texture. Single small white highlight on upper-left rounded end only.
 
-### `ui.button-green`
+### `ui.buttons.green`
 
-- File: `features/ui/assets/button-green{nine=36,40,36,40}.webp`, 360 × 94 px, 9-slice left 36, top 40, right 36, bottom 40.
+- File: `shared/assets/buttons/green{nine=36,40,36,40}.webp`, 360 × 94 px, 9-slice left 36, top 40, right 36, bottom 40.
 - Original: `ui/button-green.png`, 1024 × 1024 px.
 - Prompt:
 
   > Generate exactly one 1024x1024 PNG with genuine transparent alpha background: button-green.png. Use case: ui-mockup, production 9-slice button asset for the cozy forest lumber village mobile merge game Timber Town. One centered horizontal rounded rectangle with overall width 942 px and height 314 px (3:1), bounds approximately x=41..983, y=355..669, fixed rounded corner radius about 60 px. Front-on view. Juicy moss-green face #8ab84e, lighter glossy top highlight band, darker moss #557f2d bottom lip showing gentle toy-like thickness. Hand-drawn storybook cartoon, confident dark-brown #3a2212 ink outline 5-7 px, subtly hand-inked corners; flat cel colors, soft watercolor-like shading, gentle top-left light, subtle fine paper grain. Chunky friendly silhouette readable at 64 px. A single small white highlight confined to the upper-left rounded corner. Strict 9-slice geometry: perfectly straight horizontal and vertical middle edges, uniform edge profiles, fixed-size rounded corners; plain stretchable center with only very fine repeating texture. Highlight band and bottom lip remain straight and uniform through the middle. No text, letters, numbers, icons, decoration, wood knots, seams, scratches, or other details in the center or along middle edges. No external drop shadow, ground plane, surrounding objects, or background color. Transparent outside the single button. Preserve the 3:1 object inside the square canvas with approximately 4% left/right canvas margin and larger transparent space above/below. Output one button only.
 
-### `ui.button-wood`
+### `ui.buttons.wood`
 
-- File: `features/ui/assets/button-wood{nine=36,36,36,36}.webp`, 360 × 94 px, 9-slice left 36, top 36, right 36, bottom 36.
+- File: `shared/assets/buttons/wood{nine=36,36,36,36}.webp`, 360 × 94 px, 9-slice left 36, top 36, right 36, bottom 36.
 - Original: `ui/button-wood.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: precise-object-edit. Create button-wood.png, exactly one 1024x1024 PNG with genuine transparent alpha background. Input image is the reference and edit target: the green Timber Town UI button. Change only its material and colors to warm light wood face #d8a062, pale wood #efcd94 glossy top band, dark wood #9c6031 bottom lip, and extremely subtle fine repeating wood grain without knots. Preserve the reference silhouette, placement, rounded corners, dark-brown #3a2212 hand-inked 5-7 px outline, single small upper-left white highlight, straight glossy top band, darker bottom lip thickness, soft watercolor-like shading, gentle top-left light, subtle fine grain, and cozy hand-drawn storybook cartoon style. One horizontal rounded rectangle, approximately 3:1, centered in a square transparent canvas with about 4% horizontal margin. Strict 9-slice asset: fixed corners, perfectly straight uniform middle edges, plain stretchable center with only fine repeating texture. Keep all four buttons visually identical in geometry and treatment. No text, letters, numbers, icons, decoration in center or middle edges, knots, seams, external shadows, ground, other objects, watermark, or background color. Output a single button only.
 
-### `ui.button-berry`
+### `ui.buttons.berry`
 
-- File: `features/ui/assets/button-berry{nine=32,40,32,40}.webp`, 360 × 93 px, 9-slice left 32, top 40, right 32, bottom 40.
+- File: `shared/assets/buttons/berry{nine=32,40,32,40}.webp`, 360 × 93 px, 9-slice left 32, top 40, right 32, bottom 40.
 - Original: `ui/button-berry.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: precise-object-edit. Create button-berry.png, exactly one 1024x1024 PNG with genuine transparent alpha background. Input image is the reference and edit target: the green Timber Town UI button. Change only its material and colors to berry red face #c93b4d, a lighter berry glossy top band, and deep berry #8f2334 bottom lip for danger actions. Preserve the reference silhouette, placement, rounded corners, dark-brown #3a2212 hand-inked 5-7 px outline, single small upper-left white highlight, straight glossy top band, darker bottom lip thickness, soft watercolor-like shading, gentle top-left light, subtle fine grain, and cozy hand-drawn storybook cartoon style. One horizontal rounded rectangle, approximately 3:1, centered in a square transparent canvas with about 4% horizontal margin. Strict 9-slice asset: fixed corners, perfectly straight uniform middle edges, plain stretchable center with only fine repeating texture. Keep all four buttons visually identical in geometry and treatment. No text, letters, numbers, icons, decoration in center or middle edges, knots, seams, external shadows, ground, other objects, watermark, or background color. Output a single button only.
 
-### `ui.button-disabled`
+### `ui.buttons.disabled`
 
-- File: `features/ui/assets/button-disabled{nine=36,40,36,40}.webp`, 360 × 94 px, 9-slice left 36, top 40, right 36, bottom 40.
+- File: `shared/assets/buttons/disabled{nine=36,40,36,40}.webp`, 360 × 94 px, 9-slice left 36, top 40, right 36, bottom 40.
 - Original: `ui/button-disabled.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: precise-object-edit. Create button-disabled.png, exactly one 1024x1024 PNG with genuine transparent alpha background. Input image is the reference and edit target: the green Timber Town UI button. Change only its material and colors to desaturated grey-beige face, light grey-beige glossy top band, and darker taupe bottom lip for the disabled state. Preserve the reference silhouette, placement, rounded corners, dark-brown #3a2212 hand-inked 5-7 px outline, single small upper-left white highlight, straight glossy top band, darker bottom lip thickness, soft watercolor-like shading, gentle top-left light, subtle fine grain, and cozy hand-drawn storybook cartoon style. One horizontal rounded rectangle, approximately 3:1, centered in a square transparent canvas with about 4% horizontal margin. Strict 9-slice asset: fixed corners, perfectly straight uniform middle edges, plain stretchable center with only fine repeating texture. Keep all four buttons visually identical in geometry and treatment. No text, letters, numbers, icons, decoration in center or middle edges, knots, seams, external shadows, ground, other objects, watermark, or background color. Output a single button only.
 
-### `ui.hud-pill`
+### `ui.panels.hud-pill`
 
-- File: `features/ui/assets/hud-pill{nine=28,30,28,30}.webp`, 300 × 63 px, 9-slice left 28, top 30, right 28, bottom 30.
+- File: `shared/assets/panels/hud-pill{nine=28,30,28,30}.webp`, 300 × 63 px, 9-slice left 28, top 30, right 28, bottom 30.
 - Original: `ui/hud-pill.png`, 1024 × 1024 px.
 - Prompt:
 
   > Create one 1024x1024 transparent PNG game UI asset for Timber Town, a cozy forest lumber village merge game. Hand-drawn storybook cartoon, confident dark-brown #3a2212 ink outlines 5-7 px at 1024 px with subtly wobbly hand-inked character, flat cel colours with soft watercolor-like shading, gentle top-left light, subtle fine paper/wood grain. Chunky friendly toy-like proportions, readable at 64 px. Palette: ink #3a2212, wood #d8a062 / #efcd94 / #9c6031 / walnut #6e4121, honey #f2b43d / #c7841c, moss #8ab84e / #557f2d, pine #2f5a3b, berry #c93b4d / #8f2334, parchment #fbeed2, sky #cfe6ee. Genuine alpha transparency outside the object, no painted checkerboard. No text, letters, numbers, watermark, icons, ground plane, or external drop shadow. Front-on orthographic UI sprite, no perspective. Subject: hud-pill.png, one horizontal dark walnut wood HUD capsule centered on the square canvas, width about 944 px and height about 315 px, 3:1 aspect ratio. Very rounded semicircular ends, ink outline and restrained inner shadow. Designed for 9-slice scaling: fixed rounded ends, perfectly straight uniform horizontal middle edges, plain stretchable dark walnut centre with only fine repeating wood texture; no decoration, knots, seams or marks in centre or along middle edges. One small white highlight confined to upper-left rounded end. About 4% horizontal transparent margin, larger transparent space above and below to retain 3:1 capsule proportions.
 
-### `ui.tab-active`
+### `ui.panels.tab-active`
 
-- File: `features/ui/assets/tab-active{nine=20,20,20,20}.webp`, 256 × 105 px, 9-slice left 20, top 20, right 20, bottom 20.
+- File: `shared/assets/panels/tab-active{nine=20,20,20,20}.webp`, 256 × 105 px, 9-slice left 20, top 20, right 20, bottom 20.
 - Original: `ui/tab-active.png`, 1024 × 1024 px.
 - Prompt:
 
@@ -97,168 +97,168 @@ CRITICAL CANVAS: The output image itself MUST be SQUARE, exactly 1024 pixels wid
   over the pane, so it hides the pane's 3-unit ink edge. Same file name and insets:
   `magick tab-active.webp ( -clone 0 -crop 256x96+0+0 +repage ) ( -clone 0 -crop 232x9+12+87 +repage -resize 256x9! ) -delete 0 -append -define webp:lossless=true tab-active.webp`.
 
-### `ui.tab-idle`
+### `ui.panels.tab-idle`
 
-- File: `features/ui/assets/tab-idle{nine=24,20,24,20}.webp`, 256 × 101 px, 9-slice left 24, top 20, right 24, bottom 20.
+- File: `shared/assets/panels/tab-idle{nine=24,20,24,20}.webp`, 256 × 101 px, 9-slice left 24, top 20, right 24, bottom 20.
 - Original: `ui/tab-idle.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: ui-mockup. Generate one 1024x1024 PNG game UI asset with a genuinely transparent alpha background. Style: hand-drawn storybook cartoon for the cozy casual forest lumber village mobile merge game Timber Town. Confident dark-brown #3a2212 ink outlines 5-7 px at 1024 px, slightly wobbly hand-inked character while preserving straight scalable edge middles. Flat cel colours, soft watercolor-like shading, gentle top-left light, subtle fine paper/wood grain. Chunky friendly toy-like proportions readable at 64 px. Palette: ink #3a2212, warm wood #d8a062, light wood #efcd94, dark wood #9c6031, walnut #6e4121, honey gold #f2b43d and #c7841c, parchment #fbeed2. 9-slice UI requirements: fixed-size rounded corners, perfectly straight uniform middle edges on every side, plain stretchable centre with only fine repeating texture. No text, letters, numbers, watermark, icons, ornaments, central decoration, decoration along middle edges, external drop shadow, or ground plane. Front-on orthographic flat UI shape. Shape centered horizontally and vertically, about 4% canvas margin left and right; vertical transparent margins follow the specified object aspect ratio. Do not stretch the shape to square. Subject: one idle folder tab made of darker wood #9c6031 with subtle #d8a062 top-left lighting and #6e4121 inner-edge shading. Shape about 2:1, approximately 942 px wide by 471 px tall, rounded top corners of roughly 48 px radius, straight vertical sides, perfectly flat straight bottom with square bottom corners. One tiny white highlight confined near the upper-left rounded corner. Plain uninterrupted wood center; extremely fine repeating grain, no knots or planks. Match the geometry and style of a parchment active folder tab.
 CRITICAL CANVAS: The output image itself MUST be SQUARE, exactly 1024 pixels wide and 1024 pixels tall. Large empty transparent space above and below the subject is intentional. Draw ONLY the tab itself as a simple rectangle with two rounded upper corners and square lower corners. The entire top edge is ONE horizontal straight line connecting the two upper rounded corners at equal height. NO stepped silhouette, NO projecting folder flap, NO notch, NO full folder. Object bounds x=41 to 983, y=276 to 748.
 
-### `ui.bar-track`
+### `ui.panels.bar-track`
 
-- File: `features/ui/assets/bar-track{nine=32,28,32,28}.webp`, 480 × 65 px, 9-slice left 32, top 28, right 32, bottom 28.
+- File: `shared/assets/panels/bar-track{nine=32,28,32,28}.webp`, 480 × 65 px, 9-slice left 32, top 28, right 32, bottom 28.
 - Original: `ui/bar-track.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: ui-mockup. Generate one 1024x1024 PNG game UI asset with a genuinely transparent alpha background. Style: hand-drawn storybook cartoon for the cozy casual forest lumber village mobile merge game Timber Town. Confident dark-brown #3a2212 ink outlines 5-7 px at 1024 px, slightly wobbly hand-inked character while preserving straight scalable edge middles. Flat cel colours, soft watercolor-like shading, gentle top-left light, subtle fine paper/wood grain. Chunky friendly toy-like proportions readable at 64 px. Palette: ink #3a2212, warm wood #d8a062, light wood #efcd94, dark wood #9c6031, walnut #6e4121, honey gold #f2b43d and #c7841c, parchment #fbeed2. 9-slice UI requirements: fixed-size rounded corners, perfectly straight uniform middle edges on every side, plain stretchable centre with only fine repeating texture. No text, letters, numbers, watermark, icons, ornaments, central decoration, decoration along middle edges, external drop shadow, or ground plane. Front-on orthographic flat UI shape. Shape centered horizontally and vertically, about 4% canvas margin left and right; vertical transparent margins follow the specified object aspect ratio. Do not stretch the shape to square. Subject: one horizontal progress bar track, a dark walnut #6e4121 recessed groove, subtle darker #3a2212 inner rim and soft top-left edge lighting. Shape about 8:1, approximately 942 px wide by 118 px tall, rounded end corners of roughly 32 px radius and long perfectly straight horizontal sides. Plain dark walnut stretchable center, fine repeating wood texture only. No fill inside, no handle, no ticks.
 CRITICAL CANVAS: The output image itself MUST be SQUARE, exactly 1024 pixels wide and 1024 pixels tall. Large empty transparent space above and below the subject is intentional. Object bounds x=41 to 983, y=453 to 571. Keep the bar only 118 px tall on the 1024 px tall square canvas.
 
-### `ui.bar-fill`
+### `ui.panels.bar-fill`
 
-- File: `features/ui/assets/bar-fill{nine=24,24,24,24}.webp`, 480 × 50 px, 9-slice left 24, top 24, right 24, bottom 24.
+- File: `shared/assets/panels/bar-fill{nine=24,24,24,24}.webp`, 480 × 50 px, 9-slice left 24, top 24, right 24, bottom 24.
 - Original: `ui/bar-fill.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: ui-mockup. Generate one 1024x1024 PNG game UI asset with a genuinely transparent alpha background. Style: hand-drawn storybook cartoon for the cozy casual forest lumber village mobile merge game Timber Town. Confident dark-brown #3a2212 ink outlines 5-7 px at 1024 px, slightly wobbly hand-inked character while preserving straight scalable edge middles. Flat cel colours, soft watercolor-like shading, gentle top-left light, subtle fine paper/wood grain. Chunky friendly toy-like proportions readable at 64 px. Palette: ink #3a2212, warm wood #d8a062, light wood #efcd94, dark wood #9c6031, walnut #6e4121, honey gold #f2b43d and #c7841c, parchment #fbeed2. 9-slice UI requirements: fixed-size rounded corners, perfectly straight uniform middle edges on every side, plain stretchable centre with only fine repeating texture. No text, letters, numbers, watermark, icons, ornaments, central decoration, decoration along middle edges, external drop shadow, or ground plane. Front-on orthographic flat UI shape. Shape centered horizontally and vertically, about 4% canvas margin left and right; vertical transparent margins follow the specified object aspect ratio. Do not stretch the shape to square. Subject: one horizontal progress bar fill, honey gold #f2b43d with #c7841c lower inner-edge shading and a thin uniform pale-gold top highlight band inside the outline. Shape about 8:1, approximately 942 px wide by 118 px tall, rounded end corners of roughly 32 px radius and long perfectly straight horizontal sides. One small white highlight confined to upper-left rounded end. Plain gold stretchable center. Matching geometry for a dark walnut groove track; render gold fill only, no surrounding track, no handle, no ticks.
 CRITICAL CANVAS: The output image itself MUST be SQUARE, exactly 1024 pixels wide and 1024 pixels tall. Large empty transparent space above and below the subject is intentional. Object bounds x=41 to 983, y=453 to 571. Keep the bar only 118 px tall on the 1024 px tall square canvas.
 
-### `ui.rope-vertical`
+### `ui.decor.rope-vertical`
 
-- File: `features/ui/assets/rope-vertical.webp`, 5 × 256 px.
+- File: `shared/assets/decor/rope-vertical.webp`, 5 × 256 px.
 - Original: `ui/rope-vertical.png`, 1024 × 1024 px.
 - Prompt:
 
   > Create one 1024x1024 transparent PNG game UI asset for Timber Town, a cozy forest lumber village merge game. Hand-drawn storybook cartoon, confident dark-brown #3a2212 ink outlines 5-7 px at 1024 px with subtly wobbly hand-inked character, flat cel colours with soft watercolor-like shading, gentle top-left light, subtle fine paper/wood grain. Chunky friendly toy-like proportions, readable at 64 px. Palette: ink #3a2212, wood #d8a062 / #efcd94 / #9c6031 / walnut #6e4121, honey #f2b43d / #c7841c, moss #8ab84e / #557f2d, pine #2f5a3b, berry #c93b4d / #8f2334, parchment #fbeed2, sky #cfe6ee. Genuine alpha transparency outside the object, no painted checkerboard. No text, letters, numbers, watermark, icons, ground plane, or external drop shadow. Front-on orthographic UI sprite, no perspective. Subject: rope-vertical.png, one straight vertical twisted natural honey-tan rope segment, narrow and centered, approximately 110 px wide. A seamless vertically repeatable game UI rope texture: rope runs continuously from exact top edge through exact bottom edge of the 1024x1024 canvas, cropped at both edges with no end caps, knots, tassels or fraying. Match top and bottom cross sections and twist phase exactly, use an integer number of uniform twist repeats for seamless top-to-bottom tiling. Transparent space on both sides. Repeating diagonal twisted strands, dark-brown ink outlines and restrained cel shading in wood #d8a062 / #efcd94 / #9c6031 with honey warmth. Constant width and perfectly straight vertical axis. For this repeating segment omit rounded ends and vertical margins; avoid isolated white highlight that would break the repeat.
 
-### `ui.icon-coin`
+### `ui.icons.coin`
 
-- File: `features/ui/assets/icon-coin.webp`, 154 × 160 px.
+- File: `shared/assets/icons/coin.webp`, 154 × 160 px.
 - Original: `sprites/icon-coin.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 transparent PNG game icon for the cozy casual mobile merge game Timber Town, set in a forest lumber village. Style: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line; flat cel colours with soft watercolor-like shading and gentle top-left light; a single small white highlight on rounded forms; subtle paper/wood grain texture within the object. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions with a strong readable silhouette at 64 px. Object centered with approximately 8% transparent margin. Genuine transparent alpha background. No text, letters, numbers, watermark, external drop shadow, ground plane, or extra objects. Subject: a gold coin with a small pine-tree emblem embossed in the middle and a thick rim.
 
-### `ui.icon-energy`
+### `ui.icons.energy`
 
-- File: `features/ui/assets/icon-energy.webp`, 112 × 160 px.
+- File: `shared/assets/icons/energy.webp`, 112 × 160 px.
 - Original: `sprites/icon-energy.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 transparent PNG game icon for the cozy casual mobile merge game Timber Town, set in a forest lumber village. Style: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line; flat cel colours with soft watercolor-like shading and gentle top-left light; a single small white highlight on rounded forms; subtle paper/wood grain texture within the object. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions with a strong readable silhouette at 64 px. Object centered with approximately 8% transparent margin. Genuine transparent alpha background. No text, letters, numbers, watermark, external drop shadow, ground plane, or extra objects. Subject: a chunky yellow lightning bolt with a dark-brown ink outline.
 
-### `ui.icon-gear`
+### `ui.icons.gear`
 
-- File: `features/ui/assets/icon-gear.webp`, 160 × 160 px.
+- File: `shared/assets/icons/gear.webp`, 160 × 160 px.
 - Original: `sprites/icon-gear.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 transparent PNG game icon for the cozy casual mobile merge game Timber Town, set in a forest lumber village. Style: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line; flat cel colours with soft watercolor-like shading and gentle top-left light; a single small white highlight on rounded forms; subtle paper/wood grain texture within the object. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions with a strong readable silhouette at 64 px. Object centered with approximately 8% transparent margin. Genuine transparent alpha background. No text, letters, numbers, watermark, external drop shadow, ground plane, or extra objects. Subject: a settings cog in warm wood colours, with chunky teeth and a clear central circular hole.
 
-### `ui.icon-home`
+### `ui.icons.home`
 
-- File: `features/ui/assets/icon-home.webp`, 160 × 143 px.
+- File: `shared/assets/icons/home.webp`, 160 × 143 px.
 - Original: `sprites/icon-home.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 transparent PNG game icon for the cozy casual mobile merge game Timber Town, set in a forest lumber village. Style: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line; flat cel colours with soft watercolor-like shading and gentle top-left light; a single small white highlight on rounded forms; subtle paper/wood grain texture within the object. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions with a strong readable silhouette at 64 px. Object centered with approximately 8% transparent margin. Genuine transparent alpha background. No text, letters, numbers, watermark, external drop shadow, ground plane, or extra objects. Subject: a small friendly cottage with a berry-red roof, warm wooden walls, a simple door and window, as a home button icon.
 
-### `ui.icon-gift`
+### `ui.icons.gift`
 
-- File: `features/ui/assets/icon-gift.webp`, 181 × 192 px.
+- File: `shared/assets/icons/gift.webp`, 181 × 192 px.
 - Original: `sprites/icon-gift.png`, 1024 × 1024 px.
 - Prompt:
 
   > Create one 1024x1024 PNG with a genuinely transparent background (alpha), for a cozy casual mobile merge game called Timber Town set in a forest lumber village. Style: hand-drawn storybook cartoon, confident dark-brown ink outlines (#3a2212) of 5-7 px at 1024 px with a slightly wobbly hand-inked line, flat cel colours with soft watercolor-like shading and gentle top-left light, a single small white highlight on rounded forms, subtle paper/wood grain texture. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions and a strong readable silhouette at 64 px. Object centered with approximately 8% transparent margin. No text, no letters, no numbers, no watermark, no drop shadow outside the object, no ground plane. Only the requested icon, no border or background decoration.
 Subject: A berry-red gift box with a gold ribbon bow.
 
-### `ui.icon-close`
+### `ui.icons.close`
 
-- File: `features/ui/assets/icon-close.webp`, 128 × 127 px.
+- File: `shared/assets/icons/close.webp`, 128 × 127 px.
 - Original: `sprites/icon-close.png`, 1024 × 1024 px.
 - Prompt:
 
   > Create one 1024x1024 PNG with a genuinely transparent background (alpha), for a cozy casual mobile merge game called Timber Town set in a forest lumber village. Style: hand-drawn storybook cartoon, confident dark-brown ink outlines (#3a2212) of 5-7 px at 1024 px with a slightly wobbly hand-inked line, flat cel colours with soft watercolor-like shading and gentle top-left light, a single small white highlight on rounded forms, subtle paper/wood grain texture. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions and a strong readable silhouette at 64 px. Object centered with approximately 8% transparent margin. No text, no letters, no numbers, no watermark, no drop shadow outside the object, no ground plane. Only the requested icon, no border or background decoration.
 Subject: A bold close symbol shaped like an X made of exactly two crossed cream-coloured wooden sticks. The X is an object symbol, not typography.
 
-### `ui.icon-music`
+### `ui.icons.music`
 
-- File: `features/ui/assets/icon-music.webp`, 121 × 128 px.
+- File: `shared/assets/icons/music.webp`, 121 × 128 px.
 - Original: `sprites/icon-music.png`, 1024 × 1024 px.
 - Prompt:
 
   > Create one 1024x1024 PNG with a genuinely transparent background (alpha), for a cozy casual mobile merge game called Timber Town set in a forest lumber village. Style: hand-drawn storybook cartoon, confident dark-brown ink outlines (#3a2212) of 5-7 px at 1024 px with a slightly wobbly hand-inked line, flat cel colours with soft watercolor-like shading and gentle top-left light, a single small white highlight on rounded forms, subtle paper/wood grain texture. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions and a strong readable silhouette at 64 px. Object centered with approximately 8% transparent margin. No text, no letters, no numbers, no watermark, no drop shadow outside the object, no ground plane. Only the requested icon, no border or background decoration.
 Subject: A double musical note: two rounded noteheads with stems joined by one beam. The entire note silhouette is filled predominantly with very dark brown ink #3a2212; at least 85% of the note interior must be dark brown. Add only a small, narrow honey-gold #f2b43d highlight along its top-left edge, plus a single tiny white gleam. Do not fill the noteheads or beam with gold. Keep the soft grain, chunky friendly proportions, and subtle shading.
 
-### `ui.icon-sound`
+### `ui.icons.sound`
 
-- File: `features/ui/assets/icon-sound.webp`, 128 × 108 px.
+- File: `shared/assets/icons/sound.webp`, 128 × 108 px.
 - Original: `sprites/icon-sound.png`, 1024 × 1024 px.
 - Prompt:
 
   > Create one 1024x1024 PNG with a genuinely transparent background (alpha), for a cozy casual mobile merge game called Timber Town set in a forest lumber village. Style: hand-drawn storybook cartoon, confident dark-brown ink outlines (#3a2212) of 5-7 px at 1024 px with a slightly wobbly hand-inked line, flat cel colours with soft watercolor-like shading and gentle top-left light, a single small white highlight on rounded forms, subtle paper/wood grain texture. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions and a strong readable silhouette at 64 px. Object centered with approximately 8% transparent margin. No text, no letters, no numbers, no watermark, no drop shadow outside the object, no ground plane. Only the requested icon, no border or background decoration.
 Subject: A speaker with exactly two sound waves, drawn as two clear curved arcs beside the speaker. Use warm wood and honey gold for the speaker, with dark-brown ink outlines.
 
-### `ui.icon-check`
+### `ui.icons.check`
 
-- File: `features/ui/assets/icon-check.webp`, 128 × 113 px.
+- File: `shared/assets/icons/check.webp`, 128 × 113 px.
 - Original: `sprites/icon-check.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 PNG sprite with a genuinely transparent background for the cozy casual mobile merge game "Timber Town", set in a forest lumber village. STYLE: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line; flat cel colours with soft watercolor-like shading and gentle top-left light; a single small white highlight on rounded forms; subtle paper/wood grain texture within the object. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions and a strong readable silhouette at 64 px. Object centered with approximately 8% transparent margin. No text, letters, numbers, watermark, external drop shadow, ground plane, backdrop, or extra objects. Subject: one thick moss-green check mark.
 
-### `ui.badge-level`
+### `ui.icons.badge-level`
 
-- File: `features/ui/assets/badge-level.webp`, 96 × 96 px.
+- File: `shared/assets/icons/badge-level.webp`, 96 × 96 px.
 - Original: `sprites/badge-level.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 PNG sprite with a genuinely transparent background for the cozy casual mobile merge game "Timber Town", set in a forest lumber village. STYLE: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line; flat cel colours with soft watercolor-like shading and gentle top-left light; a single small white highlight on rounded forms; subtle paper/wood grain texture within the object. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions and a strong readable silhouette at 64 px. Object centered with approximately 8% transparent margin. No text, letters, numbers, watermark, external drop shadow, ground plane, backdrop, or extra objects. Subject: one empty round honey-gold medallion badge with a rim, nothing printed on it.
 
-### `ui.decor-sprig`
+### `ui.decor.sprig`
 
-- File: `features/ui/assets/decor-sprig.webp`, 177 × 192 px.
+- File: `shared/assets/decor/sprig.webp`, 177 × 192 px.
 - Original: `sprites/decor-sprig.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 PNG sprite with a genuinely transparent background for the cozy casual mobile merge game "Timber Town", set in a forest lumber village. STYLE: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line; flat cel colours with soft watercolor-like shading and gentle top-left light; a single small white highlight on rounded forms; subtle paper/wood grain texture within the object. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions and a strong readable silhouette at 64 px. Object centered with approximately 8% transparent margin. No text, letters, numbers, watermark, external drop shadow, ground plane, backdrop, or extra objects. Subject: one leafy sprig with exactly three red berries at its lower end.
 
-### `ui.decor-clothespin`
+### `ui.decor.clothespin`
 
-- File: `features/ui/assets/decor-clothespin.webp`, 40 × 96 px.
+- File: `shared/assets/decor/clothespin.webp`, 40 × 96 px.
 - Original: `sprites/decor-clothespin.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 PNG sprite with a genuinely transparent background for the cozy casual mobile merge game "Timber Town", set in a forest lumber village. STYLE: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line; flat cel colours with soft watercolor-like shading and gentle top-left light; a single small white highlight on rounded forms; subtle paper/wood grain texture within the object. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions and a strong readable silhouette at 64 px. Object centered with approximately 8% transparent margin. No text, letters, numbers, watermark, external drop shadow, ground plane, backdrop, or extra objects. Subject: one wooden clothespin, vertical.
 
-### `ui.fx-sparkle`
+### `ui.fx.fx-sparkle`
 
-- File: `features/ui/assets/fx-sparkle.webp`, 85 × 96 px.
+- File: `shared/assets/fx/fx-sparkle.webp`, 85 × 96 px.
 - Original: `sprites/fx-sparkle.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Style: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked lines; flat cel colours with soft watercolor-like shading, gentle top-left light, a single small white highlight on rounded forms, subtle paper/wood grain texture. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions, strong readable silhouette at 64 px. No text, letters, numbers, watermark, drop shadow outside the object, or ground plane. Center the object with approximately 8% fully transparent margin. Background must be genuine PNG alpha transparency, not a checkerboard drawing. Subject: exactly one four-point cartoon sparkle star, pale gold. Four tapered points at top, right, bottom and left, gently concave edges, a warm pale-gold fill and one small white highlight. No extra sparkles or objects.
 
-### `ui.fx-leaf`
+### `ui.fx.fx-leaf`
 
-- File: `features/ui/assets/fx-leaf.webp`, 58 × 64 px.
+- File: `shared/assets/fx/fx-leaf.webp`, 58 × 64 px.
 - Original: `sprites/fx-leaf.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Style: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked lines; flat cel colours with soft watercolor-like shading, gentle top-left light, a single small white highlight on rounded forms, subtle paper/wood grain texture. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions, strong readable silhouette at 64 px. No text, letters, numbers, watermark, drop shadow outside the object, or ground plane. Center the object with approximately 8% fully transparent margin. Background must be genuine PNG alpha transparency, not a checkerboard drawing. Subject: exactly one single small green leaf particle. Simple chunky oval leaf with a pointed tip, short stem, one central vein and minimal side veins, moss green #8ab84e with #557f2d shading. Diagonal orientation, friendly curved silhouette. No other leaves or objects.
 
-### `ui.fx-rays`
+### `ui.fx.fx-rays`
 
-- File: `features/ui/assets/fx-rays.webp`, 504 × 512 px.
+- File: `shared/assets/fx/fx-rays.webp`, 504 × 512 px.
 - Original: `sprites/fx-rays.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Style: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked lines; flat cel colours with soft watercolor-like shading, gentle top-left light, a single small white highlight on rounded forms, subtle paper/wood grain texture. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions, strong readable silhouette at 64 px. No text, letters, numbers, watermark, drop shadow outside the object, or ground plane. Center the object with approximately 8% fully transparent margin. Background must be genuine PNG alpha transparency, not a checkerboard drawing. Subject: a soft pale-gold sunburst of exactly 12 evenly spaced rays radiating from the center, for placement behind a reward item. Show the effect only, without a reward item or sun face or solid central disc. Twelve broad, gently hand-shaped rays in pale honey gold and parchment tones, watercolor-soft with opacity fading smoothly to fully transparent toward their tips. Keep the rays soft: any ink treatment is very faint and also fades with the rays. Transparent gaps between rays; exactly 12 rays, no additional streaks, stars, or particles.
 
-### `ui.fx-star`
+### `ui.fx.fx-star`
 
-- File: `features/ui/assets/fx-star.webp`, 96 × 93 px: the star of the merge and delivery bursts
+- File: `shared/assets/fx/fx-star.webp`, 96 × 93 px: the star of the merge and delivery bursts
   (`fx.stars`).
 - Original: `v5-fx/fx-star.png`, 1024 × 1024 px, drawn by Astra (gpt-6-astra, codex backend) on
   2026-10-03. Alpha under 8 % cleared, trimmed, scaled to 96 px.
@@ -266,9 +266,9 @@ Subject: A speaker with exactly two sound waves, drawn as two clear curved arcs 
 
   > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Hand-drawn storybook cartoon, slightly wobbly confident dark-brown ink outlines (#3a2212), flat cel colours with soft watercolor-like shading, gentle top-left light and a single small white highlight on rounded forms. Palette: ink #3a2212, warm wood #d8a062 / #efcd94 / #9c6031, honey gold #f2b43d / #c7841c, moss green #8ab84e, parchment #fbeed2, pale sky blue #cfe6ee. Genuine transparent alpha background, not a checkerboard drawing. One centered isolated object with about 8% transparent margin. No text, watermark, drop shadow, ground plane or extra objects. Subject: one small chunky five-point honey-gold star particle for a reward burst, bright, with a thin dark-brown ink outline and one small white highlight. Upright upper point, rounded chunky tips, no face. Fill approximately 84% of the canvas width and height.
 
-### `ui.fx-puff`
+### `ui.fx.fx-puff`
 
-- File: `features/ui/assets/fx-puff.webp`, 128 × 118 px: the steam puff over the sawmill chimney
+- File: `shared/assets/fx/fx-puff.webp`, 128 × 118 px: the steam puff over the sawmill chimney
   (`fx.steam`).
 - Original: `v5-fx/fx-puff.png`, 1024 × 1024 px, drawn by Astra (gpt-6-astra, codex backend) on
   2026-10-03. Alpha under 8 % cleared, trimmed, scaled to 128 px.
@@ -276,10 +276,10 @@ Subject: A speaker with exactly two sound waves, drawn as two clear curved arcs 
 
   > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Hand-drawn storybook cartoon, slightly wobbly confident dark-brown ink outlines (#3a2212), flat cel colours with soft watercolor-like shading, gentle top-left light and a single small white highlight on rounded forms. Palette: ink #3a2212, warm wood #d8a062 / #efcd94 / #9c6031, honey gold #f2b43d / #c7841c, moss green #8ab84e, parchment #fbeed2, pale sky blue #cfe6ee. Genuine transparent alpha background, not a checkerboard drawing. One centered isolated object with about 8% transparent margin. No text, watermark, drop shadow, ground plane or extra objects. Subject: one soft round cloud puff of white-grey steam/smoke for a sawmill chimney particle. A compact cluster of softly rounded lobes forming ONE puff, very light delicate ink outline, soft edges, semi-opaque white and pale warm-grey body with translucent feathered edges. No chimney or other objects. Fill approximately 84% of the canvas width and height.
 
-### `ui.coin-spin-0` to `ui.coin-spin-6`
+### `ui.fx.coin-spin.0` to `ui.fx.coin-spin.6`
 
-- Files: `features/ui/assets/coin-spin-0.webp` to `coin-spin-6.webp`, 160 × 160 px each, the
-  height of `ui.icon-coin`: seven frames of the coin turning half a turn about its vertical axis,
+- Files: `shared/assets/fx/coin-spin/0.webp` to `6.webp`, 160 × 160 px each, the
+  height of `ui.icons.coin`: seven frames of the coin turning half a turn about its vertical axis,
   0° to 180° in steps of 30°. Frame 6 shows the back face and loops back to frame 0. The flying
   coins of a coin gain spin through them with `Frames`.
 - Originals: `v5-fx/coin-spin-0.png` to `coin-spin-6.png`, 1024 × 1024 px, drawn by Astra
@@ -288,31 +288,31 @@ Subject: A speaker with exactly two sound waves, drawn as two clear curved arcs 
   centre (512, 512) and scaled to 160 px, so the coin keeps its place and size from frame to frame.
 - Prompts:
 
-  - `coin-spin-0.webp`:
+  - `0.webp`:
 
     > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Hand-drawn storybook cartoon, slightly wobbly confident dark-brown ink outlines (#3a2212), flat cel colours with soft watercolor-like shading, gentle top-left light and a single small white highlight on rounded forms. Palette: ink #3a2212, warm wood #d8a062 / #efcd94 / #9c6031, honey gold #f2b43d / #c7841c, moss green #8ab84e, parchment #fbeed2, pale sky blue #cfe6ee. Genuine transparent alpha background, not a checkerboard drawing. One centered isolated object with about 8% transparent margin. No text, watermark, drop shadow, ground plane or extra objects. Subject: a gold coin with a thick raised rim and a small simple embossed pine-tree emblem. Animation frame 0 of 7: facing front, a full circle. Coin center exactly (512,512), outer height and width 860 pixels, top y=82 and bottom y=942. Orthographic view with no tilt. Keep the pine emblem simple, almost bilaterally symmetric, so the mirrored back face can loop smoothly to this face. Bright honey-gold face, darker gold rim details, restrained watercolor shading. This is the master reference for the subsequent rotation frames.
 
-  - `coin-spin-1.webp`:
+  - `1.webp`:
 
     > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Hand-drawn storybook cartoon, slightly wobbly confident dark-brown ink outlines (#3a2212), flat cel colours with soft watercolor-like shading, gentle top-left light and a single small white highlight on rounded forms. Palette: ink #3a2212, warm wood #d8a062 / #efcd94 / #9c6031, honey gold #f2b43d / #c7841c, moss green #8ab84e, parchment #fbeed2, pale sky blue #cfe6ee. Genuine transparent alpha background, not a checkerboard drawing. One centered isolated object with about 8% transparent margin. No text, watermark, drop shadow, ground plane or extra objects. Input image: master coin reference and edit target. Create exactly one frame of this SAME coin, preserving its design, pine emblem, thick raised rim, ink weight, colors and watercolor texture. Change only its rotation about the vertical axis. Animation frame 1 of 7: front face turned 30 degrees around its vertical axis: a broad upright ellipse, face width about 745 pixels plus a small visible rim thickness on the right. Orthographic camera, no tilt, fixed center (512,512), outer height 860 pixels, top y=82 and bottom y=942 on the 1024x1024 canvas. Keep height and center identical to the master at every angle; do not enlarge a narrow frame to fill the canvas. Same gentle top-left lighting in every frame. Output one isolated coin only on genuine transparent alpha.
 
-  - `coin-spin-2.webp`:
+  - `2.webp`:
 
     > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Hand-drawn storybook cartoon, slightly wobbly confident dark-brown ink outlines (#3a2212), flat cel colours with soft watercolor-like shading, gentle top-left light and a single small white highlight on rounded forms. Palette: ink #3a2212, warm wood #d8a062 / #efcd94 / #9c6031, honey gold #f2b43d / #c7841c, moss green #8ab84e, parchment #fbeed2, pale sky blue #cfe6ee. Genuine transparent alpha background, not a checkerboard drawing. One centered isolated object with about 8% transparent margin. No text, watermark, drop shadow, ground plane or extra objects. Input image: master coin reference and edit target. Create exactly one frame of this SAME coin, preserving its design, pine emblem, thick raised rim, ink weight, colors and watercolor texture. Change only its rotation about the vertical axis. Animation frame 2 of 7: front face turned 60 degrees around its vertical axis: a narrow upright ellipse, face width about 430 pixels plus a small visible rim thickness on the right. Orthographic camera, no tilt, fixed center (512,512), outer height 860 pixels, top y=82 and bottom y=942 on the 1024x1024 canvas. Keep height and center identical to the master at every angle; do not enlarge a narrow frame to fill the canvas. Same gentle top-left lighting in every frame. Output one isolated coin only on genuine transparent alpha.
 
-  - `coin-spin-3.webp`:
+  - `3.webp`:
 
     > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Hand-drawn storybook cartoon, slightly wobbly confident dark-brown ink outlines (#3a2212), flat cel colours with soft watercolor-like shading, gentle top-left light and a single small white highlight on rounded forms. Palette: ink #3a2212, warm wood #d8a062 / #efcd94 / #9c6031, honey gold #f2b43d / #c7841c, moss green #8ab84e, parchment #fbeed2, pale sky blue #cfe6ee. Genuine transparent alpha background, not a checkerboard drawing. One centered isolated object with about 8% transparent margin. No text, watermark, drop shadow, ground plane or extra objects. Input image: master coin reference and edit target. Create exactly one frame of this SAME coin, preserving its design, pine emblem, thick raised rim, ink weight, colors and watercolor texture. Change only its rotation about the vertical axis. Animation frame 3 of 7: exactly edge-on at 90 degrees: ONLY a thin upright gold vertical rim about 85 pixels wide, with gently rounded top and bottom; absolutely no face or pine emblem visible. Orthographic camera, no tilt, fixed center (512,512), outer height 860 pixels, top y=82 and bottom y=942 on the 1024x1024 canvas. Keep height and center identical to the master at every angle; do not enlarge a narrow frame to fill the canvas. Same gentle top-left lighting in every frame. Output one isolated coin only on genuine transparent alpha.
 
-  - `coin-spin-4.webp`:
+  - `4.webp`:
 
     > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Hand-drawn storybook cartoon, slightly wobbly confident dark-brown ink outlines (#3a2212), flat cel colours with soft watercolor-like shading, gentle top-left light and a single small white highlight on rounded forms. Palette: ink #3a2212, warm wood #d8a062 / #efcd94 / #9c6031, honey gold #f2b43d / #c7841c, moss green #8ab84e, parchment #fbeed2, pale sky blue #cfe6ee. Genuine transparent alpha background, not a checkerboard drawing. One centered isolated object with about 8% transparent margin. No text, watermark, drop shadow, ground plane or extra objects. Input image: master coin reference and edit target. Create exactly one frame of this SAME coin, preserving its design, pine emblem, thick raised rim, ink weight, colors and watercolor texture. Change only its rotation about the vertical axis. Animation frame 4 of 7: back face turned 60 degrees away from facing the viewer (rotation 120 degrees): a narrow upright ellipse, face width about 430 pixels plus a small visible rim thickness on the left. The same pine emblem is horizontally mirrored on the back. Orthographic camera, no tilt, fixed center (512,512), outer height 860 pixels, top y=82 and bottom y=942 on the 1024x1024 canvas. Keep height and center identical to the master at every angle; do not enlarge a narrow frame to fill the canvas. Same gentle top-left lighting in every frame. Output one isolated coin only on genuine transparent alpha.
 
-  - `coin-spin-5.webp`:
+  - `5.webp`:
 
     > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Hand-drawn storybook cartoon, slightly wobbly confident dark-brown ink outlines (#3a2212), flat cel colours with soft watercolor-like shading, gentle top-left light and a single small white highlight on rounded forms. Palette: ink #3a2212, warm wood #d8a062 / #efcd94 / #9c6031, honey gold #f2b43d / #c7841c, moss green #8ab84e, parchment #fbeed2, pale sky blue #cfe6ee. Genuine transparent alpha background, not a checkerboard drawing. One centered isolated object with about 8% transparent margin. No text, watermark, drop shadow, ground plane or extra objects. Input image: master coin reference and edit target. Create exactly one frame of this SAME coin, preserving its design, pine emblem, thick raised rim, ink weight, colors and watercolor texture. Change only its rotation about the vertical axis. Animation frame 5 of 7: back face turned 30 degrees away from facing the viewer (rotation 150 degrees): a broad upright ellipse, face width about 745 pixels plus a small visible rim thickness on the left. The same pine emblem is horizontally mirrored on the back. Orthographic camera, no tilt, fixed center (512,512), outer height 860 pixels, top y=82 and bottom y=942 on the 1024x1024 canvas. Keep height and center identical to the master at every angle; do not enlarge a narrow frame to fill the canvas. Same gentle top-left lighting in every frame. Output one isolated coin only on genuine transparent alpha.
 
-  - `coin-spin-6.webp`:
+  - `6.webp`:
 
     > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Hand-drawn storybook cartoon, slightly wobbly confident dark-brown ink outlines (#3a2212), flat cel colours with soft watercolor-like shading, gentle top-left light and a single small white highlight on rounded forms. Palette: ink #3a2212, warm wood #d8a062 / #efcd94 / #9c6031, honey gold #f2b43d / #c7841c, moss green #8ab84e, parchment #fbeed2, pale sky blue #cfe6ee. Genuine transparent alpha background, not a checkerboard drawing. One centered isolated object with about 8% transparent margin. No text, watermark, drop shadow, ground plane or extra objects. Input image: master coin reference and edit target. Create exactly one frame of this SAME coin, preserving its design, pine emblem, thick raised rim, ink weight, colors and watercolor texture. Change only its rotation about the vertical axis. Animation frame 6 of 7: back face directly facing the viewer (rotation 180 degrees): full circle 860 pixels wide. The same pine emblem is horizontally mirrored on the back. Match the supplied front frame silhouette and shading closely so this frame loops cleanly back to frame 0; lighting must stay top-left, do not mirror the lighting. Orthographic camera, no tilt, fixed center (512,512), outer height 860 pixels, top y=82 and bottom y=942 on the 1024x1024 canvas. Keep height and center identical to the master at every angle; do not enlarge a narrow frame to fill the canvas. Same gentle top-left lighting in every frame. Output one isolated coin only on genuine transparent alpha.
 
@@ -332,33 +332,33 @@ Subject: A speaker with exactly two sound waves, drawn as two clear curved arcs 
 
   > Use case: illustration-story. Create one production-ready full-screen portrait background for the cozy casual mobile merge game Timber Town, a forest lumber village. Output exactly 1024x1536 pixels, opaque PNG, full bleed, no transparent margin. Shared visual style: hand-drawn storybook cartoon, confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px width, slightly wobbly hand-inked line; flat cel colours with soft watercolor-like shading, gentle top-left illumination, a single small white highlight on rounded forms where appropriate, subtle paper and wood grain texture. Chunky friendly toy-like proportions and strong silhouettes readable at 64 px. Palette: ink #3a2212, warm wood #d8a062, light wood #efcd94, dark wood #9c6031, walnut #6e4121, honey gold #f2b43d and #c7841c, moss green #8ab84e and #557f2d, pine #2f5a3b, berry red #c93b4d and #8f2334, parchment #fbeed2, pale sky blue #cfe6ee. No text, letters, numbers, logo, watermark, UI, border, or external object drop shadows. Keep UI areas calm and low-detail. Scene: an opaque, full-screen home-screen illustration panel of the lumber village on a small grassy clearing over the same sunny meadow world. Pale blue sky with two soft clouds and warm sun at upper right, distant blue-green hills, soft layered pine forest, tiny sparse meadow flowers and a winding dirt path entering from bottom centre. Main subject: one friendly chunky wooden sawmill cabin with a clearly visible circular saw blade, stacked round logs, one wooden crate, and exactly two separate wooden planks. Compose the entire cabin-and-props grouping within the middle vertical third of the image (between y=512 and y=1024), horizontally centred, at a modest scale with ample surrounding meadow. Dark-brown hand-inked outlines on cabin, blade, logs, crate, planks and nearest edge trees. Background forest and hills use softer watercolor washes. Keep upper and lower thirds calm and low-detail for UI, and the clearing around the compact scene simple. The cabin grouping is the intentional home-screen central focal point. Gentle top-left light, warm wood, honey-gold accents, moss grass, pine trees, subtle wood grain, toy-like shapes. Ground plane is part of this landscape. Fully opaque everywhere, no transparent cutout, no isolated floating island, no text or sign lettering. Filename: home-sawmill-scene.png.
 
-### `board.item-wood-1`
+### `board.items.wood-1`
 
-- File: `features/board/assets/item-wood-1.webp`, 170 × 256 px.
+- File: `features/board/assets/items/wood-1.webp`, 170 × 256 px.
 - Original: `sprites/item-wood-1-twig.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one game sprite for the cozy casual mobile merge game "Timber Town", set in a forest lumber village. Hand-drawn storybook cartoon. Confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line. Flat cel colours with soft watercolor-like shading, gentle top-left light, a single small white highlight on rounded forms, subtle paper/wood grain texture. Palette: ink #3a2212; warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121; honey gold #f2b43d / #c7841c; moss green #8ab84e / #557f2d; pine #2f5a3b; berry red #c93b4d / #8f2334; parchment #fbeed2; sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions, strong readable silhouette at 64 px. No text, no letters, no numbers, no watermark, no drop shadow outside the object, no ground plane. Object centered with approximately 8% transparent margin. Output exactly 1024x1024 PNG with a genuinely transparent background and alpha channel; do not draw a checkerboard. Subject: A small forked twig with two fresh green leaves.
 
-### `board.item-wood-2`
+### `board.items.wood-2`
 
-- File: `features/board/assets/item-wood-2.webp`, 256 × 240 px.
+- File: `features/board/assets/items/wood-2.webp`, 256 × 240 px.
 - Original: `sprites/item-wood-2-log.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one game sprite for the cozy casual mobile merge game "Timber Town", set in a forest lumber village. Hand-drawn storybook cartoon. Confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line. Flat cel colours with soft watercolor-like shading, gentle top-left light, a single small white highlight on rounded forms, subtle paper/wood grain texture. Palette: ink #3a2212; warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121; honey gold #f2b43d / #c7841c; moss green #8ab84e / #557f2d; pine #2f5a3b; berry red #c93b4d / #8f2334; parchment #fbeed2; sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions, strong readable silhouette at 64 px. No text, no letters, no numbers, no watermark, no drop shadow outside the object, no ground plane. Object centered with approximately 8% transparent margin. Output exactly 1024x1024 PNG with a genuinely transparent background and alpha channel; do not draw a checkerboard. Subject: A short round log lying on its side, visible end rings, one small sprout.
 
-### `board.item-wood-3`
+### `board.items.wood-3`
 
-- File: `features/board/assets/item-wood-3.webp`, 256 × 190 px.
+- File: `features/board/assets/items/wood-3.webp`, 256 × 190 px.
 - Original: `sprites/item-wood-3-plank.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one game sprite for the cozy casual mobile merge game "Timber Town", set in a forest lumber village. Hand-drawn storybook cartoon. Confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line. Flat cel colours with soft watercolor-like shading, gentle top-left light, a single small white highlight on rounded forms, subtle paper/wood grain texture. Palette: ink #3a2212; warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121; honey gold #f2b43d / #c7841c; moss green #8ab84e / #557f2d; pine #2f5a3b; berry red #c93b4d / #8f2334; parchment #fbeed2; sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions, strong readable silhouette at 64 px. No text, no letters, no numbers, no watermark, no drop shadow outside the object, no ground plane. Object centered with approximately 8% transparent margin. Output exactly 1024x1024 PNG with a genuinely transparent background and alpha channel; do not draw a checkerboard. Subject: A single clean sawn plank, light wood with grain and two nail holes, lying at a slight angle.
 
-### `board.item-wood-4`
+### `board.items.wood-4`
 
-- File: `features/board/assets/item-wood-4.webp`, 256 × 249 px.
+- File: `features/board/assets/items/wood-4.webp`, 256 × 249 px.
 - Original: `sprites/item-wood-4-crate.png`, 1024 × 1024 px.
 - Prompt:
 
@@ -420,9 +420,9 @@ Subject: A speaker with exactly two sound waves, drawn as two clear curved arcs 
 
   > Create one 1024x1024 PNG with genuinely transparent alpha background. Style: hand-drawn storybook cartoon for a cozy casual mobile merge game called Timber Town, set in a forest lumber village. Confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line; flat cel colours with soft watercolor-like shading and gentle top-left light; a single small white highlight on rounded forms; subtle paper/wood grain texture. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions, strong readable silhouettes at 64 px. No text, letters, numbers, watermark, or drop shadow outside the object. No ground plane unless specifically requested below. Transparent pixels outside the object, never a checkerboard illustration. One straight vertical wooden sign post only: a square beam of warm wood with visible grain and ink outline, narrow and tall, centered, occupying about 12% of the canvas width and 90% of the height. A slightly darker lower end as if set into the ground, but no ground visible. The top is flat because it will hold up a sign; do not draw the sign itself.
 
-### `ui.link-wave`
+### `ui.decor.link-wave`
 
-- File: `features/ui/assets/link-wave.webp`, 400 × 16 px: the wavy underline of a text link, berry `#c93b4d`, 3 px stroke, period 24 px, amplitude 4 px.
+- File: `shared/assets/decor/link-wave.webp`, 400 × 16 px: the wavy underline of a text link, berry `#c93b4d`, 3 px stroke, period 24 px, amplitude 4 px.
 - Drawn with ImageMagick (a sine path), not by Astra.
 
 ### `orders.rope`
@@ -431,9 +431,9 @@ Subject: A speaker with exactly two sound waves, drawn as two clear curved arcs 
   Bézier that sags 42 u, ink `#3a2212` 18 px with `#dcaa66` dashes 7 px (19 on, 8 off).
 - Drawn with ImageMagick, not by Astra.
 
-### `board.selection-ring-0` to `board.selection-ring-3`
+### `board.selection-ring.0` to `board.selection-ring.3`
 
-- Files: `features/board/assets/selection-ring-0.webp` to `selection-ring-3.webp`, 300 × 300 px
+- Files: `features/board/assets/selection-ring/0.webp` to `3.webp`, 300 × 300 px
   each: the marching outline of the selected cell (design §6 F9). The cell is 272 px plus 14 on
   every side. The outline is a rounded square with its centreline 6 px in from the edge and a
   corner radius of 44. It has 32 dashes of 22 px, stroke 9, in parchment `#fbeed2` with a 1.5 px
@@ -444,12 +444,12 @@ Subject: A speaker with exactly two sound waves, drawn as two clear curved arcs 
 
 ## Fonts
 
-- `features/ui/assets/font-display.fnt` with its page `font-display.png` (key `ui.font-display`):
+- `shared/assets/fonts/display.fnt` with its page `display.png` (key `ui.fonts.display`):
   Rubik ExtraBold, for titles, buttons, numbers and item names.
-- `features/ui/assets/font-body.fnt` with its page `font-body.png` (key `ui.font-body`): Pangolin
+- `shared/assets/fonts/body.fnt` with its page `body.png` (key `ui.fonts.body`): Pangolin
   Regular, for body lines.
 - Source: the Google Fonts TTFs `Rubik-ExtraBold.ttf` and `Pangolin-Regular.ttf`, both under the
-  SIL Open Font License 1.1 (the texts are in `LICENSE-fonts.txt`).
+  SIL Open Font License 1.1 (the texts are in `shared/LICENSE-fonts.txt`).
 - Built on 2026-09-23 with `msdf-bmfont-xml`: MSDF, distance range 6, export size 48
   (display) and 44 (body), one 512 × 512 page each, 174 glyphs (Latin, Cyrillic, digits and
   punctuation), BMFont XML.
@@ -462,10 +462,10 @@ and converted with ffmpeg (effects mono 44.1 kHz 96 kbps, music stereo 44.1 kHz 
 
 | Key | File | Source pack | Source file |
 |---|---|---|---|
-| `ui.click` | `features/ui/assets/click.mp3` | Interface Sounds 1.0 | `click_001.ogg` |
-| `ui.popup` | `features/ui/assets/popup.mp3` | Interface Sounds 1.0 | `maximize_006.ogg` |
-| `ui.coins` | `features/ui/assets/coins.mp3` | Casino Audio | `chips-stack-3.ogg` |
-| `board.merge` | `features/board/assets/merge.mp3` | Interface Sounds 1.0 | `confirmation_002.ogg` |
-| `board.spawn` | `features/board/assets/spawn.mp3` | Interface Sounds 1.0 | `pluck_002.ogg` |
+| `ui.sounds.click` | `shared/assets/sounds/click.mp3` | Interface Sounds 1.0 | `click_001.ogg` |
+| `ui.sounds.popup` | `shared/assets/sounds/popup.mp3` | Interface Sounds 1.0 | `maximize_006.ogg` |
+| `ui.sounds.coins` | `shared/assets/sounds/coins.mp3` | Casino Audio | `chips-stack-3.ogg` |
+| `board.sounds.merge` | `features/board/assets/sounds/merge.mp3` | Interface Sounds 1.0 | `confirmation_002.ogg` |
+| `board.sounds.spawn` | `features/board/assets/sounds/spawn.mp3` | Interface Sounds 1.0 | `pluck_002.ogg` |
 | `orders.complete` | `features/orders/assets/complete.mp3` | Music Jingles | `Pizzicato jingles/jingles_PIZZI07.ogg` |
-| `ui.theme` | `features/ui/assets/theme.mp3` | Music Loops (Kenney's Sound Pack) | `Farm Frolics.ogg`, the 10.7 s loop repeated four times (42.7 s) |
+| `ui.music.theme` | `shared/assets/music/theme.mp3` | Music Loops (Kenney's Sound Pack) | `Farm Frolics.ogg`, the 10.7 s loop repeated four times (42.7 s) |

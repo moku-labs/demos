@@ -1,6 +1,6 @@
 /**
  * @file The coin flight (design §6 F3): a coin gain flies coins from the popup picture to the coin
- * icon of the counter, and the counter rolls when they land, as `ui.coins` rings. Seven coins for a
+ * icon of the counter, and the counter rolls when they land, as `ui.sounds.coins` rings. Seven coins for a
  * reward, eight for the daily gift. The coins are temporary entities the animation spawns, `coin1` … `coin8`, and
  * every one of them is despawned when the timeline ends.
  *
@@ -44,13 +44,13 @@ const COIN_ORDER = 1000;
 
 /** The frames of the turning coin: half a turn, front face to back face, which loops back. */
 const coinSpin: readonly AssetKey[] = [
-  "ui.coin-spin-0",
-  "ui.coin-spin-1",
-  "ui.coin-spin-2",
-  "ui.coin-spin-3",
-  "ui.coin-spin-4",
-  "ui.coin-spin-5",
-  "ui.coin-spin-6"
+  "ui.fx.coin-spin.0",
+  "ui.fx.coin-spin.1",
+  "ui.fx.coin-spin.2",
+  "ui.fx.coin-spin.3",
+  "ui.fx.coin-spin.4",
+  "ui.fx.coin-spin.5",
+  "ui.fx.coin-spin.6"
 ];
 
 /** How fast a coin turns: a half turn in under half a second, about one per flight. */
@@ -72,7 +72,7 @@ const coinSpins = coinSpin.map((_key, start) => [
  * @returns The keys, starting on the coin's own frame.
  * @example
  * ```ts
- * spinOf(2)[0]; // "ui.coin-spin-2"
+ * spinOf(2)[0]; // "ui.fx.coin-spin.2"
  * ```
  */
 function spinOf(index: number): readonly AssetKey[] {
@@ -123,7 +123,7 @@ function coinFlight(id: string, count: number) {
               coin,
               [
                 Sprite({
-                  texture: spin[0] ?? "ui.coin-spin-0",
+                  texture: spin[0] ?? "ui.fx.coin-spin.0",
                   width: COIN_SIZE,
                   height: COIN_SIZE,
                   fit: "contain"
@@ -137,7 +137,7 @@ function coinFlight(id: string, count: number) {
         ),
         parallel(
           // The first coin lands after one flight: the jingle rings as the counter starts to roll.
-          sequence(wait(FLIGHT_MS), sfx("ui.coins")),
+          sequence(wait(FLIGHT_MS), sfx("ui.sounds.coins")),
           stagger(coins, STAGGER_MS, (coin, index) =>
             sequence(
               parallel(

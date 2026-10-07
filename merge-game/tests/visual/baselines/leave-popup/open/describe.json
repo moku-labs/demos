@@ -299,7 +299,7 @@
                       "grow": 1,
                       "height": 140,
                       "justify": "center",
-                      "nineSlice": "ui.button-wood",
+                      "nineSlice": "ui.buttons.wood",
                       "padding": {
                         "left": 40,
                         "right": 40
@@ -357,7 +357,7 @@
                       "grow": 1,
                       "height": 140,
                       "justify": "center",
-                      "nineSlice": "ui.button-green",
+                      "nineSlice": "ui.buttons.green",
                       "padding": {
                         "left": 40,
                         "right": 40
@@ -440,7 +440,7 @@
                   "height": 150,
                   "justify": "center",
                   "minWidth": 420,
-                  "nineSlice": "ui.header-plank",
+                  "nineSlice": "ui.panels.header-plank",
                   "padding": {
                     "left": 80,
                     "right": 80
@@ -478,7 +478,7 @@
               "gap": 24,
               "height": 420,
               "justify": "center",
-              "nineSlice": "ui.panel-signboard",
+              "nineSlice": "ui.panels.signboard",
               "origin": {
                 "x": 0.5,
                 "y": -0.5
@@ -742,7 +742,7 @@
                       "align": "center",
                       "height": 440,
                       "justify": "center",
-                      "nineSlice": "ui.panel-signboard",
+                      "nineSlice": "ui.panels.signboard",
                       "padding": {
                         "bottom": 72,
                         "left": 72,
@@ -882,7 +882,7 @@
                           "height": 220,
                           "justify": "center",
                           "left": 0,
-                          "nineSlice": "ui.button-green",
+                          "nineSlice": "ui.buttons.green",
                           "position": "absolute",
                           "reason": "the plank lies over its two posts",
                           "top": 0,
@@ -1105,7 +1105,7 @@
                       "margin": {
                         "left": 36
                       },
-                      "nineSlice": "ui.hud-pill",
+                      "nineSlice": "ui.panels.hud-pill",
                       "padding": {
                         "left": 84,
                         "right": 24
@@ -1510,7 +1510,7 @@
           "clip": false,
           "debug": false,
           "height": 420,
-          "texture": "ui.panel-signboard",
+          "texture": "ui.panels.signboard",
           "tint": 16777215,
           "width": 900
         },
@@ -1546,7 +1546,7 @@
           "clip": false,
           "debug": false,
           "height": 150,
-          "texture": "ui.header-plank",
+          "texture": "ui.panels.header-plank",
           "tint": 16777215,
           "width": 696
         },
@@ -1627,7 +1627,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -1665,7 +1665,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -1703,7 +1703,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -1780,7 +1780,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -1818,7 +1818,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -1856,7 +1856,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -1952,7 +1952,7 @@
           "clip": false,
           "debug": false,
           "height": 140,
-          "texture": "ui.button-wood",
+          "texture": "ui.buttons.wood",
           "tint": 16777215,
           "width": 366
         },
@@ -2058,7 +2058,7 @@
           "clip": false,
           "debug": false,
           "height": 140,
-          "texture": "ui.button-green",
+          "texture": "ui.buttons.green",
           "tint": 16777215,
           "width": 366
         },
@@ -2285,7 +2285,7 @@
           },
           "fit": "contain",
           "height": 86,
-          "texture": "ui.icon-gift",
+          "texture": "ui.icons.gift",
           "tint": 16777215,
           "width": 86
         },
@@ -2519,7 +2519,7 @@
           "clip": false,
           "debug": false,
           "height": 76,
-          "texture": "ui.hud-pill",
+          "texture": "ui.panels.hud-pill",
           "tint": 16777215,
           "width": 290
         },
@@ -2561,7 +2561,7 @@
           },
           "fit": "contain",
           "height": 110,
-          "texture": "ui.icon-coin",
+          "texture": "ui.icons.coin",
           "tint": 16777215,
           "width": 110
         },
@@ -2636,7 +2636,7 @@
           "clip": false,
           "debug": false,
           "height": 440,
-          "texture": "ui.panel-signboard",
+          "texture": "ui.panels.signboard",
           "tint": 8151118,
           "width": 900
         },
@@ -2704,7 +2704,7 @@
           },
           "fit": "fill",
           "height": 916,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 18
         },
@@ -2742,7 +2742,7 @@
           },
           "fit": "fill",
           "height": 916,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 18
         },
@@ -2780,7 +2780,7 @@
           },
           "fit": "contain",
           "height": 195,
-          "texture": "ui.decor-sprig",
+          "texture": "ui.decor.sprig",
           "tint": 16777215,
           "width": 180
         },
@@ -2818,7 +2818,7 @@
           },
           "fit": "contain",
           "height": 195,
-          "texture": "ui.decor-sprig",
+          "texture": "ui.decor.sprig",
           "tint": 16777215,
           "width": 180
         },
@@ -2979,7 +2979,7 @@
           },
           "fit": "contain",
           "height": 79,
-          "texture": "ui.icon-gear",
+          "texture": "ui.icons.gear",
           "tint": 16777215,
           "width": 79
         },
@@ -3087,7 +3087,7 @@
           "clip": false,
           "debug": false,
           "height": 220,
-          "texture": "ui.button-green",
+          "texture": "ui.buttons.green",
           "tint": 16777215,
           "width": 880
         },
@@ -3282,7 +3282,7 @@
           },
           "fit": "contain",
           "height": 184,
-          "texture": "ui.decor-sprig",
+          "texture": "ui.decor.sprig",
           "tint": 16777215,
           "width": 170
         },
@@ -3320,7 +3320,7 @@
           },
           "fit": "contain",
           "height": 184,
-          "texture": "ui.decor-sprig",
+          "texture": "ui.decor.sprig",
           "tint": 16777215,
           "width": 170
         },

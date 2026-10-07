@@ -452,7 +452,7 @@
                   "gap": 24,
                   "height": 150,
                   "justify": "center",
-                  "nineSlice": "ui.button-green",
+                  "nineSlice": "ui.buttons.green",
                   "padding": {
                     "left": 40,
                     "right": 40
@@ -509,7 +509,7 @@
                   "height": 150,
                   "justify": "center",
                   "minWidth": 420,
-                  "nineSlice": "ui.header-plank",
+                  "nineSlice": "ui.panels.header-plank",
                   "padding": {
                     "left": 80,
                     "right": 80
@@ -547,7 +547,7 @@
               "gap": 24,
               "height": 900,
               "justify": "center",
-              "nineSlice": "ui.panel-signboard",
+              "nineSlice": "ui.panels.signboard",
               "origin": {
                 "x": 0.5,
                 "y": -0.5
@@ -758,7 +758,7 @@
                   "margin": {
                     "left": 36
                   },
-                  "nineSlice": "ui.hud-pill",
+                  "nineSlice": "ui.panels.hud-pill",
                   "padding": {
                     "left": 84,
                     "right": 24
@@ -843,7 +843,7 @@
                   "margin": {
                     "left": 36
                   },
-                  "nineSlice": "ui.hud-pill",
+                  "nineSlice": "ui.panels.hud-pill",
                   "padding": {
                     "left": 84,
                     "right": 24
@@ -1297,7 +1297,7 @@
                           "gap": 24,
                           "height": 96,
                           "justify": "center",
-                          "nineSlice": "ui.button-disabled",
+                          "nineSlice": "ui.buttons.disabled",
                           "padding": {
                             "left": 16,
                             "right": 16
@@ -1757,7 +1757,7 @@
                           "gap": 24,
                           "height": 96,
                           "justify": "center",
-                          "nineSlice": "ui.button-disabled",
+                          "nineSlice": "ui.buttons.disabled",
                           "padding": {
                             "left": 16,
                             "right": 16
@@ -2161,7 +2161,7 @@
                           "gap": 24,
                           "height": 96,
                           "justify": "center",
-                          "nineSlice": "ui.button-disabled",
+                          "nineSlice": "ui.buttons.disabled",
                           "padding": {
                             "left": 16,
                             "right": 16
@@ -2529,7 +2529,7 @@
               "margin": {
                 "top": 66
               },
-              "nineSlice": "ui.button-wood",
+              "nineSlice": "ui.buttons.wood",
               "padding": {
                 "bottom": 8,
                 "left": 40,
@@ -2649,7 +2649,7 @@
           },
           "fit": "contain",
           "height": 104,
-          "texture": "ui.icon-coin",
+          "texture": "ui.icons.coin",
           "tint": 16777215,
           "width": 104
         },
@@ -2720,7 +2720,7 @@
           "clip": false,
           "debug": false,
           "height": 900,
-          "texture": "ui.panel-signboard",
+          "texture": "ui.panels.signboard",
           "tint": 16777215,
           "width": 840
         },
@@ -2756,7 +2756,7 @@
           "clip": false,
           "debug": false,
           "height": 150,
-          "texture": "ui.header-plank",
+          "texture": "ui.panels.header-plank",
           "tint": 16777215,
           "width": 714
         },
@@ -2837,7 +2837,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -2875,7 +2875,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -2913,7 +2913,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -2990,7 +2990,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -3028,7 +3028,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -3066,7 +3066,7 @@
           },
           "fit": "fill",
           "height": 614,
-          "texture": "ui.rope-vertical",
+          "texture": "ui.decor.rope-vertical",
           "tint": 16777215,
           "width": 12
         },
@@ -3123,7 +3123,7 @@
           "clip": false,
           "debug": false,
           "height": 150,
-          "texture": "ui.button-green",
+          "texture": "ui.buttons.green",
           "tint": 16777215,
           "width": 554
         },
@@ -3268,7 +3268,7 @@
           },
           "fit": "contain",
           "height": 300,
-          "texture": "board.item-wood-3",
+          "texture": "board.items.wood-3",
           "tint": 16777215,
           "width": 300
         },
@@ -3306,7 +3306,7 @@
           },
           "fit": "contain",
           "height": 580,
-          "texture": "ui.fx-rays",
+          "texture": "ui.fx.fx-rays",
           "tint": 16777215,
           "width": 580
         },
@@ -4370,7 +4370,7 @@
           },
           "fit": "contain",
           "height": 223,
-          "texture": "board.item-wood-1",
+          "texture": "board.items.wood-1",
           "tint": 16777215,
           "width": 223
         },
@@ -4431,7 +4431,7 @@
           },
           "fit": "contain",
           "height": 223,
-          "texture": "board.item-wood-1",
+          "texture": "board.items.wood-1",
           "tint": 16777215,
           "width": 223
         },
@@ -4492,7 +4492,7 @@
           },
           "fit": "contain",
           "height": 223,
-          "texture": "board.item-wood-2",
+          "texture": "board.items.wood-2",
           "tint": 16777215,
           "width": 223
         },
@@ -4521,10 +4521,10 @@
         "Frames": {
           "fps": 4,
           "keys": [
-            "board.selection-ring-0",
-            "board.selection-ring-1",
-            "board.selection-ring-2",
-            "board.selection-ring-3"
+            "board.selection-ring.0",
+            "board.selection-ring.1",
+            "board.selection-ring.2",
+            "board.selection-ring.3"
           ],
           "loop": true,
           "playing": true
@@ -4547,7 +4547,7 @@
           },
           "fit": "fill",
           "height": 300,
-          "texture": "board.selection-ring-0",
+          "texture": "board.selection-ring.0",
           "tint": 16777215,
           "width": 300
         },
@@ -4764,7 +4764,7 @@
           },
           "fit": "contain",
           "height": 48,
-          "texture": "ui.icon-coin",
+          "texture": "ui.icons.coin",
           "tint": 16777215,
           "width": 48
         },
@@ -4828,7 +4828,7 @@
           },
           "fit": "contain",
           "height": 110,
-          "texture": "board.item-wood-3",
+          "texture": "board.items.wood-3",
           "tint": 16777215,
           "width": 110
         },
@@ -4905,7 +4905,7 @@
           },
           "fit": "contain",
           "height": 56,
-          "texture": "ui.badge-level",
+          "texture": "ui.icons.badge-level",
           "tint": 16777215,
           "width": 56
         },
@@ -5034,7 +5034,7 @@
           },
           "fit": "contain",
           "height": 72,
-          "texture": "ui.decor-clothespin",
+          "texture": "ui.decor.clothespin",
           "tint": 16777215,
           "width": 30
         },
@@ -5172,7 +5172,7 @@
           },
           "fit": "contain",
           "height": 48,
-          "texture": "ui.icon-coin",
+          "texture": "ui.icons.coin",
           "tint": 16777215,
           "width": 48
         },
@@ -5301,7 +5301,7 @@
           },
           "fit": "contain",
           "height": 110,
-          "texture": "board.item-wood-2",
+          "texture": "board.items.wood-2",
           "tint": 16777215,
           "width": 110
         },
@@ -5378,7 +5378,7 @@
           },
           "fit": "contain",
           "height": 56,
-          "texture": "ui.badge-level",
+          "texture": "ui.icons.badge-level",
           "tint": 16777215,
           "width": 56
         },
@@ -5507,7 +5507,7 @@
           },
           "fit": "contain",
           "height": 72,
-          "texture": "ui.decor-clothespin",
+          "texture": "ui.decor.clothespin",
           "tint": 16777215,
           "width": 30
         },
@@ -5645,7 +5645,7 @@
           },
           "fit": "contain",
           "height": 48,
-          "texture": "ui.icon-coin",
+          "texture": "ui.icons.coin",
           "tint": 16777215,
           "width": 48
         },
@@ -5709,7 +5709,7 @@
           },
           "fit": "contain",
           "height": 110,
-          "texture": "board.item-wood-4",
+          "texture": "board.items.wood-4",
           "tint": 16777215,
           "width": 110
         },
@@ -5786,7 +5786,7 @@
           },
           "fit": "contain",
           "height": 56,
-          "texture": "ui.badge-level",
+          "texture": "ui.icons.badge-level",
           "tint": 16777215,
           "width": 56
         },
@@ -5915,7 +5915,7 @@
           },
           "fit": "contain",
           "height": 72,
-          "texture": "ui.decor-clothespin",
+          "texture": "ui.decor.clothespin",
           "tint": 16777215,
           "width": 30
         },
@@ -6011,7 +6011,7 @@
           "clip": false,
           "debug": false,
           "height": 76,
-          "texture": "ui.hud-pill",
+          "texture": "ui.panels.hud-pill",
           "tint": 16777215,
           "width": 290
         },
@@ -6053,7 +6053,7 @@
           },
           "fit": "contain",
           "height": 110,
-          "texture": "ui.icon-coin",
+          "texture": "ui.icons.coin",
           "tint": 16777215,
           "width": 110
         },
@@ -6194,7 +6194,7 @@
           "clip": false,
           "debug": false,
           "height": 96,
-          "texture": "ui.button-disabled",
+          "texture": "ui.buttons.disabled",
           "tint": 16777215,
           "width": 250
         },
@@ -6295,7 +6295,7 @@
           "clip": false,
           "debug": false,
           "height": 96,
-          "texture": "ui.button-disabled",
+          "texture": "ui.buttons.disabled",
           "tint": 16777215,
           "width": 250
         },
@@ -6396,7 +6396,7 @@
           "clip": false,
           "debug": false,
           "height": 96,
-          "texture": "ui.button-disabled",
+          "texture": "ui.buttons.disabled",
           "tint": 16777215,
           "width": 250
         },
@@ -6431,7 +6431,7 @@
           "clip": false,
           "debug": false,
           "height": 76,
-          "texture": "ui.hud-pill",
+          "texture": "ui.panels.hud-pill",
           "tint": 16777215,
           "width": 280
         },
@@ -6473,7 +6473,7 @@
           },
           "fit": "contain",
           "height": 110,
-          "texture": "ui.icon-energy",
+          "texture": "ui.icons.energy",
           "tint": 16777215,
           "width": 110
         },
@@ -6580,7 +6580,7 @@
           },
           "fit": "contain",
           "height": 79,
-          "texture": "ui.icon-home",
+          "texture": "ui.icons.home",
           "tint": 16777215,
           "width": 79
         },
@@ -6659,7 +6659,7 @@
           "clip": false,
           "debug": false,
           "height": 160,
-          "texture": "ui.button-wood",
+          "texture": "ui.buttons.wood",
           "tint": 16777215,
           "width": 830
         },
@@ -7109,7 +7109,7 @@
           },
           "fit": "contain",
           "height": 79,
-          "texture": "ui.icon-gear",
+          "texture": "ui.icons.gear",
           "tint": 16777215,
           "width": 79
         },

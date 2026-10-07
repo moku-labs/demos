@@ -2,7 +2,7 @@
  * @file Transit node `tapGenerator`: one tap on the generator. The tapped generator becomes the
  * selected thing of the board, whatever the tap answers (design §6 F9). The item, the energy it
  * cost and the charge it spent are granted together, on this edge, the cabin squashes and the
- * sawmill pops (`board.spawn`, design §6 F5). A refused tap shakes the cabin and says why (design §4): an empty bar opens the Out of
+ * sawmill pops (`board.sounds.spawn`, design §6 F5). A refused tap shakes the cabin and says why (design §4): an empty bar opens the Out of
  * energy popup, a full board shows the toast, and a sawmill that is still cooling down answers
  * `rejected`.
  */
@@ -46,7 +46,7 @@ export const tapGenerator = defineNode({
     applyRules(player, result.state);
     session.taps += 1;
     // The cabin squashes and pops; the new twig arrives on its arc by the enter motion of the items.
-    void fx(sfx("board.spawn"));
+    void fx(sfx("board.sounds.spawn"));
     void fx(
       play(sawmillTap, { generator: { projection: "board.generators", key: input.generatorId } })
     );

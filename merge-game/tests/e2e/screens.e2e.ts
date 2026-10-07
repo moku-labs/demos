@@ -382,7 +382,7 @@ describe("timber-screens — the splash", () => {
     // The middle of the blade stands on the head of the fill, on the middle line of the track.
     expect(rect.x + rect.w / 2 - trackRect.x).toBe(fillHead(sessionOf(game).loading));
     expect(rect.y + rect.h / 2 - trackRect.y).toBe(track.height / 2);
-    expect(ecs.get(blade, Sprite)).toMatchObject({ texture: "ui.icon-gear", tint: 0xb8_c4_cc });
+    expect(ecs.get(blade, Sprite)).toMatchObject({ texture: "ui.icons.gear", tint: 0xb8_c4_cc });
 
     await frames(game, 3);
 

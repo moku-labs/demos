@@ -93,7 +93,7 @@ function partView(part: ClockPart) {
 
   if (part.part === "disc") {
     return [
-      Sprite({ texture: "ui.badge-level", width: badge.size, height: badge.size, fit: "contain" }),
+      Sprite({ texture: "ui.icons.badge-level", width: badge.size, height: badge.size, fit: "contain" }),
       Transform({ x: middle.x, y: middle.y }),
       order
     ];

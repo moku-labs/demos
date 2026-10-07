@@ -7,7 +7,7 @@ import type { AssetKey } from "@generated/assets";
 
 /** The picture of every level of every chain. Generated keys, so a missing picture does not compile. */
 const pictures: Record<string, readonly AssetKey[]> = {
-  wood: ["board.item-wood-1", "board.item-wood-2", "board.item-wood-3", "board.item-wood-4"]
+  wood: ["board.items.wood-1", "board.items.wood-2", "board.items.wood-3", "board.items.wood-4"]
 };
 
 /** The name of every level of the wood chain, as `board.item` selects it (design §8). */
@@ -32,11 +32,11 @@ export type ItemName = (typeof names)[number];
  * @returns The asset key of its picture.
  * @example
  * ```ts
- * pictureOf("wood", 3); // "board.item-wood-3"
+ * pictureOf("wood", 3); // "board.items.wood-3"
  * ```
  */
 export function pictureOf(chain: string, level: number): AssetKey {
-  return pictures[chain]?.[level - 1] ?? "board.item-wood-1";
+  return pictures[chain]?.[level - 1] ?? "board.items.wood-1";
 }
 
 /**

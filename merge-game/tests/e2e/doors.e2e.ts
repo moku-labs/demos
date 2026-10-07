@@ -139,7 +139,7 @@ describe("timber-doors — an e2e script on the dev build", () => {
     expect(delivered.value).toBe(true);
     await until(game, () => heard(game).includes("orders.complete"));
 
-    expect(heard(game)).toEqual(expect.arrayContaining(["ui.click", "orders.complete"]));
+    expect(heard(game)).toEqual(expect.arrayContaining(["ui.sounds.click", "orders.complete"]));
     expect(read(app, sources.sounds)).toContainEqual(
       expect.objectContaining({ key: "orders.complete", bus: "sfx", kind: "sfx" })
     );
@@ -181,7 +181,7 @@ describe("timber-doors — the same page without the dev flag", () => {
 
     expect(read(app, sources.position).path).toBe("home");
     expect([read(app, sources.tainted), read(app, sources.cheats)]).toEqual([false, []]);
-    expect(heard(game)).not.toContain("ui.click");
+    expect(heard(game)).not.toContain("ui.sounds.click");
 
     await app.stop();
   });
