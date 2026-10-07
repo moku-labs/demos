@@ -6,18 +6,18 @@
  * unlocked by a first pointer event.
  */
 import type { Assets } from "@moku-labs/game";
+import { startMoment } from "@moku-labs/game/app";
 import { commands, run } from "@moku-labs/game/control";
 import { read, sources } from "@moku-labs/game/inspect";
 import type { Repro } from "@moku-labs/game/testing";
 import { readFile } from "node:fs/promises";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { Player } from "../../core/state";
 import { startingSession } from "../../core/state";
-import { createScreenGame, startMoment } from "../../game";
-import { scenarios } from "../../web/scenarios";
+import mergeGame from "../../index";
 import { createFakeContext, installFakeWindow } from "../helpers/fake-audio";
 import type { Game } from "../helpers/game";
 import { frames, tick, until } from "../helpers/game";
+import ready from "../scenarios/ready";
 
 /** What a production build throws for every `/control` command. */
 const refused = "[game] Control commands run in dev builds only.";
@@ -51,26 +51,11 @@ async function readManifest(): Promise<Assets.Manifest> {
   return JSON.parse(text) as Assets.Manifest;
 }
 
-/**
- * The `ready` save of the dev page: a Plank ready for the first order. Its energy is counted
- * from the start moment of the fake clock, as the page counts it from the moment it opens.
- *
- * @returns The prepared player.
- */
-function readySave(): Player {
-  const save = scenarios.ready;
-
-  if (save === undefined) throw new Error("the fixture has no ready save");
-
-  return {
-    ...save,
-    merge: { ...save.merge, energy: { ...save.merge.energy, countedAt: startMoment } }
-  };
-}
-
 /** The bug report an e2e script loads: the `ready` save, entered at Home, with no route. */
 const repro = {
-  player: readySave(),
+  // The `ready` save of the dev page, its energy counted from the start moment of the fake clock,
+  // as the page counts it from the moment it opens.
+  player: ready(startMoment).player,
   session: startingSession,
   checkpoint: "home",
   route: []
@@ -86,7 +71,7 @@ const repro = {
 async function startDevGame(): Promise<Game> {
   const page = installFakeWindow();
   const context = createFakeContext();
-  const game = createScreenGame({
+  const game = mergeGame.screen({
     manifest: await readManifest(),
     io: diskIo,
     audio: { context: () => context, journal: 200 }

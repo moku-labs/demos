@@ -25,7 +25,7 @@ import { readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Tools } from "./fixtures";
-import { expect, openTools, test } from "./fixtures";
+import { expect, GAME_NAME, openTools, test } from "./fixtures";
 import { jpegSize } from "./pictures";
 
 /** The project root the bin serves. */
@@ -278,7 +278,9 @@ async function pickIn(page: Page, rect: Rect, label: RegExp): Promise<void> {
           for (const fx of [0.04, 0.96, 0.5, 0.25, 0.75]) {
             const at = { x: rect.x + rect.w * fx, y: rect.y + rect.h * fy };
             await page.mouse.move(at.x, at.y);
-            const text = (await hover.count()) > 0 ? ((await hover.textContent()) ?? "") : "";
+            // One read: the label hides while the pointer is over no element, so a count() then
+            // textContent() can wait for a label that is gone.
+            const text = await hover.evaluateAll(labels => labels[0]?.textContent ?? "");
             if (label.test(text)) {
               found = at;
               return text;
@@ -489,7 +491,7 @@ test.describe("pick · for the chat", () => {
     expect(flow).toMatch(/^flow: board > settings > open · last: board\/settings\/enter → done/);
     expect(gameLine).toMatch(
       new RegExp(
-        String.raw`^game: merge-game 0\.0\.0 · s-[0-9a-f]{4} · f${frame} · \d\d:\d\d:\d\d · live · (clean|tainted)$`
+        String.raw`^game: ${GAME_NAME} · s-[0-9a-f]{4} · f${frame} · \d\d:\d\d:\d\d · live · (clean|tainted)$`
       )
     );
     expect(device).toBe("device: iPhone 15 393×852 portrait · dpr 3 · safe 59/0/34/0");

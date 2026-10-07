@@ -5,13 +5,14 @@
  * imports a test runner: `bun tests/visual/run.ts` loads it as well as vitest does.
  */
 import type { Assets } from "@moku-labs/game";
+import { startMoment } from "@moku-labs/game/app";
 import type { VisualSetup, VisualStart } from "@moku-labs/game/visual";
 import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import type { Player } from "../../../core/state";
 import { startingPlayer, startingSession } from "../../../core/state";
 import type { Item } from "../../../core/types";
-import { createScreenGame, startMoment } from "../../../game";
+import mergeGame from "../../../index";
 
 /** The folder of the demo: the dev manifest's paths are relative to it. */
 const gameFolder = new URL("../../../", import.meta.url);
@@ -53,12 +54,12 @@ function diskIo(): Assets.AssetsIo {
 
 /**
  * A fresh fixture game with its screen, not started: the setup of every visual test. Headless
- * the renderer is inert; the page of the pixel leg builds the same plugins in `web/main.ts`.
+ * the renderer is inert; the page of the pixel leg is the same `game.screen()` with a canvas.
  *
  * @returns The app.
  */
 export const fixtureApp: VisualSetup["app"] = () =>
-  createScreenGame({ manifest, io: diskIo() }).app;
+  mergeGame.screen({ manifest, io: diskIo() }).app;
 
 /**
  * An item of the wood chain on one cell.

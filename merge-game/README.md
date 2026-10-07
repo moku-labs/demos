@@ -21,16 +21,17 @@ bun run test:editor  # the editor scenarios on vitest; --e2e adds the Playwright
 
 | Script | What it does |
 |---|---|
-| `dev` | Serves the dev page (`web/serve.ts`) and prints its URL. `--port 0` picks a free port. |
-| `editor` | Starts `@moku-labs/editor` on this demo. |
+| `dev` | `moku-game dev`: serves the page the engine writes into `.moku/` and prints its URL. `--port 0` picks a free port. `?player=<name>` opens a save of `tests/scenarios/`. |
+| `editor` | Starts `@moku-labs/editor` on this demo: `--root .`, the page from the engine. |
 | `test` | Vitest: the game's unit tests and `tests/e2e/`. Fails on an empty test set. |
 | `test:visual` | `tests/visual/`: headless state checks, pixels on macOS. Serves the page itself. |
 | `test:editor` | `tests/editor/`: the vitest project `editor`. `--e2e` adds the Playwright specs (about 20 min, local only, not in CI); then extra arguments go to Playwright. |
 | `typecheck` | `tsc --noEmit`. |
-| `keys` | Scans the assets and strings: writes `manifest.json`, `generated/assets.ts` and `generated/strings*.ts`. `shared/` is scanned as the layer `ui` (`--layer shared=ui`), so its keys stay `ui.*`. |
+| `keys` | `moku-game keys`: writes `manifest.json`, `generated/assets.ts` and `generated/strings*.ts`. `shared/` is scanned as the layer `ui` (`assets.layers` in `config.ts`), so its keys stay `ui.*`. |
 | `lint` | oxlint with the engine's rules (`@moku-labs/game/lint`): the layout rules (layers, feature doors, test suffixes) and the game rules. |
-| `pack` | Packs the assets into `dist/assets/`. |
-| `build` | `pack`, then the static page into `dist/web/`. |
+| `pack` | `moku-game pack`: packs the assets into `dist/assets/`. |
+| `build` | `moku-game build`: packs, then builds the static page into `dist/web/`. |
+| `native` | `moku-game native`: the Tauri app of `config.ts` `native`. `bun run native build ios --simulator`. |
 
 ## Another engine or editor
 
@@ -48,8 +49,9 @@ bun run editor --engine <engine-path> --editor <editor-path>      # local editor
 - **Version or URL:** installed for this run. Locally `package.json` and `bun.lock` go back to
   their pins afterwards. In CI (`CI=true`) they stay.
 - **Engine path:** no install and no build. Vitest aliases every entry to the tree's `src/` and
-  dedupes Pixi, core and common. A Bun preload does the same for scripts, the dev page bundles
-  from source, and `typecheck` uses a generated tsconfig in `.moku/` (gitignored).
+  dedupes Pixi, core and common (`scripts/engine.ts`). `moku-game` and the editor bin get the
+  engine's recipe, `--preload <tree>/scripts/tree/preload.ts --serve-plugin
+  <tree>/scripts/tree/bundle.ts`. `typecheck` uses a generated tsconfig in `.moku/` (gitignored).
 - **Editor path:** runs the editor's built bin from that tree. Build it there first. The editor
   scenarios import that build too (vitest alias, dev page plugin) and dedupe the engine and preact.
 
@@ -60,30 +62,32 @@ later.
 
 ## Layout
 
-The game is layered: `core ← shared ← features ← game.ts`. Between layers a file imports through
+The game is layered: `core ← shared ← features ← game.ts`, and `index.ts` composes it. Between layers a file imports through
 the aliases of `tsconfig.json`; inside one feature, by relative path. `bun run lint` checks it.
 
 | Path | What |
 |---|---|
-| `game.ts` | The one entry: the root flow `mainFlow`, the plugins of the screen, `createGame` and `createScreenGame`. |
+| `index.ts` | The game as one data object: `export default defineGameApp({ ... })`. Tests make its apps with `game.headless()` and `game.screen()`. |
+| `config.ts` | The page, the native app, the system plugins, the save and the asset layers. Plain data. |
+| `game.ts` | The root flow `mainFlow`, and the volumes and dev locales the plugin configs read. |
 | `core/` | What the game is: the definers (`kit.ts`), the save (`state.ts`), the content tables (`tables.ts`) and the domain types (`types.ts`). No logic, no feature. `@core/*`. |
 | `shared/` | The layer over the features, the feature `shared`: views, the popup layout, the popup flow helper, effects, motions, tokens and text styles, the `ui` bundle and the strings every screen shares. Its door is `@shared`; the rules more than one feature needs are behind `@shared/rules`. |
 | `features/<name>/` | One feature: `index.ts` is its only door (`@features/<name>`), next to `types.ts`. Inside, a folder per kind: `flow/`, `rules/`, `screens/`, `popups/`, `views/`, `world/`, `styles/`, `motion/`, `effects/`, `plugins/`, `assets/`, `strings/`, `__tests__/`. |
-| `features/index.ts` | The feature barrel `@features`: only `game.ts` imports it. |
+| `features/index.ts` | The feature barrel `@features`: only `index.ts` and `game.ts` import it. |
 | `plugins/` | The general plugins of the game (loading, locale, exit, ui sounds), knowing no feature. The barrel `@plugins`. |
 | `generated/` | Written by `bun run keys`. `@generated/*`. |
-| `web/`, `native.ts`, `platform-bridge.ts`, `bunfig.toml` | The dev page, its server, the static build and the native app. They move into the engine CLI later. |
 
 ## Tests
 
 | Folder | Runs in | What |
 |---|---|---|
-| `features/<name>/__tests__/unit/`, `shared/__tests__/unit/`, `__tests__/` | `test` | The unit tests of one feature, of the shared layer, and of `platform-bridge.ts`. |
+| `features/<name>/__tests__/unit/`, `shared/__tests__/unit/`, `plugins/<name>/__tests__/unit/` | `test` | The unit tests of one feature, of the shared layer and of one plugin. |
 | `tests/e2e/` | `test` | Headless e2e: the game with its screen, played through taps and routes. Moved from the engine. |
 | `tests/visual/` | `test:visual` | Seven visual tests, baselines in `tests/visual/baselines/`. The runner is `tests/helpers/visual/`. |
 | `tests/editor/*.editor.ts` | `test:editor` | The editor on the merge game through its public entries: server, agent and tools over the real wire. Moved from the editor. |
 | `tests/browser/` | `test:editor --e2e` | Playwright (`*.browser.ts`): the editor's tools page on this game, served by the editor bin from a copy in `.moku/editor-e2e/`. Moved from the editor. |
-| `tests/helpers/` | | What the tests share: the headless game, the fake audio, the rules fixtures, the visual runner. |
+| `tests/scenarios/` | `dev` | The prepared saves of `?player=<name>`: `ready`, `full`, `empty`. |
+| `tests/helpers/` | | What the tests share: the headless game, the fake audio, the rules fixtures, the scenario builders, the visual runner. |
 
 Rewrite the visual baselines with `bun run test:visual --update` on a Mac. The editor screenshots
 live in `tests/browser/__screenshots__/`: `bun run test:editor --e2e --update-snapshots`. The specs
@@ -92,4 +96,5 @@ runner installs it.
 
 ## Native
 
-`bun native.ts ios --simulator` builds the Tauri app with `@moku-labs/native`.
+`bun run native build ios --simulator` builds the Tauri app with `@moku-labs/native` into
+`dist-native/`. The Tauri project lives in `.moku/tauri/`.

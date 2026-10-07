@@ -6,7 +6,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { tr } from "../../core/kit";
-import { createScreenGame } from "../../game";
+import mergeGame from "../../index";
 import { folderIo, frames, nodeOf, player, readManifest, tap, tick, until } from "../helpers/game";
 
 /** The folder of the fixture game: the dev manifest's paths are relative to it. */
@@ -21,7 +21,7 @@ const note = tr("gift.note");
  * @returns The game, resting on `home`.
  */
 async function startWithFonts() {
-  const game = createScreenGame({
+  const game = mergeGame.screen({
     player,
     manifest: await readManifest(),
     io: folderIo(gameFolder).io

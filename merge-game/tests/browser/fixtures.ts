@@ -30,8 +30,8 @@ export const WORKSPACES = [
 /** One workspace id. */
 export type WorkspaceId = (typeof WORKSPACES)[number]["id"];
 
-/** The game name the merge-game fixture registers (game/editor.ts). */
-export const GAME_NAME = "merge-game 0.0.0";
+/** The game name the editor agent registers: `page.title` of the game's `config.ts`. */
+export const GAME_NAME = "Лесной городок";
 
 /** The tools page path the bin serves. */
 export const TOOLS_PATH = "/__editor/";

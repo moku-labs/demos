@@ -8,6 +8,7 @@
  */
 import type { Assets, Ui } from "@moku-labs/game";
 import { Parent, Shape, Sprite, Tappable, Text, Touchable, Transform } from "@moku-labs/game";
+import { startMoment } from "@moku-labs/game/app";
 import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 import type { Player, Session } from "../../core/state";
@@ -16,7 +17,7 @@ import { generatorId } from "../../core/tables";
 import { GIFT_WOBBLE_MS } from "../../features/home/motion/motions";
 import { GIFT_GAP } from "../../features/home/styles/styles";
 import { fillHead, fillWidth, track } from "../../features/splash/screens/splash-screen";
-import { createScreenGame, startMoment } from "../../game";
+import mergeGame from "../../index";
 import { booted, createDiskGame } from "../helpers/game";
 
 /**
@@ -40,7 +41,7 @@ const readyPlayer: Player = {
 };
 
 /** The game as this file drives it. */
-type Game = ReturnType<typeof createScreenGame>;
+type Game = ReturnType<typeof mergeGame.screen>;
 
 /** Yields the microtask queue to the loop, the way a test waits without a timer. */
 const tick = async (times = 40): Promise<void> => {
@@ -316,7 +317,7 @@ async function startOnBoard(player: Player): Promise<Game> {
 describe("timber-screens — the splash", () => {
   it("fills the loading bar from the asset events and moves on to Home when all three are in", async () => {
     const disk = diskIo("features/board/");
-    const game = await start(createScreenGame({ manifest: await readManifest(), io: disk.io }));
+    const game = await start(mergeGame.screen({ manifest: await readManifest(), io: disk.io }));
 
     // Home and the orders are core bundles and come in; the board waits behind the latch.
     await until(game, () => sessionOf(game).loading > 0.5);
@@ -347,7 +348,7 @@ describe("timber-screens — the splash", () => {
 
   it("hangs the logo at 24 % of the safe height and the loader 305 units above the bottom", async () => {
     const disk = diskIo("features/board/");
-    const game = await start(createScreenGame({ manifest: await readManifest(), io: disk.io }));
+    const game = await start(mergeGame.screen({ manifest: await readManifest(), io: disk.io }));
 
     await until(game, () => sessionOf(game).loading > 0.5);
     await frames(game);
@@ -367,7 +368,7 @@ describe("timber-screens — the splash", () => {
 
   it("rides the spinning saw blade on the head of the fill", async () => {
     const disk = diskIo("features/board/");
-    const game = await start(createScreenGame({ manifest: await readManifest(), io: disk.io }));
+    const game = await start(mergeGame.screen({ manifest: await readManifest(), io: disk.io }));
 
     await until(game, () => sessionOf(game).loading > 0.5);
     await frames(game);
@@ -405,7 +406,7 @@ describe("timber-screens — the splash", () => {
 
   it("shows a retry line when a bundle fails to load, and a tap on it loads the bundle again", async () => {
     const broken = failingIo("features/board/");
-    const game = await start(createScreenGame({ manifest: await readManifest(), io: broken.io }));
+    const game = await start(mergeGame.screen({ manifest: await readManifest(), io: broken.io }));
     const label = () => game.app.world.ecs.get(elementOf(game, "loadingLabel"), Text)?.resolved;
 
     await until(game, () => sessionOf(game).loadFailed);
@@ -445,7 +446,7 @@ describe("timber-screens — the splash", () => {
   });
 
   it("lets a game without the file seam through to Home at once", async () => {
-    const game = await start(createScreenGame({ manifest: await readManifest() }));
+    const game = await start(mergeGame.screen({ manifest: await readManifest() }));
 
     await frames(game);
 

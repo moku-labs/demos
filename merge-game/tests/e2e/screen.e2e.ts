@@ -15,7 +15,7 @@ import { startingPlayer } from "../../core/state";
 import { generatorId } from "../../core/tables";
 import { Item } from "../../features/board/world/components/item";
 import { cellBox } from "../../features/board/world/layout/grid";
-import { createScreenGame } from "../../game";
+import mergeGame from "../../index";
 import { booted, createDiskGame } from "../helpers/game";
 
 /** One entity of `world.ecs.snapshot()`, as far as this test reads it. */
@@ -253,7 +253,7 @@ describe("screen-merge — the board as entities", () => {
 
 describe("screen-merge — the fast walk", () => {
   it("plays the whole game to the end with the screen composed", async () => {
-    const { app } = createScreenGame({ manifest: await readManifest() });
+    const { app } = mergeGame.screen({ manifest: await readManifest() });
     const game = await createHeadless(app);
 
     expect(game.state().path).toBe("home");
@@ -275,7 +275,7 @@ describe("screen-merge — the fast walk", () => {
   });
 
   it("sets the picture with no motion while the world is fast", async () => {
-    const { app } = createScreenGame({ manifest: await readManifest() });
+    const { app } = mergeGame.screen({ manifest: await readManifest() });
     const game = await createHeadless(app);
 
     await game.walk([{ at: "home", intent: "play" }, tap]);
@@ -307,7 +307,10 @@ describe("screen-merge — the pseudo-locale", () => {
 
   it("registers en-XA in a dev build and formats the refill bracketed, accented and with its duration", async () => {
     vi.stubGlobal("__MOKU_GAME_DEV__", true);
-    const { app } = createScreenGame({ manifest: await readManifest() });
+    // The game reads the flag when it is loaded, as the page sets it before it loads the game.
+    vi.resetModules();
+    const { default: devGame } = await import("../../index");
+    const { app } = devGame.screen({ manifest: await readManifest() });
 
     await app.start();
 
@@ -325,7 +328,7 @@ describe("screen-merge — the pseudo-locale", () => {
   });
 
   it("leaves en-XA out of a production build", async () => {
-    const { app } = createScreenGame({ manifest: await readManifest() });
+    const { app } = mergeGame.screen({ manifest: await readManifest() });
 
     await app.start();
 

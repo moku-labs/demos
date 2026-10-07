@@ -1,18 +1,15 @@
 /**
- * @file The e2e game build step: copies the demo's game into `.moku/editor-e2e/game/` (gitignored),
- * puts the e2e game page (`game/editor.html` and `game/editor.ts`: the demo page plus the editor
- * agent) into its `web/` folder and writes the copy's tsconfig, bunfig and package.json.
+ * @file The e2e game build step: copies the demo's game into `.moku/editor-e2e/game/` (gitignored)
+ * and writes the copy's tsconfig and package.json. The editor bin writes the page itself: it asks
+ * the engine's `preparePage` for the dev page with the editor agent, so the copy has no page, no
+ * `web/` and no bunfig.
  *
  * The copy is the project root the bin serves, so the editor's writes (notes, layout, styles,
  * captures) land in `.moku/`, never in the demo, and every run starts from the same files. The
  * copy sits inside the demo, so every package it imports resolves from the demo's node_modules:
- * `@moku-labs/game` (the pin or `--engine <x>`), `@moku-labs/editor/agent`, `@moku-labs/system`,
- * `@moku-labs/native` and `typescript`, which the bin's project index needs.
- *
- * The copy's bunfig loads the same Bun preload and dev-server plugins as the demo's own, from the
- * demo's `scripts/`: with `--engine <path>` the page bundles the engine from that tree, with
- * `--editor <path>` it takes `@moku-labs/editor/agent` from that tree's build. With neither they do
- * nothing. The bin re-runs itself in the copy, where Bun reads that bunfig.
+ * `@moku-labs/game` (the pin or `--engine <x>`), `@moku-labs/editor/agent`, `@moku-labs/system`
+ * and `typescript`, which the bin's project index needs. Of `tests/` the copy takes only
+ * `tests/scenarios/` and the helpers they import: the prepared saves of `?player=<name>`.
  *
  * The copy's tsconfig extends the demo's and repeats its `paths`: a `paths` entry resolves against
  * the config that declares it, so the layer aliases (`@core/*`, `@shared`, `@features/*`) of the
@@ -23,11 +20,7 @@
  */
 import { cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { MERGE_GAME_DIR } from "../editor/helpers/game-dir";
-
-/** This folder: the e2e page files sit in `game/`. */
-const HERE = fileURLToPath(new URL(".", import.meta.url));
 
 /** The e2e output folder. */
 const OUT_DIR = path.join(MERGE_GAME_DIR, ".moku", "editor-e2e");
@@ -43,7 +36,6 @@ const NOT_GAME = new Set([
   "CLAUDE.md",
   "README.md",
   "bun.lock",
-  "bunfig.toml",
   "dist",
   "node_modules",
   "package.json",
@@ -65,7 +57,10 @@ function isGameFile(source: string): boolean {
   return !NOT_GAME.has(top) && !relative.split(path.sep).includes("__tests__");
 }
 
-/** The way back from the copy to the demo folder, for the copy's tsconfig and bunfig. */
+/** The parts of `tests/` the copy takes: the prepared saves and the helper they build on. */
+const TEST_PARTS = ["tests/scenarios", "tests/helpers/scenarios.ts"];
+
+/** The way back from the copy to the demo folder, for the copy's tsconfig. */
 const UP = path.relative(OUT, MERGE_GAME_DIR).split(path.sep).join("/");
 
 await rm(OUT, { recursive: true, force: true });
@@ -79,8 +74,8 @@ for (const entry of await readdir(MERGE_GAME_DIR)) {
     filter: file => isGameFile(file)
   });
 }
-for (const file of ["editor.html", "editor.ts"]) {
-  await cp(path.join(HERE, "game", file), path.join(OUT, "web", file));
+for (const part of TEST_PARTS) {
+  await cp(path.join(MERGE_GAME_DIR, part), path.join(OUT, part), { recursive: true });
 }
 const demoConfigText = await readFile(path.join(MERGE_GAME_DIR, "tsconfig.json"), "utf8");
 const demoConfig = JSON.parse(demoConfigText) as {
@@ -93,16 +88,6 @@ await writeFile(
     undefined,
     2
   )}\n`
-);
-await writeFile(
-  path.join(OUT, "bunfig.toml"),
-  [
-    `preload = ["${UP}/scripts/engine-src.ts"]`,
-    "",
-    "[serve.static]",
-    `plugins = ["@moku-labs/game/hot", "${UP}/scripts/engine-bundle.ts"]`,
-    ""
-  ].join("\n")
 );
 await writeFile(
   path.join(OUT, "package.json"),

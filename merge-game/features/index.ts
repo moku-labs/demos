@@ -1,8 +1,8 @@
 /**
- * @file The feature barrel: what `game.ts` takes from the features — the instances it composes and
- * the flows and nodes of the root flow — then the public types of each feature as a namespace.
- * Only `game.ts` imports it; a feature imports another feature through that feature's own door,
- * `@features/<name>`.
+ * @file The feature barrel: what the root takes from the features — the instances `index.ts`
+ * composes and the flows and nodes of the root flow in `game.ts` — then the public types of each
+ * feature as a namespace. Only `index.ts` and `game.ts` import it; a feature imports another
+ * feature through that feature's own door, `@features/<name>`.
  */
 
 // ─── Feature Instances ───────────────────────────────

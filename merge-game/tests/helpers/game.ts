@@ -6,15 +6,18 @@
  */
 import type { Assets, Model, Ui } from "@moku-labs/game";
 import { Text } from "@moku-labs/game";
+import { startMoment } from "@moku-labs/game/app";
 import { readFile } from "node:fs/promises";
 import { expect } from "vitest";
 import type { Player } from "../../core/state";
 import { startingPlayer } from "../../core/state";
-import type { ScreenGameOptions } from "../../game";
-import { createScreenGame, startMoment } from "../../game";
+import mergeGame from "../../index";
 
 /** The game as the Timber Town tests drive it. */
-export type Game = ReturnType<typeof createScreenGame>;
+export type Game = ReturnType<typeof mergeGame.screen>;
+
+/** What a test may pin when it creates the game with its screen: the seams of `game.screen()`. */
+export type ScreenSeams = NonNullable<Parameters<typeof mergeGame.screen>[0]>;
 
 /** One entity of `world.ecs.snapshot()`, as far as the tests read it. */
 export type WorldEntity = {
@@ -249,11 +252,11 @@ const gameRoot = new URL("../../", import.meta.url);
  * @returns The game, not started.
  */
 export async function createDiskGame(
-  options: Omit<ScreenGameOptions, "manifest" | "io"> = {}
+  options: Omit<ScreenSeams, "manifest" | "io"> = {}
 ): Promise<Game> {
   const manifest = await readManifest();
 
-  return createScreenGame({ ...options, manifest, io: folderIo(gameRoot).io });
+  return mergeGame.screen({ ...options, manifest, io: folderIo(gameRoot).io });
 }
 
 /**
@@ -282,7 +285,7 @@ export async function booted(assets: Pick<Assets.Api, "isLoaded">): Promise<void
  */
 export async function startOnHome(
   start: Player,
-  seams: Pick<ScreenGameOptions, "platform"> = {}
+  seams: Pick<ScreenSeams, "platform"> = {}
 ): Promise<Game> {
   const game = await createDiskGame({ ...seams, player: start });
   const loop: { failure?: unknown } = {};
