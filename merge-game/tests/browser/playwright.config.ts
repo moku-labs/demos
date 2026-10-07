@@ -1,12 +1,15 @@
 /**
  * The editor e2e specs on the demo's game. The webServer copies the game into
  * `.moku/editor-e2e/game` (prepare-game.ts) and serves it with the editor's real bin: the game
- * page at `/`, the tools page at `/__editor/`. Its stdout and stderr go to
+ * page at `/`, which the bin takes from the engine's `preparePage` with the editor agent, the
+ * tools page at `/__editor/`. Its stdout and stderr go to
  * `.moku/editor-e2e/server.log`, which global-teardown.ts scans for errors.
  *
  * The bin is the one `scripts/run.ts test:editor` picked (`MOKU_EDITOR_BIN`: the pin, an
  * installed `--editor <x>`, or the build of an editor working tree), else the pinned one in
- * node_modules. The bin runs with its defaults, so Bun hot reload is on: a save of a game source
+ * node_modules. For an engine working tree (`MOKU_ENGINE_SRC`) the bin gets the engine's recipe,
+ * `scripts/tree/preload.ts` and `scripts/tree/bundle.ts`; for an editor working tree
+ * (`MOKU_EDITOR_ROOT`) the editor's own `scripts/tree/bundle.ts`. The bin runs with its defaults, so Bun hot reload is on: a save of a game source
  * reloads the game page, and the bridge restores its checkpoint. edit-loop.browser.ts measures that
  * loop.
  *
@@ -32,9 +35,36 @@ const OUT = ".moku/editor-e2e";
 const PORT = Number(process.env.PORT ?? 4417);
 const BASE_URL = `http://127.0.0.1:${PORT}`;
 const BIN = process.env.MOKU_EDITOR_BIN ?? "node_modules/@moku-labs/editor/dist/bin.mjs";
+
+/**
+ * The flags of the working trees of this run: the engine's preload and bundler plugin, and the
+ * editor's bundler plugin. None for installed packages.
+ *
+ * @returns The flags, each path quoted for the shell.
+ */
+function treeFlags(): string[] {
+  const engine = process.env.MOKU_ENGINE_SRC;
+  const editor = process.env.MOKU_EDITOR_ROOT;
+  const flags: string[] = [];
+
+  if (engine !== undefined && engine !== "") {
+    flags.push(
+      "--preload",
+      JSON.stringify(path.join(engine, "scripts/tree/preload.ts")),
+      "--serve-plugin",
+      JSON.stringify(path.join(engine, "scripts/tree/bundle.ts"))
+    );
+  }
+  if (editor !== undefined && editor !== "") {
+    flags.push("--serve-plugin", JSON.stringify(path.join(editor, "scripts/tree/bundle.ts")));
+  }
+
+  return flags;
+}
+
 const SERVE = [
   "bun tests/browser/prepare-game.ts",
-  `bun ${JSON.stringify(BIN)} ${OUT}/game/web/editor.html --port ${PORT} --root ${OUT}/game`
+  [`bun ${JSON.stringify(BIN)} --root ${OUT}/game --port ${PORT}`, ...treeFlags()].join(" ")
 ].join(" && ");
 
 const CHROMIUM_FLAGS = ["--font-render-hinting=none", "--force-color-profile=srgb"];
