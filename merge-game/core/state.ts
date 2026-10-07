@@ -1,7 +1,9 @@
 /**
  * @file The state of the fixture merge game: what a save holds, what one session holds and the
- * state of a new player. No logic: the rules that write it live with the features.
+ * state of a new player, and `volumesOf`, which reads the volumes back for `audio`. No rule: the
+ * rules that write the state live with the features.
  */
+import type { Model } from "@moku-labs/game";
 import { boardSize, generatorId, startingOrders, tables } from "./tables";
 import type { MergeState } from "./types";
 
@@ -71,3 +73,18 @@ export const startingPlayer: Player = {
 
 /** The session at every start. */
 export const startingSession: Session = { taps: 0, loading: 0, loadFailed: false, selected: "" };
+
+/**
+ * Reads the volumes the player chose out of the committed save. `audio` calls it on every commit,
+ * which is why no node ever touches a gain.
+ *
+ * @param player - The committed player tree, as plain JSON.
+ * @returns The gain of every bus.
+ * @example
+ * ```ts
+ * volumesOf(startingPlayer as unknown as Model.Json); // { master: 1, music: 0.6, sfx: 1 }
+ * ```
+ */
+export function volumesOf(player: Model.Json): Player["settings"]["audio"] {
+  return (player as unknown as Player).settings.audio;
+}
