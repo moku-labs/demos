@@ -22,7 +22,7 @@ back before a commit. `bun add <url>` over an installed version fails with a Dep
   `--port 0` picks a free port. `?player=<name>` opens a save of `tests/scenarios/`.
 - `bun run editor` — the editor on this demo.
 - `bun run test` — vitest: the game's unit tests and the headless e2e tests (`tests/e2e/`).
-- `bun run test:visual` — the visual tests (`tests/visual/`, runner in `tests/helpers/visual/`):
+- `bun run test:visual` — `moku-game visual`, the visual tests of `tests/visual/index.ts`:
   headless state checks, plus pixels on macOS. It serves the page itself. `--no-pixels`, `--update`, `--only <name>`.
 - `bun run test:editor` — the editor scenarios: the vitest project `editor`
   (`tests/editor/*.editor.ts`).

@@ -19,7 +19,7 @@
     "native": "moku-game native",
     "editor": "moku-editor --root .",
     "test": "bun --bun vitest run --project unit --project e2e",
-    "test:visual": "bun tests/helpers/visual/run.ts",
+    "test:visual": "moku-game visual",
     "test:editor": "bun --bun vitest run --project editor",
     "test:editor:e2e": "moku-editor e2e -c tests/browser/playwright.config.ts",
     "typecheck": "tsc --noEmit",

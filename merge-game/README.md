@@ -25,7 +25,7 @@ bun run test:editor:e2e  # the editor Playwright specs (about 20 min, local only
 | `dev` | `moku-game dev`: serves the page the engine writes into `.moku/` and prints its URL. `--port 0` picks a free port. `?player=<name>` opens a save of `tests/scenarios/`. |
 | `editor` | Starts `@moku-labs/editor` on this demo: `--root .`, the page from the engine. |
 | `test` | Vitest: the game's unit tests and `tests/e2e/`. Fails on an empty test set. |
-| `test:visual` | `tests/visual/`: headless state checks, pixels on macOS. Serves the page itself. |
+| `test:visual` | `moku-game visual` on `tests/visual/index.ts`: headless state checks, pixels on macOS. Serves the page itself. |
 | `test:editor` | `tests/editor/`: the vitest project `editor`. |
 | `test:editor:e2e` | `tests/browser/`: the Playwright specs, one run per project (`moku-editor e2e`). About 20 min, local only, not in CI. Arguments go to Playwright: `--project chromium-desktop -g pick`. |
 | `typecheck` | `tsc --noEmit`. |
@@ -82,11 +82,11 @@ the aliases of `tsconfig.json`; inside one feature, by relative path. `bun run l
 |---|---|---|
 | `features/<name>/__tests__/unit/`, `shared/__tests__/unit/`, `plugins/<name>/__tests__/unit/` | `test` | The unit tests of one feature, of the shared layer and of one plugin. |
 | `tests/e2e/` | `test` | Headless e2e: the game with its screen, played through taps and routes. Moved from the engine. |
-| `tests/visual/` | `test:visual` | Seven visual tests, baselines in `tests/visual/baselines/`. The runner is `tests/helpers/visual/`. |
+| `tests/visual/` | `test:visual` | Seven visual tests, listed in `index.ts`, baselines in `tests/visual/baselines/`. The fixture game is `tests/helpers/visual/fixture.ts`. |
 | `tests/editor/*.editor.ts` | `test:editor` | The editor on the merge game through its public entries: server, agent and tools over the real wire. Moved from the editor. |
 | `tests/browser/` | `test:editor:e2e` | Playwright (`*.browser.ts`): the editor's tools page on this game, served by the editor bin from a copy in `.moku/editor-e2e/`. Moved from the editor. |
 | `tests/scenarios/` | `dev` | The prepared saves of `?player=<name>`: `ready`, `full`, `empty`. |
-| `tests/helpers/` | | What the tests share: the headless game, the fake audio, the rules fixtures, the scenario builders, the visual runner. |
+| `tests/helpers/` | | What the tests share: the headless game, the fake audio, the rules fixtures, the scenario builders, the visual fixture. |
 
 Rewrite the visual baselines with `bun run test:visual --update` on a Mac. The editor screenshots
 live in `tests/browser/__screenshots__/`: `bun run test:editor:e2e --update-snapshots`. The specs

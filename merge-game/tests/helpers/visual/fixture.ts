@@ -2,7 +2,7 @@
  * @file The fixture game as its visual tests play it: the app of the headless leg and the save
  * every test starts from. The headless app reads its art from the fixture folder, so `text`
  * measures with the real fonts and `describe.json` holds the layout the page draws. Nothing here
- * imports a test runner: `bun tests/visual/run.ts` loads it as well as vitest does.
+ * imports a test runner: `moku-game visual` loads it as well as vitest does.
  */
 import type { Assets } from "@moku-labs/game";
 import { startMoment } from "@moku-labs/game/app";
