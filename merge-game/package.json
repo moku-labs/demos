@@ -26,11 +26,12 @@
   "dependencies": {
     "@moku-labs/common": "0.3.4",
     "@moku-labs/core": "1.7.1",
-    "@moku-labs/game": "0.9.0",
-    "@moku-labs/native": "0.3.0",
-    "@moku-labs/system": "0.3.0",
+    "@moku-labs/game": "0.10.0",
+    "@moku-labs/native": "0.3.2",
+    "@moku-labs/system": "0.3.1",
     "@tauri-apps/api": "2.12.1",
     "@tauri-apps/plugin-haptics": "2.4.1",
+    "@tauri-apps/plugin-store": "2.5.0",
     "pixi.js": "8.21.0"
   },
   "devDependencies": {
