@@ -25,7 +25,7 @@ import { readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Tools } from "./fixtures";
-import { expect, openTools, test } from "./fixtures";
+import { expect, GAME_NAME, openTools, test } from "./fixtures";
 import { jpegSize } from "./pictures";
 
 /** The project root the bin serves. */
@@ -491,7 +491,7 @@ test.describe("pick · for the chat", () => {
     expect(flow).toMatch(/^flow: board > settings > open · last: board\/settings\/enter → done/);
     expect(gameLine).toMatch(
       new RegExp(
-        String.raw`^game: merge-game 0\.0\.0 · s-[0-9a-f]{4} · f${frame} · \d\d:\d\d:\d\d · live · (clean|tainted)$`
+        String.raw`^game: ${GAME_NAME} · s-[0-9a-f]{4} · f${frame} · \d\d:\d\d:\d\d · live · (clean|tainted)$`
       )
     );
     expect(device).toBe("device: iPhone 15 393×852 portrait · dpr 3 · safe 59/0/34/0");
