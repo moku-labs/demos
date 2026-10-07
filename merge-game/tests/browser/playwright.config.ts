@@ -11,7 +11,8 @@
  * loop.
  *
  * One worker: the bin hosts one game link, and every test opens its own tools page and game frame
- * on it. Chromium runs the suite on desktop (1440×900), on the two half-screen windows (720×900,
+ * on it. `scripts/run.ts` starts Playwright once per project, so each project gets a fresh bin:
+ * Bun 1.3.14's dev server crashes after the hot reloads of all four projects in one process. Chromium runs the suite on desktop (1440×900), on the two half-screen windows (720×900,
  * 960×1080) and on the third-screen window of the Claude pane (480×900). A run never reuses a
  * server: the engine and the editor of a run are the ones its server was started with.
  *
@@ -37,6 +38,17 @@ const SERVE = [
 ].join(" && ");
 
 const CHROMIUM_FLAGS = ["--font-render-hinting=none", "--force-color-profile=srgb"];
+
+/** The window of each project: desktop, the two half screens and the third of the Claude pane. */
+const WINDOWS = {
+  "chromium-desktop": { width: 1440, height: 900 },
+  "chromium-half": { width: 720, height: 900 },
+  "chromium-third": { width: 480, height: 900 },
+  "chromium-half-wide": { width: 960, height: 1080 }
+};
+
+/** The project names, in run order. `scripts/run.ts` runs each one with its own server. */
+export const EDITOR_E2E_PROJECTS = Object.keys(WINDOWS);
 
 export default defineConfig({
   testDir: ".",
@@ -72,44 +84,15 @@ export default defineConfig({
     trace: "on-first-retry",
     video: "retain-on-failure"
   },
-  projects: [
-    {
-      name: "chromium-desktop",
-      use: {
-        ...devices["Desktop Chrome"],
-        viewport: { width: 1440, height: 900 },
-        deviceScaleFactor: 1,
-        launchOptions: { args: CHROMIUM_FLAGS }
-      }
-    },
-    {
-      name: "chromium-half",
-      use: {
-        ...devices["Desktop Chrome"],
-        viewport: { width: 720, height: 900 },
-        deviceScaleFactor: 1,
-        launchOptions: { args: CHROMIUM_FLAGS }
-      }
-    },
-    {
-      name: "chromium-third",
-      use: {
-        ...devices["Desktop Chrome"],
-        viewport: { width: 480, height: 900 },
-        deviceScaleFactor: 1,
-        launchOptions: { args: CHROMIUM_FLAGS }
-      }
-    },
-    {
-      name: "chromium-half-wide",
-      use: {
-        ...devices["Desktop Chrome"],
-        viewport: { width: 960, height: 1080 },
-        deviceScaleFactor: 1,
-        launchOptions: { args: CHROMIUM_FLAGS }
-      }
+  projects: Object.entries(WINDOWS).map(([name, viewport]) => ({
+    name,
+    use: {
+      ...devices["Desktop Chrome"],
+      viewport,
+      deviceScaleFactor: 1,
+      launchOptions: { args: CHROMIUM_FLAGS }
     }
-  ],
+  })),
   webServer: process.env.PW_EXTERNAL_SERVER
     ? []
     : {
