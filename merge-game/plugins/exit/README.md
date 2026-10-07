@@ -1,18 +1,13 @@
 # exit
 
-Answers the `exit` effect: a node asks with `fx({ kind: "exit" })`, and the plugin calls the `exit`
-the app passed. The Leave popup uses it. A node has no platform in its context, so the one line
+Answers the `exit` effect: a node asks with `fx({ kind: "exit" })`, and the plugin calls
+`platform.exit()`. The Leave popup uses it. A node has no platform in its context, so the one line
 that leaves lives here.
 
 ## Config
 
-| Key | Type | Default | What |
-|---|---|---|---|
-| `exit` | `() => void` | does nothing | Leaves the app. The web page and the native app pass the provider's `exit()`. |
-
-```ts
-pluginConfigs: { exit: { exit: () => platform.exit() } }
-```
+None. The platform provider comes from the shell: the native app leaves, the web page and iOS do
+nothing.
 
 ## Effects and events
 

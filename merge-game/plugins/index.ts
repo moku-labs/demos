@@ -11,7 +11,6 @@ export { localePlugin } from "./locale";
 export { uiSoundsPlugin } from "./ui-sounds";
 
 // ─── Types ───────────────────────────────────────────
-export type { ExitConfig } from "./exit";
 export type { LoadingConfig, RetryTrigger } from "./loading";
 export type { LocalePayload } from "./locale";
 export type { UiSoundsConfig } from "./ui-sounds";
