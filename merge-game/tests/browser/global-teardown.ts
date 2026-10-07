@@ -26,12 +26,11 @@ const PROVOKED = path.join(DIST, "server-log-provoked.json");
 const ERROR_LINE = /\b(error|exception|unhandled|panic|warn(ing)?|fail(ed|ure)?)\b|✗/i;
 
 /**
- * A stack frame line. It is judged by the message above it: a frame of a game file such as
- * `features/splash/flow/load-failed.ts` holds "failed" in its path, not an error.
+ * A source path in a log line, with its line and column. A game file such as
+ * `features/splash/flow/load-failed.ts` holds "failed" in its name, so a line is judged without
+ * its paths: Bun's `Reloaded in 2544ms: features/splash/flow/load-failed.ts` is no error.
  */
-// biome-ignore lint/suspicious/noControlCharactersInRegex: Bun colours the frames of its log
-// eslint-disable-next-line no-control-regex -- Bun colours the frames of its log
-const STACK_FRAME = /^(?:\s|\u001B\[[\d;]*m)*at\s/;
+const SOURCE_PATH = /\S+\.(?:[cm]?[jt]sx?|json|css|html)\b(?::\d+)*/g;
 
 /** One provoked window: a byte range of a log. */
 type Window = { readonly log: string; readonly from: number; readonly to: number };
@@ -79,7 +78,7 @@ function badLines(text: string, windows: readonly Window[]): string[] {
   for (const line of text.split("\n")) {
     const start = offset;
     offset += Buffer.byteLength(line, "utf8") + 1;
-    if (STACK_FRAME.test(line) || !ERROR_LINE.test(line)) continue;
+    if (!ERROR_LINE.test(line.replaceAll(SOURCE_PATH, ""))) continue;
     const isProvoked = windows.some(window => start >= window.from && start < window.to);
     if (!isProvoked || line.includes("[moku-editor]")) bad.push(line);
   }
