@@ -30,6 +30,7 @@ const ERROR_LINE = /\b(error|exception|unhandled|panic|warn(ing)?|fail(ed|ure)?)
  * `features/splash/flow/load-failed.ts` holds "failed" in its path, not an error.
  */
 // biome-ignore lint/suspicious/noControlCharactersInRegex: Bun colours the frames of its log
+// eslint-disable-next-line no-control-regex -- Bun colours the frames of its log
 const STACK_FRAME = /^(?:\s|\u001B\[[\d;]*m)*at\s/;
 
 /** One provoked window: a byte range of a log. */
