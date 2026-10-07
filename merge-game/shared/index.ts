@@ -18,6 +18,7 @@ export { sparkles } from "./effects/sparkles";
 export { starBurst } from "./effects/star-burst";
 export { stars } from "./effects/stars";
 export { popupSound, showPopup } from "./flow/popup";
+export { devLocales } from "./locales";
 export { PopupScreen } from "./layouts/popup-screen";
 export { fullBleed, primaryGlow, safeScreen } from "./styles/styles";
 export { pointerStates, ROUND_SIZE, safeEdges, theme } from "./styles/tokens";

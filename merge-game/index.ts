@@ -6,7 +6,7 @@
  * page `moku-game` writes.
  */
 import { defineGameApp } from "@moku-labs/game/app";
-import { startingPlayer, startingSession } from "@core/state";
+import { startingPlayer, startingSession, volumesOf } from "@core/state";
 import {
   boardFeature,
   energyFeature,
@@ -20,8 +20,8 @@ import {
   splashFeature
 } from "@features";
 import { exitPlugin, loadingPlugin, localePlugin, uiSoundsPlugin } from "@plugins";
-import { sharedFeature } from "@shared";
-import { devLocales, mainFlow, volumesOf } from "./game";
+import { devLocales, sharedFeature } from "@shared";
+import { mainFlow } from "./game";
 
 export default defineGameApp({
   flow: mainFlow,

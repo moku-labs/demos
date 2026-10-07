@@ -1,12 +1,9 @@
 /**
- * @file The root flow of the merge game, and the two readers its plugin configs need: the volumes
- * of the save and the dev locales. `index.ts` composes the game from them. Features come from the
- * `@features` barrel, so `core/` never imports a feature.
+ * @file The root flow of the merge game. `index.ts` composes the game with it. Features come from
+ * the `@features` barrel, so `core/` never imports a feature.
  */
-import type { I18n, Model } from "@moku-labs/game";
 import { slot } from "@moku-labs/game";
 import { defineFlow } from "@core/kit";
-import type { Player } from "@core/state";
 import {
   boardFlow,
   boot,
@@ -69,31 +66,3 @@ export const mainFlow = defineFlow("main", {
     afterOrder: { done: "board" }
   }
 });
-
-/**
- * Reads the volumes the player chose out of the committed save. `audio` calls it on every commit,
- * which is why no node ever touches a gain.
- *
- * @param player - The committed player tree, as plain JSON.
- * @returns The gain of every bus.
- * @example
- * ```ts
- * volumesOf(startingPlayer as unknown as Model.Json); // { master: 1, music: 0.6, sfx: 1 }
- * ```
- */
-export function volumesOf(player: Model.Json): Player["settings"]["audio"] {
-  return (player as unknown as Player).settings.audio;
-}
-
-/**
- * The locales a dev build adds: the pseudo-locale `en-XA` of `--pseudo`, so `ui.lint` measures
- * the longest text and an untranslated literal shows up unaccented. A production build defines
- * `__MOKU_GAME_DEV__` as `false`, the condition folds and the module is never imported.
- *
- * @returns `en-XA` in a dev build, nothing otherwise.
- */
-export function devLocales(): Record<string, I18n.StringsLoader> {
-  if (typeof __MOKU_GAME_DEV__ === "undefined" || !__MOKU_GAME_DEV__) return {};
-
-  return { "en-XA": () => import("@generated/strings.en-XA") };
-}
