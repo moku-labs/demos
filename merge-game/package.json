@@ -21,7 +21,7 @@
     "test": "bun --bun vitest run --project unit --project e2e",
     "test:visual": "bun tests/helpers/visual/run.ts",
     "test:editor": "bun --bun vitest run --project editor",
-    "test:editor:e2e": "bun tests/browser/e2e.ts",
+    "test:editor:e2e": "moku-editor e2e -c tests/browser/playwright.config.ts",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint"
   },

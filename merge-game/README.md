@@ -27,7 +27,7 @@ bun run test:editor:e2e  # the editor Playwright specs (about 20 min, local only
 | `test` | Vitest: the game's unit tests and `tests/e2e/`. Fails on an empty test set. |
 | `test:visual` | `tests/visual/`: headless state checks, pixels on macOS. Serves the page itself. |
 | `test:editor` | `tests/editor/`: the vitest project `editor`. |
-| `test:editor:e2e` | `tests/browser/`: the Playwright specs, one run per project (`tests/browser/e2e.ts`). About 20 min, local only, not in CI. Arguments go to Playwright: `--project chromium-desktop -g pick`. |
+| `test:editor:e2e` | `tests/browser/`: the Playwright specs, one run per project (`moku-editor e2e`). About 20 min, local only, not in CI. Arguments go to Playwright: `--project chromium-desktop -g pick`. |
 | `typecheck` | `tsc --noEmit`. |
 | `keys` | `moku-game keys`: writes `manifest.json`, `generated/assets.ts` and `generated/strings*.ts`. `shared/` is scanned as the layer `ui` (`assets.layers` in `config.ts`), so its keys stay `ui.*`. |
 | `lint` | oxlint with the engine's rules (`@moku-labs/game/lint`): the layout rules (layers, feature doors, test suffixes) and the game rules. |
@@ -91,7 +91,7 @@ the aliases of `tsconfig.json`; inside one feature, by relative path. `bun run l
 Rewrite the visual baselines with `bun run test:visual --update` on a Mac. The editor screenshots
 live in `tests/browser/__screenshots__/`: `bun run test:editor:e2e --update-snapshots`. The specs
 run on the Chromium of `@playwright/test`: `bunx playwright install chromium` once. In CI
-`tests/browser/e2e.ts` installs it.
+`moku-editor e2e` installs it.
 
 ## Native
 

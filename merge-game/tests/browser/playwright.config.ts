@@ -10,8 +10,9 @@
  * edit-loop.browser.ts measures that loop.
  *
  * One worker: the bin hosts one game link, and every test opens its own tools page and game frame
- * on it. `e2e.ts` starts Playwright once per project, so each project gets a fresh bin: Bun
- * 1.3.14's dev server crashes after the hot reloads of all four projects in one process. Chromium runs the suite on desktop (1440×900), on the two half-screen windows (720×900,
+ * on it. `moku-editor e2e` starts Playwright once per project, so each project gets a fresh
+ * bin: Bun 1.3.14's dev server crashes after the hot reloads of all four projects in one process.
+ * Chromium runs the suite on desktop (1440×900), on the two half-screen windows (720×900,
  * 960×1080) and on the third-screen window of the Claude pane (480×900). A run never reuses a
  * server: the engine and the editor of a run are the ones its server was started with.
  *
@@ -46,9 +47,6 @@ const WINDOWS = {
   "chromium-third": { width: 480, height: 900 },
   "chromium-half-wide": { width: 960, height: 1080 }
 };
-
-/** The project names, in run order. `e2e.ts` runs each one with its own server. */
-export const EDITOR_E2E_PROJECTS = Object.keys(WINDOWS);
 
 export default defineConfig({
   testDir: ".",

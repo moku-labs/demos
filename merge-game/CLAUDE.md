@@ -27,7 +27,7 @@ back before a commit. `bun add <url>` over an installed version fails with a Dep
 - `bun run test:editor` — the editor scenarios: the vitest project `editor`
   (`tests/editor/*.editor.ts`).
 - `bun run test:editor:e2e` — the Playwright specs (`tests/browser/`, about 20 min, local only,
-  never in CI), one run per project (`tests/browser/e2e.ts`). Arguments go to Playwright. They
+  never in CI), one run per project (`moku-editor e2e`). Arguments go to Playwright. They
   need the Chromium of `@playwright/test`: `bunx playwright install chromium`.
 - `bun run typecheck` — `tsc --noEmit`.
 - `bun run keys` — `moku-game keys`: the assets and strings into `manifest.json` and `generated/`.
