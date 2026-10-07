@@ -821,12 +821,12 @@ describe("journey-merge: edit a style", () => {
       const size = Number(/\d+/u.exec(lines[at] ?? "")?.[0]);
       const after = await readFile(path.join(root, STYLES_FILE), "utf8");
       expect(after).toBe(lines.with(at, `    size: ${String(size + 1)},`).join("\n"));
-      // The editor names a write "style" by its file name (`styles.ts`, `*.styles.ts`); the text
-      // styles of the shared layer live in `styles/text.ts`, so the write is reported as code.
+      // The editor names a write "style" by its file name (`styles.ts`, `*.styles.ts`) or by its
+      // folder (a `.ts` directly in `styles/`), so `styles/text.ts` is reported as a style.
       expect(server.written).toContainEqual({
         path: STYLES_FILE,
         bytes: expect.any(Number),
-        kind: "code"
+        kind: "style"
       });
 
       // The bookmark went to the old game, the restore to the new one.
