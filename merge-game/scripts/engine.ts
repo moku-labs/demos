@@ -1,11 +1,13 @@
 /**
- * @file What every tool of the demo needs to run against an engine working tree instead of the
+ * @file What vitest and the typecheck need to run against an engine working tree instead of the
  * installed package: where that tree is, and which entries it has. The runner (`scripts/run.ts`)
- * takes the tree from `--engine <path>` and hands it on in `MOKU_ENGINE_SRC`. The vitest config,
- * the Bun preload and the bundler plugin of the dev page read it from there. An editor working
- * tree of `--editor <path>` goes the same way in `MOKU_EDITOR_ROOT`, for the editor scenarios: its
- * built entries replace `@moku-labs/editor`. No path is written down anywhere: with no variable,
- * every tool uses `node_modules` as is.
+ * takes the tree from `--engine <path>` and hands it on in `MOKU_ENGINE_SRC`; the vitest config
+ * reads it from there. The page and the scripts of `moku-game` take the engine's own recipe
+ * instead (`<tree>/scripts/tree/preload.ts` and `bundle.ts`), which works on Bun only: vitest
+ * resolves through Vite, so it keeps the aliases this file lists. An editor working tree of
+ * `--editor <path>` goes the same way in `MOKU_EDITOR_ROOT`, for the editor scenarios: its built
+ * entries replace `@moku-labs/editor`. No path is written down anywhere: with no variable, every
+ * tool uses `node_modules` as is.
  */
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -70,30 +72,6 @@ export function entrySource(root: string, entry: string): string {
 }
 
 /**
- * Maps an import of the engine to its entry name.
- *
- * @param specifier - The import, such as `@moku-labs/game/testing`.
- * @returns The entry name, or `undefined` when the import is not an engine entry.
- */
-export function entryOf(specifier: string): string | undefined {
-  if (specifier === "@moku-labs/game") return "index";
-
-  return specifier.startsWith("@moku-labs/game/")
-    ? specifier.slice("@moku-labs/game/".length)
-    : undefined;
-}
-
-/**
- * Tells whether an import names one of the shared packages or a subpath of one.
- *
- * @param specifier - The import.
- * @returns True for `pixi.js`, `@moku-labs/core`, `@moku-labs/common/cli` and the like.
- */
-export function isShared(specifier: string): boolean {
-  return SHARED_PACKAGES.some(name => specifier === name || specifier.startsWith(`${name}/`));
-}
-
-/**
  * The editor working tree the runner picked, `undefined` for the installed package.
  *
  * @returns The absolute path of the tree, or `undefined`.
@@ -122,17 +100,5 @@ export function editorEntries(root: string): Record<string, string> {
       key === "." ? "@moku-labs/editor" : `@moku-labs/editor/${key.slice(2)}`,
       path.join(root, typeof target === "string" ? target : (target.default ?? ""))
     ])
-  );
-}
-
-/**
- * Tells whether an import names a package the editor tree must share with the demo.
- *
- * @param specifier - The import.
- * @returns True for `preact/hooks`, `@moku-labs/game/inspect`, `pixi.js` and the like.
- */
-export function isEditorShared(specifier: string): boolean {
-  return EDITOR_SHARED_PACKAGES.some(
-    name => specifier === name || specifier.startsWith(`${name}/`)
   );
 }

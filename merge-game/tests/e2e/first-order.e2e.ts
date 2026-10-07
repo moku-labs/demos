@@ -3,11 +3,12 @@
  * played to the end headless.
  */
 import type { Flow } from "@moku-labs/game";
+import { startMoment } from "@moku-labs/game/app";
 import { createHeadless, runRepro } from "@moku-labs/game/testing";
 import { describe, expect, it } from "vitest";
 import { startingPlayer, startingSession } from "../../core/state";
 import { generatorId, tables } from "../../core/tables";
-import { createGame, startMoment } from "../../game";
+import mergeGame from "../../index";
 
 /** Yields the microtask queue to the loop, the way a test waits without a timer. */
 const tick = async (times = 60): Promise<void> => {
@@ -63,7 +64,7 @@ const edgesOf = (entries: readonly { path: string; outcome: string }[]): string[
 
 describe("template-merge", () => {
   it("treats the reward popup, a rest node entered through a slot, as a rest point", async () => {
-    const { app, provider } = createGame();
+    const { app, provider } = mergeGame.headless();
     const game = await createHeadless(app);
 
     await game.walk([pastSplash, play]);
@@ -85,7 +86,7 @@ describe("template-merge", () => {
   });
 
   it("restores a bookmark taken on the reward popup back onto the popup", async () => {
-    const { app } = createGame();
+    const { app } = mergeGame.headless();
     const game = await createHeadless(app);
 
     await game.walk(untilOrder);
@@ -103,7 +104,7 @@ describe("template-merge", () => {
   });
 
   it("plays a whole session from home through the board to the reward popup", async () => {
-    const { app } = createGame();
+    const { app } = mergeGame.headless();
     const game = await createHeadless(app);
 
     // The splash is the first rest node; `home` is the checkpoint behind it.
@@ -162,7 +163,7 @@ describe("template-merge", () => {
   });
 
   it("keeps the state and the game after an illegal merge", async () => {
-    const { app } = createGame();
+    const { app } = mergeGame.headless();
     const game = await createHeadless(app);
 
     await game.walk([pastSplash, play, tap, tap]);
@@ -187,7 +188,7 @@ describe("template-merge", () => {
   });
 
   it("delivers the generator's own due moment to the resting board", async () => {
-    const { app, clock } = createGame();
+    const { app, clock } = mergeGame.headless();
     const game = await createHeadless(app);
 
     await game.walk([pastSplash, play, tap, tap, tap, tap]);
@@ -213,7 +214,7 @@ describe("template-merge", () => {
   });
 
   it("gives the same player state and the same journal for one route played twice", async () => {
-    const first = createGame({ seed: 7 });
+    const first = mergeGame.headless({ seed: 7 });
     const firstGame = await createHeadless(first.app);
 
     await firstGame.walk(untilOrder);
@@ -223,7 +224,7 @@ describe("template-merge", () => {
 
     await firstGame.stop();
 
-    const second = createGame({ seed: 7 });
+    const second = mergeGame.headless({ seed: 7 });
     const secondGame = await createHeadless(second.app);
 
     await secondGame.walk(untilOrder);
@@ -235,7 +236,7 @@ describe("template-merge", () => {
   });
 
   it("starts the next app from the save the first one wrote", async () => {
-    const first = createGame();
+    const first = mergeGame.headless();
     const firstGame = await createHeadless(first.app);
 
     await firstGame.walk([...untilOrder, claim]);
@@ -251,7 +252,7 @@ describe("template-merge", () => {
     expect(methods.at(-1)).toBe("flush");
 
     // The same provider instance: the second app reads exactly what the first one wrote into it.
-    const second = createGame({ provider: first.provider });
+    const second = mergeGame.headless({ provider: first.provider });
     const secondGame = await createHeadless(second.app);
 
     // A new run boots again and waits on the splash, with the save the first run wrote.
@@ -262,7 +263,7 @@ describe("template-merge", () => {
   });
 
   it("replays a repro from the home checkpoint", async () => {
-    const { app } = createGame();
+    const { app } = mergeGame.headless();
 
     const result = await runRepro(app, {
       player: startingPlayer,

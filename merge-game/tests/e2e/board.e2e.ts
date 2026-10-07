@@ -8,12 +8,12 @@
  */
 import type { Ui } from "@moku-labs/game";
 import { Glow, Order, Parent, Shape, Sprite, Text, Transform } from "@moku-labs/game";
+import { startMoment } from "@moku-labs/game/app";
 import { describe, expect, it } from "vitest";
 import type { Player } from "../../core/state";
 import { generatorId } from "../../core/tables";
 import { cellBox, cellSize, itemSize, slot } from "../../features/board/world/layout/grid";
 import { readyCardGlow } from "../../features/orders/styles/styles";
-import { startMoment } from "../../game";
 import type { Game } from "../helpers/game";
 import { elementOf, frames, nodeOf, player, startOnBoard, tap, until } from "../helpers/game";
 

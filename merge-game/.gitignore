@@ -4,9 +4,13 @@ coverage
 *.tsbuildinfo
 .DS_Store
 
-# Written by scripts/run.ts for a local --engine <path> run (tsconfig with the tree's paths).
+# Written by moku-game (the dev page, the Tauri project), by scripts/run.ts for a local
+# --engine <path> typecheck, and by the editor e2e (the copy of the game).
 .moku
 
 # The pictures a pixel difference leaves beside its baseline.
 tests/visual/**/*.actual.webp
 tests/visual/**/*.diff.webp
+
+# The native apps of `bun run native build <target>`.
+dist-native

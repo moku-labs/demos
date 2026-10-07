@@ -51,7 +51,7 @@ type TimberHelpers = {
   until(game: { readonly app: MergeApp }, done: () => boolean): Promise<void>;
 };
 
-/** The screen variant of the fixture: `createScreenGame` with a manifest and an asset io. */
+/** The screen variant of the fixture: `game.screen` with a manifest and an asset io. */
 type ScreenFactory = (options: { manifest: unknown; io: typeof DISK_IO }) => { app: MergeApp };
 
 /** The game's asset io over the fixture files: bundles load for real, textures are stand-ins. */
@@ -76,7 +76,7 @@ async function loadTimberHelpers(): Promise<TimberHelpers> {
 /**
  * True when the fixture's app (typed as the registry's `GameLike`) has what the helpers use.
  *
- * @param app - The app `createGame()` made.
+ * @param app - The app `game.headless()` made.
  * @returns Whether it has a log and `flow.run`.
  */
 function isMergeApp(app: Registry.GameLike): app is MergeApp {
@@ -105,14 +105,14 @@ function mergeGameOf(app: MergeApp): MergeGame {
 }
 
 /**
- * The headless merge game: `loadMergeGame()`, `createGame()`, `createHeadless(app)`. It rests at
+ * The headless merge game: `loadMergeGame()`, `game.headless()`, `createHeadless(app)`. It rests at
  * `splash`; a test answers `game.answer { intent: "loaded" }` through the agent to reach `home`.
  *
  * @returns The started game.
  */
 async function startHeadless(): Promise<MergeGame> {
-  const { createGame } = await loadMergeGame();
-  const { app } = createGame();
+  const fixture = await loadMergeGame();
+  const { app } = fixture.headless();
   if (!isMergeApp(app)) throw new Error("the merge game app has no log or no flow.run");
   const game = mergeGameOf(app);
   const headless = await withoutPage(() => createHeadless(app));
@@ -120,15 +120,15 @@ async function startHeadless(): Promise<MergeGame> {
 }
 
 /**
- * The screen game with its assets on disk: `createScreenGame({ manifest, io: DISK_IO })`, started
+ * The screen game with its assets on disk: `game.screen({ manifest, io: DISK_IO })`, started
  * and stepped until its graph rests (render-view-game.test.ts does the same).
  *
  * @returns The started game.
  */
 async function startScreen(): Promise<MergeGame> {
   const fixture = await loadMergeGame();
-  // The fixture types createScreenGame by its seed only; at run time it takes manifest and io.
-  const create = fixture.createScreenGame as unknown as ScreenFactory;
+  // The fixture types screen by its seed only; at run time it takes manifest and io.
+  const create = fixture.screen as unknown as ScreenFactory;
   const manifest: unknown = JSON.parse(
     readFileSync(path.join(MERGE_GAME_DIR, "manifest.json"), "utf8")
   );
@@ -144,9 +144,9 @@ async function startScreen(): Promise<MergeGame> {
 
 /**
  * Starts the merge game:
- * - default: headless (`loadMergeGame`, `createGame`, `createHeadless`), at `splash`;
+ * - default: headless (`loadMergeGame`, `game.headless`, `createHeadless`), at `splash`;
  * - `board`: the demo's `startOnBoard(player)`, at `board/awaitIntent`;
- * - `screen`: `createScreenGame({ manifest, io: DISK_IO })`, at its first rest node;
+ * - `screen`: `game.screen({ manifest, io: DISK_IO })`, at its first rest node;
  * - `screen` + `board`: the screen game walked onto `board/awaitIntent` with a tap on Play.
  * The page is hidden while the game starts, so its renderer is inert and frames move only
  * through `frames(n)`.

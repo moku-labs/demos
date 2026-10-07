@@ -8,8 +8,8 @@ import { loadMergeGame } from "./helpers/merge-game";
 
 describe("merge-graph fixture", () => {
   it("equals flow.describe() of the merge game", async () => {
-    const { createGame } = await loadMergeGame();
-    const { app } = createGame();
+    const { headless } = await loadMergeGame();
+    const { app } = headless();
     const game = app as unknown as { start(): Promise<void>; flow: { describe(): unknown } };
     await game.start();
     const fixture: unknown = JSON.parse(

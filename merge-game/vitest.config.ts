@@ -54,7 +54,6 @@ export default defineConfig({
         test: {
           name: "unit",
           include: [
-            "__tests__/**/*.test.{ts,tsx}",
             "shared/**/__tests__/**/*.test.{ts,tsx}",
             "features/**/__tests__/**/*.test.{ts,tsx}",
             "plugins/**/__tests__/**/*.test.{ts,tsx}"

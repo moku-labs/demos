@@ -21,7 +21,8 @@
     "keys": "bun scripts/run.ts keys",
     "lint": "bun scripts/run.ts lint",
     "pack": "bun scripts/run.ts pack",
-    "build": "bun scripts/run.ts build"
+    "build": "bun scripts/run.ts build",
+    "native": "bun scripts/run.ts native"
   },
   "dependencies": {
     "@moku-labs/common": "0.3.4",

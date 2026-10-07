@@ -18,11 +18,11 @@ import {
   Sprite,
   Transform
 } from "@moku-labs/game";
+import { startMoment } from "@moku-labs/game/app";
 import { describe, expect, it } from "vitest";
 import type { Player } from "../../core/state";
 import { generatorId } from "../../core/tables";
 import { cellBox } from "../../features/board/world/layout/grid";
-import { startMoment } from "../../game";
 import type { Game } from "../helpers/game";
 import {
   elementOf,

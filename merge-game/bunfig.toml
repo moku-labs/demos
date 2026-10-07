@@ -1,8 +1,0 @@
-# Does nothing unless the runner sets MOKU_ENGINE_SRC (`--engine <path>`).
-preload = ["./scripts/engine-src.ts"]
-
-[install]
-exact = true
-
-[serve.static]
-plugins = ["@moku-labs/game/hot", "./scripts/engine-bundle.ts"]

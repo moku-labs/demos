@@ -8,9 +8,13 @@
  * - nothing: what package.json pins.
  * - a version (`0.8.0`) or a pkg.pr.new URL: installed for this run. Locally package.json and
  *   bun.lock are put back afterwards; in CI (`CI=true`) they stay.
- * - a path to a working tree: the engine runs from its `src/` (vitest alias, Bun preload, dev page
- *   plugin and a generated tsconfig under `.moku/`); the editor runs its built bin from there, and
- *   the editor scenarios import its built entries (vitest alias, dev page plugin).
+ * - a path to a working tree: the engine runs from its `src/` (vitest alias, a generated tsconfig
+ *   under `.moku/`, and the engine's recipe `scripts/tree/preload.ts` and `scripts/tree/bundle.ts`
+ *   for `moku-game` and the editor bin); the editor runs its built bin from there, and the editor
+ *   scenarios import its built entries (vitest alias, the editor's `scripts/tree/bundle.ts`).
+ *
+ * `dev`, `build`, `keys`, `pack` and `native` run the engine bin `moku-game`, which reads
+ * `config.ts` and `index.ts`: `bun run native build ios --simulator`.
  *
  * `MOKU_ENGINE` and `MOKU_EDITOR` give the same inputs when the flags are left out. The rest of
  * the arguments go to the command: `bun run test:visual --no-pixels`, `bun run dev --port 0`.
@@ -50,8 +54,15 @@ const COMMANDS = [
   "keys",
   "lint",
   "pack",
-  "build"
+  "build",
+  "native"
 ];
+
+/** The engine bin, from the demo's node_modules: the pin or the package of `--engine <x>`. */
+const GAME_BIN = path.join("node_modules", "@moku-labs", "game", "bin", "moku-game.mjs");
+
+/** The `moku-game` commands that bundle the page, and so take `--serve-plugin`. */
+const PAGE_COMMANDS: readonly string[] = ["dev", "build", "native"];
 
 /** The Playwright config of the editor e2e specs of `test:editor`. */
 const EDITOR_E2E_CONFIG = "tests/browser/playwright.config.ts";
@@ -236,10 +247,80 @@ function engineEnv(engine: Source): Record<string, string> {
   if (!existsSync(entrySource(engine.root, "index"))) {
     throw new Error(`${engine.root} is not an engine working tree: it has no src/index.ts.`);
   }
+  if (!existsSync(treePreload(engine.root))) {
+    throw new Error(
+      `the engine at ${engine.root} has no scripts/tree/preload.ts. Use an engine of 0.10.0 or later.`
+    );
+  }
 
   ui.info(`engine from the working tree ${engine.root}`);
 
   return { [ENGINE_SRC_ENV]: engine.root };
+}
+
+/**
+ * The Bun preload of the engine's recipe for a working tree: every installed engine entry loads
+ * the tree's source.
+ *
+ * @param root - The engine working tree.
+ * @returns The absolute path of `scripts/tree/preload.ts`.
+ */
+function treePreload(root: string): string {
+  return path.join(root, "scripts", "tree", "preload.ts");
+}
+
+/**
+ * The bundler plugin of a working tree's recipe: the page bundles the tree's entries.
+ *
+ * @param root - The engine or editor working tree.
+ * @returns The absolute path of `scripts/tree/bundle.ts`.
+ */
+function treeBundle(root: string): string {
+  return path.join(root, "scripts", "tree", "bundle.ts");
+}
+
+/**
+ * The flags a page-serving bin gets for the working trees of this run: the engine's preload and
+ * bundler plugin, and the editor's bundler plugin. None for installed packages.
+ *
+ * @param invocation - The command line, read.
+ * @param page - Whether the command bundles a page, and so takes `--serve-plugin`.
+ * @returns The flags.
+ */
+function treeFlags(invocation: Invocation, page: boolean): string[] {
+  const { engine, editor } = invocation;
+  const flags: string[] = [];
+
+  if (engine.kind === "path") {
+    flags.push("--preload", treePreload(engine.root));
+    if (page) flags.push("--serve-plugin", treeBundle(engine.root));
+  }
+  if (page && editor.kind === "path" && invocation.command === "editor") {
+    flags.push("--serve-plugin", treeBundle(editor.root));
+  }
+
+  return flags;
+}
+
+/**
+ * Runs one command of the engine bin `moku-game` in the demo folder. On an engine working tree
+ * the bin itself runs under the tree's preload, so its CLI is the tree's source too.
+ *
+ * @param invocation - The command line, read.
+ * @param args - The command and its arguments, such as `["dev", "--port", "0"]`.
+ * @param env - The engine variables of this run.
+ * @returns The exit code.
+ */
+function runGameBin(
+  invocation: Invocation,
+  args: readonly string[],
+  env: Record<string, string>
+): Promise<number> {
+  const { engine } = invocation;
+  const preload = engine.kind === "path" ? [`--preload=${treePreload(engine.root)}`] : [];
+  const page = PAGE_COMMANDS.includes(invocation.command);
+
+  return exec("bun", [...preload, GAME_BIN, ...args, ...treeFlags(invocation, page)], env);
 }
 
 /**
@@ -357,22 +438,15 @@ async function runEditorScenarios(
  * @param invocation - The command line, read.
  * @returns The exit code.
  */
-async function runCommand(invocation: Invocation): Promise<number> {
+function runCommand(invocation: Invocation): Promise<number> {
   const env = engineEnv(invocation.engine);
   const { rest } = invocation;
-  const assets = "node_modules/@moku-labs/game/bin/moku-game-assets.mjs";
-  // The shared layer is scanned like a feature named `ui`, so `shared/assets/*` keeps its `ui.*` keys.
-  const scan = ["--root", ".", "--keys", "generated/assets.ts", "--layer", "shared=ui"];
-  const keys = [...scan, "--manifest", "manifest.json", "--pseudo"];
-  const pack = [...scan, "--pack", "dist/assets"];
 
   switch (invocation.command) {
-    case "dev":
-      return exec("bun", ["web/serve.ts", ...rest], env);
     case "editor":
       return exec(
         "bun",
-        [editorBin(invocation.editor), "web/index.html", "--root", ".", ...rest],
+        [editorBin(invocation.editor), "--root", ".", ...treeFlags(invocation, true), ...rest],
         env
       );
     case "test":
@@ -393,15 +467,9 @@ async function runCommand(invocation: Invocation): Promise<number> {
     }
     case "lint":
       return exec("bun", ["x", "oxlint", ...rest], env);
-    case "keys":
-      return exec("bun", [assets, ...keys, ...rest], env);
-    case "pack":
-      return exec("bun", [assets, ...pack, ...rest], env);
-    default: {
-      const packed = await exec("bun", [assets, ...pack], env);
-
-      return packed === 0 ? exec("bun", ["web/build.ts", ...rest], env) : packed;
-    }
+    default:
+      // dev, build, keys, pack, native: the engine bin reads config.ts and index.ts.
+      return runGameBin(invocation, [invocation.command, ...rest], env);
   }
 }
 

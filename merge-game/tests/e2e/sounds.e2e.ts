@@ -6,7 +6,16 @@
  * board.
  */
 import type { Assets, Flow } from "@moku-labs/game";
-import { audioPlugin, createApp, LocalWrite, Tappable, Touchable } from "@moku-labs/game";
+import {
+  createApp,
+  effectsPlugin,
+  LocalWrite,
+  platformPlugin,
+  screen,
+  Tappable,
+  Touchable
+} from "@moku-labs/game";
+import { startMoment } from "@moku-labs/game/app";
 import { fakeClock, memory } from "@moku-labs/game/testing";
 import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
@@ -16,8 +25,23 @@ import { generatorId } from "../../core/tables";
 import { boardScene } from "../../features/board/screens/scene";
 import { homeScene } from "../../features/home/screens/scene";
 import { splashScene } from "../../features/splash/screens/scene";
-import { mainFlow, screenPlugins, startMoment } from "../../game";
+import {
+  boardFeature,
+  energyFeature,
+  giftFeature,
+  homeFeature,
+  hudFeature,
+  leaveFeature,
+  ordersFeature,
+  rewardFeature,
+  settingsFeature,
+  splashFeature
+} from "../../features";
+import { mainFlow } from "../../game";
+import mergeGame from "../../index";
+import { exitPlugin, loadingPlugin, localePlugin } from "../../plugins";
 import { isControl, uiSoundsPlugin } from "../../plugins/ui-sounds";
+import { sharedFeature } from "../../shared";
 import { booted, folderIo, player, withItems } from "../helpers/game";
 
 /** Yields the microtask queue to the loop, the way a test waits without a timer. */
@@ -37,6 +61,31 @@ async function readManifest(): Promise<Assets.Manifest> {
 }
 
 /**
+ * The plugins of `game.screen()` without `audio`, in its order: the screen set, `effects`,
+ * `platform`, the shared layer, the features and the four plugins of the game.
+ */
+const quietPlugins = [
+  ...screen,
+  effectsPlugin,
+  platformPlugin,
+  sharedFeature,
+  rewardFeature,
+  splashFeature,
+  homeFeature,
+  boardFeature,
+  hudFeature,
+  ordersFeature,
+  settingsFeature,
+  energyFeature,
+  giftFeature,
+  leaveFeature,
+  localePlugin,
+  exitPlugin,
+  loadingPlugin,
+  uiSoundsPlugin
+];
+
+/**
  * Creates the game with its screen and without `audio`, over the files on disk, so the fonts of
  * the `ui` bundle are real.
  *
@@ -46,7 +95,7 @@ async function readManifest(): Promise<Assets.Manifest> {
  */
 function createQuietApp(start: Player, manifest: Assets.Manifest) {
   return createApp({
-    plugins: screenPlugins.filter(plugin => plugin !== audioPlugin),
+    plugins: quietPlugins,
     config: { referenceLong: 2100 },
     pluginConfigs: {
       model: {
@@ -275,6 +324,6 @@ describe("timber-sounds — the music and the composition", () => {
   });
 
   it("composes the click plugin with the screen", () => {
-    expect(screenPlugins).toContain(uiSoundsPlugin);
+    expect(mergeGame.screen().app.has(uiSoundsPlugin.name)).toBe(true);
   });
 });
