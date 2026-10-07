@@ -13,7 +13,7 @@ key drops the tag.
 - Originals: 1024 px PNGs (1024 × 1536 for the backgrounds) with a manifest per group:
   `sprites/manifest.json`, `ui/manifest.json` and `backgrounds/manifest.json` of the design
   capture `merge-game-showcase`. The prompt of each file below is copied from those manifests.
-- Effects art of V5 (`ui.fx.fx-star`, `ui.fx.fx-puff`, `ui.fx.coin-spin.0` to `ui.fx.coin-spin.6`): drawn
+- Effects art of V5 (`ui.fx.star`, `ui.fx.puff`, `ui.fx.coin-spin.0` to `ui.fx.coin-spin.6`): drawn
   by Astra on 2026-10-03 as the group `v5-fx` (1024 px PNGs with `manifest.json`), converted to
   WebP with ImageMagick the same day. The prompts below are copied from that manifest.
 
@@ -232,33 +232,33 @@ Subject: A speaker with exactly two sound waves, drawn as two clear curved arcs 
 
   > Use case: illustration-story. Create one 1024x1024 PNG sprite with a genuinely transparent background for the cozy casual mobile merge game "Timber Town", set in a forest lumber village. STYLE: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked line; flat cel colours with soft watercolor-like shading and gentle top-left light; a single small white highlight on rounded forms; subtle paper/wood grain texture within the object. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions and a strong readable silhouette at 64 px. Object centered with approximately 8% transparent margin. No text, letters, numbers, watermark, external drop shadow, ground plane, backdrop, or extra objects. Subject: one wooden clothespin, vertical.
 
-### `ui.fx.fx-sparkle`
+### `ui.fx.sparkle`
 
-- File: `shared/assets/fx/fx-sparkle.webp`, 85 × 96 px.
+- File: `shared/assets/fx/sparkle.webp`, 85 × 96 px.
 - Original: `sprites/fx-sparkle.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Style: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked lines; flat cel colours with soft watercolor-like shading, gentle top-left light, a single small white highlight on rounded forms, subtle paper/wood grain texture. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions, strong readable silhouette at 64 px. No text, letters, numbers, watermark, drop shadow outside the object, or ground plane. Center the object with approximately 8% fully transparent margin. Background must be genuine PNG alpha transparency, not a checkerboard drawing. Subject: exactly one four-point cartoon sparkle star, pale gold. Four tapered points at top, right, bottom and left, gently concave edges, a warm pale-gold fill and one small white highlight. No extra sparkles or objects.
 
-### `ui.fx.fx-leaf`
+### `ui.fx.leaf`
 
-- File: `shared/assets/fx/fx-leaf.webp`, 58 × 64 px.
+- File: `shared/assets/fx/leaf.webp`, 58 × 64 px.
 - Original: `sprites/fx-leaf.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Style: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked lines; flat cel colours with soft watercolor-like shading, gentle top-left light, a single small white highlight on rounded forms, subtle paper/wood grain texture. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions, strong readable silhouette at 64 px. No text, letters, numbers, watermark, drop shadow outside the object, or ground plane. Center the object with approximately 8% fully transparent margin. Background must be genuine PNG alpha transparency, not a checkerboard drawing. Subject: exactly one single small green leaf particle. Simple chunky oval leaf with a pointed tip, short stem, one central vein and minimal side veins, moss green #8ab84e with #557f2d shading. Diagonal orientation, friendly curved silhouette. No other leaves or objects.
 
-### `ui.fx.fx-rays`
+### `ui.fx.rays`
 
-- File: `shared/assets/fx/fx-rays.webp`, 504 × 512 px.
+- File: `shared/assets/fx/rays.webp`, 504 × 512 px.
 - Original: `sprites/fx-rays.png`, 1024 × 1024 px.
 - Prompt:
 
   > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Style: hand-drawn storybook cartoon; confident dark-brown ink outlines (#3a2212), 5-7 px at 1024 px, slightly wobbly hand-inked lines; flat cel colours with soft watercolor-like shading, gentle top-left light, a single small white highlight on rounded forms, subtle paper/wood grain texture. Palette: ink #3a2212, warm wood #d8a062 / light #efcd94 / dark #9c6031 / walnut #6e4121, honey gold #f2b43d / #c7841c, moss green #8ab84e / #557f2d, pine #2f5a3b, berry red #c93b4d / #8f2334, parchment #fbeed2, sky pale blue #cfe6ee. Chunky, friendly, toy-like proportions, strong readable silhouette at 64 px. No text, letters, numbers, watermark, drop shadow outside the object, or ground plane. Center the object with approximately 8% fully transparent margin. Background must be genuine PNG alpha transparency, not a checkerboard drawing. Subject: a soft pale-gold sunburst of exactly 12 evenly spaced rays radiating from the center, for placement behind a reward item. Show the effect only, without a reward item or sun face or solid central disc. Twelve broad, gently hand-shaped rays in pale honey gold and parchment tones, watercolor-soft with opacity fading smoothly to fully transparent toward their tips. Keep the rays soft: any ink treatment is very faint and also fades with the rays. Transparent gaps between rays; exactly 12 rays, no additional streaks, stars, or particles.
 
-### `ui.fx.fx-star`
+### `ui.fx.star`
 
-- File: `shared/assets/fx/fx-star.webp`, 96 × 93 px: the star of the merge and delivery bursts
+- File: `shared/assets/fx/star.webp`, 96 × 93 px: the star of the merge and delivery bursts
   (`fx.stars`).
 - Original: `v5-fx/fx-star.png`, 1024 × 1024 px, drawn by Astra (gpt-6-astra, codex backend) on
   2026-10-03. Alpha under 8 % cleared, trimmed, scaled to 96 px.
@@ -266,9 +266,9 @@ Subject: A speaker with exactly two sound waves, drawn as two clear curved arcs 
 
   > Use case: illustration-story. Create one 1024x1024 transparent PNG game sprite for Timber Town, a cozy casual mobile merge game set in a forest lumber village. Hand-drawn storybook cartoon, slightly wobbly confident dark-brown ink outlines (#3a2212), flat cel colours with soft watercolor-like shading, gentle top-left light and a single small white highlight on rounded forms. Palette: ink #3a2212, warm wood #d8a062 / #efcd94 / #9c6031, honey gold #f2b43d / #c7841c, moss green #8ab84e, parchment #fbeed2, pale sky blue #cfe6ee. Genuine transparent alpha background, not a checkerboard drawing. One centered isolated object with about 8% transparent margin. No text, watermark, drop shadow, ground plane or extra objects. Subject: one small chunky five-point honey-gold star particle for a reward burst, bright, with a thin dark-brown ink outline and one small white highlight. Upright upper point, rounded chunky tips, no face. Fill approximately 84% of the canvas width and height.
 
-### `ui.fx.fx-puff`
+### `ui.fx.puff`
 
-- File: `shared/assets/fx/fx-puff.webp`, 128 × 118 px: the steam puff over the sawmill chimney
+- File: `shared/assets/fx/puff.webp`, 128 × 118 px: the steam puff over the sawmill chimney
   (`fx.steam`).
 - Original: `v5-fx/fx-puff.png`, 1024 × 1024 px, drawn by Astra (gpt-6-astra, codex backend) on
   2026-10-03. Alpha under 8 % cleared, trimmed, scaled to 128 px.

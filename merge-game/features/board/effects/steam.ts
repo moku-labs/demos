@@ -11,7 +11,7 @@ import { generatorsOf } from "../world/projections/generators";
  * the puffs move with the board; warmed up, so the chimney smokes from the first frame.
  */
 export const steam = defineEmitter("fx.steam", {
-  textures: ["ui.fx.fx-puff"],
+  textures: ["ui.fx.puff"],
   rate: 5,
   lifeMs: [1400, 2000],
   speed: [35, 65],
