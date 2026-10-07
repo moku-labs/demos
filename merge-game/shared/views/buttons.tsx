@@ -293,6 +293,7 @@ function roundStylesOf(size: number) {
 }
 
 /** The styles of every round size a screen asked for, built once per size. */
+// eslint-disable-next-line moku-game/no-module-state -- a cache of pure styles; the same object for a size keeps the reconciler from re-applying the style on every render
 const roundStyles = new Map<number, ReturnType<typeof roundStylesOf>>();
 
 /**

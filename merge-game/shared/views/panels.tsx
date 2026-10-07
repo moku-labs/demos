@@ -95,6 +95,7 @@ function boardStyle(width: number, height: number, top: number, hung: boolean) {
 }
 
 /** Every board style a popup asked for, built once per size. */
+// eslint-disable-next-line moku-game/no-module-state -- a cache of pure styles; the same object for a size keeps the reconciler from re-applying the style on every render
 const boardStyles = new Map<string, ReturnType<typeof boardStyle>>();
 
 /**
@@ -156,6 +157,7 @@ function hungRopeStyle(side: "left" | "right", width: number) {
 }
 
 /** Both ropes of every board width a popup asked for, built once per width. */
+// eslint-disable-next-line moku-game/no-module-state -- a cache of pure styles; the same object for a size keeps the reconciler from re-applying the style on every render
 const ropeStyles = new Map<
   number,
   { left: ReturnType<typeof hungRopeStyle>; right: ReturnType<typeof hungRopeStyle> }
