@@ -28,15 +28,15 @@ export type EnergyView = { value: number; max: number };
 export function HudRow(props: { coins: number; energy: EnergyView }) {
   return (
     <row key="hudRow" style={hudRow}>
-      <RoundButton id="home" intent="leave" icon="ui.icon-home" />
-      <HudPill id="coinPill" icon="ui.icon-coin" coins={props.coins} width="wide" />
+      <RoundButton id="home" intent="leave" icon="ui.icons.home" />
+      <HudPill id="coinPill" icon="ui.icons.coin" coins={props.coins} width="wide" />
       <HudPill
         id="energyPill"
-        icon="ui.icon-energy"
+        icon="ui.icons.energy"
         text={`${props.energy.value}/${props.energy.max}`}
         width="narrow"
       />
-      <RoundButton id="settings" intent="openSettings" icon="ui.icon-gear" />
+      <RoundButton id="settings" intent="openSettings" icon="ui.icons.gear" />
     </row>
   );
 }

@@ -542,7 +542,7 @@ async function textStyleOf(
 }
 
 /**
- * A texture of the same bundle and family (`ui.button-*`) with nine-slice insets, other than the
+ * A texture of the same bundle and family (`ui.buttons.*`) with nine-slice insets, other than the
  * current one, from the game's asset manifest.
  *
  * @param current - The texture of the block.
@@ -552,7 +552,7 @@ async function siblingTexture(current: string): Promise<string> {
   const manifest = JSON.parse(await readGame("manifest.json")) as {
     bundles: Record<string, { files: { key: string; nine?: object }[] }>;
   };
-  const family = current.slice(0, current.lastIndexOf("-") + 1);
+  const family = current.slice(0, current.lastIndexOf(".") + 1);
   const keys = Object.values(manifest.bundles)
     .flatMap(bundle => bundle.files)
     .filter(file => file.nine !== undefined && file.key.startsWith(family) && file.key !== current)

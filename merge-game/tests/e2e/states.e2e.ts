@@ -399,7 +399,7 @@ describe("timber-states — the disabled sawmill (design §6 F11)", () => {
     const sawmill = viewOf(game, "board.generators", generatorId);
     const cell = cellBox("c0_0");
     const badge = game.app.world.projection.entitiesOf("board.clock");
-    const disc = badge.find(entity => ecs.get(entity, Sprite)?.texture === "ui.badge-level") ?? 0;
+    const disc = badge.find(entity => ecs.get(entity, Sprite)?.texture === "ui.icons.badge-level") ?? 0;
 
     expect(ecs.get(sawmill, Sprite)?.tint).toBe(grey);
     expect(badge.length).toBeGreaterThan(1);

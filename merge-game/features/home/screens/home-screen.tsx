@@ -43,8 +43,8 @@ function PlaySign() {
       <button key="play" intent="play" style={playButton} components={[primaryGlow]}>
         <text key="playLabel" style="ui.sign" content={tr("home.play")} />
       </button>
-      <image key="playSprigLeft" texture="ui.decor-sprig" style={playSprigLeft} />
-      <image key="playSprigRight" texture="ui.decor-sprig" style={playSprigRight} />
+      <image key="playSprigLeft" texture="ui.decor.sprig" style={playSprigLeft} />
+      <image key="playSprigRight" texture="ui.decor.sprig" style={playSprigRight} />
     </stack>
   );
 }
@@ -72,8 +72,8 @@ export const homeScreen = projection({
       </column>
       <column key="homeTop" style={homeTop}>
         <row key="homeBar" style={homeBar}>
-          <HudPill id="homeCoins" icon="ui.icon-coin" coins={item.coins} width="wide" />
-          <RoundButton id="homeSettings" intent="openSettings" icon="ui.icon-gear" />
+          <HudPill id="homeCoins" icon="ui.icons.coin" coins={item.coins} width="wide" />
+          <RoundButton id="homeSettings" intent="openSettings" icon="ui.icons.gear" />
         </row>
         <column key="giftCorner" style={giftCorner}>
           <stack
@@ -84,7 +84,7 @@ export const homeScreen = projection({
             <RoundButton
               id="gift"
               intent="gift"
-              icon="ui.icon-gift"
+              icon="ui.icons.gift"
               badge={item.giftWaiting ? 1 : undefined}
               size={GIFT_SIZE}
             />

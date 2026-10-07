@@ -5,7 +5,7 @@ import { defineEmitter } from "@core/kit";
 
 /** The pale sparkles of a burst: more of them, quicker and lighter than the stars. */
 export const sparkles = defineEmitter("fx.sparkles", {
-  textures: ["ui.fx-sparkle"],
+  textures: ["ui.fx.fx-sparkle"],
   burst: 18,
   lifeMs: [350, 650],
   speed: [120, 420],

@@ -260,13 +260,13 @@ describe("merge-game effects — the spinning coins", () => {
     expect(coins).toHaveLength(7);
     // Entity ids are reused, so the snapshot lists the coins in no fixed order.
     expect(spins.map(spin => spin?.keys[0]).toSorted()).toEqual([
-      "ui.coin-spin-0",
-      "ui.coin-spin-1",
-      "ui.coin-spin-2",
-      "ui.coin-spin-3",
-      "ui.coin-spin-4",
-      "ui.coin-spin-5",
-      "ui.coin-spin-6"
+      "ui.fx.coin-spin.0",
+      "ui.fx.coin-spin.1",
+      "ui.fx.coin-spin.2",
+      "ui.fx.coin-spin.3",
+      "ui.fx.coin-spin.4",
+      "ui.fx.coin-spin.5",
+      "ui.fx.coin-spin.6"
     ]);
     expect(spins.every(spin => spin?.keys.length === 7 && spin.fps === 16)).toBe(true);
 

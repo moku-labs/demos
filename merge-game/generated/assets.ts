@@ -5,16 +5,16 @@ export type AssetKey =
   | "board.board-tray"
   | "board.cell"
   | "board.generator"
-  | "board.item-wood-1"
-  | "board.item-wood-2"
-  | "board.item-wood-3"
-  | "board.item-wood-4"
-  | "board.merge"
-  | "board.selection-ring-0"
-  | "board.selection-ring-1"
-  | "board.selection-ring-2"
-  | "board.selection-ring-3"
-  | "board.spawn"
+  | "board.items.wood-1"
+  | "board.items.wood-2"
+  | "board.items.wood-3"
+  | "board.items.wood-4"
+  | "board.selection-ring.0"
+  | "board.selection-ring.1"
+  | "board.selection-ring.2"
+  | "board.selection-ring.3"
+  | "board.sounds.merge"
+  | "board.sounds.spawn"
   | "home.home-sawmill-scene"
   | "home.home-yard"
   | "home.sign-post"
@@ -22,63 +22,63 @@ export type AssetKey =
   | "orders.complete"
   | "orders.rope"
   | "splash.bg-splash"
-  | "ui.badge-level"
-  | "ui.bar-fill"
-  | "ui.bar-track"
-  | "ui.button-berry"
-  | "ui.button-disabled"
-  | "ui.button-green"
-  | "ui.button-wood"
-  | "ui.click"
-  | "ui.coin-spin-0"
-  | "ui.coin-spin-1"
-  | "ui.coin-spin-2"
-  | "ui.coin-spin-3"
-  | "ui.coin-spin-4"
-  | "ui.coin-spin-5"
-  | "ui.coin-spin-6"
-  | "ui.coins"
-  | "ui.decor-clothespin"
-  | "ui.decor-sprig"
-  | "ui.font-body"
-  | "ui.font-display"
-  | "ui.fx-leaf"
-  | "ui.fx-puff"
-  | "ui.fx-rays"
-  | "ui.fx-sparkle"
-  | "ui.fx-star"
-  | "ui.header-plank"
-  | "ui.hud-pill"
-  | "ui.icon-check"
-  | "ui.icon-close"
-  | "ui.icon-coin"
-  | "ui.icon-energy"
-  | "ui.icon-gear"
-  | "ui.icon-gift"
-  | "ui.icon-home"
-  | "ui.icon-music"
-  | "ui.icon-sound"
-  | "ui.link-wave"
-  | "ui.panel-parchment"
-  | "ui.panel-signboard"
-  | "ui.popup"
-  | "ui.rope-vertical"
-  | "ui.tab-active"
-  | "ui.tab-idle"
-  | "ui.theme";
+  | "ui.buttons.berry"
+  | "ui.buttons.disabled"
+  | "ui.buttons.green"
+  | "ui.buttons.wood"
+  | "ui.decor.clothespin"
+  | "ui.decor.link-wave"
+  | "ui.decor.rope-vertical"
+  | "ui.decor.sprig"
+  | "ui.fonts.body"
+  | "ui.fonts.display"
+  | "ui.fx.coin-spin.0"
+  | "ui.fx.coin-spin.1"
+  | "ui.fx.coin-spin.2"
+  | "ui.fx.coin-spin.3"
+  | "ui.fx.coin-spin.4"
+  | "ui.fx.coin-spin.5"
+  | "ui.fx.coin-spin.6"
+  | "ui.fx.fx-leaf"
+  | "ui.fx.fx-puff"
+  | "ui.fx.fx-rays"
+  | "ui.fx.fx-sparkle"
+  | "ui.fx.fx-star"
+  | "ui.icons.badge-level"
+  | "ui.icons.check"
+  | "ui.icons.close"
+  | "ui.icons.coin"
+  | "ui.icons.energy"
+  | "ui.icons.gear"
+  | "ui.icons.gift"
+  | "ui.icons.home"
+  | "ui.icons.music"
+  | "ui.icons.sound"
+  | "ui.music.theme"
+  | "ui.panels.bar-fill"
+  | "ui.panels.bar-track"
+  | "ui.panels.header-plank"
+  | "ui.panels.hud-pill"
+  | "ui.panels.parchment"
+  | "ui.panels.signboard"
+  | "ui.panels.tab-active"
+  | "ui.panels.tab-idle"
+  | "ui.sounds.click"
+  | "ui.sounds.coins"
+  | "ui.sounds.popup";
 
 export type FontKey =
-  | "ui.font-body"
-  | "ui.font-display";
+  | "ui.fonts.body"
+  | "ui.fonts.display";
 
 export type AudioKey =
-  | "board.merge"
-  | "board.spawn"
+  | "board.sounds.merge"
+  | "board.sounds.spawn"
   | "orders.complete"
-  | "ui.click"
-  | "ui.coins"
-  | "ui.popup"
-  | "ui.theme";
+  | "ui.music.theme"
+  | "ui.sounds.click"
+  | "ui.sounds.coins"
+  | "ui.sounds.popup";
 
 export type BundleKey =
   | "board"
@@ -91,16 +91,16 @@ export const nineSlice = {
   "board.board-tray": { left: 96, top: 96, right: 96, bottom: 96 },
   "board.cell": { left: 44, top: 52, right: 44, bottom: 52 },
   "orders.card-order": { left: 40, top: 40, right: 40, bottom: 40 },
-  "ui.bar-fill": { left: 24, top: 24, right: 24, bottom: 24 },
-  "ui.bar-track": { left: 32, top: 28, right: 32, bottom: 28 },
-  "ui.button-berry": { left: 32, top: 40, right: 32, bottom: 40 },
-  "ui.button-disabled": { left: 36, top: 40, right: 36, bottom: 40 },
-  "ui.button-green": { left: 36, top: 40, right: 36, bottom: 40 },
-  "ui.button-wood": { left: 36, top: 36, right: 36, bottom: 36 },
-  "ui.header-plank": { left: 52, top: 52, right: 52, bottom: 52 },
-  "ui.hud-pill": { left: 28, top: 30, right: 28, bottom: 30 },
-  "ui.panel-parchment": { left: 48, top: 48, right: 48, bottom: 48 },
-  "ui.panel-signboard": { left: 72, top: 72, right: 72, bottom: 76 },
-  "ui.tab-active": { left: 20, top: 20, right: 20, bottom: 20 },
-  "ui.tab-idle": { left: 24, top: 20, right: 24, bottom: 20 }
+  "ui.buttons.berry": { left: 32, top: 40, right: 32, bottom: 40 },
+  "ui.buttons.disabled": { left: 36, top: 40, right: 36, bottom: 40 },
+  "ui.buttons.green": { left: 36, top: 40, right: 36, bottom: 40 },
+  "ui.buttons.wood": { left: 36, top: 36, right: 36, bottom: 36 },
+  "ui.panels.bar-fill": { left: 24, top: 24, right: 24, bottom: 24 },
+  "ui.panels.bar-track": { left: 32, top: 28, right: 32, bottom: 28 },
+  "ui.panels.header-plank": { left: 52, top: 52, right: 52, bottom: 52 },
+  "ui.panels.hud-pill": { left: 28, top: 30, right: 28, bottom: 30 },
+  "ui.panels.parchment": { left: 48, top: 48, right: 48, bottom: 48 },
+  "ui.panels.signboard": { left: 72, top: 72, right: 72, bottom: 76 },
+  "ui.panels.tab-active": { left: 20, top: 20, right: 20, bottom: 20 },
+  "ui.panels.tab-idle": { left: 24, top: 20, right: 24, bottom: 20 }
 } as const;

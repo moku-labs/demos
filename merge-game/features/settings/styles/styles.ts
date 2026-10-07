@@ -48,7 +48,7 @@ export const tabOpen = defineStyle({
   align: "center",
   justify: "center",
   padding: { bottom: tab.overlap },
-  nineSlice: "ui.tab-active",
+  nineSlice: "ui.panels.tab-active",
   is: tabStates
 });
 
@@ -62,7 +62,7 @@ export const tabIdle = defineStyle({
   margin: { bottom: tab.overlap },
   align: "center",
   justify: "center",
-  nineSlice: "ui.tab-idle",
+  nineSlice: "ui.panels.tab-idle",
   is: tabStates
 });
 
@@ -104,11 +104,11 @@ export const stepStyle = defineStyle({
   height: 120,
   align: "center",
   justify: "center",
-  nineSlice: "ui.button-wood",
+  nineSlice: "ui.buttons.wood",
   is: {
     hover: { offsetY: -4, scale: 1.03 },
     pressed: { offsetY: 6, scale: 0.97 },
-    disabled: { nineSlice: "ui.button-disabled" }
+    disabled: { nineSlice: "ui.buttons.disabled" }
   }
 });
 
@@ -175,7 +175,7 @@ export const barTrack = defineStyle({
   gap: 8,
   height: 90,
   padding: { left: 22, right: 22 },
-  nineSlice: "ui.bar-track"
+  nineSlice: "ui.panels.bar-track"
 });
 
 /** One segment of the bar: a honey capsule when lit, a dark one when not. */

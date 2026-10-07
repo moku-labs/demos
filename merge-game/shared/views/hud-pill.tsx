@@ -48,7 +48,7 @@ function pillStyle(width: number) {
     justify: "center",
     margin: { left: pill.overhang },
     padding: { left: pill.padLeft, right: pill.padRight },
-    nineSlice: "ui.hud-pill"
+    nineSlice: "ui.panels.hud-pill"
   });
 }
 

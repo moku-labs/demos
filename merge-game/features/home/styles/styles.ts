@@ -114,7 +114,7 @@ export const playButton = defineStyle({
   direction: "row",
   align: "center",
   justify: "center",
-  nineSlice: "ui.button-green",
+  nineSlice: "ui.buttons.green",
   is: pointerStates,
   reason: "the plank lies over its two posts"
 });

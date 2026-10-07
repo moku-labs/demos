@@ -1805,7 +1805,7 @@ test.describe("game · element picker", () => {
       "export const playButton = defineStyle({"
     );
     await expect(style.locator("[data-part=code-lines]")).toContainText(
-      'nineSlice: "ui.button-green"'
+      'nineSlice: "ui.buttons.green"'
     );
     await expect(code.locator("[data-action=show-all]")).toHaveCount(0);
 

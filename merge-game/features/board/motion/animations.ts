@@ -28,7 +28,7 @@ const burst = { size: 72, reach: 190, ms: 480 } as const;
 const pieces = Array.from({ length: PIECES }, (_unused, index) => ({
   id: `sparkle${index + 1}`,
   angle: (index / PIECES) * 2 * Math.PI,
-  texture: index % 2 === 0 ? ("ui.fx-sparkle" as const) : ("ui.fx-leaf" as const)
+  texture: index % 2 === 0 ? ("ui.fx.fx-sparkle" as const) : ("ui.fx.fx-leaf" as const)
 }));
 
 /**
@@ -204,7 +204,7 @@ export const toastBoardFull = defineAnimation("board.toastBoardFull", {
       spawn(
         "toastSign",
         [
-          NineSlice({ texture: "ui.button-berry", width: sign.width, height: sign.height }),
+          NineSlice({ texture: "ui.buttons.berry", width: sign.width, height: sign.height }),
           Transform({ ...top, ...hidden, pivot: { x: sign.width / 2, y: 0 } })
         ],
         { layer: "fx", order: 1 }

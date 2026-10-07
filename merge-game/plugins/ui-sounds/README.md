@@ -10,10 +10,10 @@ Folder `ui-sounds/`, plugin name `uiSounds`.
 
 | Key | Type | Default | What |
 |---|---|---|---|
-| `click` | `string` | `"ui.click"` | The asset key of the click. |
+| `click` | `string` | `"ui.sounds.click"` | The asset key of the click. |
 
 ```ts
-pluginConfigs: { uiSounds: { click: "ui.click" } }
+pluginConfigs: { uiSounds: { click: "ui.sounds.click" } }
 ```
 
 ## Effects and events

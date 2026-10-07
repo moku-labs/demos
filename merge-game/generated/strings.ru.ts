@@ -48,7 +48,7 @@ ${intl.duration({ style: "short", secondsDisplay: "always" }).format(duration(p.
   "energy.watch": () => [{ kind: "text", text: "Смотреть и\nпополнить" }],
   "gift.claim": () => [{ kind: "text", text: "Забрать" }],
   "gift.coins": (p, intl) => [{ kind: "text", text: (intl.plural().select((p.coins as number)) === "one" ? "монета" : intl.plural().select((p.coins as number)) === "few" ? "монеты" : "монет") }],
-  "gift.note": () => [{ kind: "text", text: "Заходи завтра за новыми <icon=ui.icon-coin>" }],
+  "gift.note": () => [{ kind: "text", text: "Заходи завтра за новыми <icon=ui.icons.coin>" }],
   "gift.title": () => [{ kind: "text", text: "Подарок дня" }],
   "home.play": () => [{ kind: "text", text: "Играть" }],
   "hud.deliver": () => [{ kind: "text", text: "Отдать" }],

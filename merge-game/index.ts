@@ -50,8 +50,8 @@ export default defineGameApp({
       bundles: ["home", "board", "orders"],
       retry: { node: "splash", outcome: "retry" }
     },
-    uiSounds: { click: "ui.click" },
-    text: { fonts: { body: "ui.font-body", digits: "ui.font-display" } },
+    uiSounds: { click: "ui.sounds.click" },
+    text: { fonts: { body: "ui.fonts.body", digits: "ui.fonts.display" } },
     i18n: { locale: "ru", fallback: "ru", locales: devLocales() },
     audio: { volumes: volumesOf },
     input: { heldScale: 1.08 },

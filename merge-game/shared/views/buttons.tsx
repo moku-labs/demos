@@ -35,9 +35,9 @@ const plankSizes: readonly PlankSize[] = [
 
 /** The nine-slice of every face. */
 const plankFaces: Record<PlankLook, AssetKey> = {
-  green: "ui.button-green",
-  wood: "ui.button-wood",
-  berry: "ui.button-berry"
+  green: "ui.buttons.green",
+  wood: "ui.buttons.wood",
+  berry: "ui.buttons.berry"
 };
 
 /**
@@ -109,8 +109,8 @@ function plankStyle(look: PlankLook, size: PlankSize) {
     nineSlice: plankFaces[look],
     is: {
       ...(isShort(size) ? {} : pointerStates),
-      selected: { nineSlice: "ui.button-green" },
-      disabled: { nineSlice: "ui.button-disabled" }
+      selected: { nineSlice: "ui.buttons.green" },
+      disabled: { nineSlice: "ui.buttons.disabled" }
     }
   });
 }
@@ -222,7 +222,7 @@ export function PlankButton(props: PlankButtonProps) {
   const tapBox = tapBoxStyles[size];
   const contents = [
     selected ? (
-      <icon key={`${props.id}Check`} name="ui.icon-check" style={checkStyle} />
+      <icon key={`${props.id}Check`} name="ui.icons.check" style={checkStyle} />
     ) : undefined,
     props.glyph === "play" ? (
       <stack key={`${props.id}Play`} style={playRingStyle}>

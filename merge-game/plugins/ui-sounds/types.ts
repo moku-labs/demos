@@ -7,10 +7,10 @@
  *
  * @example
  * ```ts
- * const config: UiSoundsConfig = { click: "ui.click" };
+ * const config: UiSoundsConfig = { click: "ui.sounds.click" };
  * ```
  */
 export type UiSoundsConfig = {
-  /** The asset key of the click. `"ui.click"` by default, the click of the shared layer. */
+  /** The asset key of the click. `"ui.sounds.click"` by default, the click of the shared layer. */
   click: string;
 };

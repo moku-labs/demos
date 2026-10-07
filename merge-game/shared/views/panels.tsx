@@ -24,7 +24,7 @@ const plaqueStyle = defineStyle({
   direction: "row",
   align: "center",
   justify: "center",
-  nineSlice: "ui.header-plank",
+  nineSlice: "ui.panels.header-plank",
   // Hung a little crooked, 1.5 degrees to the left, as the design draws it.
   rotation: -0.026,
   reason: "the title plaque sits on the top edge of the signboard, half above it (design §6 G)"
@@ -75,7 +75,7 @@ function boardStyle(width: number, height: number, top: number, hung: boolean) {
     justify: "center",
     gap: theme.space.md,
     padding: { top, right: 72, bottom: 64, left: 72 },
-    nineSlice: "ui.panel-signboard"
+    nineSlice: "ui.panels.signboard"
   } as const;
 
   if (!hung) return defineStyle(board);
@@ -198,7 +198,7 @@ function Rope(props: { id: string; style: ReturnType<typeof hungRopeStyle> }) {
       {ropeSegments.map(index => (
         <image
           key={`${props.id}${index}`}
-          texture="ui.rope-vertical"
+          texture="ui.decor.rope-vertical"
           fit="fill"
           style={ropeSegmentStyle}
         />
@@ -259,7 +259,7 @@ export function Signboard(props: SignboardProps) {
       )}
       {props.close === undefined ? undefined : (
         <button key={`${props.id}Close`} intent={props.close} style={closeStyle}>
-          <icon key={`${props.id}CloseIcon`} name="ui.icon-close" style={closeIconStyle} />
+          <icon key={`${props.id}CloseIcon`} name="ui.icons.close" style={closeIconStyle} />
         </button>
       )}
     </panel>
@@ -288,7 +288,7 @@ const parchmentStyle = defineStyle({
   padding: 48,
   alignSelf: "stretch",
   grow: 1,
-  nineSlice: "ui.panel-parchment"
+  nineSlice: "ui.panels.parchment"
 });
 
 /** The parchment chip of a popup body: the width of the board, as tall as its words. */
@@ -299,7 +299,7 @@ const chipStyle = defineStyle({
   padding: { top: 40, right: 40, bottom: 40, left: 40 },
   minHeight: 200,
   alignSelf: "stretch",
-  nineSlice: "ui.panel-parchment"
+  nineSlice: "ui.panels.parchment"
 });
 
 /**

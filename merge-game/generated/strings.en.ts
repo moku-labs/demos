@@ -47,7 +47,7 @@ export default {
   "energy.watch": () => [{ kind: "text", text: "Watch & refill" }],
   "gift.claim": () => [{ kind: "text", text: "Claim" }],
   "gift.coins": (p, intl) => [{ kind: "text", text: (intl.plural().select((p.coins as number)) === "one" ? "coin" : "coins") }],
-  "gift.note": () => [{ kind: "text", text: "Come back tomorrow for more <icon=ui.icon-coin>" }],
+  "gift.note": () => [{ kind: "text", text: "Come back tomorrow for more <icon=ui.icons.coin>" }],
   "gift.title": () => [{ kind: "text", text: "Daily gift" }],
   "home.play": () => [{ kind: "text", text: "Play" }],
   "hud.deliver": () => [{ kind: "text", text: "Deliver" }],

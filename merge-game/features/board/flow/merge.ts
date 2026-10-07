@@ -1,6 +1,6 @@
 /**
  * @file Transit node `merge`: the item on `from` is dragged onto the item on `to`. A legal merge
- * bursts into sparkles and leaves on the item that rose and plays `board.merge` (design §6 F4); a
+ * bursts into sparkles and leaves on the item that rose and plays `board.sounds.merge` (design §6 F4); a
  * merge the rules refuse —
  * another level, a crate on a crate, the sawmill — shakes what stands on `to` and changes nothing
  * (design §6 F7), and the dragged item flies home on the settle of the input plugin. The node
@@ -29,7 +29,7 @@ export const merge = defineNode({
     }
 
     applyRules(player, result.state);
-    void fx(sfx("board.merge"));
+    void fx(sfx("board.sounds.merge"));
     // The risen item keeps the id of the target, so the burst aims at the item that stays.
     void fx(play(mergeBurst, { item: { projection: "board.items", key: result.item.id } }));
 

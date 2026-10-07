@@ -9,7 +9,7 @@ import { defineEmitter } from "@core/kit";
  * and fade.
  */
 export const stars = defineEmitter("fx.stars", {
-  textures: ["ui.fx-star"],
+  textures: ["ui.fx.fx-star"],
   burst: 14,
   lifeMs: [500, 850],
   speed: [260, 560],

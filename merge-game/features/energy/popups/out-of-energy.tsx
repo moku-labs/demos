@@ -21,7 +21,7 @@ export const OutOfEnergy = defineComponent("OutOfEnergy", {
         top={150}
         hung
       >
-        <Prize id="energyPrize" picture="ui.icon-energy" look="sky" />
+        <Prize id="energyPrize" picture="ui.icons.energy" look="sky" />
         <Parchment id="energyTimer" chip>
           <text
             key="energyRefill"

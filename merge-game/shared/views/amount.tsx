@@ -31,7 +31,7 @@ export function Amount(
 ) {
   return (
     <row key={props.id} style={amountRow}>
-      <icon key={`${props.id}Coin`} name="ui.icon-coin" style={amountCoin} />
+      <icon key={`${props.id}Coin`} name="ui.icons.coin" style={amountCoin} />
       <text key={props.amountKey} style="ui.amount" content={props.amount} />
       {props.unit === undefined ? undefined : (
         <text key={props.unitKey} style="ui.title" content={props.unit} />

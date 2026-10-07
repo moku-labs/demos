@@ -7,7 +7,7 @@ import { homeScreen } from "./home-screen";
 
 export const homeScene = defineScene("home", {
   bundle: "home",
-  music: "ui.theme",
+  music: "ui.music.theme",
   layers: {},
   projections: [homeScreen]
 });

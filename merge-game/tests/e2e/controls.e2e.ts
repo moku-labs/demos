@@ -125,9 +125,9 @@ describe("timber-controls — disabled", () => {
 
     // The plank on the board fills the first order only. The art of a short plank is the
     // `<id>Plank` inside its taller tap box.
-    expect(ecs.get(elementOf(game, "deliver0Plank"), NineSlice)?.texture).toBe("ui.button-green");
+    expect(ecs.get(elementOf(game, "deliver0Plank"), NineSlice)?.texture).toBe("ui.buttons.green");
     expect(ecs.get(elementOf(game, "deliver1Plank"), NineSlice)?.texture).toBe(
-      "ui.button-disabled"
+      "ui.buttons.disabled"
     );
 
     ecs.tag(waiting, PointerOver);
@@ -159,7 +159,7 @@ describe("timber-controls — disabled", () => {
     const ecs = game.app.world.ecs;
 
     expect(ecs.get(elementOf(game, "deliver1Plank"), NineSlice)?.texture).toBe(
-      "ui.button-disabled"
+      "ui.buttons.disabled"
     );
 
     // Two twigs make the second log the second order asks for; the first already lies on c2_2.
@@ -172,7 +172,7 @@ describe("timber-controls — disabled", () => {
 
     const ready = elementOf(game, "deliver1");
 
-    expect(ecs.get(elementOf(game, "deliver1Plank"), NineSlice)?.texture).toBe("ui.button-green");
+    expect(ecs.get(elementOf(game, "deliver1Plank"), NineSlice)?.texture).toBe("ui.buttons.green");
     expect(ecs.has(ready, Tappable)).toBe(true);
     expect(nodeOf(game.app.ui.tree(), "deliver1")?.state.disabled).toBe(false);
 
@@ -190,8 +190,8 @@ describe("timber-controls — selected", () => {
     game.app.input.tap(elementOf(game, "tabLanguage"));
     await frames(game);
 
-    expect(ecs.get(elementOf(game, "languageRussian"), NineSlice)?.texture).toBe("ui.button-green");
-    expect(ecs.get(elementOf(game, "languageEnglish"), NineSlice)?.texture).toBe("ui.button-wood");
+    expect(ecs.get(elementOf(game, "languageRussian"), NineSlice)?.texture).toBe("ui.buttons.green");
+    expect(ecs.get(elementOf(game, "languageEnglish"), NineSlice)?.texture).toBe("ui.buttons.wood");
     expect(shows(game, "languageRussianCheck")).toBe(true);
     expect(shows(game, "languageEnglishCheck")).toBe(false);
 

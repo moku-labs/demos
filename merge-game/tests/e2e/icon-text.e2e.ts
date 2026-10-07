@@ -1,6 +1,6 @@
 /**
  * @file An icon inside wrapped text, headless (V5): the note of the daily gift is one `ui.paragraph`
- * string with `<icon=ui.icon-coin>` in it, in both languages. The game reads its art from the
+ * string with `<icon=ui.icons.coin>` in it, in both languages. The game reads its art from the
  * fixture folder, so `text` measures with the advance tables of the real fonts, as the page does:
  * the note takes two lines, and the coin rides in the second line with its word.
  */
@@ -70,7 +70,7 @@ describe("timber-icon-text — a coin inside the wrapped note of the daily gift"
     const text = nodeOf(game.app.ui.tree(), "giftNote");
 
     expect(text?.rect.h).toBe(2 * 65);
-    expect(nodeOf(game.app.ui.tree(), "giftNotePaper")?.style.nineSlice).toBe("ui.panel-parchment");
+    expect(nodeOf(game.app.ui.tree(), "giftNotePaper")?.style.nineSlice).toBe("ui.panels.parchment");
 
     await game.app.stop();
   });

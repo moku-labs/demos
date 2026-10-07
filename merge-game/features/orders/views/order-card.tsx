@@ -191,7 +191,7 @@ function CardPicture(props: { card: OrderCardView }) {
         </stack>
       ) : undefined}
       <stack key={`${id}Level`} style={levelBadge}>
-        <image key={`${id}LevelDisc`} texture="ui.badge-level" style={levelDisc} />
+        <image key={`${id}LevelDisc`} texture="ui.icons.badge-level" style={levelDisc} />
         <text key={`${id}LevelNumber`} style="ui.badgeInk" content={String(card.level)} />
       </stack>
     </stack>
@@ -218,7 +218,7 @@ export function OrderCard(props: { card: OrderCardView }) {
       motion={cardSwayOf(card.slot, card.ready)}
       components={card.ready ? [readyCardGlow] : []}
     >
-      <image key={`${id}Pin`} texture="ui.decor-clothespin" style={pinStyle} />
+      <image key={`${id}Pin`} texture="ui.decor.clothespin" style={pinStyle} />
       <text
         key={`${id}Title`}
         style="ui.small"
@@ -231,7 +231,7 @@ export function OrderCard(props: { card: OrderCardView }) {
         content={tr("board.item", { item: nameOf(card.level) })}
       />
       <row key={`${id}Reward`} style={rewardRow}>
-        <icon key={`${id}Coin`} name="ui.icon-coin" style={rewardIcon} />
+        <icon key={`${id}Coin`} name="ui.icons.coin" style={rewardIcon} />
         <text key={`${id}Coins`} style="ui.name" content={String(card.reward)} />
       </row>
       <PlankButton

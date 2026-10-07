@@ -6,7 +6,7 @@ import type { Flow } from "@moku-labs/game";
 import { sfx } from "@moku-labs/game";
 
 /** The sound a popup board makes as it swings in (design §6 F1). */
-export const popupSound = sfx("ui.popup");
+export const popupSound = sfx("ui.sounds.popup");
 
 /**
  * Shows a popup that comes in: plays its swing sound once and awaits the popup. A node that shows

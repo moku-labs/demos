@@ -1,8 +1,8 @@
-The two MSDF fonts of this folder are built from Google Fonts released under the SIL Open Font
+The two MSDF fonts of `assets/fonts/` are built from Google Fonts released under the SIL Open Font
 License 1.1. Both licence texts follow.
 
-- font-display.fnt, font-display.png: Rubik ExtraBold (Rubik-ExtraBold.ttf).
-- font-body.fnt, font-body.png: Pangolin Regular (Pangolin-Regular.ttf).
+- assets/fonts/display.fnt, assets/fonts/display.png: Rubik ExtraBold (Rubik-ExtraBold.ttf).
+- assets/fonts/body.fnt, assets/fonts/body.png: Pangolin Regular (Pangolin-Regular.ttf).
 
 ================================================================================
 Rubik ExtraBold

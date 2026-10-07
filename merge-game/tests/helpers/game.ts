@@ -464,7 +464,7 @@ export function textureOf(entity: WorldEntity): string | undefined {
  * @returns How many coins are in the air.
  */
 export function coinsInFlight(game: Game): number {
-  return spawnedByAnim(game).filter(entity => textureOf(entity)?.startsWith("ui.coin-spin-"))
+  return spawnedByAnim(game).filter(entity => textureOf(entity)?.startsWith("ui.fx.coin-spin."))
     .length;
 }
 

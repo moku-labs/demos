@@ -39,7 +39,7 @@ const trackStyle = defineStyle({
   direction: "row",
   align: "center",
   padding: track.inset,
-  nineSlice: "ui.bar-track"
+  nineSlice: "ui.panels.bar-track"
 });
 
 /**
@@ -102,7 +102,7 @@ function fillStyle(loading: number, failed: boolean) {
     height: track.height - 2 * track.inset,
     alpha: failed ? failedFill.alpha : shown,
     ...(failed ? { tint: failedFill.tint } : {}),
-    nineSlice: "ui.bar-fill"
+    nineSlice: "ui.panels.bar-fill"
   });
 }
 
@@ -146,7 +146,7 @@ export const splashScreen = projection({
           <row key="loadingFill" style={fillStyle(item.loading, item.failed)} />
           <image
             key="loadingBlade"
-            texture="ui.icon-gear"
+            texture="ui.icons.gear"
             style={bladeStyle(item.loading)}
             motion={bladeSpin}
           />
