@@ -25,6 +25,12 @@ const PROVOKED = path.join(DIST, "server-log-provoked.json");
 /** A line the bin, Bun or the editor plugins print on an error or a warning. */
 const ERROR_LINE = /\b(error|exception|unhandled|panic|warn(ing)?|fail(ed|ure)?)\b|✗/i;
 
+/**
+ * A stack frame line. It is judged by the message above it: a frame of a game file such as
+ * `features/splash/flow/load-failed.ts` holds "failed" in its path, not an error.
+ */
+const STACK_FRAME = /^\s+at\s/;
+
 /** One provoked window: a byte range of a log. */
 type Window = { readonly log: string; readonly from: number; readonly to: number };
 
@@ -71,7 +77,7 @@ function badLines(text: string, windows: readonly Window[]): string[] {
   for (const line of text.split("\n")) {
     const start = offset;
     offset += Buffer.byteLength(line, "utf8") + 1;
-    if (!ERROR_LINE.test(line)) continue;
+    if (STACK_FRAME.test(line) || !ERROR_LINE.test(line)) continue;
     const isProvoked = windows.some(window => start >= window.from && start < window.to);
     if (!isProvoked || line.includes("[moku-editor]")) bad.push(line);
   }
