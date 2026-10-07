@@ -29,7 +29,8 @@ const ERROR_LINE = /\b(error|exception|unhandled|panic|warn(ing)?|fail(ed|ure)?)
  * A stack frame line. It is judged by the message above it: a frame of a game file such as
  * `features/splash/flow/load-failed.ts` holds "failed" in its path, not an error.
  */
-const STACK_FRAME = /^\s+at\s/;
+// biome-ignore lint/suspicious/noControlCharactersInRegex: Bun colours the frames of its log
+const STACK_FRAME = /^(?:\s|\u001B\[[\d;]*m)*at\s/;
 
 /** One provoked window: a byte range of a log. */
 type Window = { readonly log: string; readonly from: number; readonly to: number };
