@@ -5,17 +5,13 @@
  * tools page at `/__editor/`. Its stdout and stderr go to
  * `.moku/editor-e2e/server.log`, which global-teardown.ts scans for errors.
  *
- * The bin is the one `scripts/run.ts test:editor` picked (`MOKU_EDITOR_BIN`: the pin, an
- * installed `--editor <x>`, or the build of an editor working tree), else the pinned one in
- * node_modules. For an engine working tree (`MOKU_ENGINE_SRC`) the bin gets the engine's recipe,
- * `scripts/tree/preload.ts` and `scripts/tree/bundle.ts`; for an editor working tree
- * (`MOKU_EDITOR_ROOT`) the editor's own `scripts/tree/bundle.ts`. The bin runs with its defaults, so Bun hot reload is on: a save of a game source
- * reloads the game page, and the bridge restores its checkpoint. edit-loop.browser.ts measures that
- * loop.
+ * The bin is the pinned one in node_modules. It runs with its defaults, so Bun hot reload is on:
+ * a save of a game source reloads the game page, and the bridge restores its checkpoint.
+ * edit-loop.browser.ts measures that loop.
  *
  * One worker: the bin hosts one game link, and every test opens its own tools page and game frame
- * on it. `scripts/run.ts` starts Playwright once per project, so each project gets a fresh bin:
- * Bun 1.3.14's dev server crashes after the hot reloads of all four projects in one process. Chromium runs the suite on desktop (1440×900), on the two half-screen windows (720×900,
+ * on it. `e2e.ts` starts Playwright once per project, so each project gets a fresh bin: Bun
+ * 1.3.14's dev server crashes after the hot reloads of all four projects in one process. Chromium runs the suite on desktop (1440×900), on the two half-screen windows (720×900,
  * 960×1080) and on the third-screen window of the Claude pane (480×900). A run never reuses a
  * server: the engine and the editor of a run are the ones its server was started with.
  *
@@ -34,37 +30,11 @@ const OUT = ".moku/editor-e2e";
 
 const PORT = Number(process.env.PORT ?? 4417);
 const BASE_URL = `http://127.0.0.1:${PORT}`;
-const BIN = process.env.MOKU_EDITOR_BIN ?? "node_modules/@moku-labs/editor/dist/bin.mjs";
-
-/**
- * The flags of the working trees of this run: the engine's preload and bundler plugin, and the
- * editor's bundler plugin. None for installed packages.
- *
- * @returns The flags, each path quoted for the shell.
- */
-function treeFlags(): string[] {
-  const engine = process.env.MOKU_ENGINE_SRC;
-  const editor = process.env.MOKU_EDITOR_ROOT;
-  const flags: string[] = [];
-
-  if (engine !== undefined && engine !== "") {
-    flags.push(
-      "--preload",
-      JSON.stringify(path.join(engine, "scripts/tree/preload.ts")),
-      "--serve-plugin",
-      JSON.stringify(path.join(engine, "scripts/tree/bundle.ts"))
-    );
-  }
-  if (editor !== undefined && editor !== "") {
-    flags.push("--serve-plugin", JSON.stringify(path.join(editor, "scripts/tree/bundle.ts")));
-  }
-
-  return flags;
-}
+const BIN = "node_modules/@moku-labs/editor/dist/bin.mjs";
 
 const SERVE = [
   "bun tests/browser/prepare-game.ts",
-  [`bun ${JSON.stringify(BIN)} --root ${OUT}/game --port ${PORT}`, ...treeFlags()].join(" ")
+  `bun ${BIN} --root ${OUT}/game --port ${PORT}`
 ].join(" && ");
 
 const CHROMIUM_FLAGS = ["--font-render-hinting=none", "--force-color-profile=srgb"];
@@ -77,7 +47,7 @@ const WINDOWS = {
   "chromium-half-wide": { width: 960, height: 1080 }
 };
 
-/** The project names, in run order. `scripts/run.ts` runs each one with its own server. */
+/** The project names, in run order. `e2e.ts` runs each one with its own server. */
 export const EDITOR_E2E_PROJECTS = Object.keys(WINDOWS);
 
 export default defineConfig({
