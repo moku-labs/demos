@@ -7,7 +7,7 @@
       "dependencies": {
         "@moku-labs/common": "0.3.4",
         "@moku-labs/core": "1.7.1",
-        "@moku-labs/game": "https://pkg.pr.new/@moku-labs/game@43",
+        "@moku-labs/game": "0.12.0",
         "@moku-labs/native": "0.3.2",
         "@moku-labs/system": "0.3.1",
         "@tauri-apps/api": "2.12.1",
@@ -15,7 +15,7 @@
         "pixi.js": "8.21.0",
       },
       "devDependencies": {
-        "@moku-labs/editor": "https://pkg.pr.new/@moku-labs/editor@bc5d11aef7f007d7a61faf7b01ffca12d3744b54",
+        "@moku-labs/editor": "0.9.0",
         "@playwright/test": "1.63.0",
         "@types/bun": "1.3.14",
         "happy-dom": "20.14.5",
@@ -139,9 +139,9 @@
 
     "@moku-labs/core": ["@moku-labs/core@1.7.1", "", {}, "sha512-QBlI5U2yKNhxCgszQWdu5iRFkDLJik37tAfNqNbG2AGDwo5J/7t3vK8lLWSwH9gduXORladUEgd7Fcc+cIiQMQ=="],
 
-    "@moku-labs/editor": ["@moku-labs/editor@https://pkg.pr.new/@moku-labs/editor@bc5d11aef7f007d7a61faf7b01ffca12d3744b54", { "dependencies": { "elkjs": "0.12.0", "preact": "10.29.8" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1", "@moku-labs/game": ">=0.10.0", "typescript": ">=5.5" }, "bin": { "moku-editor": "./dist/bin.mjs" } }, "sha512-8cRUhsZ8wMAwFavMfbnUiMKjMDhzwrxaF1dhlWamaV7aD3MeLBZvkD0Q+xMkEZqbGBFwLF2S/jn+dPBG3Abgqw=="],
+    "@moku-labs/editor": ["@moku-labs/editor@0.9.0", "", { "dependencies": { "elkjs": "0.12.0", "preact": "10.29.8" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1", "@moku-labs/game": ">=0.10.0", "typescript": ">=5.5" }, "bin": { "moku-editor": "dist/bin.mjs" } }, "sha512-xvxxUSxfo6YFdCqLb7VC2AvQF45HmUzN5litKTbknxAMIBtiTK3xnAKbK9/P7jMF39otIdBs5v27RAPAu4Ex1Q=="],
 
-    "@moku-labs/game": ["@moku-labs/game@https://pkg.pr.new/@moku-labs/game@43", { "dependencies": { "immer": "11.1.18", "maxrects-packer": "2.7.3", "yoga-layout": "3.2.1" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1", "@moku-labs/native": "^0.3.2", "@moku-labs/system": "^0.3.1", "pixi.js": "^8.0.0", "playwright-core": ">=1.50.0", "sharp": "^0.34.0", "typescript": ">=5.5" }, "optionalPeers": ["@moku-labs/native", "@moku-labs/system", "playwright-core", "sharp", "typescript"], "bin": { "moku-game": "./bin/moku-game.mjs", "moku-game-assets": "./bin/moku-game-assets.mjs", "moku-game-index": "./bin/moku-game-index.mjs" } }, "sha512-aYYfF53Yn4tqVErHvNmrNosBowuoZ49EE3VtrD/bq9Md14dnq/KPF8ndSfYcASg5/Y5k1jmY5YcqFYjiU2C9OQ=="],
+    "@moku-labs/game": ["@moku-labs/game@0.12.0", "", { "dependencies": { "immer": "11.1.18", "maxrects-packer": "2.7.3", "yoga-layout": "3.2.1" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1", "@moku-labs/native": "^0.3.2", "@moku-labs/system": "^0.3.1", "pixi.js": "^8.0.0", "playwright-core": ">=1.50.0", "sharp": "^0.34.0", "typescript": ">=5.5" }, "optionalPeers": ["@moku-labs/native", "@moku-labs/system", "playwright-core", "sharp", "typescript"], "bin": { "moku-game": "bin/moku-game.mjs", "moku-game-index": "bin/moku-game-index.mjs", "moku-game-assets": "bin/moku-game-assets.mjs" } }, "sha512-qm1f0/LnNKQmiM1ZHrQCsolcDpSZpxPdWTA/WSjVYKPdU58PP4GwsFAtHnPbpHOpKtmQO8e24nyoCxS44H0pGQ=="],
 
     "@moku-labs/native": ["@moku-labs/native@0.3.2", "", { "dependencies": { "@tauri-apps/cli": "^2" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1" } }, "sha512-CgYq45rp1q0nZS535jCz1M9Bl6oy60cHRipjzfHoMi7V+UQ88GfVJaX1NaQ/JtrUfjuBPxUbw+4K+xMEVFbcPg=="],
 
