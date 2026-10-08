@@ -1,7 +1,7 @@
 {
   "name": "merge-game",
   "version": "0.1.0",
-  "description": "Moku merge game (Timber Town) \u2014 a Layer-3 demo on @moku-labs/game: the engine's reference puzzle game, its e2e and visual tests, and the editor on it.",
+  "description": "Moku merge game (Timber Town) — a Layer-3 demo on @moku-labs/game: the engine's reference puzzle game, its e2e and visual tests, and the editor on it.",
   "private": true,
   "type": "module",
   "moku": {
@@ -36,7 +36,7 @@
     "pixi.js": "8.21.0"
   },
   "devDependencies": {
-    "@moku-labs/editor": "0.9.0",
+    "@moku-labs/editor": "https://pkg.pr.new/@moku-labs/editor@730217b355c8305fdeaa42a0cd90c437b86a4174",
     "@playwright/test": "1.63.0",
     "@types/bun": "1.3.14",
     "happy-dom": "20.14.5",
