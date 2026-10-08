@@ -8,8 +8,7 @@ import type { VisualReport } from "@moku-labs/game/visual";
 import { runVisualTests } from "@moku-labs/game/visual";
 import { fileURLToPath } from "node:url";
 import { beforeAll, describe, expect, it } from "vitest";
-import { fixtureApp } from "../helpers/visual/fixture";
-import { fixtureVisualTests } from "../helpers/visual/tests";
+import visual from "../visual";
 
 /** The folder of the baselines. */
 const dir = fileURLToPath(new URL("../visual/baselines/", import.meta.url));
@@ -30,7 +29,7 @@ describe("visual tests of the merge game, headless", () => {
   let report: VisualReport;
 
   beforeAll(async () => {
-    report = await runVisualTests({ app: fixtureApp }, fixtureVisualTests, {
+    report = await runVisualTests(visual.app, visual.tests, {
       dir,
       pixels: false,
       argv: []
@@ -51,7 +50,7 @@ describe("visual tests of the merge game, headless", () => {
   }
 
   it("runs every test without an error", () => {
-    expect(report.tests.map(test => test.error)).toEqual(fixtureVisualTests.map(() => undefined));
+    expect(report.tests.map(test => test.error)).toEqual(visual.tests.map(() => undefined));
   });
 
   it("reaches exactly the expected checkpoints, in order", () => {

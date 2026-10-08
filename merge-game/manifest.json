@@ -354,36 +354,36 @@
           "mb": 0.098
         },
         {
-          "key": "ui.fx.fx-leaf",
-          "path": "shared/assets/fx/fx-leaf.webp",
+          "key": "ui.fx.leaf",
+          "path": "shared/assets/fx/leaf.webp",
           "width": 58,
           "height": 64,
           "mb": 0.014
         },
         {
-          "key": "ui.fx.fx-puff",
-          "path": "shared/assets/fx/fx-puff.webp",
+          "key": "ui.fx.puff",
+          "path": "shared/assets/fx/puff.webp",
           "width": 128,
           "height": 118,
           "mb": 0.058
         },
         {
-          "key": "ui.fx.fx-rays",
-          "path": "shared/assets/fx/fx-rays.webp",
+          "key": "ui.fx.rays",
+          "path": "shared/assets/fx/rays.webp",
           "width": 504,
           "height": 512,
           "mb": 0.984
         },
         {
-          "key": "ui.fx.fx-sparkle",
-          "path": "shared/assets/fx/fx-sparkle.webp",
+          "key": "ui.fx.sparkle",
+          "path": "shared/assets/fx/sparkle.webp",
           "width": 85,
           "height": 96,
           "mb": 0.031
         },
         {
-          "key": "ui.fx.fx-star",
-          "path": "shared/assets/fx/fx-star.webp",
+          "key": "ui.fx.star",
+          "path": "shared/assets/fx/star.webp",
           "width": 96,
           "height": 93,
           "mb": 0.034

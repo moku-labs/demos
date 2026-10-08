@@ -191,8 +191,8 @@ describe("timber-motions — the merge burst (F4)", () => {
     const pieces = spawnedByAnim(game).filter(piece => textureOf(piece) !== undefined);
 
     expect(pieces).toHaveLength(12);
-    expect(pieces.filter(piece => textureOf(piece) === "ui.fx.fx-sparkle")).toHaveLength(6);
-    expect(pieces.filter(piece => textureOf(piece) === "ui.fx.fx-leaf")).toHaveLength(6);
+    expect(pieces.filter(piece => textureOf(piece) === "ui.fx.sparkle")).toHaveLength(6);
+    expect(pieces.filter(piece => textureOf(piece) === "ui.fx.leaf")).toHaveLength(6);
     expect(pieces.every(piece => (piece.components.Layer as { name?: string }).name === "fx")).toBe(
       true
     );

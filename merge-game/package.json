@@ -19,16 +19,16 @@
     "native": "moku-game native",
     "editor": "moku-editor --root .",
     "test": "bun --bun vitest run --project unit --project e2e",
-    "test:visual": "bun tests/helpers/visual/run.ts",
+    "test:visual": "moku-game visual",
     "test:editor": "bun --bun vitest run --project editor",
-    "test:editor:e2e": "bun tests/browser/e2e.ts",
+    "test:editor:e2e": "moku-editor e2e -c tests/browser/playwright.config.ts",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint"
   },
   "dependencies": {
     "@moku-labs/common": "0.3.4",
     "@moku-labs/core": "1.7.1",
-    "@moku-labs/game": "0.11.0",
+    "@moku-labs/game": "0.12.0",
     "@moku-labs/native": "0.3.2",
     "@moku-labs/system": "0.3.1",
     "@tauri-apps/api": "2.12.1",
@@ -36,7 +36,7 @@
     "pixi.js": "8.21.0"
   },
   "devDependencies": {
-    "@moku-labs/editor": "0.8.0",
+    "@moku-labs/editor": "0.9.0",
     "@playwright/test": "1.63.0",
     "@types/bun": "1.3.14",
     "happy-dom": "20.14.5",

@@ -3306,7 +3306,7 @@
           },
           "fit": "contain",
           "height": 580,
-          "texture": "ui.fx.fx-rays",
+          "texture": "ui.fx.rays",
           "tint": 16777215,
           "width": 580
         },
