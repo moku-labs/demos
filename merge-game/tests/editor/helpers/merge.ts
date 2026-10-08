@@ -130,7 +130,7 @@ async function startScreen(): Promise<MergeGame> {
   // The fixture types screen by its seed only; at run time it takes manifest and io.
   const create = fixture.screen as unknown as ScreenFactory;
   const manifest: unknown = JSON.parse(
-    readFileSync(path.join(MERGE_GAME_DIR, "manifest.json"), "utf8")
+    readFileSync(path.join(MERGE_GAME_DIR, "generated", "manifest.json"), "utf8")
   );
   const { app } = create({ manifest, io: DISK_IO });
   const game = mergeGameOf(app);

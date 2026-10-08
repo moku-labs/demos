@@ -19,7 +19,7 @@ const gameFolder = new URL("../../../", import.meta.url);
 
 /** The dev manifest, the file the dev server hands the page. */
 const manifest = JSON.parse(
-  readFileSync(new URL("manifest.json", gameFolder), "utf8")
+  readFileSync(new URL("generated/manifest.json", gameFolder), "utf8")
 ) as Assets.Manifest;
 
 /**

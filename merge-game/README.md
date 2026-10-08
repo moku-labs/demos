@@ -29,7 +29,7 @@ bun run test:editor:e2e  # the editor Playwright specs (about 20 min, local only
 | `test:editor` | `tests/editor/`: the vitest project `editor`. |
 | `test:editor:e2e` | `tests/browser/`: the Playwright specs, one run per project (`moku-editor e2e`). About 20 min, local only, not in CI. Arguments go to Playwright: `--project chromium-desktop -g pick`. |
 | `typecheck` | `tsc --noEmit`. |
-| `keys` | `moku-game keys`: writes `manifest.json`, `generated/assets.ts` and `generated/strings*.ts`. `shared/` is scanned as the layer `ui` (`assets.layers` in `config.ts`), so its keys stay `ui.*`. |
+| `keys` | `moku-game keys`: writes `generated/manifest.json`, `generated/assets.ts` and `generated/strings*.ts`. `shared/` is scanned as the layer `ui` (`assets.layers` in `config.ts`), so its keys stay `ui.*`. |
 | `lint` | oxlint with the engine's rules (`@moku-labs/game/lint`): the layout rules (layers, feature doors, test suffixes) and the game rules. |
 | `pack` | `moku-game pack`: packs the assets into `dist/assets/`. |
 | `build` | `moku-game build`: packs, then builds the static page into `dist/web/`. |

@@ -43,8 +43,8 @@ describe("merge-game helper", () => {
     expect(game.app.flow.state().path).toBe("splash");
     await link.run("game.answer", { intent: "loaded" });
     await until(() => game.app.flow.state().path === "home", "home after loaded");
-    expect(await link.files.list("")).toEqual(
-      expect.arrayContaining([expect.objectContaining({ path: "manifest.json" })])
+    expect(await link.files.list("generated")).toEqual(
+      expect.arrayContaining([expect.objectContaining({ path: "generated/manifest.json" })])
     );
   }, 30_000);
 
