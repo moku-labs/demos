@@ -549,7 +549,7 @@ async function textStyleOf(
  * @returns The texture key.
  */
 async function siblingTexture(current: string): Promise<string> {
-  const manifest = JSON.parse(await readGame("manifest.json")) as {
+  const manifest = JSON.parse(await readGame("generated/manifest.json")) as {
     bundles: Record<string, { files: { key: string; nine?: object }[] }>;
   };
   const family = current.slice(0, current.lastIndexOf(".") + 1);

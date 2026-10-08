@@ -22,7 +22,7 @@ import { expect, test } from "./fixtures";
 const GAME_ROOT = fileURLToPath(new URL("../../.moku/editor-e2e/game/", import.meta.url));
 
 /** The asset manifest the Textures card reads. */
-const MANIFEST = path.join(GAME_ROOT, "manifest.json");
+const MANIFEST = path.join(GAME_ROOT, "generated", "manifest.json");
 
 /** Where Refresh's test parks the manifest. */
 const MANIFEST_AWAY = path.join(GAME_ROOT, "manifest.e2e-away.json");

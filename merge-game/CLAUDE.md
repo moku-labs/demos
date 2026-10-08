@@ -30,7 +30,7 @@ back before a commit. `bun add <url>` over an installed version fails with a Dep
   never in CI), one run per project (`moku-editor e2e`). Arguments go to Playwright. They
   need the Chromium of `@playwright/test`: `bunx playwright install chromium`.
 - `bun run typecheck` — `tsc --noEmit`.
-- `bun run keys` — `moku-game keys`: the assets and strings into `manifest.json` and `generated/`.
+- `bun run keys` — `moku-game keys`: the assets and strings into `generated/` (`manifest.json`, `assets.ts`, `strings*.ts`).
   `shared/` is scanned as the layer `ui` (`assets.layers` in `config.ts`), so its keys stay `ui.*`.
 - `bun run lint` — oxlint with the engine's rules (`.oxlintrc.json`, `@moku-labs/game/lint`).
 - `bun run pack` — `moku-game pack`: the assets into `dist/assets/`.

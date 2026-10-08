@@ -658,10 +658,10 @@ describe("journey-merge: Game and Render", () => {
       renderView.highlight(undefined);
       expect(renderBox()).toBeNull();
 
-      // The texture rows: every texture of the loaded bundles of manifest.json, no other.
+      // The texture rows: every texture of the loaded bundles of generated/manifest.json, no other.
       await until(() => renderView.snapshot().textures.length > 0, "the texture rows");
       const assets: AssetManifest = JSON.parse(
-        await readFile(path.join(root, "manifest.json"), "utf8")
+        await readFile(path.join(root, "generated", "manifest.json"), "utf8")
       );
       const textures = texturesOf(assets);
       const loaded = new Set(renderView.snapshot().bundles.map(bundle => bundle.name));

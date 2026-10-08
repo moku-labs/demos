@@ -55,7 +55,7 @@ const tick = async (times = 40): Promise<void> => {
  * @returns The parsed manifest.
  */
 async function readManifest(): Promise<Assets.Manifest> {
-  const text = await readFile(new URL("../../manifest.json", import.meta.url), "utf8");
+  const text = await readFile(new URL("../../generated/manifest.json", import.meta.url), "utf8");
 
   return JSON.parse(text) as Assets.Manifest;
 }
