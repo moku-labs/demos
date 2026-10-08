@@ -492,13 +492,43 @@ async function openProvoked(log: string, from: number): Promise<void> {
   await writeWindows(windows);
 }
 
+/** How long the server log must stay unchanged before the window ends. */
+const QUIET_MS = 2000;
+
+/** The longest wait for the server log to go quiet. */
+const QUIET_LIMIT_MS = 15_000;
+
 /**
- * Ends the window this spec opened at the size the log has now.
+ * Waits until the server log stops growing: Bun reports the last broken import of the run a
+ * moment after the script restored it, and that line still belongs to this window.
+ *
+ * @param log - The server log.
+ * @returns The size of the log once it is quiet, or at the limit.
+ */
+async function quietSize(log: string): Promise<number> {
+  const limit = Date.now() + QUIET_LIMIT_MS;
+  let size = statSync(log).size;
+  let since = Date.now();
+
+  while (Date.now() - since < QUIET_MS && Date.now() < limit) {
+    await new Promise(resolve => setTimeout(resolve, 250));
+    const now = statSync(log).size;
+    if (now !== size) {
+      size = now;
+      since = Date.now();
+    }
+  }
+
+  return size;
+}
+
+/**
+ * Ends the window this spec opened once the server log is quiet.
  */
 async function closeProvoked(): Promise<void> {
   if (provoked === undefined) return;
   const { log, from } = provoked;
-  const to = statSync(log).size;
+  const to = await quietSize(log);
   const windows = await readWindows();
   const isOurs = (window: ProvokedWindow): boolean =>
     window.log === log && window.from === from && window.by === BY;
