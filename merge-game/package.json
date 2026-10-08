@@ -36,7 +36,7 @@
     "pixi.js": "8.21.0"
   },
   "devDependencies": {
-    "@moku-labs/editor": "https://pkg.pr.new/@moku-labs/editor@730217b355c8305fdeaa42a0cd90c437b86a4174",
+    "@moku-labs/editor": "0.9.1",
     "@playwright/test": "1.63.0",
     "@types/bun": "1.3.14",
     "happy-dom": "20.14.5",
