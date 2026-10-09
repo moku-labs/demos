@@ -24,8 +24,11 @@ back before a commit. `bun add <url>` over an installed version fails with a Dep
 - `bun run test` — vitest: the game's unit tests and the headless e2e tests (`tests/e2e/`).
 - `bun run test:visual` — `moku-game visual`, the visual tests of `tests/visual/index.ts`:
   headless state checks, plus pixels on macOS. It serves the page itself. `--no-pixels`, `--update`, `--only <name>`.
-- `bun run test:editor` — the editor scenarios: the vitest project `editor`
-  (`tests/editor/*.editor.ts`).
+- `bun run test:editor` — the editor scenarios and the hot swap test: the vitest projects `editor`
+  (`tests/editor/*.editor.ts`) and `hot`. CI runs it in the `editor` job, which has Chromium.
+- `bun run test:hot` — the hot swap test alone (`tests/hot/*.hot.ts`): `moku-game dev` on a temp
+  copy of the game, in Chromium (`bunx playwright-core install chromium`). A save of a string, a
+  `.tsx` and texture bytes must not reload the page. Installed engine only, never an engine tree.
 - `bun run test:editor:e2e` — the Playwright specs (`tests/browser/`, about 20 min, local only,
   never in CI), one run per project (`moku-editor e2e`). Arguments go to Playwright. They
   need the Chromium of `@playwright/test`: `bunx playwright install chromium`.
@@ -72,6 +75,6 @@ checks it.
 - `generated/` — `bun run keys` writes it.
 - `tests/e2e/` — headless e2e. `tests/visual/` — the visual tests and baselines.
   `tests/editor/` — editor scenarios (`*.editor.ts`, `helpers/` for vitest). `tests/browser/` —
-  the Playwright specs (`*.browser.ts`, config, screenshots). `tests/scenarios/` — the prepared
+  the Playwright specs (`*.browser.ts`, config, screenshots). `tests/hot/` — the hot swap test in a browser. `tests/scenarios/` — the prepared
   saves of `?player=<name>`. `tests/helpers/` — what the tests share.
 - Vitest gets the layer aliases from `vitest.config.ts`, which repeats `tsconfig.json` `paths`.
