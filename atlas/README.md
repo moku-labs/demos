@@ -33,6 +33,6 @@ bun run build
 | Client / islands   | `@moku-labs/web` (Preact, SSG ⇄ SPA) |
 | Server / data      | `@moku-labs/worker` (Cloudflare)     |
 | Tooling            | Biome · ESLint 9 · Vitest · tsdown   |
-| Runtime floor      | Node ≥ 24 · Bun ≥ 1.3.14             |
+| Runtime floor      | Node ≥ 24 · Bun ≥ 1.4.2              |
 
 This is a Layer-3 **consumer** app: it never depends on `@moku-labs/core` directly. See [`CLAUDE.md`](./CLAUDE.md) for architecture and the Moku development workflow.
