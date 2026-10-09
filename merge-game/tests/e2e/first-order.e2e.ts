@@ -73,10 +73,11 @@ describe("template-merge", () => {
 
     await game.walk(untilOrder.slice(2));
 
-    // `show` is a transit node with a popup effect since V3: the graph waits inside it, and the
-    // last rest point (the bookmark) stays the board.
+    // `show` is a transit node with a popup effect: the graph waits inside it at the popup's gate.
+    // The bookmark names that waiting node, and `rest` is the rest point before it, the board.
     expect(game.state().path).toBe("afterOrder/show");
-    expect(app.flow.bookmark().path).toBe("board/awaitIntent");
+    expect(app.flow.bookmark().path).toBe("afterOrder/show");
+    expect(app.flow.bookmark().rest?.path).toBe("board/awaitIntent");
     expect(provider.calls.filter(call => call.method === "commit").length).toBeGreaterThan(
       commitsOnTheBoard
     );
@@ -95,10 +96,9 @@ describe("template-merge", () => {
 
     await game.walk([claim]);
     await app.flow.restore(bookmark);
-    await tick();
 
-    // A restore lands on the rest point before the delivery: the popup is not a rest node.
-    expect(game.state().path).toBe("board/awaitIntent");
+    // A restore runs the waiting node again and resolves once its gate is open: back on the popup.
+    expect(game.state().path).toBe("afterOrder/show");
 
     await game.stop();
   });
