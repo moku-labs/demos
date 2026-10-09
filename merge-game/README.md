@@ -14,7 +14,8 @@ bun install
 bun run dev        # the game in the browser, prints the URL
 bun run editor     # the editor on the game
 bun run test       # unit + headless e2e
-bun run test:editor  # the editor scenarios on vitest
+bun run test:editor  # the editor scenarios and the hot swap test on vitest
+bun run test:hot  # the hot swap test alone
 bun run test:editor:e2e  # the editor Playwright specs (about 20 min, local only)
 ```
 
@@ -26,7 +27,8 @@ bun run test:editor:e2e  # the editor Playwright specs (about 20 min, local only
 | `editor` | Starts `@moku-labs/editor` on this demo: `--root .`, the page from the engine. |
 | `test` | Vitest: the game's unit tests and `tests/e2e/`. Fails on an empty test set. |
 | `test:visual` | `moku-game visual` on `tests/visual/index.ts`: headless state checks, pixels on macOS. Serves the page itself. |
-| `test:editor` | `tests/editor/`: the vitest project `editor`. |
+| `test:editor` | `tests/editor/` and `tests/hot/`: the vitest projects `editor` and `hot`. |
+| `test:hot` | `tests/hot/`: the vitest project `hot`. Needs Chromium: `bunx playwright-core install chromium`. |
 | `test:editor:e2e` | `tests/browser/`: the Playwright specs, one run per project (`moku-editor e2e`). About 20 min, local only, not in CI. Arguments go to Playwright: `--project chromium-desktop -g pick`. |
 | `typecheck` | `tsc --noEmit`. |
 | `keys` | `moku-game keys`: writes `generated/manifest.json`, `generated/assets.ts` and `generated/strings*.ts`. `shared/` is scanned as the layer `ui` (`assets.layers` in `config.ts`), so its keys stay `ui.*`. |
@@ -84,6 +86,7 @@ the aliases of `tsconfig.json`; inside one feature, by relative path. `bun run l
 | `tests/e2e/` | `test` | Headless e2e: the game with its screen, played through taps and routes. Moved from the engine. |
 | `tests/visual/` | `test:visual` | Seven visual tests, listed in `index.ts`, baselines in `tests/visual/baselines/`. The fixture game is `tests/helpers/visual/fixture.ts`. |
 | `tests/editor/*.editor.ts` | `test:editor` | The editor on the merge game through its public entries: server, agent and tools over the real wire. Moved from the editor. |
+| `tests/hot/*.hot.ts` | `test:editor`, `test:hot` | Hot swap under `moku-game dev` on the installed engine, in Chromium: a save of a string, of a `.tsx` and of texture bytes reaches the game with no page reload. It saves into a copy of the game in the temp folder. |
 | `tests/browser/` | `test:editor:e2e` | Playwright (`*.browser.ts`): the editor's tools page on this game, served by the editor bin from a copy in `.moku/editor-e2e/`. Moved from the editor. |
 | `tests/scenarios/` | `dev` | The prepared saves of `?player=<name>`: `ready`, `full`, `empty`. |
 | `tests/helpers/` | | What the tests share: the headless game, the fake audio, the rules fixtures, the scenario builders, the visual fixture. |

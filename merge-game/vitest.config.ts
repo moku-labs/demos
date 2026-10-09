@@ -37,6 +37,10 @@ export default defineConfig({
       {
         extends: true,
         test: { name: "editor", include: ["tests/editor/**/*.editor.ts"] }
+      },
+      {
+        extends: true,
+        test: { name: "hot", include: ["tests/hot/**/*.hot.ts"] }
       }
     ]
   }
