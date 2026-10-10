@@ -1,0 +1,1996 @@
+{
+  "ui": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [],
+            "key": "skyArt",
+            "rect": {
+              "h": 1440,
+              "w": 1080,
+              "x": 0,
+              "y": 0
+            },
+            "state": {
+              "active": false,
+              "covered": false,
+              "disabled": false,
+              "focus": false,
+              "hover": false,
+              "pressed": false,
+              "selected": false
+            },
+            "style": {
+              "height": "100%",
+              "width": "100%"
+            },
+            "type": "image"
+          }
+        ],
+        "key": "stageSky",
+        "rect": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "state": {
+          "active": false,
+          "covered": false,
+          "disabled": false,
+          "focus": false,
+          "hover": false,
+          "pressed": false,
+          "selected": false
+        },
+        "style": {},
+        "type": "screen"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "key": "hillBack",
+                "rect": {
+                  "h": 1920,
+                  "w": 3456,
+                  "x": -1742,
+                  "y": -240
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 1920,
+                  "left": -1742,
+                  "top": 0,
+                  "width": 3456
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "hillMid",
+                "rect": {
+                  "h": 1920,
+                  "w": 3456,
+                  "x": -1908,
+                  "y": -240
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 1920,
+                  "left": -1908,
+                  "top": 0,
+                  "width": 3456
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "hillGround",
+                "rect": {
+                  "h": 1208,
+                  "w": 3456,
+                  "x": -1188,
+                  "y": 1672
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "fill": 16630446,
+                  "height": 1208,
+                  "left": -1188,
+                  "top": 1912,
+                  "width": 3456
+                },
+                "type": "stack"
+              },
+              {
+                "children": [],
+                "key": "hillFront",
+                "rect": {
+                  "h": 1920,
+                  "w": 3456,
+                  "x": -2074,
+                  "y": -240
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 1920,
+                  "left": -2074,
+                  "top": 0,
+                  "width": 3456
+                },
+                "type": "image"
+              }
+            ],
+            "key": "hillsStage",
+            "rect": {
+              "h": 1920,
+              "w": 1080,
+              "x": 0,
+              "y": -240
+            },
+            "state": {
+              "active": false,
+              "covered": false,
+              "disabled": false,
+              "focus": false,
+              "hover": false,
+              "pressed": false,
+              "selected": false
+            },
+            "style": {
+              "height": 1920,
+              "width": 1080
+            },
+            "type": "stack"
+          }
+        ],
+        "key": "stageHills",
+        "rect": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "state": {
+          "active": false,
+          "covered": false,
+          "disabled": false,
+          "focus": false,
+          "hover": false,
+          "pressed": false,
+          "selected": false
+        },
+        "style": {
+          "align": "center",
+          "justify": "center"
+        },
+        "type": "screen"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "key": "homeTic",
+                    "rect": {
+                      "h": 323,
+                      "w": 371,
+                      "x": 354,
+                      "y": -122
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {},
+                    "type": "text"
+                  }
+                ],
+                "key": "homeTicSlot",
+                "rect": {
+                  "h": 323,
+                  "w": 1080,
+                  "x": 0,
+                  "y": -122
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "justify": "center",
+                  "left": 0,
+                  "offsetX": -100,
+                  "rotation": -0.10471975511965978,
+                  "top": 118,
+                  "width": 1080
+                },
+                "type": "row"
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "key": "homeTac",
+                    "rect": {
+                      "h": 323,
+                      "w": 452,
+                      "x": 314,
+                      "y": 109
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {},
+                    "type": "text"
+                  }
+                ],
+                "key": "homeTacSlot",
+                "rect": {
+                  "h": 323,
+                  "w": 1080,
+                  "x": 0,
+                  "y": 109
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "justify": "center",
+                  "left": 0,
+                  "offsetX": 83,
+                  "rotation": 0.06981317007977318,
+                  "top": 349,
+                  "width": 1080
+                },
+                "type": "row"
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "key": "homeToe",
+                    "rect": {
+                      "h": 323,
+                      "w": 461,
+                      "x": 309,
+                      "y": 340
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {},
+                    "type": "text"
+                  }
+                ],
+                "key": "homeToeSlot",
+                "rect": {
+                  "h": 323,
+                  "w": 1080,
+                  "x": 0,
+                  "y": 340
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "justify": "center",
+                  "left": 0,
+                  "offsetX": -44,
+                  "rotation": -0.05235987755982989,
+                  "top": 580,
+                  "width": 1080
+                },
+                "type": "row"
+              },
+              {
+                "children": [],
+                "key": "homeToyX",
+                "rect": {
+                  "h": 180,
+                  "w": 180,
+                  "x": 753,
+                  "y": -86
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 180,
+                  "left": 753,
+                  "rotation": 0.20943951023931956,
+                  "top": 154,
+                  "width": 180
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "homeToyO",
+                "rect": {
+                  "h": 180,
+                  "w": 180,
+                  "x": 98,
+                  "y": 196
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 180,
+                  "left": 98,
+                  "rotation": -0.13962634015954636,
+                  "top": 436,
+                  "width": 180
+                },
+                "type": "image"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "key": "levelKnob",
+                            "rect": {
+                              "h": 141,
+                              "w": 266,
+                              "x": 141,
+                              "y": 807
+                            },
+                            "state": {
+                              "active": false,
+                              "covered": false,
+                              "disabled": false,
+                              "focus": false,
+                              "hover": false,
+                              "pressed": false,
+                              "selected": false
+                            },
+                            "style": {
+                              "height": 141,
+                              "left": 15,
+                              "nineSlice": "ui.knob-teal",
+                              "top": 17,
+                              "width": 266
+                            },
+                            "type": "stack"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "key": "levelEasyLabel",
+                                "rect": {
+                                  "h": 71,
+                                  "w": 128,
+                                  "x": 210,
+                                  "y": 840
+                                },
+                                "state": {
+                                  "active": false,
+                                  "covered": false,
+                                  "disabled": false,
+                                  "focus": false,
+                                  "hover": false,
+                                  "pressed": false,
+                                  "selected": false
+                                },
+                                "style": {},
+                                "type": "text"
+                              }
+                            ],
+                            "key": "levelEasy",
+                            "rect": {
+                              "h": 180,
+                              "w": 266,
+                              "x": 141,
+                              "y": 790
+                            },
+                            "state": {
+                              "active": false,
+                              "covered": false,
+                              "disabled": false,
+                              "focus": false,
+                              "hover": false,
+                              "pressed": false,
+                              "selected": false
+                            },
+                            "style": {
+                              "align": "center",
+                              "height": 180,
+                              "justify": "center",
+                              "left": 15,
+                              "padding": {
+                                "bottom": 9
+                              },
+                              "top": 0,
+                              "width": 266
+                            },
+                            "type": "button"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "key": "levelNormalLabel",
+                                "rect": {
+                                  "h": 71,
+                                  "w": 192,
+                                  "x": 444,
+                                  "y": 840
+                                },
+                                "state": {
+                                  "active": false,
+                                  "covered": false,
+                                  "disabled": false,
+                                  "focus": false,
+                                  "hover": false,
+                                  "pressed": false,
+                                  "selected": false
+                                },
+                                "style": {},
+                                "type": "text"
+                              }
+                            ],
+                            "key": "levelNormal",
+                            "rect": {
+                              "h": 180,
+                              "w": 266,
+                              "x": 407,
+                              "y": 790
+                            },
+                            "state": {
+                              "active": false,
+                              "covered": false,
+                              "disabled": false,
+                              "focus": false,
+                              "hover": false,
+                              "pressed": false,
+                              "selected": true
+                            },
+                            "style": {
+                              "align": "center",
+                              "height": 180,
+                              "justify": "center",
+                              "left": 281,
+                              "padding": {
+                                "bottom": 9
+                              },
+                              "top": 0,
+                              "width": 266
+                            },
+                            "type": "button"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "key": "levelHardLabel",
+                                "rect": {
+                                  "h": 71,
+                                  "w": 127,
+                                  "x": 742,
+                                  "y": 840
+                                },
+                                "state": {
+                                  "active": false,
+                                  "covered": false,
+                                  "disabled": false,
+                                  "focus": false,
+                                  "hover": false,
+                                  "pressed": false,
+                                  "selected": false
+                                },
+                                "style": {},
+                                "type": "text"
+                              }
+                            ],
+                            "key": "levelHard",
+                            "rect": {
+                              "h": 180,
+                              "w": 266,
+                              "x": 673,
+                              "y": 790
+                            },
+                            "state": {
+                              "active": false,
+                              "covered": false,
+                              "disabled": false,
+                              "focus": false,
+                              "hover": false,
+                              "pressed": false,
+                              "selected": false
+                            },
+                            "style": {
+                              "align": "center",
+                              "height": 180,
+                              "justify": "center",
+                              "left": 547,
+                              "padding": {
+                                "bottom": 9
+                              },
+                              "top": 0,
+                              "width": 266
+                            },
+                            "type": "button"
+                          }
+                        ],
+                        "key": "levelOptions",
+                        "rect": {
+                          "h": 180,
+                          "w": 828,
+                          "x": 126,
+                          "y": 790
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "height": 180,
+                          "width": 828
+                        },
+                        "type": "stack"
+                      }
+                    ],
+                    "key": "homeLevels",
+                    "rect": {
+                      "h": 180,
+                      "w": 828,
+                      "x": 126,
+                      "y": 790
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "height": 180,
+                      "left": 0,
+                      "nineSlice": "ui.pill-cream",
+                      "top": 0,
+                      "width": 828
+                    },
+                    "type": "panel"
+                  }
+                ],
+                "key": "homeLevelsSlot",
+                "rect": {
+                  "h": 180,
+                  "w": 828,
+                  "x": 126,
+                  "y": 790
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 180,
+                  "left": 126,
+                  "top": 1030,
+                  "width": 828
+                },
+                "type": "stack"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "key": "homePlayLabel",
+                        "rect": {
+                          "h": 128,
+                          "w": 212,
+                          "x": 434,
+                          "y": 1289
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {},
+                        "type": "text"
+                      }
+                    ],
+                    "key": "homePlay",
+                    "rect": {
+                      "h": 208,
+                      "w": 556,
+                      "x": 262,
+                      "y": 1255
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "align": "center",
+                      "justify": "center",
+                      "minHeight": 208,
+                      "minWidth": 556,
+                      "nineSlice": "ui.btn-teal-big",
+                      "padding": {
+                        "bottom": 36,
+                        "left": 96,
+                        "right": 96,
+                        "top": 25
+                      }
+                    },
+                    "type": "button"
+                  }
+                ],
+                "key": "homePlaySlot",
+                "rect": {
+                  "h": 208,
+                  "w": 1080,
+                  "x": 0,
+                  "y": 1255
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "justify": "center",
+                  "left": 0,
+                  "top": 1495,
+                  "width": 1080
+                },
+                "type": "row"
+              }
+            ],
+            "key": "homeStage",
+            "rect": {
+              "h": 1920,
+              "w": 1080,
+              "x": 0,
+              "y": -240
+            },
+            "state": {
+              "active": false,
+              "covered": false,
+              "disabled": false,
+              "focus": false,
+              "hover": false,
+              "pressed": false,
+              "selected": false
+            },
+            "style": {
+              "height": 1920,
+              "width": 1080
+            },
+            "type": "stack"
+          }
+        ],
+        "key": "stageHome",
+        "rect": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "state": {
+          "active": false,
+          "covered": false,
+          "disabled": false,
+          "focus": false,
+          "hover": false,
+          "pressed": false,
+          "selected": false
+        },
+        "style": {
+          "align": "center",
+          "justify": "center"
+        },
+        "type": "screen"
+      }
+    ],
+    "rect": {
+      "h": 0,
+      "w": 0,
+      "x": 0,
+      "y": 0
+    },
+    "state": {
+      "active": false,
+      "covered": false,
+      "disabled": false,
+      "focus": false,
+      "hover": false,
+      "pressed": false,
+      "selected": false
+    },
+    "style": {},
+    "type": "screen"
+  },
+  "views": [
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 3456,
+          "x": -1742,
+          "y": -240
+        },
+        "Parallax": {
+          "at": 0
+        },
+        "Parent": {
+          "key": "hillsStage",
+          "projection": "stage.hills"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 1920,
+          "texture": "ui.hill-back",
+          "tint": 16777215,
+          "width": 3456
+        },
+        "Transform": {
+          "pivot": {
+            "x": 1728,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": -14,
+          "y": 960
+        }
+      },
+      "key": "hillBack",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 3456,
+          "x": -2074,
+          "y": -240
+        },
+        "Parallax": {
+          "at": 0
+        },
+        "Parent": {
+          "key": "hillsStage",
+          "projection": "stage.hills"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 1920,
+          "texture": "ui.hill-front",
+          "tint": 16777215,
+          "width": 3456
+        },
+        "Transform": {
+          "pivot": {
+            "x": 1728,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": -346,
+          "y": 960
+        }
+      },
+      "key": "hillFront",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1208,
+          "w": 3456,
+          "x": -1188,
+          "y": 1672
+        },
+        "Parent": {
+          "key": "hillsStage",
+          "projection": "stage.hills"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16630446,
+          "fillAlpha": 1,
+          "h": 1208,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 3456
+        },
+        "Transform": {
+          "pivot": {
+            "x": 1728,
+            "y": 604
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 2516
+        }
+      },
+      "key": "hillGround",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 3456,
+          "x": -1908,
+          "y": -240
+        },
+        "Parallax": {
+          "at": 0
+        },
+        "Parent": {
+          "key": "hillsStage",
+          "projection": "stage.hills"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 1920,
+          "texture": "ui.hill-mid",
+          "tint": 16777215,
+          "width": 3456
+        },
+        "Transform": {
+          "pivot": {
+            "x": 1728,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": -180,
+          "y": 960
+        }
+      },
+      "key": "hillMid",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 1080,
+          "x": 0,
+          "y": -240
+        },
+        "Parent": {
+          "key": "stageHills",
+          "projection": "stage.hills"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1920,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "hillsStage",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "hills"
+        }
+      },
+      "key": "stage.hills",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 0
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1440,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 720
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "stageHills",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        }
+      },
+      "key": "home",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 180,
+          "w": 828,
+          "x": 126,
+          "y": 790
+        },
+        "NineSlice": {
+          "alpha": 1,
+          "clip": false,
+          "debug": false,
+          "height": 180,
+          "texture": "ui.pill-cream",
+          "tint": 16777215,
+          "width": 828
+        },
+        "Parent": {
+          "key": "homeLevelsSlot",
+          "projection": "stage.home"
+        },
+        "Touchable": true,
+        "Transform": {
+          "pivot": {
+            "x": 414,
+            "y": 90
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 414,
+          "y": 90
+        }
+      },
+      "key": "homeLevels",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 180,
+          "w": 828,
+          "x": 126,
+          "y": 790
+        },
+        "Parent": {
+          "key": "homeStage",
+          "projection": "stage.home"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 180,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 828
+        },
+        "Transform": {
+          "pivot": {
+            "x": 414,
+            "y": 90
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 1120
+        }
+      },
+      "key": "homeLevelsSlot",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 208,
+          "w": 556,
+          "x": 262,
+          "y": 1255
+        },
+        "NineSlice": {
+          "alpha": 1,
+          "clip": false,
+          "debug": false,
+          "height": 208,
+          "texture": "ui.btn-teal-big",
+          "tint": 16777215,
+          "width": 556
+        },
+        "Parent": {
+          "key": "homePlaySlot",
+          "projection": "stage.home"
+        },
+        "Tappable": {
+          "intent": "play",
+          "payload": {}
+        },
+        "Transform": {
+          "pivot": {
+            "x": 278,
+            "y": 104
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 104
+        }
+      },
+      "key": "homePlay",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 128,
+          "w": 212,
+          "x": 434,
+          "y": 1289
+        },
+        "Parent": {
+          "key": "homePlay",
+          "projection": "stage.home"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 106,
+            "y": 64
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 278,
+          "y": 98
+        }
+      },
+      "key": "homePlayLabel",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 208,
+          "w": 1080,
+          "x": 0,
+          "y": 1255
+        },
+        "Parent": {
+          "key": "homeStage",
+          "projection": "stage.home"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 208,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 104
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 1599
+        }
+      },
+      "key": "homePlaySlot",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 1080,
+          "x": 0,
+          "y": -240
+        },
+        "Parent": {
+          "key": "stageHome",
+          "projection": "stage.home"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1920,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "homeStage",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 323,
+          "w": 452,
+          "x": 314,
+          "y": 109
+        },
+        "Parent": {
+          "key": "homeTacSlot",
+          "projection": "stage.home"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 226,
+            "y": 161.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 161.5
+        }
+      },
+      "key": "homeTac",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 323,
+          "w": 1080,
+          "x": 0,
+          "y": 109
+        },
+        "Parent": {
+          "key": "homeStage",
+          "projection": "stage.home"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 323,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 161.5
+          },
+          "rotation": 0.06981317007977318,
+          "scale": 1,
+          "x": 623,
+          "y": 510.5
+        }
+      },
+      "key": "homeTacSlot",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 323,
+          "w": 371,
+          "x": 354,
+          "y": -122
+        },
+        "Parent": {
+          "key": "homeTicSlot",
+          "projection": "stage.home"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 185.5,
+            "y": 161.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 539.5,
+          "y": 161.5
+        }
+      },
+      "key": "homeTic",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 323,
+          "w": 1080,
+          "x": 0,
+          "y": -122
+        },
+        "Parent": {
+          "key": "homeStage",
+          "projection": "stage.home"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 323,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 161.5
+          },
+          "rotation": -0.10471975511965978,
+          "scale": 1,
+          "x": 440,
+          "y": 279.5
+        }
+      },
+      "key": "homeTicSlot",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 323,
+          "w": 461,
+          "x": 309,
+          "y": 340
+        },
+        "Parent": {
+          "key": "homeToeSlot",
+          "projection": "stage.home"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 230.5,
+            "y": 161.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 539.5,
+          "y": 161.5
+        }
+      },
+      "key": "homeToe",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 323,
+          "w": 1080,
+          "x": 0,
+          "y": 340
+        },
+        "Parent": {
+          "key": "homeStage",
+          "projection": "stage.home"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 323,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 161.5
+          },
+          "rotation": -0.05235987755982989,
+          "scale": 1,
+          "x": 496,
+          "y": 741.5
+        }
+      },
+      "key": "homeToeSlot",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 180,
+          "w": 180,
+          "x": 98,
+          "y": 196
+        },
+        "Parent": {
+          "key": "homeStage",
+          "projection": "stage.home"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 180,
+          "texture": "match.piece-o",
+          "tint": 16777215,
+          "width": 180
+        },
+        "Transform": {
+          "pivot": {
+            "x": 90,
+            "y": 90
+          },
+          "rotation": -0.13962634015954636,
+          "scale": 1,
+          "x": 188,
+          "y": 526
+        }
+      },
+      "key": "homeToyO",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 180,
+          "w": 180,
+          "x": 753,
+          "y": -86
+        },
+        "Parent": {
+          "key": "homeStage",
+          "projection": "stage.home"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 180,
+          "texture": "match.piece-x",
+          "tint": 16777215,
+          "width": 180
+        },
+        "Transform": {
+          "pivot": {
+            "x": 90,
+            "y": 90
+          },
+          "rotation": 0.20943951023931956,
+          "scale": 1,
+          "x": 843,
+          "y": 244
+        }
+      },
+      "key": "homeToyX",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 180,
+          "w": 266,
+          "x": 141,
+          "y": 790
+        },
+        "Parent": {
+          "key": "levelOptions",
+          "projection": "stage.home"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 180,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 266
+        },
+        "Tappable": {
+          "intent": "setLevel",
+          "payload": {
+            "level": "easy"
+          }
+        },
+        "Transform": {
+          "pivot": {
+            "x": 133,
+            "y": 90
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 148,
+          "y": 90
+        }
+      },
+      "key": "levelEasy",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 71,
+          "w": 128,
+          "x": 210,
+          "y": 840
+        },
+        "Parent": {
+          "key": "levelEasy",
+          "projection": "stage.home"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 64,
+            "y": 35.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 133,
+          "y": 85.5
+        }
+      },
+      "key": "levelEasyLabel",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 180,
+          "w": 266,
+          "x": 673,
+          "y": 790
+        },
+        "Parent": {
+          "key": "levelOptions",
+          "projection": "stage.home"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 180,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 266
+        },
+        "Tappable": {
+          "intent": "setLevel",
+          "payload": {
+            "level": "hard"
+          }
+        },
+        "Transform": {
+          "pivot": {
+            "x": 133,
+            "y": 90
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 680,
+          "y": 90
+        }
+      },
+      "key": "levelHard",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 71,
+          "w": 127,
+          "x": 742,
+          "y": 840
+        },
+        "Parent": {
+          "key": "levelHard",
+          "projection": "stage.home"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 63.5,
+            "y": 35.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 132.5,
+          "y": 85.5
+        }
+      },
+      "key": "levelHardLabel",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 141,
+          "w": 266,
+          "x": 141,
+          "y": 807
+        },
+        "LevelKnob": {
+          "index": 1
+        },
+        "NineSlice": {
+          "alpha": 1,
+          "clip": false,
+          "debug": false,
+          "height": 141,
+          "texture": "ui.knob-teal",
+          "tint": 16777215,
+          "width": 266
+        },
+        "Parent": {
+          "key": "levelOptions",
+          "projection": "stage.home"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 133,
+            "y": 70.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 414,
+          "y": 87.5
+        }
+      },
+      "key": "levelKnob",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 180,
+          "w": 266,
+          "x": 407,
+          "y": 790
+        },
+        "Parent": {
+          "key": "levelOptions",
+          "projection": "stage.home"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 180,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 266
+        },
+        "Tappable": {
+          "intent": "setLevel",
+          "payload": {
+            "level": "normal"
+          }
+        },
+        "Transform": {
+          "pivot": {
+            "x": 133,
+            "y": 90
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 414,
+          "y": 90
+        }
+      },
+      "key": "levelNormal",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 71,
+          "w": 192,
+          "x": 444,
+          "y": 840
+        },
+        "Parent": {
+          "key": "levelNormal",
+          "projection": "stage.home"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 96,
+            "y": 35.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 133,
+          "y": 85.5
+        }
+      },
+      "key": "levelNormalLabel",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 180,
+          "w": 828,
+          "x": 126,
+          "y": 790
+        },
+        "Parent": {
+          "key": "homeLevels",
+          "projection": "stage.home"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 180,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 828
+        },
+        "Transform": {
+          "pivot": {
+            "x": 414,
+            "y": 90
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 414,
+          "y": 90
+        }
+      },
+      "key": "levelOptions",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 0
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1440,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 720
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "stageHome",
+      "projection": "stage.home"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "Parent": {
+          "key": "stageSky",
+          "projection": "stage.sky"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "cover",
+          "height": 1440,
+          "texture": "ui.sky",
+          "tint": 16777215,
+          "width": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 720
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "skyArt",
+      "projection": "stage.sky"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "background"
+        }
+      },
+      "key": "stage.sky",
+      "projection": "stage.sky"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 0
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1440,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 720
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "stageSky",
+      "projection": "stage.sky"
+    }
+  ]
+}

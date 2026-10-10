@@ -1,0 +1,55 @@
+{
+  "name": "ticktoe",
+  "description": "Moku tic-tac-toe — a Layer-3 demo on @moku-labs/game: one player against a bot on three levels, its headless and visual tests, and the editor on it.",
+  "private": true,
+  "type": "module",
+  "moku": {
+    "demo": true
+  },
+  "scripts": {
+    "dev": "moku-game dev",
+    "editor": "moku-editor --root .",
+    "keys": "moku-game keys",
+    "pack": "moku-game pack",
+    "build": "moku-game keys --check && moku-game build",
+    "native": "moku-game native",
+    "lint": "biome check . && oxlint",
+    "lint:fix": "biome check --write . && oxlint --fix",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "bun --bun vitest run --project unit",
+    "test:coverage": "bun --bun vitest run --project unit --coverage",
+    "test:visual": "moku-game visual",
+    "test:editor": "bun --bun vitest run --project editor --project hot",
+    "test:hot": "bun --bun vitest run --project hot"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "bun": ">=1.4.2"
+  },
+  "dependencies": {
+    "@moku-labs/common": "0.3.5",
+    "@moku-labs/core": "1.7.1",
+    "@moku-labs/game": "0.14.0",
+    "@moku-labs/system": "0.3.2",
+    "@tauri-apps/api": "2.12.2",
+    "pixi.js": "8.22.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.16",
+    "@moku-labs/ai": "0.16.2",
+    "@moku-labs/editor": "0.10.0",
+    "@moku-labs/native": "0.3.3",
+    "@types/bun": "1.4.2",
+    "@vitest/coverage-istanbul": "4.0.18",
+    "eslint-plugin-jsdoc": "65.1.0",
+    "eslint-plugin-unicorn": "63.0.0",
+    "happy-dom": "20.14.5",
+    "oxlint": "1.86.0",
+    "playwright-core": "1.60.0",
+    "preact": "10.29.8",
+    "sharp": "0.34.5",
+    "typescript": "6.0.3",
+    "vitest": "4.0.18"
+  }
+}

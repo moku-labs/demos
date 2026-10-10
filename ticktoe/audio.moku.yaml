@@ -1,0 +1,99 @@
+# yaml-language-server: $schema=.moku/build.schema.json
+# The music and the sound effects of the game, ordered from ElevenLabs.
+# Run `bunx moku estimate audio.moku.yaml` first: it needs no key and spends nothing.
+version: 1
+name: audio
+defaults:
+  provider: elevenlabs
+  maxAttempts: 2
+items:
+  - id: music/theme
+    task: music
+    input:
+      model: music_v2_5
+      prompt: >-
+        Cozy, playful instrumental loop for a candy-toy tic-tac-toe mobile game. Soft marimba and
+        glockenspiel melody, plucked ukulele, light hand claps and shaker, warm round bass. Bright,
+        friendly, a little bouncy, about 100 BPM, major key. Calm enough to play for many rounds,
+        no big build-ups, no drops. The ending flows back into the beginning for a seamless loop.
+        No vocals.
+      lengthMs: 60000
+
+  - id: sfx/tap
+    task: sfx
+    input:
+      model: eleven_text_to_sound_v2
+      prompt: "Short soft toy button press, a rounded plastic click with a tiny bounce, cute casual mobile game UI, dry, no reverb"
+      durationMs: 500
+  - id: sfx/level
+    task: sfx
+    input:
+      model: eleven_text_to_sound_v2
+      prompt: "Short soft slide and click of a toy switch moving to a new position, wooden and plastic, cute casual mobile game UI, dry"
+      durationMs: 500
+  - id: sfx/whoosh
+    task: sfx
+    input:
+      model: eleven_text_to_sound_v2
+      prompt: "Soft airy whoosh of a screen sliding sideways, light and friendly, a faint sparkle at the end, casual mobile game transition"
+      durationMs: 800
+  - id: sfx/place-x
+    task: sfx
+    input:
+      model: eleven_text_to_sound_v2
+      prompt: "A hard candy toy piece dropped onto a wooden tile: a bright plastic plop with a small squashy bounce, cute, dry, close"
+      durationMs: 500
+  - id: sfx/place-o
+    task: sfx
+    input:
+      model: eleven_text_to_sound_v2
+      prompt: "A rubbery candy ring dropped onto a wooden tile: a round hollow boop with a small squashy bounce, lower pitch, cute, dry, close"
+      durationMs: 500
+  - id: sfx/refuse
+    task: sfx
+    input:
+      model: eleven_text_to_sound_v2
+      prompt: "Gentle cartoon 'nope': two quick soft wooden wobbles going down in pitch, friendly not harsh, casual mobile game UI"
+      durationMs: 500
+  - id: sfx/win
+    task: sfx
+    input:
+      model: eleven_text_to_sound_v2
+      prompt: "Happy short win jingle for a kids puzzle game: rising glockenspiel and marimba arpeggio with sparkles and a soft confetti pop at the end, bright major key"
+      durationMs: 2000
+  - id: sfx/loss
+    task: sfx
+    input:
+      model: eleven_text_to_sound_v2
+      prompt: "Gentle short lose sound for a kids puzzle game: three soft marimba notes stepping down, a little deflating boop, kind and not sad"
+      durationMs: 1500
+  - id: sfx/draw
+    task: sfx
+    input:
+      model: eleven_text_to_sound_v2
+      prompt: "Neutral short 'it is a draw' sound for a kids puzzle game: two even glockenspiel notes and a soft shrug-like boop, calm, friendly"
+      durationMs: 1200
+  - id: sfx/score
+    task: sfx
+    input:
+      model: eleven_text_to_sound_v2
+      prompt: "A single bright counter tick with a tiny coin-like ping as a score number rolls up by one, cute casual mobile game UI, dry"
+      durationMs: 500
+  - id: sfx/card
+    task: sfx
+    input:
+      model: eleven_text_to_sound_v2
+      prompt: "A soft cardboard panel popping up from below with a springy bounce, a light paper thump and a tiny sparkle, casual mobile game UI"
+      durationMs: 700
+  - id: sfx/flip
+    task: sfx
+    input:
+      model: eleven_text_to_sound_v2
+      prompt: "A quick ripple of nine small wooden tiles flipping over one after another, light clacks sweeping from left to right, cute, dry"
+      durationMs: 1000
+  - id: sfx/splash
+    task: sfx
+    input:
+      model: eleven_text_to_sound_v2
+      prompt: "Two big bouncy toy pieces flying in and bumping together: a short whoosh, a soft rubbery boing, then a burst of tiny candy sprinkles scattering, playful game logo sting"
+      durationMs: 1500

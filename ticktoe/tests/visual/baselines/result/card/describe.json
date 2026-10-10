@@ -1,0 +1,4451 @@
+{
+  "ui": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [],
+            "key": "skyArt",
+            "rect": {
+              "h": 1440,
+              "w": 1080,
+              "x": 0,
+              "y": 0
+            },
+            "state": {
+              "active": false,
+              "covered": false,
+              "disabled": false,
+              "focus": false,
+              "hover": false,
+              "pressed": false,
+              "selected": false
+            },
+            "style": {
+              "height": "100%",
+              "width": "100%"
+            },
+            "type": "image"
+          }
+        ],
+        "key": "stageSky",
+        "rect": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "state": {
+          "active": false,
+          "covered": false,
+          "disabled": false,
+          "focus": false,
+          "hover": false,
+          "pressed": false,
+          "selected": false
+        },
+        "style": {},
+        "type": "screen"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "key": "hillBack",
+                "rect": {
+                  "h": 1920,
+                  "w": 3456,
+                  "x": -1742,
+                  "y": -240
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 1920,
+                  "left": -1742,
+                  "top": 0,
+                  "width": 3456
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "hillMid",
+                "rect": {
+                  "h": 1920,
+                  "w": 3456,
+                  "x": -1908,
+                  "y": -240
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 1920,
+                  "left": -1908,
+                  "top": 0,
+                  "width": 3456
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "hillGround",
+                "rect": {
+                  "h": 1208,
+                  "w": 3456,
+                  "x": -1188,
+                  "y": 1672
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "fill": 16630446,
+                  "height": 1208,
+                  "left": -1188,
+                  "top": 1912,
+                  "width": 3456
+                },
+                "type": "stack"
+              },
+              {
+                "children": [],
+                "key": "hillFront",
+                "rect": {
+                  "h": 1920,
+                  "w": 3456,
+                  "x": -2074,
+                  "y": -240
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 1920,
+                  "left": -2074,
+                  "top": 0,
+                  "width": 3456
+                },
+                "type": "image"
+              }
+            ],
+            "key": "hillsStage",
+            "rect": {
+              "h": 1920,
+              "w": 1080,
+              "x": 0,
+              "y": -240
+            },
+            "state": {
+              "active": false,
+              "covered": false,
+              "disabled": false,
+              "focus": false,
+              "hover": false,
+              "pressed": false,
+              "selected": false
+            },
+            "style": {
+              "height": 1920,
+              "width": 1080
+            },
+            "type": "stack"
+          }
+        ],
+        "key": "stageHills",
+        "rect": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "state": {
+          "active": false,
+          "covered": false,
+          "disabled": false,
+          "focus": false,
+          "hover": false,
+          "pressed": false,
+          "selected": false
+        },
+        "style": {
+          "align": "center",
+          "justify": "center"
+        },
+        "type": "screen"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "key": "scoreYouLabel",
+                            "rect": {
+                              "h": 58,
+                              "w": 84,
+                              "x": 254,
+                              "y": -113
+                            },
+                            "state": {
+                              "active": false,
+                              "covered": false,
+                              "disabled": false,
+                              "focus": false,
+                              "hover": false,
+                              "pressed": false,
+                              "selected": false
+                            },
+                            "style": {},
+                            "type": "text"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "key": "scoreYouDigitText",
+                                "rect": {
+                                  "h": 128,
+                                  "w": 60,
+                                  "x": 267,
+                                  "y": -68
+                                },
+                                "state": {
+                                  "active": false,
+                                  "covered": false,
+                                  "disabled": false,
+                                  "focus": false,
+                                  "hover": false,
+                                  "pressed": false,
+                                  "selected": false
+                                },
+                                "style": {},
+                                "type": "text"
+                              }
+                            ],
+                            "key": "scoreYouDigit",
+                            "rect": {
+                              "h": 128,
+                              "w": 60,
+                              "x": 267,
+                              "y": -68
+                            },
+                            "state": {
+                              "active": false,
+                              "covered": false,
+                              "disabled": false,
+                              "focus": false,
+                              "hover": false,
+                              "pressed": false,
+                              "selected": false
+                            },
+                            "style": {
+                              "margin": {
+                                "bottom": -40,
+                                "top": -13
+                              }
+                            },
+                            "type": "row"
+                          }
+                        ],
+                        "key": "scoreYou",
+                        "rect": {
+                          "h": 133,
+                          "w": 243,
+                          "x": 175,
+                          "y": -113
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "align": "center",
+                          "direction": "column",
+                          "width": 243
+                        },
+                        "type": "column"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "key": "scoreDrawsLabel",
+                            "rect": {
+                              "h": 58,
+                              "w": 134,
+                              "x": 473,
+                              "y": -113
+                            },
+                            "state": {
+                              "active": false,
+                              "covered": false,
+                              "disabled": false,
+                              "focus": false,
+                              "hover": false,
+                              "pressed": false,
+                              "selected": false
+                            },
+                            "style": {},
+                            "type": "text"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "key": "scoreDrawsDigitText",
+                                "rect": {
+                                  "h": 128,
+                                  "w": 40,
+                                  "x": 521,
+                                  "y": -68
+                                },
+                                "state": {
+                                  "active": false,
+                                  "covered": false,
+                                  "disabled": false,
+                                  "focus": false,
+                                  "hover": false,
+                                  "pressed": false,
+                                  "selected": false
+                                },
+                                "style": {},
+                                "type": "text"
+                              }
+                            ],
+                            "key": "scoreDrawsDigit",
+                            "rect": {
+                              "h": 128,
+                              "w": 40,
+                              "x": 521,
+                              "y": -68
+                            },
+                            "state": {
+                              "active": false,
+                              "covered": false,
+                              "disabled": false,
+                              "focus": false,
+                              "hover": false,
+                              "pressed": false,
+                              "selected": false
+                            },
+                            "style": {
+                              "margin": {
+                                "bottom": -40,
+                                "top": -13
+                              }
+                            },
+                            "type": "row"
+                          }
+                        ],
+                        "key": "scoreDraws",
+                        "rect": {
+                          "h": 133,
+                          "w": 243,
+                          "x": 419,
+                          "y": -113
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "align": "center",
+                          "direction": "column",
+                          "width": 243
+                        },
+                        "type": "column"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "key": "scoreBotLabel",
+                            "rect": {
+                              "h": 58,
+                              "w": 75,
+                              "x": 746,
+                              "y": -113
+                            },
+                            "state": {
+                              "active": false,
+                              "covered": false,
+                              "disabled": false,
+                              "focus": false,
+                              "hover": false,
+                              "pressed": false,
+                              "selected": false
+                            },
+                            "style": {},
+                            "type": "text"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "key": "scoreBotDigitText",
+                                "rect": {
+                                  "h": 128,
+                                  "w": 40,
+                                  "x": 764,
+                                  "y": -68
+                                },
+                                "state": {
+                                  "active": false,
+                                  "covered": false,
+                                  "disabled": false,
+                                  "focus": false,
+                                  "hover": false,
+                                  "pressed": false,
+                                  "selected": false
+                                },
+                                "style": {},
+                                "type": "text"
+                              }
+                            ],
+                            "key": "scoreBotDigit",
+                            "rect": {
+                              "h": 128,
+                              "w": 40,
+                              "x": 764,
+                              "y": -68
+                            },
+                            "state": {
+                              "active": false,
+                              "covered": false,
+                              "disabled": false,
+                              "focus": false,
+                              "hover": false,
+                              "pressed": false,
+                              "selected": false
+                            },
+                            "style": {
+                              "margin": {
+                                "bottom": -40,
+                                "top": -13
+                              }
+                            },
+                            "type": "row"
+                          }
+                        ],
+                        "key": "scoreBot",
+                        "rect": {
+                          "h": 133,
+                          "w": 243,
+                          "x": 662,
+                          "y": -113
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "align": "center",
+                          "direction": "column",
+                          "width": 243
+                        },
+                        "type": "column"
+                      }
+                    ],
+                    "key": "scoreRow",
+                    "rect": {
+                      "h": 219,
+                      "w": 792,
+                      "x": 144,
+                      "y": -140
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "align": "start",
+                      "direction": "row",
+                      "justify": "between",
+                      "nineSlice": "ui.pill-cream",
+                      "padding": {
+                        "bottom": 59,
+                        "left": 31,
+                        "right": 31,
+                        "top": 27
+                      },
+                      "width": 792
+                    },
+                    "type": "panel"
+                  }
+                ],
+                "key": "hudTop",
+                "rect": {
+                  "h": 219,
+                  "w": 1080,
+                  "x": 0,
+                  "y": -140
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "align": "center",
+                  "direction": "column",
+                  "gap": 19,
+                  "left": 0,
+                  "origin": "top",
+                  "top": 100,
+                  "width": 1080
+                },
+                "type": "column"
+              }
+            ],
+            "key": "hudStage",
+            "rect": {
+              "h": 1920,
+              "w": 1080,
+              "x": 0,
+              "y": -240
+            },
+            "state": {
+              "active": false,
+              "covered": false,
+              "disabled": false,
+              "focus": false,
+              "hover": false,
+              "pressed": false,
+              "selected": false
+            },
+            "style": {
+              "height": 1920,
+              "width": 1080
+            },
+            "type": "stack"
+          }
+        ],
+        "key": "matchHud",
+        "rect": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "state": {
+          "active": false,
+          "covered": false,
+          "disabled": false,
+          "focus": false,
+          "hover": false,
+          "pressed": false,
+          "selected": false
+        },
+        "style": {
+          "align": "center",
+          "justify": "center"
+        },
+        "type": "screen"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "key": "tile0Face",
+                        "rect": {
+                          "h": 292,
+                          "w": 277,
+                          "x": 114,
+                          "y": 297
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "height": 292,
+                          "left": 0,
+                          "position": "absolute",
+                          "reason": "the face covers the tile whatever the tile's padding is",
+                          "top": 0,
+                          "width": 277
+                        },
+                        "type": "image"
+                      }
+                    ],
+                    "key": "tile0",
+                    "rect": {
+                      "h": 277,
+                      "w": 277,
+                      "x": 114,
+                      "y": 297
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "height": 277,
+                      "left": 0,
+                      "top": 0,
+                      "width": 277
+                    },
+                    "type": "button"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "key": "tile1Face",
+                        "rect": {
+                          "h": 292,
+                          "w": 277,
+                          "x": 402,
+                          "y": 297
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "height": 292,
+                          "left": 0,
+                          "position": "absolute",
+                          "reason": "the face covers the tile whatever the tile's padding is",
+                          "top": 0,
+                          "width": 277
+                        },
+                        "type": "image"
+                      }
+                    ],
+                    "key": "tile1",
+                    "rect": {
+                      "h": 277,
+                      "w": 277,
+                      "x": 402,
+                      "y": 297
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "height": 277,
+                      "left": 288,
+                      "top": 0,
+                      "width": 277
+                    },
+                    "type": "button"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "key": "tile2Face",
+                        "rect": {
+                          "h": 292,
+                          "w": 277,
+                          "x": 690,
+                          "y": 297
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "height": 292,
+                          "left": 0,
+                          "position": "absolute",
+                          "reason": "the face covers the tile whatever the tile's padding is",
+                          "top": 0,
+                          "width": 277
+                        },
+                        "type": "image"
+                      }
+                    ],
+                    "key": "tile2",
+                    "rect": {
+                      "h": 277,
+                      "w": 277,
+                      "x": 690,
+                      "y": 297
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "height": 277,
+                      "left": 576,
+                      "top": 0,
+                      "width": 277
+                    },
+                    "type": "button"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "key": "tile3Face",
+                        "rect": {
+                          "h": 292,
+                          "w": 277,
+                          "x": 114,
+                          "y": 585
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "height": 292,
+                          "left": 0,
+                          "position": "absolute",
+                          "reason": "the face covers the tile whatever the tile's padding is",
+                          "top": 0,
+                          "width": 277
+                        },
+                        "type": "image"
+                      }
+                    ],
+                    "key": "tile3",
+                    "rect": {
+                      "h": 277,
+                      "w": 277,
+                      "x": 114,
+                      "y": 585
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "height": 277,
+                      "left": 0,
+                      "top": 288,
+                      "width": 277
+                    },
+                    "type": "button"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "key": "tile4Face",
+                        "rect": {
+                          "h": 292,
+                          "w": 277,
+                          "x": 402,
+                          "y": 585
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "height": 292,
+                          "left": 0,
+                          "position": "absolute",
+                          "reason": "the face covers the tile whatever the tile's padding is",
+                          "top": 0,
+                          "width": 277
+                        },
+                        "type": "image"
+                      }
+                    ],
+                    "key": "tile4",
+                    "rect": {
+                      "h": 277,
+                      "w": 277,
+                      "x": 402,
+                      "y": 585
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "height": 277,
+                      "left": 288,
+                      "top": 288,
+                      "width": 277
+                    },
+                    "type": "button"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "key": "tile5Face",
+                        "rect": {
+                          "h": 292,
+                          "w": 277,
+                          "x": 690,
+                          "y": 585
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "height": 292,
+                          "left": 0,
+                          "position": "absolute",
+                          "reason": "the face covers the tile whatever the tile's padding is",
+                          "top": 0,
+                          "width": 277
+                        },
+                        "type": "image"
+                      }
+                    ],
+                    "key": "tile5",
+                    "rect": {
+                      "h": 277,
+                      "w": 277,
+                      "x": 690,
+                      "y": 585
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "height": 277,
+                      "left": 576,
+                      "top": 288,
+                      "width": 277
+                    },
+                    "type": "button"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "key": "tile6Face",
+                        "rect": {
+                          "h": 292,
+                          "w": 277,
+                          "x": 114,
+                          "y": 873
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "height": 292,
+                          "left": 0,
+                          "position": "absolute",
+                          "reason": "the face covers the tile whatever the tile's padding is",
+                          "top": 0,
+                          "width": 277
+                        },
+                        "type": "image"
+                      }
+                    ],
+                    "key": "tile6",
+                    "rect": {
+                      "h": 277,
+                      "w": 277,
+                      "x": 114,
+                      "y": 873
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "height": 277,
+                      "left": 0,
+                      "top": 576,
+                      "width": 277
+                    },
+                    "type": "button"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "key": "tile7Face",
+                        "rect": {
+                          "h": 292,
+                          "w": 277,
+                          "x": 402,
+                          "y": 873
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "height": 292,
+                          "left": 0,
+                          "position": "absolute",
+                          "reason": "the face covers the tile whatever the tile's padding is",
+                          "top": 0,
+                          "width": 277
+                        },
+                        "type": "image"
+                      }
+                    ],
+                    "key": "tile7",
+                    "rect": {
+                      "h": 277,
+                      "w": 277,
+                      "x": 402,
+                      "y": 873
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "height": 277,
+                      "left": 288,
+                      "top": 576,
+                      "width": 277
+                    },
+                    "type": "button"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "key": "tile8Face",
+                        "rect": {
+                          "h": 292,
+                          "w": 277,
+                          "x": 690,
+                          "y": 873
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "height": 292,
+                          "left": 0,
+                          "position": "absolute",
+                          "reason": "the face covers the tile whatever the tile's padding is",
+                          "top": 0,
+                          "width": 277
+                        },
+                        "type": "image"
+                      }
+                    ],
+                    "key": "tile8",
+                    "rect": {
+                      "h": 277,
+                      "w": 277,
+                      "x": 690,
+                      "y": 873
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "height": 277,
+                      "left": 576,
+                      "top": 576,
+                      "width": 277
+                    },
+                    "type": "button"
+                  }
+                ],
+                "key": "tray",
+                "rect": {
+                  "h": 853,
+                  "w": 853,
+                  "x": 114,
+                  "y": 297
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 853,
+                  "left": 114,
+                  "offsetY": -171,
+                  "top": 537,
+                  "width": 853
+                },
+                "type": "stack"
+              }
+            ],
+            "key": "trayStage",
+            "rect": {
+              "h": 1920,
+              "w": 1080,
+              "x": 0,
+              "y": -240
+            },
+            "state": {
+              "active": false,
+              "covered": false,
+              "disabled": false,
+              "focus": false,
+              "hover": false,
+              "pressed": false,
+              "selected": false
+            },
+            "style": {
+              "height": 1920,
+              "width": 1080
+            },
+            "type": "stack"
+          }
+        ],
+        "key": "matchTray",
+        "rect": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "state": {
+          "active": false,
+          "covered": false,
+          "disabled": false,
+          "focus": false,
+          "hover": false,
+          "pressed": false,
+          "selected": false
+        },
+        "style": {
+          "align": "center",
+          "justify": "center"
+        },
+        "type": "screen"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "key": "resultTitle",
+                        "rect": {
+                          "h": 149,
+                          "w": 434,
+                          "x": 323,
+                          "y": 1242
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {},
+                        "type": "text"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [],
+                                    "key": "cardAgainLabel",
+                                    "rect": {
+                                      "h": 75,
+                                      "w": 289,
+                                      "x": 239,
+                                      "y": 1447
+                                    },
+                                    "state": {
+                                      "active": false,
+                                      "covered": false,
+                                      "disabled": false,
+                                      "focus": false,
+                                      "hover": false,
+                                      "pressed": false,
+                                      "selected": false
+                                    },
+                                    "style": {},
+                                    "type": "text"
+                                  }
+                                ],
+                                "key": "cardAgain",
+                                "rect": {
+                                  "h": 152,
+                                  "w": 421,
+                                  "x": 173,
+                                  "y": 1414
+                                },
+                                "state": {
+                                  "active": false,
+                                  "covered": false,
+                                  "disabled": false,
+                                  "focus": false,
+                                  "hover": false,
+                                  "pressed": false,
+                                  "selected": false
+                                },
+                                "style": {
+                                  "align": "center",
+                                  "justify": "center",
+                                  "minHeight": 152,
+                                  "nineSlice": "ui.btn-teal",
+                                  "padding": {
+                                    "bottom": 38,
+                                    "left": 66,
+                                    "right": 66,
+                                    "top": 28
+                                  }
+                                },
+                                "type": "button"
+                              }
+                            ],
+                            "key": "cardAgainSlot",
+                            "rect": {
+                              "h": 152,
+                              "w": 421,
+                              "x": 173,
+                              "y": 1414
+                            },
+                            "state": {
+                              "active": false,
+                              "covered": false,
+                              "disabled": false,
+                              "focus": false,
+                              "hover": false,
+                              "pressed": false,
+                              "selected": false
+                            },
+                            "style": {},
+                            "type": "row"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [],
+                                    "key": "cardHomeLabel",
+                                    "rect": {
+                                      "h": 75,
+                                      "w": 154,
+                                      "x": 688,
+                                      "y": 1447
+                                    },
+                                    "state": {
+                                      "active": false,
+                                      "covered": false,
+                                      "disabled": false,
+                                      "focus": false,
+                                      "hover": false,
+                                      "pressed": false,
+                                      "selected": false
+                                    },
+                                    "style": {},
+                                    "type": "text"
+                                  }
+                                ],
+                                "key": "cardHome",
+                                "rect": {
+                                  "h": 152,
+                                  "w": 286,
+                                  "x": 622,
+                                  "y": 1414
+                                },
+                                "state": {
+                                  "active": false,
+                                  "covered": false,
+                                  "disabled": false,
+                                  "focus": false,
+                                  "hover": false,
+                                  "pressed": false,
+                                  "selected": false
+                                },
+                                "style": {
+                                  "align": "center",
+                                  "justify": "center",
+                                  "minHeight": 152,
+                                  "nineSlice": "ui.btn-peach",
+                                  "padding": {
+                                    "bottom": 38,
+                                    "left": 66,
+                                    "right": 66,
+                                    "top": 28
+                                  }
+                                },
+                                "type": "button"
+                              }
+                            ],
+                            "key": "cardHomeSlot",
+                            "rect": {
+                              "h": 152,
+                              "w": 286,
+                              "x": 622,
+                              "y": 1414
+                            },
+                            "state": {
+                              "active": false,
+                              "covered": false,
+                              "disabled": false,
+                              "focus": false,
+                              "hover": false,
+                              "pressed": false,
+                              "selected": false
+                            },
+                            "style": {},
+                            "type": "row"
+                          }
+                        ],
+                        "key": "cardButtons",
+                        "rect": {
+                          "h": 152,
+                          "w": 735,
+                          "x": 173,
+                          "y": 1414
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "align": "center",
+                          "direction": "row",
+                          "gap": 28
+                        },
+                        "type": "row"
+                      }
+                    ],
+                    "key": "resultCard",
+                    "rect": {
+                      "h": 535,
+                      "w": 842,
+                      "x": 119,
+                      "y": 1095
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "align": "center",
+                      "direction": "column",
+                      "gap": 23,
+                      "height": 535,
+                      "justify": "end",
+                      "left": 0,
+                      "nineSlice": "ui.card",
+                      "padding": {
+                        "bottom": 64,
+                        "left": 50,
+                        "right": 50,
+                        "top": 112
+                      },
+                      "top": 49,
+                      "width": 842
+                    },
+                    "type": "panel"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "key": "cardTopX",
+                        "rect": {
+                          "h": 164,
+                          "w": 164,
+                          "x": 458,
+                          "y": 1046
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "height": 164,
+                          "width": 164
+                        },
+                        "type": "image"
+                      }
+                    ],
+                    "key": "cardTop",
+                    "rect": {
+                      "h": 164,
+                      "w": 842,
+                      "x": 119,
+                      "y": 1046
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "direction": "row",
+                      "height": 164,
+                      "justify": "center",
+                      "left": 0,
+                      "top": 0,
+                      "width": 842
+                    },
+                    "type": "row"
+                  }
+                ],
+                "key": "cardGroup",
+                "rect": {
+                  "h": 584,
+                  "w": 842,
+                  "x": 119,
+                  "y": 1046
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 584,
+                  "left": 119,
+                  "top": 1286,
+                  "width": 842
+                },
+                "type": "stack"
+              }
+            ],
+            "key": "cardStage",
+            "rect": {
+              "h": 1920,
+              "w": 1080,
+              "x": 0,
+              "y": -240
+            },
+            "state": {
+              "active": false,
+              "covered": false,
+              "disabled": false,
+              "focus": false,
+              "hover": false,
+              "pressed": false,
+              "selected": false
+            },
+            "style": {
+              "height": 1920,
+              "width": 1080
+            },
+            "type": "stack"
+          }
+        ],
+        "key": "matchCard",
+        "rect": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "state": {
+          "active": false,
+          "covered": false,
+          "disabled": false,
+          "focus": false,
+          "hover": false,
+          "pressed": false,
+          "selected": false
+        },
+        "style": {
+          "align": "center",
+          "justify": "center"
+        },
+        "type": "screen"
+      }
+    ],
+    "rect": {
+      "h": 0,
+      "w": 0,
+      "x": 0,
+      "y": 0
+    },
+    "state": {
+      "active": false,
+      "covered": false,
+      "disabled": false,
+      "focus": false,
+      "hover": false,
+      "pressed": false,
+      "selected": false
+    },
+    "style": {},
+    "type": "screen"
+  },
+  "views": [
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        }
+      },
+      "key": "board",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 152,
+          "w": 421,
+          "x": 173,
+          "y": 1414
+        },
+        "NineSlice": {
+          "alpha": 1,
+          "clip": false,
+          "debug": false,
+          "height": 152,
+          "texture": "ui.btn-teal",
+          "tint": 16777215,
+          "width": 421
+        },
+        "Parent": {
+          "key": "cardAgainSlot",
+          "projection": "match.card"
+        },
+        "Tappable": {
+          "intent": "again",
+          "payload": {}
+        },
+        "Transform": {
+          "pivot": {
+            "x": 210.5,
+            "y": 76
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 210.5,
+          "y": 76
+        }
+      },
+      "key": "cardAgain",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 75,
+          "w": 289,
+          "x": 239,
+          "y": 1447
+        },
+        "Parent": {
+          "key": "cardAgain",
+          "projection": "match.card"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 144.5,
+            "y": 37.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 210.5,
+          "y": 70.5
+        }
+      },
+      "key": "cardAgainLabel",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 152,
+          "w": 421,
+          "x": 173,
+          "y": 1414
+        },
+        "Parent": {
+          "key": "cardButtons",
+          "projection": "match.card"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 152,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 421
+        },
+        "Transform": {
+          "pivot": {
+            "x": 210.5,
+            "y": 76
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 210.5,
+          "y": 76
+        }
+      },
+      "key": "cardAgainSlot",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 152,
+          "w": 735,
+          "x": 173,
+          "y": 1414
+        },
+        "Parent": {
+          "key": "resultCard",
+          "projection": "match.card"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 152,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 735
+        },
+        "Transform": {
+          "pivot": {
+            "x": 367.5,
+            "y": 76
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 421.5,
+          "y": 395
+        }
+      },
+      "key": "cardButtons",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 584,
+          "w": 842,
+          "x": 119,
+          "y": 1046
+        },
+        "Parent": {
+          "key": "cardStage",
+          "projection": "match.card"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 584,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 842
+        },
+        "Transform": {
+          "pivot": {
+            "x": 421,
+            "y": 292
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 1578
+        }
+      },
+      "key": "cardGroup",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 152,
+          "w": 286,
+          "x": 622,
+          "y": 1414
+        },
+        "NineSlice": {
+          "alpha": 1,
+          "clip": false,
+          "debug": false,
+          "height": 152,
+          "texture": "ui.btn-peach",
+          "tint": 16777215,
+          "width": 286
+        },
+        "Parent": {
+          "key": "cardHomeSlot",
+          "projection": "match.card"
+        },
+        "Tappable": {
+          "intent": "home",
+          "payload": {}
+        },
+        "Transform": {
+          "pivot": {
+            "x": 143,
+            "y": 76
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 143,
+          "y": 76
+        }
+      },
+      "key": "cardHome",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 75,
+          "w": 154,
+          "x": 688,
+          "y": 1447
+        },
+        "Parent": {
+          "key": "cardHome",
+          "projection": "match.card"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 77,
+            "y": 37.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 143,
+          "y": 70.5
+        }
+      },
+      "key": "cardHomeLabel",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 152,
+          "w": 286,
+          "x": 622,
+          "y": 1414
+        },
+        "Parent": {
+          "key": "cardButtons",
+          "projection": "match.card"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 152,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 286
+        },
+        "Transform": {
+          "pivot": {
+            "x": 143,
+            "y": 76
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 592,
+          "y": 76
+        }
+      },
+      "key": "cardHomeSlot",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 1080,
+          "x": 0,
+          "y": -240
+        },
+        "Parent": {
+          "key": "matchCard",
+          "projection": "match.card"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1920,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "cardStage",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 164,
+          "w": 842,
+          "x": 119,
+          "y": 1046
+        },
+        "Parent": {
+          "key": "cardGroup",
+          "projection": "match.card"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 164,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 842
+        },
+        "Transform": {
+          "pivot": {
+            "x": 421,
+            "y": 82
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 421,
+          "y": 82
+        }
+      },
+      "key": "cardTop",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 164,
+          "w": 164,
+          "x": 458,
+          "y": 1046
+        },
+        "Parent": {
+          "key": "cardTop",
+          "projection": "match.card"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 164,
+          "texture": "match.piece-x",
+          "tint": 16777215,
+          "width": 164
+        },
+        "Transform": {
+          "pivot": {
+            "x": 82,
+            "y": 82
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 421,
+          "y": 82
+        }
+      },
+      "key": "cardTopX",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 0
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1440,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 720
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "matchCard",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 535,
+          "w": 842,
+          "x": 119,
+          "y": 1095
+        },
+        "NineSlice": {
+          "alpha": 1,
+          "clip": false,
+          "debug": false,
+          "height": 535,
+          "texture": "ui.card",
+          "tint": 16777215,
+          "width": 842
+        },
+        "Parent": {
+          "key": "cardGroup",
+          "projection": "match.card"
+        },
+        "Touchable": true,
+        "Transform": {
+          "pivot": {
+            "x": 421,
+            "y": 267.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 421,
+          "y": 316.5
+        }
+      },
+      "key": "resultCard",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 149,
+          "w": 434,
+          "x": 323,
+          "y": 1242
+        },
+        "Parent": {
+          "key": "resultCard",
+          "projection": "match.card"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 217,
+            "y": 74.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 421,
+          "y": 221.5
+        }
+      },
+      "key": "resultTitle",
+      "projection": "match.card"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        }
+      },
+      "key": "board",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 1080,
+          "x": 0,
+          "y": -240
+        },
+        "Parent": {
+          "key": "matchHud",
+          "projection": "match.hud"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1920,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "hudStage",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 219,
+          "w": 1080,
+          "x": 0,
+          "y": -140
+        },
+        "Parent": {
+          "key": "hudStage",
+          "projection": "match.hud"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 219,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 0
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 100
+        }
+      },
+      "key": "hudTop",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 0
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1440,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 720
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "matchHud",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 133,
+          "w": 243,
+          "x": 662,
+          "y": -113
+        },
+        "Parent": {
+          "key": "scoreRow",
+          "projection": "match.hud"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 133,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 243
+        },
+        "Transform": {
+          "pivot": {
+            "x": 121.5,
+            "y": 66.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 639.5,
+          "y": 93.5
+        }
+      },
+      "key": "scoreBot",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 128,
+          "w": 40,
+          "x": 764,
+          "y": -68
+        },
+        "Counter": {
+          "value": 1
+        },
+        "Parent": {
+          "key": "scoreBot",
+          "projection": "match.hud"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 128,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 40
+        },
+        "Transform": {
+          "pivot": {
+            "x": 20,
+            "y": 64
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 122,
+          "y": 109
+        }
+      },
+      "key": "scoreBotDigit",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 128,
+          "w": 40,
+          "x": 764,
+          "y": -68
+        },
+        "Counter": {
+          "value": 1
+        },
+        "Parent": {
+          "key": "scoreBotDigit",
+          "projection": "match.hud"
+        },
+        "Text": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "bind": {
+            "component": "Counter",
+            "field": "value",
+            "format": "int"
+          },
+          "content": "",
+          "resolved": "1",
+          "style": "ui.score.blue"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 20,
+            "y": 64
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 20,
+          "y": 64
+        }
+      },
+      "key": "scoreBotDigitText",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 58,
+          "w": 75,
+          "x": 746,
+          "y": -113
+        },
+        "Parent": {
+          "key": "scoreBot",
+          "projection": "match.hud"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 37.5,
+            "y": 29
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 121.5,
+          "y": 29
+        }
+      },
+      "key": "scoreBotLabel",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 133,
+          "w": 243,
+          "x": 419,
+          "y": -113
+        },
+        "Parent": {
+          "key": "scoreRow",
+          "projection": "match.hud"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 133,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 243
+        },
+        "Transform": {
+          "pivot": {
+            "x": 121.5,
+            "y": 66.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 396.5,
+          "y": 93.5
+        }
+      },
+      "key": "scoreDraws",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 128,
+          "w": 40,
+          "x": 521,
+          "y": -68
+        },
+        "Counter": {
+          "value": 1
+        },
+        "Parent": {
+          "key": "scoreDraws",
+          "projection": "match.hud"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 128,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 40
+        },
+        "Transform": {
+          "pivot": {
+            "x": 20,
+            "y": 64
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 122,
+          "y": 109
+        }
+      },
+      "key": "scoreDrawsDigit",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 128,
+          "w": 40,
+          "x": 521,
+          "y": -68
+        },
+        "Counter": {
+          "value": 1
+        },
+        "Parent": {
+          "key": "scoreDrawsDigit",
+          "projection": "match.hud"
+        },
+        "Text": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "bind": {
+            "component": "Counter",
+            "field": "value",
+            "format": "int"
+          },
+          "content": "",
+          "resolved": "1",
+          "style": "ui.score.yellow"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 20,
+            "y": 64
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 20,
+          "y": 64
+        }
+      },
+      "key": "scoreDrawsDigitText",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 58,
+          "w": 134,
+          "x": 473,
+          "y": -113
+        },
+        "Parent": {
+          "key": "scoreDraws",
+          "projection": "match.hud"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 67,
+            "y": 29
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 121,
+          "y": 29
+        }
+      },
+      "key": "scoreDrawsLabel",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 219,
+          "w": 792,
+          "x": 144,
+          "y": -140
+        },
+        "NineSlice": {
+          "alpha": 1,
+          "clip": false,
+          "debug": false,
+          "height": 219,
+          "texture": "ui.pill-cream",
+          "tint": 16777215,
+          "width": 792
+        },
+        "Parent": {
+          "key": "hudTop",
+          "projection": "match.hud"
+        },
+        "Touchable": true,
+        "Transform": {
+          "pivot": {
+            "x": 396,
+            "y": 109.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 109.5
+        }
+      },
+      "key": "scoreRow",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 133,
+          "w": 243,
+          "x": 175,
+          "y": -113
+        },
+        "Parent": {
+          "key": "scoreRow",
+          "projection": "match.hud"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 133,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 243
+        },
+        "Transform": {
+          "pivot": {
+            "x": 121.5,
+            "y": 66.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 152.5,
+          "y": 93.5
+        }
+      },
+      "key": "scoreYou",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 128,
+          "w": 60,
+          "x": 267,
+          "y": -68
+        },
+        "Counter": {
+          "value": 3
+        },
+        "Parent": {
+          "key": "scoreYou",
+          "projection": "match.hud"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 128,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 60
+        },
+        "Transform": {
+          "pivot": {
+            "x": 30,
+            "y": 64
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 122,
+          "y": 109
+        }
+      },
+      "key": "scoreYouDigit",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 128,
+          "w": 60,
+          "x": 267,
+          "y": -68
+        },
+        "Counter": {
+          "value": 3
+        },
+        "Parent": {
+          "key": "scoreYouDigit",
+          "projection": "match.hud"
+        },
+        "Text": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "bind": {
+            "component": "Counter",
+            "field": "value",
+            "format": "int"
+          },
+          "content": "",
+          "resolved": "3",
+          "style": "ui.score.coral"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 30,
+            "y": 64
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 30,
+          "y": 64
+        }
+      },
+      "key": "scoreYouDigitText",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 58,
+          "w": 84,
+          "x": 254,
+          "y": -113
+        },
+        "Parent": {
+          "key": "scoreYou",
+          "projection": "match.hud"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 42,
+            "y": 29
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 121,
+          "y": 29
+        }
+      },
+      "key": "scoreYouLabel",
+      "projection": "match.hud"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 2
+        },
+        "Outcome": {
+          "role": 1,
+          "step": 0
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "fit": "fill",
+          "height": 206,
+          "texture": "match.piece-x",
+          "tint": 16777215,
+          "width": 206
+        },
+        "Transform": {
+          "pivot": {
+            "x": 0,
+            "y": -103
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 138.5
+        },
+        "effects.colorMatrix": {
+          "brightness": 1,
+          "contrast": 0,
+          "enabled": false,
+          "grayscale": 0,
+          "hue": 0,
+          "order": 0,
+          "saturation": 0
+        }
+      },
+      "key": "piece0",
+      "projection": "match.pieces"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 1
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "fit": "fill",
+          "height": 77,
+          "texture": "match.piece-shadow",
+          "tint": 16777215,
+          "width": 206
+        },
+        "Transform": {
+          "pivot": {
+            "x": 0,
+            "y": 0
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 229.5
+        }
+      },
+      "key": "piece0Shadow",
+      "projection": "match.pieces"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 2
+        },
+        "Outcome": {
+          "role": 2,
+          "step": 0
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "fit": "fill",
+          "height": 206,
+          "texture": "match.piece-o",
+          "tint": 16777215,
+          "width": 206
+        },
+        "Transform": {
+          "pivot": {
+            "x": 0,
+            "y": -103
+          },
+          "rotation": 0,
+          "scale": 0.82,
+          "x": 714.5,
+          "y": 138.5
+        },
+        "effects.colorMatrix": {
+          "brightness": 1,
+          "contrast": 0,
+          "enabled": true,
+          "grayscale": 0.85,
+          "hue": 0,
+          "order": 0,
+          "saturation": 0
+        }
+      },
+      "key": "piece2",
+      "projection": "match.pieces"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 1
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "fit": "fill",
+          "height": 77,
+          "texture": "match.piece-shadow",
+          "tint": 16777215,
+          "width": 206
+        },
+        "Transform": {
+          "pivot": {
+            "x": 0,
+            "y": 0
+          },
+          "rotation": 0,
+          "scale": 0.82,
+          "x": 714.5,
+          "y": 229.5
+        }
+      },
+      "key": "piece2Shadow",
+      "projection": "match.pieces"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 2
+        },
+        "Outcome": {
+          "role": 2,
+          "step": 0
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "fit": "fill",
+          "height": 206,
+          "texture": "match.piece-o",
+          "tint": 16777215,
+          "width": 206
+        },
+        "Transform": {
+          "pivot": {
+            "x": 0,
+            "y": -103
+          },
+          "rotation": 0,
+          "scale": 0.82,
+          "x": 138.5,
+          "y": 426.5
+        },
+        "effects.colorMatrix": {
+          "brightness": 1,
+          "contrast": 0,
+          "enabled": true,
+          "grayscale": 0.85,
+          "hue": 0,
+          "order": 0,
+          "saturation": 0
+        }
+      },
+      "key": "piece3",
+      "projection": "match.pieces"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 1
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "fit": "fill",
+          "height": 77,
+          "texture": "match.piece-shadow",
+          "tint": 16777215,
+          "width": 206
+        },
+        "Transform": {
+          "pivot": {
+            "x": 0,
+            "y": 0
+          },
+          "rotation": 0,
+          "scale": 0.82,
+          "x": 138.5,
+          "y": 517.5
+        }
+      },
+      "key": "piece3Shadow",
+      "projection": "match.pieces"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 2
+        },
+        "Outcome": {
+          "role": 1,
+          "step": 1
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "fit": "fill",
+          "height": 206,
+          "texture": "match.piece-x",
+          "tint": 16777215,
+          "width": 206
+        },
+        "Transform": {
+          "pivot": {
+            "x": 0,
+            "y": -103
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 426.5,
+          "y": 426.5
+        },
+        "effects.colorMatrix": {
+          "brightness": 1,
+          "contrast": 0,
+          "enabled": false,
+          "grayscale": 0,
+          "hue": 0,
+          "order": 0,
+          "saturation": 0
+        }
+      },
+      "key": "piece4",
+      "projection": "match.pieces"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 1
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "fit": "fill",
+          "height": 77,
+          "texture": "match.piece-shadow",
+          "tint": 16777215,
+          "width": 206
+        },
+        "Transform": {
+          "pivot": {
+            "x": 0,
+            "y": 0
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 426.5,
+          "y": 517.5
+        }
+      },
+      "key": "piece4Shadow",
+      "projection": "match.pieces"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 2
+        },
+        "Outcome": {
+          "role": 1,
+          "step": 2
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "fit": "fill",
+          "height": 206,
+          "texture": "match.piece-x",
+          "tint": 16777215,
+          "width": 206
+        },
+        "Transform": {
+          "pivot": {
+            "x": 0,
+            "y": -103
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 714.5,
+          "y": 714.5
+        },
+        "effects.colorMatrix": {
+          "brightness": 1,
+          "contrast": 0,
+          "enabled": false,
+          "grayscale": 0,
+          "hue": 0,
+          "order": 0,
+          "saturation": 0
+        }
+      },
+      "key": "piece8",
+      "projection": "match.pieces"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 1
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "fit": "fill",
+          "height": 77,
+          "texture": "match.piece-shadow",
+          "tint": 16777215,
+          "width": 206
+        },
+        "Transform": {
+          "pivot": {
+            "x": 0,
+            "y": 0
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 714.5,
+          "y": 805.5
+        }
+      },
+      "key": "piece8Shadow",
+      "projection": "match.pieces"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        }
+      },
+      "key": "board",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 0
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1440,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 720
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "matchTray",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 277,
+          "w": 277,
+          "x": 114,
+          "y": 297
+        },
+        "Emitter": {
+          "active": true,
+          "effect": "fx.confetti"
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 277,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 277
+        },
+        "Taken": {
+          "mark": 1
+        },
+        "Tappable": {
+          "intent": "tap",
+          "payload": {
+            "cell": 0
+          }
+        },
+        "TileCell": {
+          "index": 0
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 138.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 138.5
+        },
+        "Win": {
+          "on": 1
+        }
+      },
+      "key": "tile0",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 292,
+          "w": 277,
+          "x": 114,
+          "y": 297
+        },
+        "Parent": {
+          "key": "tile0",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 292,
+          "texture": "match.tile-win",
+          "tint": 16777215,
+          "width": 277
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 146
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 146
+        }
+      },
+      "key": "tile0Face",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 277,
+          "w": 277,
+          "x": 402,
+          "y": 297
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 277,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 277
+        },
+        "Taken": {
+          "mark": 0
+        },
+        "Tappable": {
+          "intent": "tap",
+          "payload": {
+            "cell": 1
+          }
+        },
+        "TileCell": {
+          "index": 1
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 138.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 426.5,
+          "y": 138.5
+        },
+        "Win": {
+          "on": 0
+        }
+      },
+      "key": "tile1",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 292,
+          "w": 277,
+          "x": 402,
+          "y": 297
+        },
+        "Parent": {
+          "key": "tile1",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 292,
+          "texture": "match.tile",
+          "tint": 16777215,
+          "width": 277
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 146
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 146
+        }
+      },
+      "key": "tile1Face",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 277,
+          "w": 277,
+          "x": 690,
+          "y": 297
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 277,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 277
+        },
+        "Taken": {
+          "mark": 2
+        },
+        "Tappable": {
+          "intent": "tap",
+          "payload": {
+            "cell": 2
+          }
+        },
+        "TileCell": {
+          "index": 2
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 138.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 714.5,
+          "y": 138.5
+        },
+        "Win": {
+          "on": 0
+        }
+      },
+      "key": "tile2",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 292,
+          "w": 277,
+          "x": 690,
+          "y": 297
+        },
+        "Parent": {
+          "key": "tile2",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 292,
+          "texture": "match.tile",
+          "tint": 16777215,
+          "width": 277
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 146
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 146
+        }
+      },
+      "key": "tile2Face",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 277,
+          "w": 277,
+          "x": 114,
+          "y": 585
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 277,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 277
+        },
+        "Taken": {
+          "mark": 2
+        },
+        "Tappable": {
+          "intent": "tap",
+          "payload": {
+            "cell": 3
+          }
+        },
+        "TileCell": {
+          "index": 3
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 138.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 426.5
+        },
+        "Win": {
+          "on": 0
+        }
+      },
+      "key": "tile3",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 292,
+          "w": 277,
+          "x": 114,
+          "y": 585
+        },
+        "Parent": {
+          "key": "tile3",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 292,
+          "texture": "match.tile",
+          "tint": 16777215,
+          "width": 277
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 146
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 146
+        }
+      },
+      "key": "tile3Face",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 277,
+          "w": 277,
+          "x": 402,
+          "y": 585
+        },
+        "Emitter": {
+          "active": true,
+          "effect": "fx.confetti"
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 277,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 277
+        },
+        "Taken": {
+          "mark": 1
+        },
+        "Tappable": {
+          "intent": "tap",
+          "payload": {
+            "cell": 4
+          }
+        },
+        "TileCell": {
+          "index": 4
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 138.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 426.5,
+          "y": 426.5
+        },
+        "Win": {
+          "on": 1
+        }
+      },
+      "key": "tile4",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 292,
+          "w": 277,
+          "x": 402,
+          "y": 585
+        },
+        "Parent": {
+          "key": "tile4",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 292,
+          "texture": "match.tile-win",
+          "tint": 16777215,
+          "width": 277
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 146
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 146
+        }
+      },
+      "key": "tile4Face",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 277,
+          "w": 277,
+          "x": 690,
+          "y": 585
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 277,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 277
+        },
+        "Taken": {
+          "mark": 0
+        },
+        "Tappable": {
+          "intent": "tap",
+          "payload": {
+            "cell": 5
+          }
+        },
+        "TileCell": {
+          "index": 5
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 138.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 714.5,
+          "y": 426.5
+        },
+        "Win": {
+          "on": 0
+        }
+      },
+      "key": "tile5",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 292,
+          "w": 277,
+          "x": 690,
+          "y": 585
+        },
+        "Parent": {
+          "key": "tile5",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 292,
+          "texture": "match.tile",
+          "tint": 16777215,
+          "width": 277
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 146
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 146
+        }
+      },
+      "key": "tile5Face",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 277,
+          "w": 277,
+          "x": 114,
+          "y": 873
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 277,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 277
+        },
+        "Taken": {
+          "mark": 0
+        },
+        "Tappable": {
+          "intent": "tap",
+          "payload": {
+            "cell": 6
+          }
+        },
+        "TileCell": {
+          "index": 6
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 138.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 714.5
+        },
+        "Win": {
+          "on": 0
+        }
+      },
+      "key": "tile6",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 292,
+          "w": 277,
+          "x": 114,
+          "y": 873
+        },
+        "Parent": {
+          "key": "tile6",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 292,
+          "texture": "match.tile",
+          "tint": 16777215,
+          "width": 277
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 146
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 146
+        }
+      },
+      "key": "tile6Face",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 277,
+          "w": 277,
+          "x": 402,
+          "y": 873
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 277,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 277
+        },
+        "Taken": {
+          "mark": 0
+        },
+        "Tappable": {
+          "intent": "tap",
+          "payload": {
+            "cell": 7
+          }
+        },
+        "TileCell": {
+          "index": 7
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 138.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 426.5,
+          "y": 714.5
+        },
+        "Win": {
+          "on": 0
+        }
+      },
+      "key": "tile7",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 292,
+          "w": 277,
+          "x": 402,
+          "y": 873
+        },
+        "Parent": {
+          "key": "tile7",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 292,
+          "texture": "match.tile",
+          "tint": 16777215,
+          "width": 277
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 146
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 146
+        }
+      },
+      "key": "tile7Face",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 277,
+          "w": 277,
+          "x": 690,
+          "y": 873
+        },
+        "Emitter": {
+          "active": true,
+          "effect": "fx.confetti"
+        },
+        "Parent": {
+          "key": "tray",
+          "projection": "match.tray"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 277,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 277
+        },
+        "Taken": {
+          "mark": 1
+        },
+        "Tappable": {
+          "intent": "tap",
+          "payload": {
+            "cell": 8
+          }
+        },
+        "TileCell": {
+          "index": 8
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 138.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 714.5,
+          "y": 714.5
+        },
+        "Win": {
+          "on": 1
+        }
+      },
+      "key": "tile8",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 292,
+          "w": 277,
+          "x": 690,
+          "y": 873
+        },
+        "Parent": {
+          "key": "tile8",
+          "projection": "match.tray"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 292,
+          "texture": "match.tile-win",
+          "tint": 16777215,
+          "width": 277
+        },
+        "Transform": {
+          "pivot": {
+            "x": 138.5,
+            "y": 146
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 138.5,
+          "y": 146
+        }
+      },
+      "key": "tile8Face",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 853,
+          "w": 853,
+          "x": 114,
+          "y": 297
+        },
+        "Parent": {
+          "key": "trayStage",
+          "projection": "match.tray"
+        },
+        "RoundMood": {
+          "result": 1
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 853,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 853
+        },
+        "Transform": {
+          "pivot": {
+            "x": 426.5,
+            "y": 426.5
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540.5,
+          "y": 792.5
+        }
+      },
+      "key": "tray",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 1080,
+          "x": 0,
+          "y": -240
+        },
+        "Parent": {
+          "key": "matchTray",
+          "projection": "match.tray"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1920,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "trayStage",
+      "projection": "match.tray"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 3456,
+          "x": -1742,
+          "y": -240
+        },
+        "Parallax": {
+          "at": 1
+        },
+        "Parent": {
+          "key": "hillsStage",
+          "projection": "stage.hills"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 1920,
+          "texture": "ui.hill-back",
+          "tint": 16777215,
+          "width": 3456
+        },
+        "Transform": {
+          "pivot": {
+            "x": 1728,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 1094,
+          "y": 960
+        }
+      },
+      "key": "hillBack",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 3456,
+          "x": -2074,
+          "y": -240
+        },
+        "Parallax": {
+          "at": 1
+        },
+        "Parent": {
+          "key": "hillsStage",
+          "projection": "stage.hills"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 1920,
+          "texture": "ui.hill-front",
+          "tint": 16777215,
+          "width": 3456
+        },
+        "Transform": {
+          "pivot": {
+            "x": 1728,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 1426,
+          "y": 960
+        }
+      },
+      "key": "hillFront",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1208,
+          "w": 3456,
+          "x": -1188,
+          "y": 1672
+        },
+        "Parent": {
+          "key": "hillsStage",
+          "projection": "stage.hills"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16630446,
+          "fillAlpha": 1,
+          "h": 1208,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 3456
+        },
+        "Transform": {
+          "pivot": {
+            "x": 1728,
+            "y": 604
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 2516
+        }
+      },
+      "key": "hillGround",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 3456,
+          "x": -1908,
+          "y": -240
+        },
+        "Parallax": {
+          "at": 1
+        },
+        "Parent": {
+          "key": "hillsStage",
+          "projection": "stage.hills"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 1920,
+          "texture": "ui.hill-mid",
+          "tint": 16777215,
+          "width": 3456
+        },
+        "Transform": {
+          "pivot": {
+            "x": 1728,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 1260,
+          "y": 960
+        }
+      },
+      "key": "hillMid",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 1080,
+          "x": 0,
+          "y": -240
+        },
+        "Parent": {
+          "key": "stageHills",
+          "projection": "stage.hills"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1920,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "hillsStage",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "hills"
+        }
+      },
+      "key": "stage.hills",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 0
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1440,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 720
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "stageHills",
+      "projection": "stage.hills"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "Parent": {
+          "key": "stageSky",
+          "projection": "stage.sky"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "cover",
+          "height": 1440,
+          "texture": "ui.sky",
+          "tint": 16777215,
+          "width": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 720
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "skyArt",
+      "projection": "stage.sky"
+    },
+    {
+      "components": {
+        "Layer": {
+          "name": "background"
+        }
+      },
+      "key": "stage.sky",
+      "projection": "stage.sky"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 0
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1440,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 720
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "stageSky",
+      "projection": "stage.sky"
+    }
+  ]
+}
