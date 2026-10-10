@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "moku-editor": {
+      "type": "stdio",
+      "command": "bunx",
+      "args": ["moku-editor", "mcp", "--port", "3000"]
+    }
+  }
+}
