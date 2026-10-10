@@ -14,6 +14,7 @@ This is a **monorepo, not a workspace**: there is no root `package.json` and no 
 |------|-------|---------------|
 | [`tracker`](tracker/) | web + worker — D1, KV, R2, Queues, Durable Objects | Real-time kanban board; full Layer-3 web + worker composition |
 | [`merge-game`](merge-game/) | game — `@moku-labs/game` on PixiJS (WebGPU), `@moku-labs/editor` | Timber Town, the engine's reference merge puzzle; e2e and visual tests that run against any engine or editor build |
+| [`ticktoe`](ticktoe/) | game — `@moku-labs/game` on PixiJS, `@moku-labs/editor`, native shell through `@moku-labs/native` | Tic-tac-toe against a bot on three levels; splash, sound, a native build; headless, visual and editor tests |
 
 ## Running a demo
 

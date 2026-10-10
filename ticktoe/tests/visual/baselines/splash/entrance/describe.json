@@ -1,0 +1,2004 @@
+{
+  "ui": {
+    "children": [
+      {
+        "children": [],
+        "key": "splashSky",
+        "rect": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "state": {
+          "active": false,
+          "covered": false,
+          "disabled": false,
+          "focus": false,
+          "hover": false,
+          "pressed": false,
+          "selected": false
+        },
+        "style": {
+          "height": "100%",
+          "left": 0,
+          "position": "absolute",
+          "reason": "the sky fills the window behind the stage",
+          "top": 0,
+          "width": "100%"
+        },
+        "type": "image"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "key": "splashHillBack",
+            "rect": {
+              "h": 1920,
+              "w": 3456,
+              "x": -1742,
+              "y": -240
+            },
+            "state": {
+              "active": false,
+              "covered": false,
+              "disabled": false,
+              "focus": false,
+              "hover": false,
+              "pressed": false,
+              "selected": false
+            },
+            "style": {
+              "height": 1920,
+              "left": -1742,
+              "top": 0,
+              "width": 3456
+            },
+            "type": "image"
+          },
+          {
+            "children": [],
+            "key": "splashHillMid",
+            "rect": {
+              "h": 1920,
+              "w": 3456,
+              "x": -1908,
+              "y": -240
+            },
+            "state": {
+              "active": false,
+              "covered": false,
+              "disabled": false,
+              "focus": false,
+              "hover": false,
+              "pressed": false,
+              "selected": false
+            },
+            "style": {
+              "height": 1920,
+              "left": -1908,
+              "top": 0,
+              "width": 3456
+            },
+            "type": "image"
+          },
+          {
+            "children": [],
+            "key": "splashGround",
+            "rect": {
+              "h": 1208,
+              "w": 3456,
+              "x": -1188,
+              "y": 1672
+            },
+            "state": {
+              "active": false,
+              "covered": false,
+              "disabled": false,
+              "focus": false,
+              "hover": false,
+              "pressed": false,
+              "selected": false
+            },
+            "style": {
+              "fill": 16630446,
+              "height": 1208,
+              "left": -1188,
+              "top": 1912,
+              "width": 3456
+            },
+            "type": "stack"
+          },
+          {
+            "children": [],
+            "key": "splashHillFront",
+            "rect": {
+              "h": 1920,
+              "w": 3456,
+              "x": -2074,
+              "y": -240
+            },
+            "state": {
+              "active": false,
+              "covered": false,
+              "disabled": false,
+              "focus": false,
+              "hover": false,
+              "pressed": false,
+              "selected": false
+            },
+            "style": {
+              "height": 1920,
+              "left": -2074,
+              "top": 0,
+              "width": 3456
+            },
+            "type": "image"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "key": "splashOArt",
+                    "rect": {
+                      "h": 506,
+                      "w": 506,
+                      "x": 478,
+                      "y": 297
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "height": 506,
+                      "left": 0,
+                      "top": 0,
+                      "width": 506
+                    },
+                    "type": "image"
+                  }
+                ],
+                "key": "splashO",
+                "rect": {
+                  "h": 506,
+                  "w": 506,
+                  "x": 478,
+                  "y": 297
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 506,
+                  "left": 478,
+                  "rotation": 0.13962634015954636,
+                  "top": 537,
+                  "width": 506
+                },
+                "type": "stack"
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "key": "splashXArt",
+                    "rect": {
+                      "h": 500,
+                      "w": 500,
+                      "x": 99,
+                      "y": 15
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "height": 500,
+                      "left": 0,
+                      "top": 0,
+                      "width": 500
+                    },
+                    "type": "image"
+                  }
+                ],
+                "key": "splashX",
+                "rect": {
+                  "h": 500,
+                  "w": 500,
+                  "x": 99,
+                  "y": 15
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 500,
+                  "left": 99,
+                  "rotation": -0.24434609527920614,
+                  "top": 255,
+                  "width": 500
+                },
+                "type": "stack"
+              },
+              {
+                "children": [],
+                "key": "splashSprinkle0",
+                "rect": {
+                  "h": 36,
+                  "w": 94,
+                  "x": 742,
+                  "y": -96
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 36,
+                  "left": 742,
+                  "rotation": -0.6632251157578453,
+                  "tint": 16359584,
+                  "top": 144,
+                  "width": 94
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "splashSprinkle1",
+                "rect": {
+                  "h": 36,
+                  "w": 94,
+                  "x": 654,
+                  "y": 59
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 36,
+                  "left": 654,
+                  "rotation": -1.0821041362364843,
+                  "tint": 16445146,
+                  "top": 299,
+                  "width": 94
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "splashSprinkle2",
+                "rect": {
+                  "h": 36,
+                  "w": 94,
+                  "x": 897,
+                  "y": 48
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 36,
+                  "left": 897,
+                  "rotation": -0.6981317007977318,
+                  "tint": 6474153,
+                  "top": 288,
+                  "width": 94
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "splashSprinkle3",
+                "rect": {
+                  "h": 36,
+                  "w": 94,
+                  "x": 50,
+                  "y": 486
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 36,
+                  "left": 50,
+                  "rotation": 0.9075712110370514,
+                  "tint": 16359584,
+                  "top": 726,
+                  "width": 94
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "splashSprinkle4",
+                "rect": {
+                  "h": 36,
+                  "w": 94,
+                  "x": 288,
+                  "y": 773
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 36,
+                  "left": 288,
+                  "rotation": -0.5235987755982988,
+                  "tint": 16038972,
+                  "top": 1013,
+                  "width": 94
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "splashSprinkle5",
+                "rect": {
+                  "h": 36,
+                  "w": 94,
+                  "x": 404,
+                  "y": 895
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 36,
+                  "left": 404,
+                  "rotation": 0.6981317007977318,
+                  "tint": 6474153,
+                  "top": 1135,
+                  "width": 94
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "splashSprinkle6",
+                "rect": {
+                  "h": 36,
+                  "w": 94,
+                  "x": 914,
+                  "y": 989
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 36,
+                  "left": 914,
+                  "rotation": 0.8377580409572782,
+                  "tint": 16359584,
+                  "top": 1229,
+                  "width": 94
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "splashStar0",
+                "rect": {
+                  "h": 78,
+                  "w": 78,
+                  "x": 122,
+                  "y": -141
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 78,
+                  "left": 122,
+                  "rotation": -0.20943951023931956,
+                  "tint": 16777215,
+                  "top": 99,
+                  "width": 78
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "splashStar1",
+                "rect": {
+                  "h": 78,
+                  "w": 78,
+                  "x": 958,
+                  "y": 247
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 78,
+                  "left": 958,
+                  "rotation": 0.17453292519943295,
+                  "tint": 16777215,
+                  "top": 487,
+                  "width": 78
+                },
+                "type": "image"
+              },
+              {
+                "children": [],
+                "key": "splashStar2",
+                "rect": {
+                  "h": 78,
+                  "w": 78,
+                  "x": 543,
+                  "y": 956
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 78,
+                  "left": 543,
+                  "rotation": -0.13962634015954636,
+                  "tint": 16777215,
+                  "top": 1196,
+                  "width": 78
+                },
+                "type": "image"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "key": "splashTic",
+                        "rect": {
+                          "h": 128,
+                          "w": 147,
+                          "x": 261,
+                          "y": 1100
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {},
+                        "type": "text"
+                      },
+                      {
+                        "children": [],
+                        "key": "splashTac",
+                        "rect": {
+                          "h": 128,
+                          "w": 179,
+                          "x": 433,
+                          "y": 1100
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {},
+                        "type": "text"
+                      },
+                      {
+                        "children": [],
+                        "key": "splashToe",
+                        "rect": {
+                          "h": 128,
+                          "w": 182,
+                          "x": 637,
+                          "y": 1100
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {},
+                        "type": "text"
+                      }
+                    ],
+                    "key": "splashTitlePill",
+                    "rect": {
+                      "h": 230,
+                      "w": 858,
+                      "x": 111,
+                      "y": 1056
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "align": "center",
+                      "direction": "row",
+                      "gap": 25,
+                      "height": 230,
+                      "justify": "center",
+                      "left": 0,
+                      "nineSlice": "ui.pill-cream-big",
+                      "padding": {
+                        "bottom": 14
+                      },
+                      "top": 0,
+                      "width": 858
+                    },
+                    "type": "panel"
+                  }
+                ],
+                "key": "splashTitle",
+                "rect": {
+                  "h": 230,
+                  "w": 858,
+                  "x": 111,
+                  "y": 1056
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 230,
+                  "left": 111,
+                  "top": 1296,
+                  "width": 858
+                },
+                "type": "stack"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "key": "splashFill",
+                            "rect": {
+                              "h": 44,
+                              "w": 526,
+                              "x": 277,
+                              "y": 1375
+                            },
+                            "state": {
+                              "active": false,
+                              "covered": false,
+                              "disabled": false,
+                              "focus": false,
+                              "hover": false,
+                              "pressed": false,
+                              "selected": false
+                            },
+                            "style": {
+                              "fill": 7197362,
+                              "height": 44,
+                              "left": 0,
+                              "origin": "topLeft",
+                              "radius": 22,
+                              "top": 0,
+                              "width": 526
+                            },
+                            "type": "stack"
+                          }
+                        ],
+                        "key": "splashFillWindow",
+                        "rect": {
+                          "h": 44,
+                          "w": 526,
+                          "x": 277,
+                          "y": 1375
+                        },
+                        "state": {
+                          "active": false,
+                          "covered": false,
+                          "disabled": false,
+                          "focus": false,
+                          "hover": false,
+                          "pressed": false,
+                          "selected": false
+                        },
+                        "style": {
+                          "height": 44,
+                          "left": 14,
+                          "overflow": "hidden",
+                          "position": "absolute",
+                          "radius": 22,
+                          "reason": "the window of the fill is the inside of the track, above its lip",
+                          "top": 14,
+                          "width": 526
+                        },
+                        "type": "stack"
+                      }
+                    ],
+                    "key": "splashBarTrack",
+                    "rect": {
+                      "h": 80,
+                      "w": 554,
+                      "x": 263,
+                      "y": 1361
+                    },
+                    "state": {
+                      "active": false,
+                      "covered": false,
+                      "disabled": false,
+                      "focus": false,
+                      "hover": false,
+                      "pressed": false,
+                      "selected": false
+                    },
+                    "style": {
+                      "height": 80,
+                      "left": 0,
+                      "nineSlice": "ui.pill-cream-small",
+                      "top": 0,
+                      "width": 554
+                    },
+                    "type": "panel"
+                  }
+                ],
+                "key": "splashBar",
+                "rect": {
+                  "h": 80,
+                  "w": 554,
+                  "x": 263,
+                  "y": 1361
+                },
+                "state": {
+                  "active": false,
+                  "covered": false,
+                  "disabled": false,
+                  "focus": false,
+                  "hover": false,
+                  "pressed": false,
+                  "selected": false
+                },
+                "style": {
+                  "height": 80,
+                  "left": 263,
+                  "top": 1601,
+                  "width": 554
+                },
+                "type": "stack"
+              }
+            ],
+            "key": "splashArt",
+            "rect": {
+              "h": 1920,
+              "w": 1080,
+              "x": 0,
+              "y": -240
+            },
+            "state": {
+              "active": false,
+              "covered": false,
+              "disabled": false,
+              "focus": false,
+              "hover": false,
+              "pressed": false,
+              "selected": false
+            },
+            "style": {
+              "height": 1920,
+              "left": 0,
+              "top": 0,
+              "width": 1080
+            },
+            "type": "stack"
+          }
+        ],
+        "key": "splashStage",
+        "rect": {
+          "h": 1920,
+          "w": 1080,
+          "x": 0,
+          "y": -240
+        },
+        "state": {
+          "active": false,
+          "covered": false,
+          "disabled": false,
+          "focus": false,
+          "hover": false,
+          "pressed": false,
+          "selected": false
+        },
+        "style": {
+          "height": 1920,
+          "width": 1080
+        },
+        "type": "stack"
+      }
+    ],
+    "key": "splashScreen",
+    "rect": {
+      "h": 1440,
+      "w": 1080,
+      "x": 0,
+      "y": 0
+    },
+    "state": {
+      "active": false,
+      "covered": false,
+      "disabled": false,
+      "focus": false,
+      "hover": false,
+      "pressed": false,
+      "selected": false
+    },
+    "style": {
+      "align": "center",
+      "justify": "center"
+    },
+    "type": "screen"
+  },
+  "views": [
+    {
+      "components": {
+        "Layer": {
+          "name": "ui"
+        }
+      },
+      "key": "splash.screen",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 1080,
+          "x": 0,
+          "y": -240
+        },
+        "Parent": {
+          "key": "splashStage",
+          "projection": "splash.screen"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1920,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 960
+        }
+      },
+      "key": "splashArt",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 80,
+          "w": 554,
+          "x": 263,
+          "y": 1361
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 80,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 554
+        },
+        "Transform": {
+          "pivot": {
+            "x": 277,
+            "y": 40
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 1641
+        }
+      },
+      "key": "splashBar",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 80,
+          "w": 554,
+          "x": 263,
+          "y": 1361
+        },
+        "NineSlice": {
+          "alpha": 1,
+          "clip": false,
+          "debug": false,
+          "height": 80,
+          "texture": "ui.pill-cream-small",
+          "tint": 16777215,
+          "width": 554
+        },
+        "Parent": {
+          "key": "splashBar",
+          "projection": "splash.screen"
+        },
+        "Touchable": true,
+        "Transform": {
+          "pivot": {
+            "x": 277,
+            "y": 40
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 277,
+          "y": 40
+        }
+      },
+      "key": "splashBarTrack",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 44,
+          "w": 526,
+          "x": 277,
+          "y": 1375
+        },
+        "Fill": {
+          "pct": 0
+        },
+        "Parent": {
+          "key": "splashFillWindow",
+          "projection": "splash.screen"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 7197362,
+          "fillAlpha": 1,
+          "h": 44,
+          "kind": "rect",
+          "radius": 22,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 526
+        },
+        "Transform": {
+          "pivot": {
+            "x": 0,
+            "y": 0
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": -526,
+          "y": 0
+        }
+      },
+      "key": "splashFill",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 44,
+          "w": 526,
+          "x": 277,
+          "y": 1375
+        },
+        "Parent": {
+          "key": "splashBarTrack",
+          "projection": "splash.screen"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": true,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 44,
+          "kind": "rect",
+          "radius": 22,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 526
+        },
+        "Transform": {
+          "pivot": {
+            "x": 263,
+            "y": 22
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 277,
+          "y": 36
+        }
+      },
+      "key": "splashFillWindow",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1208,
+          "w": 3456,
+          "x": -1188,
+          "y": 1672
+        },
+        "Parent": {
+          "key": "splashStage",
+          "projection": "splash.screen"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16630446,
+          "fillAlpha": 1,
+          "h": 1208,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 3456
+        },
+        "Transform": {
+          "pivot": {
+            "x": 1728,
+            "y": 604
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 2516
+        }
+      },
+      "key": "splashGround",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 3456,
+          "x": -1742,
+          "y": -240
+        },
+        "Parent": {
+          "key": "splashStage",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 1920,
+          "texture": "ui.hill-back",
+          "tint": 16777215,
+          "width": 3456
+        },
+        "Transform": {
+          "pivot": {
+            "x": 1728,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": -14,
+          "y": 960
+        }
+      },
+      "key": "splashHillBack",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 3456,
+          "x": -2074,
+          "y": -240
+        },
+        "Parent": {
+          "key": "splashStage",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 1920,
+          "texture": "ui.hill-front",
+          "tint": 16777215,
+          "width": 3456
+        },
+        "Transform": {
+          "pivot": {
+            "x": 1728,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": -346,
+          "y": 960
+        }
+      },
+      "key": "splashHillFront",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 3456,
+          "x": -1908,
+          "y": -240
+        },
+        "Parent": {
+          "key": "splashStage",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 1920,
+          "texture": "ui.hill-mid",
+          "tint": 16777215,
+          "width": 3456
+        },
+        "Transform": {
+          "pivot": {
+            "x": 1728,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": -180,
+          "y": 960
+        }
+      },
+      "key": "splashHillMid",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 506,
+          "w": 506,
+          "x": 478,
+          "y": 297
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 506,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 506
+        },
+        "Transform": {
+          "pivot": {
+            "x": 253,
+            "y": 253
+          },
+          "rotation": 0.13962634015954636,
+          "scale": 1,
+          "x": 731,
+          "y": 790
+        }
+      },
+      "key": "splashO",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 506,
+          "w": 506,
+          "x": 478,
+          "y": 297
+        },
+        "Parent": {
+          "key": "splashO",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 506,
+          "texture": "splash.o",
+          "tint": 16777215,
+          "width": 506
+        },
+        "Transform": {
+          "pivot": {
+            "x": 253,
+            "y": 253
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 253,
+          "y": 253
+        }
+      },
+      "key": "splashOArt",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "Layer": {
+          "name": "ui"
+        },
+        "Order": {
+          "value": 0
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1440,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 720
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "splashScreen",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1440,
+          "w": 1080,
+          "x": 0,
+          "y": 0
+        },
+        "Parent": {
+          "key": "splashScreen",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "cover",
+          "height": 1440,
+          "texture": "ui.sky",
+          "tint": 16777215,
+          "width": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 720
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "splashSky",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 36,
+          "w": 94,
+          "x": 742,
+          "y": -96
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 36,
+          "texture": "splash.sprinkle",
+          "tint": 16359584,
+          "width": 94
+        },
+        "Transform": {
+          "pivot": {
+            "x": 47,
+            "y": 18
+          },
+          "rotation": -0.6632251157578453,
+          "scale": 1,
+          "x": 789,
+          "y": 162
+        }
+      },
+      "key": "splashSprinkle0",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 36,
+          "w": 94,
+          "x": 654,
+          "y": 59
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 36,
+          "texture": "splash.sprinkle",
+          "tint": 16445146,
+          "width": 94
+        },
+        "Transform": {
+          "pivot": {
+            "x": 47,
+            "y": 18
+          },
+          "rotation": -1.0821041362364843,
+          "scale": 1,
+          "x": 701,
+          "y": 317
+        }
+      },
+      "key": "splashSprinkle1",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 36,
+          "w": 94,
+          "x": 897,
+          "y": 48
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 36,
+          "texture": "splash.sprinkle",
+          "tint": 6474153,
+          "width": 94
+        },
+        "Transform": {
+          "pivot": {
+            "x": 47,
+            "y": 18
+          },
+          "rotation": -0.6981317007977318,
+          "scale": 1,
+          "x": 944,
+          "y": 306
+        }
+      },
+      "key": "splashSprinkle2",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 36,
+          "w": 94,
+          "x": 50,
+          "y": 486
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 36,
+          "texture": "splash.sprinkle",
+          "tint": 16359584,
+          "width": 94
+        },
+        "Transform": {
+          "pivot": {
+            "x": 47,
+            "y": 18
+          },
+          "rotation": 0.9075712110370514,
+          "scale": 1,
+          "x": 97,
+          "y": 744
+        }
+      },
+      "key": "splashSprinkle3",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 36,
+          "w": 94,
+          "x": 288,
+          "y": 773
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 36,
+          "texture": "splash.sprinkle",
+          "tint": 16038972,
+          "width": 94
+        },
+        "Transform": {
+          "pivot": {
+            "x": 47,
+            "y": 18
+          },
+          "rotation": -0.5235987755982988,
+          "scale": 1,
+          "x": 335,
+          "y": 1031
+        }
+      },
+      "key": "splashSprinkle4",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 36,
+          "w": 94,
+          "x": 404,
+          "y": 895
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 36,
+          "texture": "splash.sprinkle",
+          "tint": 6474153,
+          "width": 94
+        },
+        "Transform": {
+          "pivot": {
+            "x": 47,
+            "y": 18
+          },
+          "rotation": 0.6981317007977318,
+          "scale": 1,
+          "x": 451,
+          "y": 1153
+        }
+      },
+      "key": "splashSprinkle5",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 36,
+          "w": 94,
+          "x": 914,
+          "y": 989
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 36,
+          "texture": "splash.sprinkle",
+          "tint": 16359584,
+          "width": 94
+        },
+        "Transform": {
+          "pivot": {
+            "x": 47,
+            "y": 18
+          },
+          "rotation": 0.8377580409572782,
+          "scale": 1,
+          "x": 961,
+          "y": 1247
+        }
+      },
+      "key": "splashSprinkle6",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 1920,
+          "w": 1080,
+          "x": 0,
+          "y": -240
+        },
+        "Parent": {
+          "key": "splashScreen",
+          "projection": "splash.screen"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 1920,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 1080
+        },
+        "Transform": {
+          "pivot": {
+            "x": 540,
+            "y": 960
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 720
+        }
+      },
+      "key": "splashStage",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 78,
+          "w": 78,
+          "x": 122,
+          "y": -141
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 78,
+          "texture": "splash.star",
+          "tint": 16777215,
+          "width": 78
+        },
+        "Transform": {
+          "pivot": {
+            "x": 39,
+            "y": 39
+          },
+          "rotation": -0.20943951023931956,
+          "scale": 1,
+          "x": 161,
+          "y": 138
+        }
+      },
+      "key": "splashStar0",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 78,
+          "w": 78,
+          "x": 958,
+          "y": 247
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 78,
+          "texture": "splash.star",
+          "tint": 16777215,
+          "width": 78
+        },
+        "Transform": {
+          "pivot": {
+            "x": 39,
+            "y": 39
+          },
+          "rotation": 0.17453292519943295,
+          "scale": 1,
+          "x": 997,
+          "y": 526
+        }
+      },
+      "key": "splashStar1",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 78,
+          "w": 78,
+          "x": 543,
+          "y": 956
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 78,
+          "texture": "splash.star",
+          "tint": 16777215,
+          "width": 78
+        },
+        "Transform": {
+          "pivot": {
+            "x": 39,
+            "y": 39
+          },
+          "rotation": -0.13962634015954636,
+          "scale": 1,
+          "x": 582,
+          "y": 1235
+        }
+      },
+      "key": "splashStar2",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 128,
+          "w": 179,
+          "x": 433,
+          "y": 1100
+        },
+        "Parent": {
+          "key": "splashTitlePill",
+          "projection": "splash.screen"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 89.5,
+            "y": 64
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 411.5,
+          "y": 108
+        }
+      },
+      "key": "splashTac",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 128,
+          "w": 147,
+          "x": 261,
+          "y": 1100
+        },
+        "Parent": {
+          "key": "splashTitlePill",
+          "projection": "splash.screen"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 73.5,
+            "y": 64
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 223.5,
+          "y": 108
+        }
+      },
+      "key": "splashTic",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 230,
+          "w": 858,
+          "x": 111,
+          "y": 1056
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 230,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 858
+        },
+        "Transform": {
+          "pivot": {
+            "x": 429,
+            "y": 115
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 540,
+          "y": 1411
+        }
+      },
+      "key": "splashTitle",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 230,
+          "w": 858,
+          "x": 111,
+          "y": 1056
+        },
+        "NineSlice": {
+          "alpha": 1,
+          "clip": false,
+          "debug": false,
+          "height": 230,
+          "texture": "ui.pill-cream-big",
+          "tint": 16777215,
+          "width": 858
+        },
+        "Parent": {
+          "key": "splashTitle",
+          "projection": "splash.screen"
+        },
+        "Touchable": true,
+        "Transform": {
+          "pivot": {
+            "x": 429,
+            "y": 115
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 429,
+          "y": 115
+        }
+      },
+      "key": "splashTitlePill",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 128,
+          "w": 182,
+          "x": 637,
+          "y": 1100
+        },
+        "Parent": {
+          "key": "splashTitlePill",
+          "projection": "splash.screen"
+        },
+        "Transform": {
+          "pivot": {
+            "x": 91,
+            "y": 64
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 617,
+          "y": 108
+        }
+      },
+      "key": "splashToe",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 500,
+          "w": 500,
+          "x": 99,
+          "y": 15
+        },
+        "Parent": {
+          "key": "splashArt",
+          "projection": "splash.screen"
+        },
+        "Shape": {
+          "alpha": 1,
+          "clip": false,
+          "dash": 0,
+          "fill": 16777215,
+          "fillAlpha": 0,
+          "h": 500,
+          "kind": "rect",
+          "radius": 0,
+          "stroke": 0,
+          "strokeWidth": 0,
+          "w": 500
+        },
+        "Transform": {
+          "pivot": {
+            "x": 250,
+            "y": 250
+          },
+          "rotation": -0.24434609527920614,
+          "scale": 1,
+          "x": 349,
+          "y": 505
+        }
+      },
+      "key": "splashX",
+      "projection": "splash.screen"
+    },
+    {
+      "components": {
+        "Box": {
+          "h": 500,
+          "w": 500,
+          "x": 99,
+          "y": 15
+        },
+        "Parent": {
+          "key": "splashX",
+          "projection": "splash.screen"
+        },
+        "Sprite": {
+          "alpha": 1,
+          "anchor": {
+            "x": 0,
+            "y": 0
+          },
+          "fit": "fill",
+          "height": 500,
+          "texture": "splash.x",
+          "tint": 16777215,
+          "width": 500
+        },
+        "Transform": {
+          "pivot": {
+            "x": 250,
+            "y": 250
+          },
+          "rotation": 0,
+          "scale": 1,
+          "x": 250,
+          "y": 250
+        }
+      },
+      "key": "splashXArt",
+      "projection": "splash.screen"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "path": "round/celebrate",
+  "player": {
+    "level": "normal",
+    "nextFirst": 2,
+    "score": {
+      "bot": 1,
+      "draws": 1,
+      "you": 3
+    }
+  },
+  "rng": {
+    "seed": 7,
+    "streams": {}
+  },
+  "session": {
+    "board": [
+      1,
+      0,
+      2,
+      2,
+      1,
+      0,
+      0,
+      0,
+      1
+    ],
+    "botDraw": 0,
+    "botDueAt": 0,
+    "card": false,
+    "celebrateDueAt": 9007199254740991,
+    "result": "win",
+    "screen": "board",
+    "shownScore": {
+      "bot": 1,
+      "draws": 1,
+      "you": 2
+    },
+    "splash": {
+      "minDueAt": 0,
+      "minPassed": true,
+      "pct": 1,
+      "ready": true
+    },
+    "turn": 2,
+    "winLine": [
+      0,
+      4,
+      8
+    ]
+  }
+}

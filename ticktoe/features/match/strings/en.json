@@ -1,0 +1,13 @@
+{
+  "hud.you": "You",
+  "hud.draws": "Draws",
+  "hud.bot": "Bot",
+  "hud.home": "Home",
+  "turn.yours": "Your move",
+  "turn.bot": "Bot is thinking",
+  "result.win": "You win",
+  "result.loss": "Bot wins",
+  "result.draw": "Draw",
+  "card.again": "Play again",
+  "card.home": "Home"
+}

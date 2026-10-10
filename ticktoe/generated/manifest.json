@@ -1,0 +1,339 @@
+{
+  "version": 1,
+  "bundles": {
+    "match": {
+      "feature": "match",
+      "tier": "core",
+      "mb": 3.13,
+      "files": [
+        {
+          "key": "match.card",
+          "path": "features/match/assets/card.mp3",
+          "kind": "audio",
+          "mb": 0.012
+        },
+        {
+          "key": "match.draw",
+          "path": "features/match/assets/draw.mp3",
+          "kind": "audio",
+          "mb": 0.019
+        },
+        {
+          "key": "match.flip",
+          "path": "features/match/assets/flip.mp3",
+          "kind": "audio",
+          "mb": 0.016
+        },
+        {
+          "key": "match.fx.confetti",
+          "path": "features/match/assets/fx/confetti.png",
+          "width": 32,
+          "height": 32,
+          "mb": 0.004
+        },
+        {
+          "key": "match.level",
+          "path": "features/match/assets/level.mp3",
+          "kind": "audio",
+          "mb": 0.008
+        },
+        {
+          "key": "match.loss",
+          "path": "features/match/assets/loss.mp3",
+          "kind": "audio",
+          "mb": 0.024
+        },
+        {
+          "key": "match.piece-o",
+          "path": "features/match/assets/piece-o.png",
+          "width": 320,
+          "height": 320,
+          "mb": 0.391
+        },
+        {
+          "key": "match.piece-shadow",
+          "path": "features/match/assets/piece-shadow.png",
+          "width": 320,
+          "height": 120,
+          "mb": 0.146
+        },
+        {
+          "key": "match.piece-x",
+          "path": "features/match/assets/piece-x.png",
+          "width": 320,
+          "height": 320,
+          "mb": 0.391
+        },
+        {
+          "key": "match.place-o",
+          "path": "features/match/assets/place-o.mp3",
+          "kind": "audio",
+          "mb": 0.008
+        },
+        {
+          "key": "match.place-x",
+          "path": "features/match/assets/place-x.mp3",
+          "kind": "audio",
+          "mb": 0.008
+        },
+        {
+          "key": "match.refuse",
+          "path": "features/match/assets/refuse.mp3",
+          "kind": "audio",
+          "mb": 0.008
+        },
+        {
+          "key": "match.score",
+          "path": "features/match/assets/score.mp3",
+          "kind": "audio",
+          "mb": 0.008
+        },
+        {
+          "key": "match.theme",
+          "path": "features/match/assets/theme.mp3",
+          "kind": "audio",
+          "mb": 1.374
+        },
+        {
+          "key": "match.tile",
+          "path": "features/match/assets/tile.png",
+          "width": 288,
+          "height": 304,
+          "mb": 0.334
+        },
+        {
+          "key": "match.tile-win",
+          "path": "features/match/assets/tile-win.png",
+          "width": 288,
+          "height": 304,
+          "mb": 0.334
+        },
+        {
+          "key": "match.whoosh",
+          "path": "features/match/assets/whoosh.mp3",
+          "kind": "audio",
+          "mb": 0.013
+        },
+        {
+          "key": "match.win",
+          "path": "features/match/assets/win.mp3",
+          "kind": "audio",
+          "mb": 0.032
+        }
+      ]
+    },
+    "splash": {
+      "feature": "splash",
+      "tier": "boot",
+      "mb": 3.189,
+      "files": [
+        {
+          "key": "splash.o",
+          "path": "features/splash/assets/o.png",
+          "width": 640,
+          "height": 640,
+          "mb": 1.563
+        },
+        {
+          "key": "splash.splash",
+          "path": "features/splash/assets/splash.mp3",
+          "kind": "audio",
+          "mb": 0.024
+        },
+        {
+          "key": "splash.sprinkle",
+          "path": "features/splash/assets/sprinkle.png",
+          "width": 96,
+          "height": 40,
+          "mb": 0.015
+        },
+        {
+          "key": "splash.star",
+          "path": "features/splash/assets/star.png",
+          "width": 80,
+          "height": 80,
+          "mb": 0.024
+        },
+        {
+          "key": "splash.x",
+          "path": "features/splash/assets/x.png",
+          "width": 640,
+          "height": 640,
+          "mb": 1.563
+        }
+      ]
+    },
+    "ui": {
+      "feature": "ui",
+      "tier": "boot",
+      "mb": 38.042,
+      "files": [
+        {
+          "key": "ui.btn-peach",
+          "path": "shared/assets/btn-peach{nine=69,69,69,83}.png",
+          "width": 170,
+          "height": 184,
+          "mb": 0.119,
+          "nine": {
+            "left": 69,
+            "top": 69,
+            "right": 69,
+            "bottom": 83
+          }
+        },
+        {
+          "key": "ui.btn-teal",
+          "path": "shared/assets/btn-teal{nine=69,69,69,83}.png",
+          "width": 170,
+          "height": 184,
+          "mb": 0.119,
+          "nine": {
+            "left": 69,
+            "top": 69,
+            "right": 69,
+            "bottom": 83
+          }
+        },
+        {
+          "key": "ui.btn-teal-big",
+          "path": "shared/assets/btn-teal-big{nine=97,97,97,111}.png",
+          "width": 226,
+          "height": 240,
+          "mb": 0.207,
+          "nine": {
+            "left": 97,
+            "top": 97,
+            "right": 97,
+            "bottom": 111
+          }
+        },
+        {
+          "key": "ui.card",
+          "path": "shared/assets/card{nine=94,94,94,111}.png",
+          "width": 220,
+          "height": 237,
+          "mb": 0.199,
+          "nine": {
+            "left": 94,
+            "top": 94,
+            "right": 94,
+            "bottom": 111
+          }
+        },
+        {
+          "key": "ui.font-body",
+          "path": "shared/assets/font-body.fnt",
+          "kind": "font",
+          "mb": 1,
+          "pages": [
+            {
+              "path": "shared/assets/font-body.png",
+              "width": 512,
+              "height": 512,
+              "mb": 1
+            }
+          ]
+        },
+        {
+          "key": "ui.hill-back",
+          "path": "shared/assets/hill-back.png",
+          "width": 2304,
+          "height": 1280,
+          "mb": 11.25
+        },
+        {
+          "key": "ui.hill-front",
+          "path": "shared/assets/hill-front.png",
+          "width": 2304,
+          "height": 1280,
+          "mb": 11.25
+        },
+        {
+          "key": "ui.hill-mid",
+          "path": "shared/assets/hill-mid.png",
+          "width": 2304,
+          "height": 1280,
+          "mb": 11.25
+        },
+        {
+          "key": "ui.knob-teal",
+          "path": "shared/assets/knob-teal{nine=66,66,66,74}.png",
+          "width": 164,
+          "height": 172,
+          "mb": 0.108,
+          "nine": {
+            "left": 66,
+            "top": 66,
+            "right": 66,
+            "bottom": 74
+          }
+        },
+        {
+          "key": "ui.pill-cream",
+          "path": "shared/assets/pill-cream{nine=78,78,78,92}.png",
+          "width": 188,
+          "height": 202,
+          "mb": 0.145,
+          "nine": {
+            "left": 78,
+            "top": 78,
+            "right": 78,
+            "bottom": 92
+          }
+        },
+        {
+          "key": "ui.pill-cream-big",
+          "path": "shared/assets/pill-cream-big{nine=108,108,108,122}.png",
+          "width": 248,
+          "height": 262,
+          "mb": 0.248,
+          "nine": {
+            "left": 108,
+            "top": 108,
+            "right": 108,
+            "bottom": 122
+          }
+        },
+        {
+          "key": "ui.pill-cream-small",
+          "path": "shared/assets/pill-cream-small{nine=36,36,36,44}.png",
+          "width": 104,
+          "height": 112,
+          "mb": 0.044,
+          "nine": {
+            "left": 36,
+            "top": 36,
+            "right": 36,
+            "bottom": 44
+          }
+        },
+        {
+          "key": "ui.pill-peach",
+          "path": "shared/assets/pill-peach{nine=69,69,69,80}.png",
+          "width": 170,
+          "height": 181,
+          "mb": 0.117,
+          "nine": {
+            "left": 69,
+            "top": 69,
+            "right": 69,
+            "bottom": 80
+          }
+        },
+        {
+          "key": "ui.sky",
+          "path": "shared/assets/sky.png",
+          "width": 540,
+          "height": 960,
+          "mb": 1.978
+        },
+        {
+          "key": "ui.tap",
+          "path": "shared/assets/tap.mp3",
+          "kind": "audio",
+          "mb": 0.008
+        }
+      ]
+    }
+  }
+}

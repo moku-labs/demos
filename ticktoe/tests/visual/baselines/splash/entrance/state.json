@@ -1,0 +1,48 @@
+{
+  "path": "splashWait",
+  "player": {
+    "level": "normal",
+    "nextFirst": 1,
+    "score": {
+      "bot": 0,
+      "draws": 0,
+      "you": 0
+    }
+  },
+  "rng": {
+    "seed": 7,
+    "streams": {}
+  },
+  "session": {
+    "board": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "botDraw": 0,
+    "botDueAt": 0,
+    "card": false,
+    "celebrateDueAt": 0,
+    "result": "none",
+    "screen": "home",
+    "shownScore": {
+      "bot": 0,
+      "draws": 0,
+      "you": 0
+    },
+    "splash": {
+      "minDueAt": 9007199254740991,
+      "minPassed": false,
+      "pct": 0,
+      "ready": false
+    },
+    "turn": 1,
+    "winLine": []
+  }
+}
