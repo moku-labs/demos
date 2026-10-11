@@ -38,7 +38,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.16",
     "@moku-labs/ai": "0.16.2",
-    "@moku-labs/editor": "0.10.0",
+    "@moku-labs/editor": "0.10.4",
     "@moku-labs/native": "0.3.3",
     "@types/bun": "1.4.2",
     "@vitest/coverage-istanbul": "4.0.18",
