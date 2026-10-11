@@ -1,8 +1,8 @@
 /**
  * @file A transition that keeps failing, without a screen. The runner rolls back and returns to
  * the rest point once; on the second failure it enters the safe node `home` with the session of
- * that rest point, the Board's. Home then brings the session back to Home, so the screen and the
- * gate agree, and cancels the moment the round left armed on the clock. A transition is made to
+ * that rest point, the Board's. The `recover` of Home then brings the session back to Home, so the
+ * screen and the gate agree, and cancels the moment the round left armed on the clock. A transition is made to
  * fail here by an `onEnter` callback that throws for one path.
  */
 import { startingPlayer } from "@core/state";
@@ -23,6 +23,10 @@ const WINNING = [0, 8, 6, 7];
  * @returns The function that mends the node again.
  */
 function breakNode(started: Pick<Started, "app">, path: string): () => void {
+  // The failures to come are errors of the log. Its trace keeps them; nothing prints them into
+  // the output of this run.
+  started.app.log.clearSinks();
+
   return started.app.flow.onEnter("load", info => {
     if (info.path === path) throw new Error(`The node "${path}" is broken.`);
   });
@@ -94,6 +98,36 @@ describe("leaving the Board fails twice in the middle of a round", () => {
     await started.run.stop();
   });
 
+  it("leaves one error entry per failure in the log: the retry, then the safe node", async () => {
+    const started = await atHome({ seed: 7 });
+
+    await answer(started, "play");
+    await playMove(started.run, started.clock, 4);
+    breakNode(started, "round/leaveBoard");
+    await answer(started, "home");
+    await answer(started, "home");
+
+    const errors = started.app.log.trace().filter(entry => entry.level === "error");
+
+    expect(errors.map(entry => entry.event)).toEqual(["flow:error", "flow:error"]);
+    expect(errors.map(entry => entry.data)).toMatchObject([
+      {
+        path: "round/leaveBoard",
+        rolledBackTo: "round/humanTurn",
+        retry: true,
+        error: { message: 'The node "round/leaveBoard" is broken.' }
+      },
+      {
+        path: "round/leaveBoard",
+        rolledBackTo: "home",
+        retry: false,
+        error: { message: 'The node "round/leaveBoard" is broken.' }
+      }
+    ]);
+
+    await started.run.stop();
+  });
+
   it("takes a level and Play at that Home, and nothing else", async () => {
     const started = await atHome({ seed: 7 });
 
@@ -102,7 +136,7 @@ describe("leaving the Board fails twice in the middle of a round", () => {
     await answer(started, "home");
     await answer(started, "home");
 
-    expect(started.run.answer({ intent: "recovered" })).toBe(false);
+    expect(started.run.answer({ intent: "recover" })).toBe(false);
     expect(started.run.answer({ intent: "tap", payload: { cell: 4 } })).toBe(false);
     expect(started.run.answer({ intent: "home" })).toBe(false);
     expect(started.run.answer({ intent: "setLevel", payload: { level: "hard" } })).toBe(true);

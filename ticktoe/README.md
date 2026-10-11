@@ -8,7 +8,7 @@ no `src/`, no `createApp` call and no server.
 
 <br/>
 
-[![engine](https://img.shields.io/badge/%40moku--labs%2Fgame-0.14.0-1864ab)](#requirements)
+[![engine](https://img.shields.io/badge/%40moku--labs%2Fgame-0.14.3-1864ab)](#requirements)
 [![pixi](https://img.shields.io/badge/pixi.js-8.22.0-e72264)](#requirements)
 [![types](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](#requirements)
 [![node](https://img.shields.io/badge/node-%3E%3D24-339933?logo=node.js&logoColor=white)](#requirements)
@@ -77,8 +77,10 @@ The numbers live in `core/tables.ts`. The rules live in `features/match/rules/`.
 ## Sound
 
 One looping theme and 13 sound effects, all `.mp3`. The audio plugin of the engine plays them:
-`game.screen()` composes it, so `index.ts` names nothing for it. The game is silent until the first
-touch, because a browser lets no page sound before one. On an iPhone the silent switch mutes it.
+`game.screen()` composes it, so `index.ts` names nothing for it. In a browser the game is silent
+until the first touch, because a browser lets no page sound before one. A shell that lets audio
+play at once, a native webview with the gesture requirement off, sounds from the splash on. On an
+iPhone the silent switch mutes it.
 
 | Key | File | When it sounds |
 |---|---|---|
@@ -95,7 +97,7 @@ touch, because a browser lets no page sound before one. On an iPhone the silent 
 | `match.score` | `features/match/assets/score.mp3` | The score digit rolls. |
 | `match.card` | `features/match/assets/card.mp3` | The result card starts to rise. |
 | `match.flip` | `features/match/assets/flip.mp3` | Play again: the tiles turn clean. |
-| `splash.splash` | `features/splash/assets/splash.mp3` | The X and the O meet on the splash. Heard only after a touch. |
+| `splash.splash` | `features/splash/assets/splash.mp3` | The X and the O meet on the splash. In a browser heard only after a touch. |
 
 The theme is in the bundle `match`, which loads behind the splash, so its 1.4 MB never delay the
 first frame.
@@ -132,8 +134,6 @@ bun run keys
 | `features/match/` | The rules, the bot, the flows `round` and `roundEnd`, the Board views and motion. |
 | `features/stage/` | The scene `stage`: sky, hills, Home, the level picker. |
 | `plugins/load-progress/` | Posts loading progress and `ready` into the flow. |
-| `plugins/flow-log/` | Writes every failed node of the flow into the log. |
-| `plugins/press-buffer/` | Keeps the last press a closed gate refused and answers the gate with it when it opens. |
 | `generated/` | Asset keys, strings and the dev manifest. Written by `bun run keys`. Never edited. |
 | `tests/` | Integration tests, helpers, scenarios, visual tests and their baselines, the editor tests and the hot swap test. |
 
@@ -229,7 +229,7 @@ folder has no workflow and no git hook of its own: run `bun run lint`, `bun run 
 ## Requirements
 
 - Node 24 or newer, Bun 1.4.2 or newer. The tests run on Bun itself (`bun --bun vitest`).
-- `@moku-labs/game` 0.14.0 on `pixi.js` 8.22.0. Dev tools: `@moku-labs/editor` 0.10.0.
+- `@moku-labs/game` 0.14.3 on `pixi.js` 8.22.0. Dev tools: `@moku-labs/editor` 0.10.0.
 - `playwright-core` 1.60.0 and its Chromium for the pixel leg and the hot swap test.
 - TypeScript 6, strict mode.
 
