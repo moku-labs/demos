@@ -45,26 +45,46 @@ function gainNode() {
 }
 
 /**
- * What a test may ask of the stand-in: with `holdResume` the context does not run when the first
+ * What a test may ask of the stand-in. With `holdResume` the context does not run when the first
  * touch asks it to, only when the test calls `letRun()`, the way a slow browser answers late.
+ * With `running` the context runs from its creation, the way a shell that wants no gesture hands
+ * it out: a native webview with the gesture requirement off.
  */
-export type FakeAudioOptions = { holdResume?: boolean };
+export type FakeAudioOptions = { holdResume?: boolean; running?: boolean };
+
+/** The gestures a browser waits for before it lets a page sound. */
+const GESTURES = ["pointerdown", "touchend"] as const;
 
 /**
- * Builds a stand-in for the audio context of a browser. Like a real one it starts suspended and
- * runs after `resume()`. It decodes nothing: a "decoded" sound is the size of its file, and every
- * source that is started is kept in `started`.
+ * Builds a stand-in for the audio context of a browser that wants a gesture. Like a real one it
+ * starts suspended, and a `resume()` asked before the first gesture on the page stays pending:
+ * it is answered when that gesture comes. It decodes nothing: a "decoded" sound is the size of
+ * its file, and every source that is started is kept in `started`. Build it after the `window`
+ * of the test is there: the stand-in hears the gestures on it.
  *
- * @param options - Whether `resume()` waits for `letRun()`.
+ * @param options - Whether `resume()` waits for `letRun()`, and whether the context runs at once.
  * @returns The context for the seam `game.screen({ audio })`, what it started, and `letRun`.
  */
 export function fakeAudio(options: FakeAudioOptions = {}) {
   const started: Started[] = [];
-  const run = { state: "suspended", waiting: [] as (() => void)[] };
+  const run = {
+    state: options.running === true ? "running" : "suspended",
+    touched: false,
+    waiting: [] as (() => void)[]
+  };
   const letRun = () => {
     run.state = "running";
     for (const answer of run.waiting.splice(0)) answer();
   };
+  const page = (globalThis as { window?: EventTarget }).window;
+
+  for (const gesture of GESTURES) {
+    page?.addEventListener(gesture, () => {
+      run.touched = true;
+      // The gesture lets a `resume()` that waited for it through, unless the test holds it.
+      if (options.holdResume !== true) letRun();
+    });
+  }
   const context = {
     destination: {},
     currentTime: 0,
@@ -90,7 +110,7 @@ export function fakeAudio(options: FakeAudioOptions = {}) {
       throw new Error("The stand-in plays no stream: the game decodes its music.");
     },
     resume: () => {
-      if (options.holdResume !== true) letRun();
+      if (run.touched && options.holdResume !== true) letRun();
 
       return run.state === "running"
         ? Promise.resolve()
