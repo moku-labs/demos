@@ -8,7 +8,7 @@ no `src/`, no `createApp` call and no server.
 
 <br/>
 
-[![engine](https://img.shields.io/badge/%40moku--labs%2Fgame-0.14.2-1864ab)](#requirements)
+[![engine](https://img.shields.io/badge/%40moku--labs%2Fgame-0.14.3-1864ab)](#requirements)
 [![pixi](https://img.shields.io/badge/pixi.js-8.22.0-e72264)](#requirements)
 [![types](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](#requirements)
 [![node](https://img.shields.io/badge/node-%3E%3D24-339933?logo=node.js&logoColor=white)](#requirements)
@@ -229,7 +229,7 @@ folder has no workflow and no git hook of its own: run `bun run lint`, `bun run 
 ## Requirements
 
 - Node 24 or newer, Bun 1.4.2 or newer. The tests run on Bun itself (`bun --bun vitest`).
-- `@moku-labs/game` 0.14.2 on `pixi.js` 8.22.0. Dev tools: `@moku-labs/editor` 0.10.0.
+- `@moku-labs/game` 0.14.3 on `pixi.js` 8.22.0. Dev tools: `@moku-labs/editor` 0.10.0.
 - `playwright-core` 1.60.0 and its Chromium for the pixel leg and the hot swap test.
 - TypeScript 6, strict mode.
 

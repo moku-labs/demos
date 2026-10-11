@@ -7,7 +7,7 @@
       "dependencies": {
         "@moku-labs/common": "0.3.5",
         "@moku-labs/core": "1.7.1",
-        "@moku-labs/game": "0.14.2",
+        "@moku-labs/game": "0.14.3",
         "@moku-labs/system": "0.3.2",
         "@tauri-apps/api": "2.12.2",
         "pixi.js": "8.22.0",
@@ -246,7 +246,7 @@
 
     "@moku-labs/editor": ["@moku-labs/editor@0.10.0", "", { "dependencies": { "elkjs": "0.12.0", "preact": "10.29.8" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1", "@moku-labs/game": ">=0.13.1", "typescript": ">=5.5" }, "bin": { "moku-editor": "dist/bin.mjs" } }, "sha512-60hFEUGUCNC1ebpc2oHQJ3iTtPM3cEhqPz2vS3FzwZYHYSDzC1vEYvkCOb6IUX7kSSDgD+Xm9wxHltHtfFtiCQ=="],
 
-    "@moku-labs/game": ["@moku-labs/game@0.14.2", "", { "dependencies": { "immer": "11.1.18", "maxrects-packer": "2.7.3", "yoga-layout": "3.2.1" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1", "@moku-labs/native": "^0.3.2", "@moku-labs/system": "^0.3.1", "pixi.js": "^8.0.0", "playwright-core": ">=1.50.0", "sharp": "^0.34.0", "typescript": ">=5.5" }, "optionalPeers": ["@moku-labs/native", "@moku-labs/system", "playwright-core", "sharp", "typescript"], "bin": { "moku-game": "bin/moku-game.mjs", "moku-game-index": "bin/moku-game-index.mjs", "moku-game-assets": "bin/moku-game-assets.mjs" } }, "sha512-QCSep2V4swyC28+1CAHCQuGrwTqbczb3PoSM3ujao6TSILgtvBbuFEgXdtslgGl8TXLIF1SL1Mqm3QQ5owvrZQ=="],
+    "@moku-labs/game": ["@moku-labs/game@0.14.3", "", { "dependencies": { "immer": "11.1.18", "maxrects-packer": "2.7.3", "yoga-layout": "3.2.1" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1", "@moku-labs/native": "^0.3.2", "@moku-labs/system": "^0.3.1", "pixi.js": "^8.0.0", "playwright-core": ">=1.50.0", "sharp": "^0.34.0", "typescript": ">=5.5" }, "optionalPeers": ["@moku-labs/native", "@moku-labs/system", "playwright-core", "sharp", "typescript"], "bin": { "moku-game": "bin/moku-game.mjs", "moku-game-index": "bin/moku-game-index.mjs", "moku-game-assets": "bin/moku-game-assets.mjs" } }, "sha512-JkPtrgT3hkY6LO95737Ygn2ne89BlDNjEQiY6VfX0amLFFlo+Y9CgtzR5DszSZq9XO4lgXg9AeD/Jcc7Mx1SRA=="],
 
     "@moku-labs/native": ["@moku-labs/native@0.3.3", "", { "dependencies": { "@tauri-apps/cli": "^2" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1" } }, "sha512-PGPx60PPxeWhosPLCj8AkFYcZtdSJR4iruS/4GD5h0dK3K/b20+v5CXUO+UF72JVaQvMBUe862IGj76ao39Cgw=="],
 

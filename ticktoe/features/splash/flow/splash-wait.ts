@@ -9,6 +9,7 @@ import { type } from "@moku-labs/game";
  * `loadProgress`, `elapsed` from the clock.
  */
 export const splashWait = defineNode({
+  scene: "splash",
   outcomes: { progress: type<{ pct: number }>(), ready: type(), elapsed: type<{ now: number }>() },
   rest: true,
   inbox: ["progress", "ready", "elapsed"]
