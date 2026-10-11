@@ -229,7 +229,7 @@ folder has no workflow and no git hook of its own: run `bun run lint`, `bun run 
 ## Requirements
 
 - Node 24 or newer, Bun 1.4.2 or newer. The tests run on Bun itself (`bun --bun vitest`).
-- `@moku-labs/game` 0.14.3 on `pixi.js` 8.22.0. Dev tools: `@moku-labs/editor` 0.10.0.
+- `@moku-labs/game` 0.14.3 on `pixi.js` 8.22.0. Dev tools: `@moku-labs/editor` 0.10.4.
 - `playwright-core` 1.60.0 and its Chromium for the pixel leg and the hot swap test.
 - TypeScript 6, strict mode.
 

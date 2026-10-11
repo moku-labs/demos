@@ -84,9 +84,10 @@ const GAME_COMMANDS = [
   "game.walk"
 ];
 
-/** The editor commands the agent adds (capture, overlay and reload), sorted. */
+/** The editor commands the agent adds (capture, clock, overlay and reload), sorted. */
 const EDITOR_COMMANDS = [
   "editor.capture",
+  "editor.clock",
   "editor.overlay",
   "editor.reload",
   "editor.series",
