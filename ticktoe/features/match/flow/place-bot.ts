@@ -27,8 +27,7 @@ export const placeBot = defineNode({
     session.turn = 1;
     session.botDueAt = 0;
     fx.emit(dropHint(cell));
-    // Not awaited: the move never waits for its sound. The timeline plays on after this node.
-    void fx(play(landO, {}));
+    fx.start(play(landO, {}));
 
     return out.placed();
   }

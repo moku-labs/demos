@@ -91,8 +91,7 @@ function shadowView(item: PieceItem) {
 }
 
 /**
- * The projection `match.pieces`: one view per piece and per shadow, keyed by the cell. Every item
- * is an object of the piece table, so a piece nobody touched is left alone by a commit.
+ * The projection `match.pieces`: one view per piece and per shadow, keyed by the cell.
  */
 export const matchPieces = projection({
   name: "match.pieces",

@@ -31,7 +31,7 @@ const pieceRest = {
   Sprite: { width: PIECE, height: PIECE, alpha: 1 }
 };
 
-/** A piece or a shadow of the table. */
+/** A piece or a shadow. */
 function item(fields: Partial<PieceItem> = {}): PieceItem {
   return {
     key: "piece4",

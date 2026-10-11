@@ -13,8 +13,8 @@ import { resetTargets } from "../names";
 export const resetBoard = defineNode({
   outcomes: { done: type() },
   run: async ({ session, fx, out }) => {
-    // Only Play again leads here. Not awaited: the reset never waits for the tap.
-    void fx(sfx("ui.tap"));
+    // Only Play again leads here.
+    fx.start(sfx("ui.tap"));
     await fx(play(boardReset, resetTargets(session)));
 
     return out.done();

@@ -20,8 +20,7 @@ export const showScore = defineNode({
 
     session.celebrateDueAt = 0;
     session.shownScore = { ...player.score };
-    // Not awaited: the card never waits for the tick.
-    void fx(sfx("match.score"));
+    fx.start(sfx("match.score"));
 
     return out.done();
   }

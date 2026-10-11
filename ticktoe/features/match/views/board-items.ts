@@ -60,67 +60,6 @@ export type PieceItem = {
 };
 
 /**
- * The nine cells, in order.
- */
-const CELLS = [0, 1, 2, 3, 4, 5, 6, 7, 8] as const;
-
-/**
- * Every part a piece can have in a result, with the place in the line a winner can have and the
- * mark a draw can end on.
- */
-const PARTS = [
-  { role: ROLE.none, step: 0, endedBy: 0 },
-  { role: ROLE.winner, step: 0, endedBy: 0 },
-  { role: ROLE.winner, step: 1, endedBy: 0 },
-  { role: ROLE.winner, step: 2, endedBy: 0 },
-  { role: ROLE.dimmed, step: 0, endedBy: 0 },
-  { role: ROLE.sagged, step: 0, endedBy: 0 },
-  { role: ROLE.shrug, step: 0, endedBy: 1 },
-  { role: ROLE.shrug, step: 0, endedBy: 2 }
-] as const;
-
-/**
- * The name of one entry of the piece table.
- *
- * @param item - The fields that tell one piece from another.
- * @returns The name.
- */
-function nameOf(item: Omit<PieceItem, "key">): string {
-  return `${item.kind}:${item.cell}:${item.mark}:${item.role}:${item.step}:${item.endedBy}`;
-}
-
-/**
- * Builds the table of every piece and shadow the Board can show: one frozen object per kind, cell,
- * mark and part.
- *
- * @returns The table, by entry name.
- */
-function buildPieces(): Readonly<Record<string, PieceItem>> {
-  const table: Record<string, PieceItem> = {};
-
-  for (const cell of CELLS) {
-    for (const mark of [1, 2] as const) {
-      for (const part of PARTS) {
-        const piece = { kind: "piece", cell, mark, ...part } as const;
-        const shadow = { kind: "shadow", cell, mark, ...part } as const;
-
-        table[nameOf(piece)] = Object.freeze({ key: pieceKey(cell), ...piece });
-        table[nameOf(shadow)] = Object.freeze({ key: shadowKey(cell), ...shadow });
-      }
-    }
-  }
-
-  return Object.freeze(table);
-}
-
-/**
- * Every piece and shadow the Board can show. A projection hands out these objects and never a new
- * one: the engine leaves a view alone while its item is the same object, so a commit that does not
- * touch a piece does not cut its drop short.
- */
-const PIECES = buildPieces();
-
-/**
  * The part of the piece on a cell in the result of the round.
  *
  * @param session - The session.
@@ -156,7 +95,7 @@ export function partOf(
  * Nothing while another screen shows.
  *
  * @param session - The session.
- * @returns The items, each one an object of the piece table.
+ * @returns The items.
  */
 export function piecesOf(session: Session): PieceItem[] {
   const items: PieceItem[] = [];
@@ -167,10 +106,11 @@ export function piecesOf(session: Session): PieceItem[] {
     if (mark === 0) continue;
 
     const part = partOf(session, cell, mark);
-    const shadow = PIECES[nameOf({ kind: "shadow", cell, mark, ...part })];
-    const piece = PIECES[nameOf({ kind: "piece", cell, mark, ...part })];
 
-    if (shadow !== undefined && piece !== undefined) items.push(shadow, piece);
+    items.push(
+      { key: shadowKey(cell), kind: "shadow", cell, mark, ...part },
+      { key: pieceKey(cell), kind: "piece", cell, mark, ...part }
+    );
   }
 
   return items;

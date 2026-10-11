@@ -25,8 +25,7 @@ export const placeHuman = defineNode({
     session.board[cell] = 1;
     session.turn = 2;
     fx.emit(dropHint(cell));
-    // Not awaited: the move never waits for its sound. The timeline plays on after this node.
-    void fx(play(landX, {}));
+    fx.start(play(landX, {}));
 
     return out.placed();
   }
