@@ -3,7 +3,7 @@ import path from "node:path";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Json, Manifest } from "@moku-labs/editor";
-import type { ConsoleView } from "@moku-labs/editor/tools";
+import type { ConsoleView, GameView } from "@moku-labs/editor/tools";
 import { MERGE_NAME, type MergeGame, type MergeOptions, startMergeGame } from "./helpers/merge";
 import {
   type AgentStack,
@@ -110,8 +110,8 @@ const BOARD_OUTCOMES = [
 /** The scene id of the board slot, the parent of every board entity. */
 const BOARD_SLOT = "ui:boardScreen/boardSlot";
 
-/** The text styles file flowView edits: the file with the most `textStyle:` keys in the index. */
-const STYLES_FILE = "shared/styles/text.ts";
+/** The file of the HUD row's layout style: the `defineStyle` block `hudRow` the Element tab edits. */
+const STYLES_FILE = "features/hud/styles/styles.ts";
 
 /** The toast of a reload that restored the bookmark. */
 const RESTORED = "Game reloaded · state restored from the last checkpoint";
@@ -327,7 +327,7 @@ async function click(element: HTMLElement | undefined): Promise<void> {
  * One tab of flowView's Inspector by its label.
  *
  * @param flow - The Flow host.
- * @param label - "Info", "Code" or "Styles".
+ * @param label - "Info" or "Code".
  * @returns The tab.
  * @throws {Error} When the Inspector has no such tab.
  */
@@ -766,64 +766,63 @@ describe("journey-merge: edit a style", () => {
   it(
     "M3: a style edit writes one line, reloads a fresh game and restores it on the board (D-07)",
     async () => {
-      const live = await mergeStack();
-      await walkToBoard(live);
+      // The screen game: the Element tab reads the ui tree, which a headless game does not have.
+      const live = await mergeStack({ game: { screen: true, board: true } });
       const { tools, server, root, page } = live;
-      const { workspace, flowView, link } = tools.app;
-      // flowView watches the flow from start; its canvas renders when first shown (Game is the
-      // default).
-      workspace.show("flow");
-      await until(() => flowView.focus.current() === "board/awaitIntent", "Flow on the board");
+      const { workspace, gameView, link } = tools.app;
+      expect(workspace.active()).toBe("game");
       const before = await readFile(path.join(root, STYLES_FILE), "utf8");
+      const lines = before.split("\n");
+      const block = lines.findIndex(text => text.startsWith("export const hudRow = defineStyle("));
       const iframe = document.querySelector("iframe[data-game-frame]");
       if (!(iframe instanceof HTMLIFrameElement)) throw new Error("no game frame");
       const srcSets = countSrcSets(iframe);
 
-      // 1. Styles tab of a board node, the text style ui.number, size one step up.
-      const flow = workspace.host("flow");
-      expect(flowView.focus.select("board/awaitIntent")).toBe(true);
-      await until(
-        () => flow.querySelector('[data-flow="inspector"] [role="tab"]') !== null,
-        "the Inspector tabs"
-      );
-      await click(inspectorTab(flow, "Styles"));
-      const keySelect = '[data-flow="styles-tab"] [data-part="key"] select';
-      await until(() => flow.querySelector(keySelect) !== null, "the text style select");
-      const select = elementIn(flow, keySelect);
-      if (!(select instanceof HTMLSelectElement)) throw new Error("the text style is no select");
-      await act(() => {
-        select.value = "ui.number";
-        select.dispatchEvent(new Event("change", { bubbles: true }));
-      });
-      const stepUp = '[data-flow="styles-tab"] [data-field="size"] [data-action="step-up"]';
-      const excerpt = '[data-flow="styles-tab"] [data-part="excerpt"]';
-      await until(
-        () => flow.querySelector(excerpt)?.textContent.includes('"ui.number"') === true,
-        "the ui.number block in the Styles tab"
+      // 1. The HUD row of the board in the Element tab: its layout style card names the
+      // `defineStyle` block; margin.top one step up.
+      let row: GameView.ElementRef | undefined;
+      await until(async () => {
+        await live.game.frames(1);
+        const scene = await gameView.scene();
+        row = [...scene.nodes.values()].find(node => node.key === "hudRow")?.ref;
+        return row !== undefined;
+      }, "the HUD row in the scene");
+      gameView.select(row);
+      const game = workspace.host("game");
+      const card = '[data-part="style-card"]';
+      const field = `${card} [data-field="margin.top"]`;
+      const stepUp = `${field} button[aria-label="Increase margin.top"]`;
+      await until(() => game.querySelector(stepUp) !== null, "the style card of the HUD row");
+      expect(elementIn(game, `${card} [data-part="where"]`).textContent).toBe(
+        `${STYLES_FILE}:${String(block + 1)}`
       );
       const setsBefore = srcSets();
-      await click(elementIn(flow, stepUp));
+      await click(elementIn(game, stepUp));
+      await until(
+        () => toastTexts(page).some(text => text.startsWith("✓ Saved")),
+        "the saved toast of the style card"
+      );
 
-      // 2. The workspace reassigns the frame src: the game page reloads into a fresh headless
-      // merge game, resting at splash.
+      // 2. The workspace reassigns the frame src: the game page reloads into a fresh screen game.
+      // Its loading plugin answers `loaded` at the splash, so it rests at home, off the board.
       await until(() => srcSets() > setsBefore, "the game frame reload", 5000);
-      await reloadMerge(live, () => startMergeGame());
-      expect(live.game.app.flow.state().path).toBe("splash");
+      await reloadMerge(live, () => startMergeGame({ screen: true }));
+      expect(live.game.app.flow.state().path).toBe("home");
 
       // 3. The toast; the fresh game stands on the board again.
       await until(() => toastTexts(page).includes(RESTORED), "the restored toast", 6000);
       await until(() => steppedTo(live.game, "board/awaitIntent"), "the fresh game on the board");
       expect(await link.read("game.position")).toMatchObject({ path: "board/awaitIntent" });
 
-      // Exactly one line changed: the size of ui.number, one step up.
-      const lines = before.split("\n");
-      const block = lines.findIndex(text => text.includes('"ui.number": {'));
-      const at = lines.findIndex((text, index) => index > block && /^\s+size: \d+,$/u.test(text));
-      const size = Number(/\d+/u.exec(lines[at] ?? "")?.[0]);
+      // Exactly one line changed: margin.top of hudRow, one step up.
+      const at = lines.findIndex(
+        (text, index) => index > block && /^\s+margin: \{ top: \d+ \},$/u.test(text)
+      );
+      const top = Number(/\d+/u.exec(lines[at] ?? "")?.[0]);
       const after = await readFile(path.join(root, STYLES_FILE), "utf8");
-      expect(after).toBe(lines.with(at, `    size: ${String(size + 1)},`).join("\n"));
+      expect(after).toBe(lines.with(at, `  margin: { top: ${String(top + 1)} },`).join("\n"));
       // The editor names a write "style" by its file name (`styles.ts`, `*.styles.ts`) or by its
-      // folder (a `.ts` directly in `styles/`), so `styles/text.ts` is reported as a style.
+      // folder (a `.ts` directly in `styles/`).
       expect(server.written).toContainEqual({
         path: STYLES_FILE,
         bytes: expect.any(Number),
@@ -837,13 +836,14 @@ describe("journey-merge: edit a style", () => {
       expect(restores).toHaveLength(1);
       expect(restores[0]?.conn).not.toBe(bookmarks[0]?.conn);
       expect(restores[0]?.at ?? 0).toBeGreaterThan(bookmarks[0]?.at ?? 0);
-      const applied = '[data-flow="styles-tab"] [data-part="applied"]';
-      await until(
-        () =>
-          flow.querySelector(applied)?.textContent ===
-          `✓ Written to ${STYLES_FILE}:${String(at + 1)} · game reloaded · state restored`,
-        "the Styles tab result line"
-      );
+      // The HUD row is still selected; once the fresh game drew a frame its card shows the
+      // written value and refuses nothing.
+      expect(gameView.selected()).toEqual(row);
+      await until(async () => {
+        await live.game.frames(1);
+        return game.querySelector(`${field} output`)?.textContent === String(top + 1);
+      }, "the written value on the style card");
+      expect(game.querySelector(`${card} [data-part="error"]`)).toBeNull();
       expect(unhandled?.list).toEqual([]);
     },
     TIMEOUT_MS
@@ -955,11 +955,11 @@ describe("journey-merge: state and console", () => {
 
 describe("journey-merge: capture", () => {
   it(
-    "M5: a series on merge-game: shots on real frames, index and the contact sheet",
+    "M5: a series on merge-game: shots on real frames, index, and the contact sheet on request",
     async () => {
       const live = await mergeStack({ png: PNG_1X1 });
       await walkToBoard(live);
-      const { tools, game, server } = live;
+      const { tools, game, server, page } = live;
       const { gameView, workspace, link } = tools.app;
 
       // One series while the game steps 16 ms frames.
@@ -998,12 +998,21 @@ describe("journey-merge: capture", () => {
         index.shots.map((_, at) => `${String(at + 1).padStart(3, "0")}.png`)
       );
 
-      // The contact sheet opens with every shot.
+      // The series ends with its toast and no contact sheet.
       expect(workspace.active()).toBe("game");
-      const sheet = workspace.host("game");
+      const host = workspace.host("game");
+      const saved = `✓ ${String(series.shots)} shots saved`;
+      await until(
+        () => toastTexts(page).some(text => text.startsWith(saved)),
+        "the toast of the series"
+      );
+      expect(document.querySelector('[data-game="sheet"]')).toBeNull();
+
+      // The sheet opens on request, with every shot.
+      await act(() => gameView.openSheet(series.indexPath));
       await until(
         () =>
-          sheet.querySelectorAll('[data-game="sheet"] [data-part="tile"]').length === series.shots,
+          host.querySelectorAll('[data-game="sheet"] [data-part="tile"]').length === series.shots,
         "a tile per shot on the contact sheet"
       );
 

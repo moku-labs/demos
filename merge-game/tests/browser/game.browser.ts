@@ -1514,7 +1514,7 @@ test.describe("game · series", () => {
     expect(await list(CAPTURES_DIR)).toEqual([]);
   });
 
-  test("a full series writes NNN.png and index.json and opens the contact sheet", async ({
+  test("a full series writes NNN.png and index.json, opens no contact sheet, and Open on its card opens it", async ({
     tools
   }) => {
     const page = tools.page;
@@ -1533,9 +1533,12 @@ test.describe("game · series", () => {
     await expect(pop.locator("[data-part=recording]")).toBeVisible();
     await expect(bar(page, "series")).toHaveAttribute("data-recording", "");
 
+    // The series ends with its toast and its capture card, and no contact sheet.
     const sheet = page.locator("dialog[data-game=sheet]");
-    await expect(sheet).toBeVisible({ timeout: 20_000 });
-    await expect(toast(page)).toContainText("✓ 4 shots saved");
+    await expect(toast(page)).toContainText("✓ 4 shots saved", { timeout: 20_000 });
+    const seriesCard = page.locator("[data-game=card]");
+    await expect(seriesCard.locator("[data-part=saved]")).toHaveText("✓ 4 shots saved");
+    await expect(sheet).toHaveCount(0);
     const folders = await seriesFolders();
     expect(folders).toHaveLength(1);
     const folder = `${CAPTURES_DIR}/${folders[0]}`;
@@ -1556,6 +1559,9 @@ test.describe("game · series", () => {
     ]);
     await pngSize(path.join(GAME_ROOT, folder, "001.png"));
 
+    // Open on the card of the series opens its contact sheet.
+    await seriesCard.locator("[data-action=open]").click();
+    await expect(sheet).toBeVisible({ timeout: 20_000 });
     await expect(sheet.getByRole("heading")).toHaveText(
       new RegExp(`^Series · .+ · 4 shots · 1 s at 250 ms · from frame ${index.fromFrame}$`)
     );
@@ -1566,7 +1572,7 @@ test.describe("game · series", () => {
     await expect(bar(page, "series")).not.toHaveAttribute("data-recording", "");
   });
 
-  test("Stop ends a series early; the sheet steps through the shots and marks a bug", async ({
+  test("Stop ends a series early; the sheet, opened from its card, steps through the shots and marks a bug", async ({
     tools
   }) => {
     const page = tools.page;
@@ -1600,7 +1606,14 @@ test.describe("game · series", () => {
     });
     await rec.getByRole("button", { name: "Stop" }).click();
 
+    // The stopped series ends with its capture card and no sheet; Open on the card opens it.
     const sheet = page.locator("dialog[data-game=sheet]");
+    const seriesCard = page.locator("[data-game=card]");
+    await expect(seriesCard.locator("[data-part=saved]")).toHaveText(/^✓ \d+ shots saved$/, {
+      timeout: 20_000
+    });
+    await expect(sheet).toHaveCount(0);
+    await seriesCard.locator("[data-action=open]").click();
     await expect(sheet).toBeVisible({ timeout: 20_000 });
     await expect(sheet.getByRole("heading")).toHaveText(/ · stopped early$/);
     const [series] = await seriesFolders();
@@ -1744,9 +1757,15 @@ test.describe("game · element picker", () => {
     await tab.locator("[data-part=children] button", { hasText: /^play$/ }).click();
     await expect(tab.locator("[data-part=name]")).toHaveText("play");
 
-    // Pick another turns the picker on and hides the pick's capture card (round 2b R17), so the
-    // first Esc leaves the picker and keeps the selection.
-    await tab.getByRole("button", { name: "Pick another" }).click();
+    // The tab has no "Pick another": its footer is Copy reference, then Show in render tree.
+    await expect(tab.getByRole("button", { name: "Pick another" })).toHaveCount(0);
+    await expect(tab.locator("footer button")).toHaveText([
+      "Copy reference",
+      "Show in render tree"
+    ]);
+    // Select turns the picker on and hides the pick's capture card (round 2b R17), so the first
+    // Esc leaves the picker and keeps the selection.
+    await bar(page, "pick").click();
     await expect(bar(page, "pick")).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator("[data-game=card]")).toHaveCount(0);
     await page.keyboard.press("Escape");

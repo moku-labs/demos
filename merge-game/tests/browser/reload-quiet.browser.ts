@@ -27,6 +27,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Tools } from "./fixtures";
 import { expect, test } from "./fixtures";
+import { selectByKey } from "./hub-client";
 import { barChecked, flipBarToggle } from "./top-bar";
 
 /** The project root the bin serves. */
@@ -714,13 +715,9 @@ test.describe("only the game reloads · U9 U10", () => {
     await showGame(tools);
     await expect.poll(() => gamePath(page)).toBe("home");
 
-    // Pick the Play button: its style card names playButton in features/home/styles/styles.ts.
-    await page.keyboard.press("r");
-    await expect(page.locator("[data-frame-box]")).toHaveAttribute("data-reference", "");
-    await page.evaluate(() => navigator.clipboard.writeText(""));
-    await page.locator('[data-moku-proxy][data-moku-key="play"]').dispatchEvent("pointerup");
-    await expect.poll(() => clipboard(page), { timeout: 15_000 }).toMatch(REFERENCE_LINE);
-    await page.keyboard.press("r");
+    // Pick the Play button by its key: its style card names playButton in
+    // features/home/styles/styles.ts.
+    expect((await selectByKey(page, "play")).line).toMatch(REFERENCE_LINE);
     const panel = page.locator('aside[data-side-panel="game.side"]');
     if ((await panel.getAttribute("data-state")) === "collapsed") {
       await panel.locator(":scope > [data-part=rail] [data-action=expand]").click();
@@ -828,8 +825,11 @@ test.describe("only the game reloads · U9 U10", () => {
     const page = tools.page;
     await showGame(tools);
     await expect.poll(() => gamePath(page)).toBe("home");
-    await page.keyboard.press("r");
-    await expect(page.locator("[data-frame-box]")).toHaveAttribute("data-reference", "");
+    // Select on: the picker layer takes the drag.
+    const pick = page.locator("[data-workspace-host=game] [data-game=toolbar] [data-part=pick]");
+    await pick.click();
+    await expect(pick).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("[data-game=overlay] [data-part=picker]")).toBeVisible();
 
     // A drag across the top of Home, from under the status bar at the left edge to just under
     // the logo sign at the right edge.
@@ -846,13 +846,9 @@ test.describe("only the game reloads · U9 U10", () => {
     expect(area).toContain('text "Лесной городок"');
     expect(area).toMatch(/ · key homeLogo · /);
 
-    // One pick of the coin pill's words: the state line carries the value the game shows.
-    await page.evaluate(() => navigator.clipboard.writeText(""));
-    await page
-      .locator('[data-moku-proxy][data-moku-key="homeCoinsText"]')
-      .dispatchEvent("pointerup");
-    await expect.poll(() => clipboard(page), { timeout: 15_000 }).toMatch(REFERENCE_LINE);
-    const line = await clipboard(page);
+    // One pick of the coin pill's words, by its key: the state line carries the value the game
+    // shows.
+    const { line = "" } = await selectByKey(page, "homeCoinsText");
     expect(REFERENCE_LINE.exec(line)?.[1]).toBe("homeCoinsText");
     const block = await blockOf(REFERENCE_LINE.exec(line)?.[2] ?? "");
     expect(block).toMatch(/^state: visible · .*value "0"/m);

@@ -23,10 +23,11 @@ import {
 // ─────────────────────────────────────────────────────────────────────────────
 // A pick for the chat on the real merge game (round 2 R2), across gameView,
 // files, the capture plugin and the game's bookmark doors.
-// The settings popup is open; Reference mode is on; a click on the
-// settingsBoard proxy writes the crop, the full frame and the card file with
-// the reference block (round 2b R13), puts the one reference line naming the
-// card on the clipboard, and its bookmark brings the game back to the popup.
+// The settings popup is open; the picker is on and "Copy on select" is on (the
+// default); a click on the settings board writes the crop, the full frame and
+// the card file with the reference block (round 2b R13), puts the one reference
+// line naming the card on the clipboard, and its bookmark brings the game back
+// to the popup.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Three cores and a real game start for the test. */
@@ -35,8 +36,14 @@ const TIMEOUT_MS = 30_000;
 /** The PNG the stubbed canvas answers for the crop. */
 const CROP_PNG = "data:image/png;base64,Q1JPUA==";
 
+/** The box every element of the page answers: a window larger than every device preset. */
+const LAID_OUT = { width: 1440, height: 1920 };
+
 /** Where the settings popup rests in the board flow. */
 const SETTINGS_OPEN = "board/settings/open";
+
+/** The scene id of the settings board, by the keys of its parents. */
+const SETTINGS_BOARD = "ui:settingsScreen/settingsBoard";
 
 /** The one clipboard line of the pick: name, type, flow node, source, ref bounds, card. */
 const LINE =
@@ -81,6 +88,15 @@ function keep<Part extends Stoppable>(part: Part): Part {
   return part;
 }
 
+/** A box in page px. */
+type Rect = { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+
+/** A point in page px. */
+type Point = { readonly x: number; readonly y: number };
+
+/** The scene the Game workspace builds from the game. */
+type Scene = Awaited<ReturnType<ToolsStack["app"]["gameView"]["scene"]>>;
+
 /** The started stack. */
 type PickStack = {
   readonly root: string;
@@ -97,7 +113,9 @@ type CapturingApp = { readonly renderer: { capture(): Promise<unknown> } };
  * Starts the merge project, the screen game on the board, the agent and the tools, and waits
  * for the live link. The screen game's renderer is inert and answers no picture, so its capture
  * answers a PNG here (`withRenderer` cannot wrap the frozen screen app: its `renderer` is a
- * non-configurable property the layout doors read too).
+ * non-configurable property the layout doors read too). happy-dom lays nothing out, so every
+ * element answers one box: the game frame fits its stage at a real scale, and a click on the
+ * picker layer lands where `gameFrame().box()` says the page is.
  *
  * @returns The stack.
  */
@@ -107,6 +125,8 @@ async function pickStack(): Promise<PickStack> {
   const root = await createProject("merge");
   const server = keep(await startServer(root));
   const page = installPage(server.origin, server.app.hub.path());
+  const box = new page.window.DOMRect(0, 0, LAID_OUT.width, LAID_OUT.height);
+  vi.spyOn(page.window.Element.prototype, "getBoundingClientRect").mockReturnValue(box);
   const game = keep(await startMergeGame({ screen: true, board: true }));
   keep(await startAgent(server, game, { modules: [], name: MERGE_NAME }));
   const { renderer } = game.app as unknown as CapturingApp;
@@ -178,12 +198,80 @@ async function steppedTo(game: MergeGame, where: string): Promise<boolean> {
 }
 
 /**
- * The Reference mode proxy of the settings board.
+ * Tells whether a box contains a point.
  *
- * @returns The proxy element, or null while none is drawn.
+ * @param rect - The box.
+ * @param point - The point.
+ * @returns True when the point is inside.
  */
-function proxy(): HTMLElement | null {
-  return document.querySelector<HTMLElement>('[data-moku-proxy][data-moku-key="settingsBoard"]');
+function contains(rect: Rect, point: Point): boolean {
+  return (
+    point.x >= rect.x && point.x < rect.x + rect.w && point.y >= rect.y && point.y < rect.y + rect.h
+  );
+}
+
+/**
+ * A point of a scene node that none of the nodes inside it covers: a click there is a click on
+ * the node itself, as a person clicks the wood of the board between its rows.
+ *
+ * @param scene - The calibrated scene.
+ * @param id - The scene id of the node.
+ * @returns The point in page px.
+ * @throws {Error} When the node is not placed or the nodes inside it cover all of it.
+ */
+function ownPointOf(scene: Scene, id: string): Point {
+  const rect = scene.nodes.get(id)?.rect;
+  if (rect === undefined) throw new Error(`the scene has no placed node ${id}`);
+  const inside = [...scene.nodes.values()]
+    .filter(node => node.id.startsWith(`${id}/`))
+    .flatMap(node => (node.rect === undefined ? [] : [node.rect]));
+  const steps = 16;
+  for (let row = 1; row < steps; row += 1) {
+    for (let column = 1; column < steps; column += 1) {
+      const point = {
+        x: rect.x + (rect.w * column) / steps,
+        y: rect.y + (rect.h * row) / steps
+      };
+      if (!inside.some(child => contains(child, point))) return point;
+    }
+  }
+  throw new Error(`the nodes inside ${id} cover all of it`);
+}
+
+/**
+ * The picker layer over the game frame.
+ *
+ * @returns The layer, or null while the picker is off.
+ */
+function pickerLayer(): HTMLElement | null {
+  return document.querySelector<HTMLElement>('[data-part="picker"]');
+}
+
+/**
+ * Clicks the picker layer at a point of the game page: a press and a release of the main button
+ * at the same client point, the way a mouse does it. The frame box says where the page is.
+ *
+ * @param tools - The tools stack.
+ * @param point - The point in page px.
+ * @returns Resolves after the render.
+ * @throws {Error} When the frame is not laid out or the picker layer is not there.
+ */
+async function clickGameAt(tools: ToolsStack, point: Point): Promise<void> {
+  const box = tools.app.workspace.gameFrame().box();
+  const layer = pickerLayer();
+  if (box === undefined || box.scale <= 0) throw new Error("the game frame is not laid out");
+  if (layer === null) throw new Error("the picker layer is not there");
+  const at = {
+    bubbles: true,
+    button: 0,
+    pointerId: 1,
+    clientX: box.left + point.x * box.scale,
+    clientY: box.top + point.y * box.scale
+  };
+  await act(() => {
+    layer.dispatchEvent(new PointerEvent("pointerdown", at));
+    layer.dispatchEvent(new PointerEvent("pointerup", at));
+  });
 }
 
 /**
@@ -226,21 +314,21 @@ describe("a pick for the chat on merge-game (round 2 R2, 2b R13)", () => {
       // 1. Open the settings popup and wait for its calibrated scene.
       await link.run("game.answer", { intent: "openSettings" });
       await until(() => steppedTo(game, SETTINGS_OPEN), SETTINGS_OPEN);
+      let scene = await gameView.scene();
       await until(async () => {
         await game.frames(1);
-        const scene = await gameView.scene();
-        return scene.calibrated && scene.nodes.has("ui:settingsScreen/settingsBoard");
+        scene = await gameView.scene();
+        return scene.calibrated && scene.nodes.has(SETTINGS_BOARD);
       }, "the calibrated scene of the settings popup");
 
-      // 2. Reference mode on: the proxy of the settings board; a click on it picks.
+      // 2. The picker on, "Copy on select" on by default: a click on the settings board picks it.
       const written = stubTheBrowser(page, { width: 1080, height: 1440 });
-      workspace.setReference(true);
-      await until(() => proxy() !== null, "the settingsBoard proxy");
-      expect(proxy()?.dataset.mokuRefBounds).toMatch(/^\d+ \d+ \d+ \d+$/);
-      expect(proxy()?.dataset.mokuFrame).toMatch(/^\d+$/);
-      await act(() => {
-        proxy()?.dispatchEvent(new PointerEvent("pointerup", { bubbles: true }));
-      });
+      expect(workspace.copyOnSelect()).toBe(true);
+      gameView.pick(true);
+      await until(() => pickerLayer() !== null, "the picker layer over the game");
+      await clickGameAt(tools, ownPointOf(scene, SETTINGS_BOARD));
+      await until(() => gameView.selected() !== undefined, "a selected element");
+      expect(gameView.selected()).toEqual({ kind: "ui", path: "settingsScreen/settingsBoard" });
       await until(() => written.length > 0, "the reference line on the clipboard");
 
       // 3. One line names the card; the card holds every producible block line, in order; the

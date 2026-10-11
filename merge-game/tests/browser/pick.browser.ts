@@ -6,14 +6,15 @@
  * card `<key>-f<frame>.md` there (the reference block with its eleven lines in the fixed order
  * inside a `text` fence, the JSX of the element and the links to both pictures), puts ONE line
  * naming the card on the clipboard and toasts "Reference, shot and bookmark copied". The Element
- * tab shows the full block and the Code section; the capture card of the pick offers the line again. Restoring the pick's bookmark
- * from a fresh start brings the game back to board/settings/open. In Reference mode the proxies
- * carry the frame, the reference bounds and, once a pick found it, the style source; a key built
- * in a loop (card0) resolves to the element that takes it (the project index, D-47). In Reference mode the cursor over the game is
- * a crosshair, a real click still picks one element, and a drag picks an area (U9): the card
- * `area-f<frame>.md` lists the elements inside it with their child trees, layout lines and px
- * bounds (captures-by-day U5), next to the area's crop. In Select mode a drag picks an area too
- * (U4). Shot and Series put their paths on the clipboard too.
+ * tab shows the Code section and no reference block (the block is in the card); the capture card
+ * of the pick offers the line again. Restoring the pick's bookmark from a fresh start brings the
+ * game back to board/settings/open. A pick by key (`editor.select`, the MCP path) names the style
+ * source in its block and card; a key built in a loop (card0) resolves to the element that takes
+ * it (the project index, D-47). While Select is on the cursor over the game is a crosshair, a real
+ * click picks one element, and a drag picks an area (U9, U4): the card `area-f<frame>.md` lists
+ * the elements inside it with their child trees, layout lines and px bounds (captures-by-day U5),
+ * next to the area's crop. Shot and Series put their paths on the clipboard too; a series opens
+ * no contact sheet.
  *
  * The bookmark value is read off the tools page's socket: the answer to the tools' own
  * `game.bookmark` run, as the hub sent it. The restore runs `game.restore` with that value through
@@ -26,6 +27,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Tools } from "./fixtures";
 import { expect, GAME_NAME, openTools, test } from "./fixtures";
+import { selectByKey } from "./hub-client";
 import { jpegSize } from "./pictures";
 
 /** The project root the bin serves. */
@@ -363,21 +365,31 @@ async function sharedOf(line: string): Promise<Shared> {
 }
 
 /**
- * Picks an element through its Reference mode proxy (a click on a proxy is its pointerup), waits
- * for its one line on the clipboard (emptied first) and reads the card it names.
+ * Picks an element by its ui key over the hub (`editor.select`, the MCP path) and reads the card
+ * its line names.
  *
  * @param page - The test page.
  * @param key - The ui key.
  * @returns What the pick shared.
  */
-async function pickProxy(page: Page, key: string): Promise<Shared> {
-  await page.evaluate(() => navigator.clipboard.writeText(""));
-  await page.locator(`[data-moku-proxy][data-moku-key="${key}"]`).dispatchEvent("pointerup");
-  await expect.poll(() => clipboard(page), { timeout: 15_000 }).toMatch(REFERENCE_LINE);
-  await expect(toast(page)).toHaveText("Reference, shot and bookmark copied");
-  const line = await clipboard(page);
+async function pickKey(page: Page, key: string): Promise<Shared> {
+  const { line = "" } = await selectByKey(page, key);
   expect(REFERENCE_LINE.exec(line)?.[1], line).toBe(key);
   return sharedOf(line);
+}
+
+/**
+ * Turns Select on with its toolbar button and waits for the picker layer.
+ *
+ * @param page - The test page.
+ * @returns The picker layer.
+ */
+async function pickerOn(page: Page): Promise<Locator> {
+  await bar(page, "pick").click();
+  await expect(bar(page, "pick")).toHaveAttribute("aria-pressed", "true");
+  const layer = page.locator("[data-game=overlay] [data-part=picker]");
+  await expect(layer).toBeVisible();
+  return layer;
 }
 
 /**
@@ -392,16 +404,6 @@ function parse(payload: string | Buffer): Message | undefined {
   } catch {
     return undefined;
   }
-}
-
-/**
- * A reference block without its clock (the HH:MM:SS of its game line).
- *
- * @param text - The block.
- * @returns The block without the time.
- */
-function withoutClock(text: string): string {
-  return text.replace(/ · \d\d:\d\d:\d\d · /, " · ");
 }
 
 /**
@@ -527,13 +529,22 @@ test.describe("pick · for the chat", () => {
     expect(Math.abs(cropSize.w - (right - left) * ratio)).toBeLessThanOrEqual(2);
     expect(cropSize.w).toBeLessThan(fullSize.w);
 
-    // The Element tab shows the card's block, read-only.
+    // The capture card of the pick offers the line again: its Reference action. The card hides
+    // itself after a few seconds, so it is read before the Element tab.
+    const shotCard = page.locator("[data-game=card]");
+    await expect(shotCard.locator("[data-part=path]")).toHaveAttribute("title", crop);
+    const again = shotCard.getByRole("button", { name: "Reference" });
+    await expect(again).toHaveAttribute("title", line);
+    await page.evaluate(() => navigator.clipboard.writeText(""));
+    await again.click();
+    await expect.poll(() => clipboard(page)).toBe(line);
+    await expect(toast(page)).toHaveText("✓ Reference copied");
+
+    // The Element tab shows the picked board and no reference block: the block is in the card.
     await expandSide(page);
     const tab = page.locator("[data-workspace-host=game] [data-game=side] [data-part=element]");
-    const pre = tab.locator("pre[data-part=reference]");
-    await expect(pre).toHaveAttribute("aria-busy", "false");
-    const shown = (await pre.textContent()) ?? "";
-    expect(withoutClock(shown)).toBe(withoutClock(block));
+    await expect(tab.locator("[data-part=name]")).toHaveText("settingsBoard");
+    await expect(tab.locator("pre[data-part=reference]")).toHaveCount(0);
 
     // The Code section (round 2b R12): the board's JSX from <Signboard to </Signboard>, 20 lines
     // and then Show all. The board takes no style={…} of its own, so no style block shows.
@@ -555,16 +566,6 @@ test.describe("pick · for the chat", () => {
     await expect(showAll).toHaveCount(0);
     await expect(code.locator("[data-part=snippet]")).toHaveCount(1);
 
-    // The capture card of the pick offers the line again: its Reference action.
-    const shotCard = page.locator("[data-game=card]");
-    await expect(shotCard.locator("[data-part=path]")).toHaveAttribute("title", crop);
-    const again = shotCard.getByRole("button", { name: "Reference" });
-    await expect(again).toHaveAttribute("title", line);
-    await page.evaluate(() => navigator.clipboard.writeText(""));
-    await again.click();
-    await expect.poll(() => clipboard(page)).toBe(line);
-    await expect(toast(page)).toHaveText("✓ Reference copied");
-
     // The bookmark of the pick: its id names the frame of the game.bookmark answer.
     const id = /^restore: bookmark (settingsBoard-f(\d+))$/.exec(restore ?? "");
     const bookmark = taken.find(entry => entry.frame === Number(id?.[2]));
@@ -583,29 +584,23 @@ test.describe("pick · for the chat", () => {
     expect([back.x, back.y, back.w, back.h].map(value => Math.round(value))).toEqual(px);
   });
 
-  test("Reference mode: proxies carry the frame, the reference bounds and the style source; card0 resolves to the element that builds it", async ({
+  test("a pick by key: the block and the card of play name its source and its style source; card0 resolves to the element that builds it", async ({
     tools
   }) => {
     const page = tools.page;
     await showGame(tools);
     await expect.poll(() => gamePath(page)).toBe("home");
-    // R turns Reference mode on in every top-bar layout.
+    // Reference mode is gone: R turns nothing on and no proxy lies over the game.
     await page.keyboard.press("r");
-    await expect(page.locator("[data-frame-box]")).toHaveAttribute("data-reference", "");
+    await expect(page.locator("[data-frame-box]")).not.toHaveAttribute("data-reference", "");
+    await expect(page.locator("[data-moku-proxy]")).toHaveCount(0);
 
-    // A proxy carries its frame and its reference bounds before any pick.
-    const play = page.locator('[data-moku-proxy][data-moku-key="play"]');
-    await expect(play).toHaveAttribute("data-moku-frame", /^\d+$/);
-    await expect(play).toHaveAttribute("data-moku-ref-bounds", /^\d+ \d+ \d+ \d+$/);
-
-    // A pick through the proxy (its click is a pointerup) finds the source: the style source joins.
-    const { block, text } = await pickProxy(page, "play");
+    // A pick of play by its key finds the source: the style source joins, with the ref bounds.
+    const { block, text } = await pickKey(page, "play");
     const style = /· style: playButton (features\/home\/styles\/styles\.ts:\d+)/.exec(block);
     expect(style, block).not.toBeNull();
-    await expect(play).toHaveAttribute("data-moku-style-source", style?.[1] ?? "");
-    await expect(play).toHaveAttribute("data-moku-source", /^features\/home\/screens\/home-screen\.tsx:\d+$/);
-    const ref = /· ref (\d+),(\d+) (\d+)×(\d+)$/m.exec(block);
-    await expect(play).toHaveAttribute("data-moku-ref-bounds", (ref?.slice(1) ?? []).join(" "));
+    expect(block).toMatch(/^source: features\/home\/screens\/home-screen\.tsx:\d+ · /m);
+    expect(block).toMatch(/· ref \d+,\d+ \d+×\d+$/m);
     // The card holds the JSX and the style block, each fenced with its file:line.
     expect(text).toMatch(/^## JSX · features\/home\/screens\/home-screen\.tsx:\d+$/m);
     expect(text).toContain(`## Style · playButton · ${style?.[1] ?? ""}`);
@@ -615,51 +610,48 @@ test.describe("pick · for the chat", () => {
     // `id = cardKey(card.slot)`. The project index answers the element that takes the key (D-47).
     await answer(page, "play");
     await expect.poll(() => gamePath(page)).toBe("board/awaitIntent");
-    const card0 = page.locator('[data-moku-proxy][data-moku-key="card0"]');
-    await expect(card0).toHaveCount(1, { timeout: 15_000 });
-    const card0Shared = await pickProxy(page, "card0");
+    await settledRect(page, "card0");
+    const card0Shared = await pickKey(page, "card0");
     expect(card0Shared.line).toMatch(/ · features\/orders\/views\/order-card\.tsx:215 · /);
     expect(card0Shared.block.split("\n")[0]).toMatch(/^@moku card0 · /);
     expect(card0Shared.block).toMatch(/^source: features\/orders\/views\/order-card\.tsx:215( · |$)/m);
     // The JSX of the card starts at its element: `<column` on line 215, `key={id}` on 216.
     expect(card0Shared.text).toMatch(/^## JSX · features\/orders\/views\/order-card\.tsx:214$/m);
     expect(card0Shared.text).toContain("key={id}");
-    await page.keyboard.press("r");
-    await expect(page.locator("[data-moku-proxy]")).toHaveCount(0);
   });
 
-  test("Reference mode: the cursor is a crosshair, a click picks the element under it, a drag picks the area: area-f<frame>.md lists the elements inside next to its crop", async ({
+  test("Select: the cursor is a crosshair, a click picks the element under it, a drag picks the area: area-f<frame>.md lists the elements inside next to its crop", async ({
     tools
   }) => {
     const page = tools.page;
     await showGame(tools);
     await expect.poll(() => gamePath(page)).toBe("home");
-    await page.keyboard.press("r");
-    await expect(page.locator("[data-frame-box]")).toHaveAttribute("data-reference", "");
 
-    // A crosshair over the whole proxy layer and over every proxy.
-    const layer = page.locator("[data-moku-proxies]");
-    const play = page.locator('[data-moku-proxy][data-moku-key="play"]');
-    await expect(play).toHaveCount(1);
+    // Select on: a crosshair over the whole picker layer.
+    const layer = await pickerOn(page);
     expect(await layer.evaluate(element => getComputedStyle(element).cursor)).toBe("crosshair");
-    expect(await play.evaluate(element => getComputedStyle(element).cursor)).toBe("crosshair");
 
-    // A real click (press and release on one spot) picks the one element under the pointer.
+    // A real click (press and release on one spot) picks the one element under the pointer: the
+    // hover label names it.
     const rect = await toClient(page, await settledRect(page, "play"));
     const at = { x: rect.x + rect.w / 2, y: rect.y + rect.h / 2 };
-    const under = await page.evaluate(point => {
-      const element = document.elementFromPoint(point.x, point.y);
-      return element instanceof HTMLElement ? (element.dataset.mokuName ?? "") : "";
-    }, at);
-    expect(under, "a proxy under the centre of the Play sign").toMatch(/^play/);
+    const hover = page.locator("[data-game=overlay] [data-part=label]");
+    await page.mouse.move(at.x, at.y);
+    await expect(hover, "an element under the centre of the Play sign").toHaveText(/^play\S* · /, {
+      timeout: 20_000
+    });
+    const under = ((await hover.textContent()) ?? "").split(" · ")[0];
     await page.evaluate(() => navigator.clipboard.writeText(""));
     await page.mouse.click(at.x, at.y);
     await expect.poll(() => clipboard(page), { timeout: 15_000 }).toMatch(REFERENCE_LINE);
     expect(REFERENCE_LINE.exec(await clipboard(page))?.[1]).toBe(under);
     await expect(toast(page)).toHaveText("Reference, shot and bookmark copied");
+    // The pick turned Select off.
+    await expect(bar(page, "pick")).toHaveAttribute("aria-pressed", "false");
 
-    // A drag from just outside one corner of the Play sign past the other: the dashed marquee
-    // follows the pointer, the release picks the area.
+    // Select on again. A drag from just outside one corner of the Play sign past the other: the
+    // dashed marquee follows the pointer, the release picks the area.
+    await pickerOn(page);
     await page.evaluate(() => navigator.clipboard.writeText(""));
     const margin = 6;
     await page.mouse.move(rect.x - margin, rect.y - margin);
@@ -724,7 +716,7 @@ test.describe("pick · for the chat", () => {
     expect(Math.abs(cropSize.h - (Number(areaH) + 16) * ratio)).toBeLessThanOrEqual(2 * ratio + 2);
   });
 
-  test("Select mode: a drag picks the area like Reference mode: area-f<frame>.md in today's folder, the area line on the clipboard, the picker off (U4)", async ({
+  test("Select mode: a drag picks the area: area-f<frame>.md in today's folder, the area line on the clipboard, the picker off (U4)", async ({
     tools
   }) => {
     const page = tools.page;
@@ -788,11 +780,13 @@ test.describe("pick · for the chat", () => {
       .getByRole("radio", { name: "250 ms" })
       .click();
     await pop.getByRole("button", { name: "● Start" }).click();
-    const sheet = page.locator("dialog[data-game=sheet]");
-    await expect(sheet).toBeVisible({ timeout: 20_000 });
+    // The series ends with its card and its line on the clipboard; no contact sheet opens.
+    await expect(card.locator("[data-part=saved]")).toHaveText("✓ 4 shots saved", {
+      timeout: 20_000
+    });
     await expect
       .poll(() => clipboard(page))
       .toMatch(/^series: \.moku\/captures\/\d{4}-\d{2}-\d{2}\/series-\d{4}\/ \(4 frames\)$/);
-    await sheet.getByRole("button", { name: "Close" }).click();
+    await expect(page.locator("dialog[data-game=sheet]")).toHaveCount(0);
   });
 });
