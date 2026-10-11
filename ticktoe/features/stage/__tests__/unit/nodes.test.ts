@@ -6,6 +6,7 @@
 import { sfx } from "@core/kit";
 import type { Player, Session } from "@core/state";
 import { startingPlayer, startingSession } from "@core/state";
+import { fakeFx } from "@moku-labs/game/testing";
 import { describe, expect, it } from "vitest";
 import { setLevel } from "../../flow/set-level";
 
@@ -16,33 +17,24 @@ const NO_PAYLOAD = null;
 type Runnable = { run?: (context: never) => unknown };
 
 /**
- * Builds the context of one node run: drafts a test can read back, an `fx` that records every
- * effect the node started, and an `out` that names the outcome taken.
+ * Builds the context of one node run: drafts a test can read back, the engine's fake `fx` that
+ * records every effect the node started, and an `out` that names the outcome taken.
  */
 function contextOf(fields: { input?: unknown; player?: Player; session?: Partial<Session> } = {}) {
-  const started: unknown[] = [];
-  const awaited = (descriptor: unknown) => {
-    started.push(descriptor);
-
-    // A sound never answers here: a node that waited for one would never end its run.
-    return (descriptor as { kind?: unknown }).kind === "sfx"
-      ? new Promise<never>(() => undefined)
-      : Promise.resolve();
-  };
-  const fx = Object.assign(awaited, {
-    start: (descriptor: unknown) => {
-      started.push(descriptor);
-    }
+  // A sound never answers here: a node that waited for one would never end its run.
+  const fx = fakeFx({
+    answer: descriptor =>
+      descriptor.kind === "sfx" ? new Promise<never>(() => undefined) : undefined
   });
   const context = {
     input: fields.input,
     player: structuredClone(fields.player ?? startingPlayer),
     session: structuredClone({ ...startingSession, ...fields.session }) as Session,
-    fx,
+    fx: fx.fx,
     out: new Proxy({}, { get: (_target, outcome) => () => outcome })
   };
 
-  return { context, started };
+  return { context, started: fx.started };
 }
 
 /** Runs a node with a context and answers the name of the outcome it took. */
