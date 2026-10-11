@@ -1,8 +1,9 @@
 /**
  * @file A press on a button while the gate is closed, in the whole game on a screen app in plain
  * Bun. A transit node closes the gate while it awaits its animation: the head shake, the exit of
- * Home, the board reset and the exit of the Board. The plugin `pressBuffer` keeps the last press
- * of such a window and answers the gate with it when it opens and lists the intent. Time is the
+ * Home, the board reset and the exit of the Board. The gate of the engine holds the last press of
+ * such a window for `tables.press.holdMs` (`flow.holdMs`) and offers it once to the next gate
+ * that opens: the gate takes it when it lists the intent, in the moment it opens. Time is the
  * frames the test steps; the fake clock only ends the bot's pause and the celebration.
  */
 import type { Player, Session } from "@core/state";
@@ -30,6 +31,9 @@ const taken: Board = [2, 0, 0, 0, 1, 0, 0, 0, 0];
 /** A board one tap from a human win: X X _ / O O _ / _ _ _. */
 const humanWinsAt2: Board = [1, 1, 0, 2, 2, 0, 0, 0, 0];
 
+/** A board one tap from a draw on a full board: X O X / X O O / O X _. */
+const drawAt8: Board = [1, 2, 1, 1, 2, 2, 2, 1, 0];
+
 /** A player the bot opens the next round for: after one more round the human opens again. */
 const botOpens: Player = { ...startingPlayer, nextFirst: 2 };
 
@@ -39,8 +43,11 @@ const ARRIVAL_FRAMES = 70;
 /** How many frames a wait for an open gate may take before the test gives up. */
 const PATIENCE = 400;
 
-/** How many frames 500 ms are, rounded up: a press older than these is forgotten. */
-const KEEP_FRAMES = Math.ceil(tables.press.keepMs / FRAME_MS);
+/** How many frames the hold time is, rounded up: a press older than these is dropped. */
+const HOLD_FRAMES = Math.ceil(tables.press.holdMs / FRAME_MS);
+
+/** The longest frame the engine hands out: `time.maxDeltaMs`. */
+const LONG_FRAME_MS = 50;
 
 /** Who owns the stand-in views of a test. */
 const OWNER = { kind: "plugin", name: "test" } as const;
@@ -96,11 +103,47 @@ async function toBoard(app: ScreenApp, board: Board, player: Player = startingPl
 }
 
 /**
- * Plays a started game to the result card of a round the human wins with one tap.
+ * Steps frames until the graph has entered a number of nodes.
+ *
+ * @param app - The screen app.
+ * @param visits - The record of `visitsOf`.
+ * @param count - How many entries it must hold.
  */
-async function toCard(live: Live, player: Player): Promise<void> {
-  await toBoard(live.app, humanWinsAt2, player);
-  await tap(live.app, "match.tray", "tile2");
+async function untilVisited(app: ScreenApp, visits: string[], count: number): Promise<void> {
+  for (let step = 0; step < PATIENCE; step += 1) {
+    if (visits.length >= count) return;
+
+    await frames(app);
+  }
+
+  throw new Error(`The graph entered only ${visits.join(", ")}.`);
+}
+
+/**
+ * Steps frames of 50 ms until the gate is open.
+ *
+ * @returns How many milliseconds of game time that took.
+ */
+async function longFramesUntilOpen(app: ScreenApp): Promise<number> {
+  const from = app.time.snapshot().elapsed;
+
+  for (let count = 0; count < PATIENCE; count += 1) {
+    if (app.flow.gate.state().open) return app.time.snapshot().elapsed - from;
+
+    app.time.step(LONG_FRAME_MS);
+    await settle();
+  }
+
+  throw new Error(`The gate never opened: the graph stands on "${app.flow.state().path}".`);
+}
+
+/**
+ * Plays a started game to the result card of a round the human ends with one tap: a win on
+ * `humanWinsAt2`, a draw on `drawAt8`.
+ */
+async function toCard(live: Live, player: Player, board: Board): Promise<void> {
+  await toBoard(live.app, board, player);
+  await tap(live.app, "match.tray", `tile${board.indexOf(0, 2)}`);
   await frames(live.app, ARRIVAL_FRAMES);
   await endCelebration(live.clock);
   await until(live.app, "round/roundEnd/resultCard");
@@ -123,12 +166,24 @@ async function untilOpen(app: ScreenApp): Promise<number> {
 }
 
 /**
+ * Starts the real game live with a frame source, as on the page. The gate holds a refused press
+ * only while the frame loop runs, and plain Bun has no `requestAnimationFrame`. This stand-in
+ * never fires: the test steps the frames itself.
+ */
+function startLive(): Promise<Live> {
+  vi.stubGlobal("requestAnimationFrame", () => 1);
+  vi.stubGlobal("cancelAnimationFrame", () => undefined);
+
+  return startSounding();
+}
+
+/**
  * Starts the game, plays it to the result card and presses Play again: the board reset begins.
  */
-async function resetting(player: Player): Promise<Live> {
-  const live = await startSounding();
+async function resetting(player: Player, board: Board = humanWinsAt2): Promise<Live> {
+  const live = await startLive();
 
-  await toCard(live, player);
+  await toCard(live, player, board);
 
   expect(await tap(live.app, "match.card", "cardAgain")).toBe(true);
   expect(live.app.flow.state().path).toBe("round/roundEnd/resetBoard");
@@ -140,7 +195,7 @@ async function resetting(player: Player): Promise<Live> {
  * Starts the game on the Board and taps the taken tile 4: the head shake begins.
  */
 async function shaking(): Promise<Live> {
-  const live = await startSounding();
+  const live = await startLive();
 
   await toBoard(live.app, taken);
 
@@ -154,11 +209,19 @@ async function shaking(): Promise<Live> {
 /** How many frames the board reset keeps the gate closed. Measured once, before the tests. */
 let resetFrames = 0;
 
+/** How long the reset of a full board keeps the gate closed on frames of 50 ms. Measured once. */
+let longestResetMs = 0;
+
 beforeAll(async () => {
   const live = await resetting(botOpens);
 
   resetFrames = await untilOpen(live.app);
   await live.stop();
+
+  const full = await resetting(botOpens, drawAt8);
+
+  longestResetMs = await longFramesUntilOpen(full.app);
+  await full.stop();
   vi.unstubAllGlobals();
 });
 
@@ -176,13 +239,12 @@ describe("a press during the head shake", () => {
     expect(app.input.tap(tile(8))).toBe(false);
     expect(sessionOf(app).board[8]).toBe(0);
 
+    const visits = visitsOf(app);
+
     await untilOpen(app);
 
-    // The gate of the human's turn is open; the next frame answers it with the kept tap.
-    expect(app.flow.state().path).toBe("round/humanTurn");
-
-    await frames(app);
-
+    // The gate of the human's turn took the held tap in the moment it opened.
+    expect(visits.slice(0, 2)).toEqual(["round/humanTurn", "round/placeHuman"]);
     expect(sessionOf(app).board).toEqual([2, 0, 0, 0, 1, 0, 0, 0, 1]);
     expect(app.flow.state().path).toBe("round/botWait");
 
@@ -199,7 +261,6 @@ describe("a press during the head shake", () => {
     expect(app.input.tap(tile(8))).toBe(false);
 
     await untilOpen(app);
-    await frames(app);
 
     expect(sessionOf(app).board).toEqual([2, 0, 0, 0, 1, 0, 0, 0, 1]);
 
@@ -223,10 +284,11 @@ describe("a press during the head shake", () => {
 
     expect(app.input.tap({ projection: "match.hud", key: "boardHome" })).toBe(false);
 
-    await untilOpen(app);
-    await frames(app);
+    const visits = visitsOf(app);
 
-    expect(app.flow.state().path).toBe("round/leaveBoard");
+    await until(app, "round/leaveBoard");
+
+    expect(visits).toEqual(["round/humanTurn", "round/leaveBoard"]);
 
     await until(app, "home");
 
@@ -248,7 +310,6 @@ describe("a press during the head shake", () => {
 
     await frames(kept.app, 3);
     expect(kept.app.input.tap(tile(8))).toBe(false);
-    await untilOpen(kept.app);
     await frames(kept.app, ARRIVAL_FRAMES);
 
     // The same nodes in the same order, and the same committed player, session and random state.
@@ -260,7 +321,7 @@ describe("a press during the head shake", () => {
   });
 
   it("is the game's to refuse when the shake was the bot's: the pause takes the tap and shakes", async () => {
-    const live = await startSounding();
+    const live = await startLive();
     const { app } = live;
 
     await toBoard(app, taken);
@@ -278,11 +339,11 @@ describe("a press during the head shake", () => {
 
     await frames(app, 3);
     expect(app.input.tap(tile(2))).toBe(false);
-    await untilOpen(app);
-    await frames(app);
+    await untilVisited(app, visits, 3);
 
-    // The kept tap reached the pause, which refuses a tap as it always does: a second shake.
+    // The held tap reached the pause, which refuses a tap as it always does: a second shake.
     expect(app.flow.state().path).toBe("round/refuseTap");
+    expect(visits).toEqual(["round/refuseTap", "round/botWait", "round/refuseTap"]);
     expect(sessionOf(app).board).toEqual([2, 0, 0, 0, 1, 0, 0, 0, 1]);
 
     await untilOpen(app);
@@ -305,33 +366,50 @@ describe("a press while the board resets after Play again", () => {
 
     expect(app.flow.gate.state().open).toBe(false);
     expect(app.input.tap(tile(4))).toBe(false);
+    expect(sessionOf(app).board).not.toEqual(EMPTY);
+
+    const visits = visitsOf(app);
 
     await untilOpen(app);
 
-    expect(app.flow.state().path).toBe("round/humanTurn");
-    expect(sessionOf(app).board).toEqual(EMPTY);
-
-    await frames(app);
-
+    // The round began on a clean Board, and the gate of the human's turn took the held tap.
+    expect(visits.slice(0, 3)).toEqual(["round/boardIn", "round/humanTurn", "round/placeHuman"]);
     expect(sessionOf(app).board).toEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
     expect(app.flow.state().path).toBe("round/botWait");
 
     await live.stop();
   });
 
-  it("is forgotten when it is older than 500 ms as the gate opens", async () => {
+  it("is played when it was made in the first frame of the reset: older than 500 ms", async () => {
     const live = await resetting(botOpens);
     const { app } = live;
 
-    await frames(app, resetFrames - KEEP_FRAMES - 4);
-
     expect(app.input.tap(tile(4))).toBe(false);
 
-    await untilOpen(app);
-    await frames(app, 10);
+    const waited = await untilOpen(app);
 
-    expect(app.flow.state().path).toBe("round/humanTurn");
-    expect(sessionOf(app).board).toEqual(EMPTY);
+    expect(waited * FRAME_MS).toBeGreaterThan(500);
+    expect(sessionOf(app).board).toEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
+    expect(app.flow.state().path).toBe("round/botWait");
+
+    await live.stop();
+  });
+
+  it("is held longer than the longest reset takes: a full board on frames of 50 ms", async () => {
+    // The table says which animation the number covers: 1205 ms of steps, more on long frames.
+    expect(longestResetMs).toBeGreaterThanOrEqual(1205);
+    expect(tables.press.holdMs).toBeGreaterThan(longestResetMs);
+
+    const live = await resetting(botOpens, drawAt8);
+    const { app } = live;
+
+    // The press comes in the frame of Play again itself: no press of this game waits longer.
+    expect(app.input.tap(tile(4))).toBe(false);
+
+    await longFramesUntilOpen(app);
+
+    expect(sessionOf(app).board).toEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
+    expect(app.flow.state().path).toBe("round/botWait");
 
     await live.stop();
   });
@@ -345,12 +423,10 @@ describe("a press while the board resets after Play again", () => {
     await frames(app, resetFrames - 10);
     expect(app.input.tap(tile(4))).toBe(false);
 
-    await untilOpen(app);
-    expect(app.flow.state().path).toBe("round/botWait");
+    await until(app, "round/refuseTap");
 
-    await frames(app);
-
-    expect(app.flow.state().path).toBe("round/refuseTap");
+    // The pause of the bot took the held tap in the moment its gate opened.
+    expect(visits.slice(-2)).toEqual(["round/botWait", "round/refuseTap"]);
     expect(sessionOf(app).board).toEqual(EMPTY);
 
     await untilOpen(app);
@@ -385,7 +461,7 @@ describe("a press while the board resets after Play again", () => {
 
 describe("a press while Home leaves", () => {
   it("is not turned into anything: the Board takes neither Play nor a level", async () => {
-    const live = await startSounding();
+    const live = await startLive();
     const { app } = live;
 
     await toHome(live);
@@ -401,7 +477,7 @@ describe("a press while Home leaves", () => {
     expect(app.input.tap({ projection: "stage.home", key: "levelHard" })).toBe(false);
 
     await untilOpen(app);
-    await frames(app, KEEP_FRAMES + 4);
+    await frames(app, HOLD_FRAMES + 4);
 
     expect(app.flow.state().path).toBe("round/humanTurn");
     expect(app.flow.gate.state().allowed).toEqual(["tap", "home"]);
@@ -414,7 +490,7 @@ describe("a press while Home leaves", () => {
   });
 
   it("is delivered when it names what the Board takes", async () => {
-    const live = await startSounding();
+    const live = await startLive();
     const { app } = live;
 
     await toHome(live);
@@ -428,11 +504,11 @@ describe("a press while Home leaves", () => {
     expect(app.flow.gate.state().open).toBe(false);
     expect(app.input.tap(standIn)).toBe(false);
 
+    const visits = visitsOf(app);
+
     await untilOpen(app);
-    expect(app.flow.state().path).toBe("round/humanTurn");
 
-    await frames(app);
-
+    expect(visits.slice(0, 3)).toEqual(["round/boardIn", "round/humanTurn", "round/placeHuman"]);
     expect(sessionOf(app).board).toEqual([0, 0, 0, 0, 1, 0, 0, 0, 0]);
     expect(app.flow.state().path).toBe("round/botWait");
 
@@ -441,8 +517,8 @@ describe("a press while Home leaves", () => {
 });
 
 describe("a press while the Board leaves", () => {
-  it("does not reach Home: a kept tap on a tile is no level and no Play", async () => {
-    const live = await startSounding();
+  it("does not reach Home: a held tap on a tile is no level and no Play", async () => {
+    const live = await startLive();
     const { app } = live;
 
     await toBoard(app, taken);
@@ -468,7 +544,7 @@ describe("a press while the Board leaves", () => {
   });
 
   it("does not reach the next round either: Play starts it on an empty board", async () => {
-    const live = await startSounding();
+    const live = await startLive();
     const { app } = live;
 
     await toBoard(app, taken);
@@ -476,7 +552,7 @@ describe("a press while the Board leaves", () => {
     await frames(app, 3);
     expect(app.input.tap(tile(8))).toBe(false);
     await untilOpen(app);
-    // Two frames draw Home. Play is pressed then, while the kept tap is still young.
+    // Two frames draw Home. Play is pressed then, while the held tap is still young.
     await frames(app, 2);
 
     expect(await tap(app, "stage.home", "homePlay")).toBe(true);
@@ -490,7 +566,7 @@ describe("a press while the Board leaves", () => {
   });
 
   it("is delivered when it names what Home takes", async () => {
-    const live = await startSounding();
+    const live = await startLive();
     const { app } = live;
 
     await toBoard(app, taken);
@@ -505,12 +581,10 @@ describe("a press while the Board leaves", () => {
     expect(app.flow.gate.state().open).toBe(false);
     expect(app.input.tap(standIn)).toBe(false);
 
-    await untilOpen(app);
-    expect(app.flow.state().path).toBe("home");
+    await until(app, "leaveHome");
 
-    await frames(app);
-
-    expect(app.flow.state().path).toBe("leaveHome");
+    // Home took the held press in the moment its gate opened.
+    expect(visits).toEqual(["round/leaveBoard", "home", "leaveHome"]);
 
     await until(app, "round/humanTurn");
 
@@ -523,7 +597,7 @@ describe("a press while the Board leaves", () => {
 
 describe("a press the gate takes", () => {
   it("is answered once: the pause of the bot that follows gets no tap", async () => {
-    const live = await startSounding();
+    const live = await startLive();
     const { app } = live;
 
     await toBoard(app, taken);
@@ -531,7 +605,7 @@ describe("a press the gate takes", () => {
     const visits = visitsOf(app);
 
     expect(await tap(app, "match.tray", "tile8")).toBe(true);
-    await frames(app, KEEP_FRAMES + 4);
+    await frames(app, HOLD_FRAMES + 4);
 
     expect(app.flow.state().path).toBe("round/botWait");
     expect(sessionOf(app).board).toEqual([2, 0, 0, 0, 1, 0, 0, 0, 1]);
@@ -540,12 +614,7 @@ describe("a press the gate takes", () => {
     await live.stop();
   });
 
-  it("is answered once when the engine offers it again itself, in the frame the shake ends", async () => {
-    // With a frame source the gate keeps a refused answer for one frame and offers it again when
-    // it opens within that frame. This stand-in never fires: the test steps the frames.
-    vi.stubGlobal("requestAnimationFrame", () => 1);
-    vi.stubGlobal("cancelAnimationFrame", () => undefined);
-
+  it("is answered once when it comes in the last frame of the shake", async () => {
     const measured = await shaking();
     const shakeFrames = await untilOpen(measured.app);
 
@@ -569,11 +638,11 @@ describe("a press the gate takes", () => {
     await frames(app);
     off();
 
-    // The gate refused it and the engine delivered it: the X is on the tile already.
+    // The gate refused it, and the gate that opened in the same frame took it: the X is there.
     expect(taps).toEqual([false]);
     expect(sessionOf(app).board).toEqual([2, 0, 0, 0, 1, 0, 0, 0, 1]);
 
-    await frames(app, KEEP_FRAMES);
+    await frames(app, HOLD_FRAMES);
 
     // The pause of the bot takes a tap, and it got none: nothing shook.
     expect(app.flow.state().path).toBe("round/botWait");
@@ -585,7 +654,7 @@ describe("a press the gate takes", () => {
 
 describe("a tap the game refuses by its own rule", () => {
   it("shakes as before during the bot's pause, and is not kept for the human's turn", async () => {
-    const live = await startSounding();
+    const live = await startLive();
     const { app } = live;
 
     await toBoard(app, taken);
@@ -617,7 +686,7 @@ describe("a tap the game refuses by its own rule", () => {
   });
 
   it("is not kept when the gate is open and lists another intent: a tile during the celebration", async () => {
-    const live = await startSounding();
+    const live = await startLive();
     const { app } = live;
 
     await toBoard(app, humanWinsAt2, botOpens);
@@ -644,15 +713,14 @@ describe("a tap the game refuses by its own rule", () => {
 });
 
 describe("the game without a screen", () => {
-  it("has no press buffer: a refused answer stays refused, and the round walks as before", async () => {
+  it("holds no answer: a refused one stays refused, and the round walks as before", async () => {
     const clock = fakeClock(startMoment);
     const { app } = game.headless({ clock, seed: 7 });
     const run = await createHeadless(app);
     const session = () => app.model.store.snapshot().session as Session;
 
-    // The screen app composes the plugin; the headless one has neither it nor an input door.
-    expect(game.screen().app.has("pressBuffer")).toBe(true);
-    expect(app.has("pressBuffer")).toBe(false);
+    // No frame loop runs without a screen, so the gate holds nothing. There is no input door.
+    expect(app.time.isRunning()).toBe(false);
     expect(app.has("input")).toBe(false);
 
     await leaveSplash({ app, clock });

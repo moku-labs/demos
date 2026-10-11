@@ -309,6 +309,33 @@ describe("the sound before the first touch", () => {
   });
 });
 
+describe("the sound in a shell that wants no touch", () => {
+  it("plays the sting of the splash with no touch: the context runs from its creation", async () => {
+    const sounding = await startSounding({ running: true });
+    const { app, started } = sounding;
+
+    expect(app.audio.unlocked()).toBe(true);
+
+    await until(app, "splashWait");
+
+    const [sting] = app.audio.journal();
+
+    expect(app.audio.journal()).toMatchObject([{ key: "splash.splash", bus: "sfx", kind: "sfx" }]);
+    expect(started).toEqual([{ bytes: bytesOf("splash.splash"), loop: false }]);
+    // The pieces meet 800 ms into the entrance: 100 ms of lead and 700 ms of flight.
+    expect(sting?.at).toBeGreaterThanOrEqual(800);
+    expect(sting?.at).toBeLessThan(800 + 2 * FRAME_MS);
+
+    // Home starts its theme as the scene comes, with no touch either.
+    await toHome(sounding);
+
+    expect(heard(app)).toEqual(["splash.splash", "match.theme"]);
+    expectOwnFiles(sounding);
+
+    await sounding.stop();
+  });
+});
+
 describe("a first touch that is a press of Play", () => {
   it("keeps the tap until the browser lets the page sound, and drops nothing", async () => {
     const sounding = await startSounding({ holdResume: true });
