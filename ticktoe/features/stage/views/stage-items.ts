@@ -1,7 +1,5 @@
 /**
- * @file What the projections of the stage read from the state: plain items. Each function hands
- * out objects of a frozen table and never a new one: the engine leaves a view alone while its item
- * is the same object, so a commit that does not touch the stage cuts no motion of it short.
+ * @file What the projections of the stage read from the state: plain items.
  */
 import type { Player, Session } from "@core/state";
 import type { Level } from "@core/types";
@@ -19,30 +17,13 @@ export type HillsItem = { readonly screen: Session["screen"] };
 export type HomeItem = { readonly level: Level; readonly index: number };
 
 /**
- * The one item of the hills per screen.
- */
-const HILLS: Readonly<Record<Session["screen"], HillsItem>> = Object.freeze({
-  home: Object.freeze({ screen: "home" }),
-  board: Object.freeze({ screen: "board" })
-});
-
-/**
- * The one item of Home per level.
- */
-const HOMES: Readonly<Record<Level, HomeItem>> = Object.freeze({
-  easy: Object.freeze({ level: "easy", index: levelIndex("easy") }),
-  normal: Object.freeze({ level: "normal", index: levelIndex("normal") }),
-  hard: Object.freeze({ level: "hard", index: levelIndex("hard") })
-});
-
-/**
  * The hills as the session has them: always there, on the screen that shows.
  *
  * @param session - The session.
  * @returns The item of that screen.
  */
 export function hillsOf(session: Session): HillsItem {
-  return HILLS[session.screen];
+  return { screen: session.screen };
 }
 
 /**
@@ -64,5 +45,7 @@ export function parallaxAt(screen: Session["screen"]): number {
  * @returns One item, or none.
  */
 export function homeOf(player: Player, session: Session): HomeItem[] {
-  return session.screen === "home" ? [HOMES[player.level]] : [];
+  if (session.screen !== "home") return [];
+
+  return [{ level: player.level, index: levelIndex(player.level) }];
 }

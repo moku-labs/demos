@@ -19,8 +19,8 @@ export const setLevel = defineNode({
 
     if (level !== undefined) {
       player.level = level;
-      // Not awaited: Home never waits for a sound. The saved level sounds too: it was pressed.
-      void fx(sfx("match.level"));
+      // The saved level sounds too: it was pressed.
+      fx.start(sfx("match.level"));
     }
 
     return out.done();

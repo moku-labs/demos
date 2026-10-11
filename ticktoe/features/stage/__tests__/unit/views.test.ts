@@ -1,6 +1,6 @@
 /**
- * @file What the three projections of the stage read from the state: plain items of a frozen table,
- * checked without a screen.
+ * @file What the three projections of the stage read from the state: plain items, checked without
+ * a screen.
  */
 import type { Player, Session } from "@core/state";
 import { startingPlayer, startingSession } from "@core/state";
@@ -8,7 +8,6 @@ import { describe, expect, it } from "vitest";
 import { stageHills } from "../../views/hills";
 import { stageHome } from "../../views/home-screen";
 import { stageSky } from "../../views/sky";
-import type { HomeItem } from "../../views/stage-items";
 import { hillsOf, homeOf } from "../../views/stage-items";
 
 /** The session while the Board shows. */
@@ -29,13 +28,13 @@ describe("what the sky reads", () => {
 });
 
 describe("what the hills read", () => {
-  it("is the same frozen object for the same screen, so a commit elsewhere leaves the hills alone", () => {
+  it("is the screen that shows and nothing else, whatever the round holds", () => {
     const busy: Session = { ...onBoard, board: [1, 0, 0, 0, 2, 0, 0, 0, 0], turn: 1 };
 
-    expect(hillsOf(busy)).toBe(hillsOf(onBoard));
-    expect(hillsOf({ ...startingSession })).toBe(hillsOf(startingSession));
-    expect(Object.isFrozen(hillsOf(onBoard))).toBe(true);
-    expect(stageHills.from(startingPlayer, busy)).toBe(hillsOf(onBoard));
+    expect(hillsOf(startingSession)).toEqual({ screen: "home" });
+    expect(hillsOf(onBoard)).toEqual({ screen: "board" });
+    expect(hillsOf(busy)).toEqual({ screen: "board" });
+    expect(stageHills.from(startingPlayer, busy)).toEqual({ screen: "board" });
     expect(stageHills.layer).toBe("hills");
   });
 });
@@ -51,14 +50,12 @@ describe("what Home reads", () => {
     expect(homeOf(startingPlayer, onBoard)).toEqual([]);
   });
 
-  it("is the same frozen object for the same level, so a commit elsewhere cuts no motion short", () => {
-    const [first] = homeOf(playerAt("hard"), startingSession);
+  it("is the level and nothing else of the save: a score changes nothing", () => {
     const scored: Player = { ...playerAt("hard"), score: { you: 3, draws: 1, bot: 2 } };
 
-    expect(homeOf(scored, startingSession)[0]).toBe(first);
-    expect(Object.isFrozen(first)).toBe(true);
-    expect(stageHome.from(scored, startingSession)).toEqual([first]);
-    expect(stageHome.key?.(first as HomeItem)).toBe("home");
+    expect(homeOf(scored, startingSession)).toEqual([{ level: "hard", index: 2 }]);
+    expect(stageHome.from(scored, startingSession)).toEqual([{ level: "hard", index: 2 }]);
+    expect(stageHome.key?.({ level: "hard", index: 2 })).toBe("home");
     expect(stageHome.layer).toBe("ui");
   });
 });

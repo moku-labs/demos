@@ -6,7 +6,7 @@ import { projection } from "@core/kit";
 import type { AssetKey } from "@generated/assets";
 
 /**
- * The one thing the sky reads: its art. The same object at every commit, so the sky stays as it is.
+ * The one thing the sky reads: its art.
  */
 const SKY: { readonly texture: AssetKey } = Object.freeze({ texture: "ui.sky" });
 

@@ -41,9 +41,9 @@ export const scoreRound = defineNode({
     player.score[SCORE_OF[input.result]] += 1;
     player.nextFirst = player.nextFirst === 1 ? 2 : 1;
     session.celebrateDueAt = now + tables.celebrateMs[input.result];
-    // Not awaited: the celebration never waits for its sound. Started before the clock is armed,
-    // so its wait counts from the last move, as the drop of the piece does.
-    void fx(play(resultSound(input.result, lastMover(session.turn)), {}));
+    // Started before the clock is armed, so its wait counts from the last move, as the drop of the
+    // piece does.
+    fx.start(play(resultSound(input.result, lastMover(session.turn)), {}));
     await fx(schedule(session.celebrateDueAt));
 
     return out.done();

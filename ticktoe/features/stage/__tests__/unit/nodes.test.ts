@@ -21,7 +21,7 @@ type Runnable = { run?: (context: never) => unknown };
  */
 function contextOf(fields: { input?: unknown; player?: Player; session?: Partial<Session> } = {}) {
   const started: unknown[] = [];
-  const fx = (descriptor: unknown) => {
+  const awaited = (descriptor: unknown) => {
     started.push(descriptor);
 
     // A sound never answers here: a node that waited for one would never end its run.
@@ -29,6 +29,11 @@ function contextOf(fields: { input?: unknown; player?: Player; session?: Partial
       ? new Promise<never>(() => undefined)
       : Promise.resolve();
   };
+  const fx = Object.assign(awaited, {
+    start: (descriptor: unknown) => {
+      started.push(descriptor);
+    }
+  });
   const context = {
     input: fields.input,
     player: structuredClone(fields.player ?? startingPlayer),

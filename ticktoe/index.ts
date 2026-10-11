@@ -26,7 +26,6 @@ export default defineGameApp({
   shared: sharedFeature,
   features: [splashFeature, matchFeature, stageFeature],
   plugins: [loadProgressPlugin],
-  headless: { features: [splashFeature, matchFeature, stageFeature] },
   pluginConfigs: {
     text: { fonts: { body: "ui.font-body", digits: "ui.font-body" } },
     loadProgress: { bundles: ["match"], step: 0.25 },

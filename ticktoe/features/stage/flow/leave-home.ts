@@ -13,14 +13,14 @@ import { homeExit } from "../motion/animations";
 export const leaveHome = defineNode({
   outcomes: { done: type() },
   run: async ({ player, session, fx, out }) => {
-    // Only Play leads here. Not awaited: the exit never waits for the tap.
-    void fx(sfx("ui.tap"));
+    // Only Play leads here.
+    fx.start(sfx("ui.tap"));
     await fx(play(homeExit, {}));
 
     session.screen = "board";
     session.shownScore = { ...player.score };
-    // The hills slide when this edge commits. Not awaited either.
-    void fx(sfx("match.whoosh"));
+    // The hills slide when this edge commits.
+    fx.start(sfx("match.whoosh"));
 
     return out.done();
   }

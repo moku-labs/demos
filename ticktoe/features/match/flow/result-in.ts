@@ -13,8 +13,7 @@ export const resultIn = defineNode({
   outcomes: { done: type() },
   run: ({ session, fx, out }) => {
     session.card = true;
-    // Not awaited: the buttons of the card never wait for its sound.
-    void fx(play(cardIn, {}));
+    fx.start(play(cardIn, {}));
 
     return out.done();
   }
