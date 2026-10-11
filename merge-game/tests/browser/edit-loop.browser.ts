@@ -2,9 +2,9 @@
  * @file The edit loop (round 2 R7): how fast a change made from a reference block shows in the
  * game, on the merge-game copy the bin serves with Bun hot reload on (its default, D-23).
  *
- * Five scripted edits, each the way an agent in the chat works: pick the element (a click on its
- * Reference mode proxy), read the one reference line off the clipboard and the card file it names
- * (round 2b R13), derive the edit only from the reference block in the card (its `source`,
+ * Five scripted edits, each the way an agent in the chat works: pick the element by its key (the
+ * `editor.select` request of MCP `moku_select`), read the one reference line of the answer and the
+ * card file it names (round 2b R13), derive the edit only from the reference block in the card (its `source`,
  * `style`, `texture`, `layout` and `bounds` lines, then the code those lines point to), write the
  * file on disk with `fs` (not through the editor), and measure the ms from the save until the
  * game page shows the new value with its state restored:
@@ -32,6 +32,7 @@ import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, test } from "./fixtures";
+import { selectByKey } from "./hub-client";
 
 /** The project root the bin serves. */
 const GAME_ROOT = fileURLToPath(new URL("../../.moku/editor-e2e/game/", import.meta.url));
@@ -732,31 +733,18 @@ const SCRIPTS: readonly Script[] = [
 // ---------------------------------------------------------------------------------------------
 
 /**
- * Picks an element through its Reference mode proxy, reads the one line off the clipboard, then
- * the reference block from the card file the line names.
+ * Picks an element by its key over the hub (`editor.select`), reads the one line of the answer,
+ * then the reference block from the card file the line names.
  *
  * @param page - The test page.
  * @param key - The ui key.
  * @returns The block text.
  */
 async function pickBlock(page: Page, key: string): Promise<string> {
-  await page.evaluate(() => navigator.clipboard.writeText(""));
-  const proxy = page.locator(`[data-moku-proxy][data-moku-key="${key}"]`);
-  await expect(proxy).toHaveCount(1, { timeout: 15_000 });
-  // A click on a proxy is its pointerup.
-  await proxy.dispatchEvent("pointerup");
-  let card = "";
-  await expect
-    .poll(
-      async () => {
-        const line = await page.evaluate(() => navigator.clipboard.readText());
-        const match = REFERENCE_LINE.exec(line);
-        card = match?.[1] === key ? (match[2] ?? "") : "";
-        return card;
-      },
-      { timeout: 15_000 }
-    )
-    .not.toBe("");
+  const { line = "" } = await selectByKey(page, key);
+  const match = REFERENCE_LINE.exec(line);
+  expect(match?.[1], line).toBe(key);
+  const card = match?.[2] ?? "";
   const text = await readGame(card);
   const block = TEXT_FENCE.exec(text)?.[1];
   if (block === undefined || !block.includes("\nshot: ")) {
@@ -827,9 +815,6 @@ test.describe("edit loop (R7)", () => {
     await expect(page.locator("[data-frame-box]")).toHaveAttribute("data-docked", "stage");
     await expect.poll(() => seen(page, "play", "path")).toBe("home");
     const initial = await probe(page, "play", {});
-    // Reference mode: the proxies take the picks, the game gets no input.
-    await page.keyboard.press("r");
-    await expect(page.locator("[data-frame-box]")).toHaveAttribute("data-reference", "");
 
     const originals = new Map<string, string>();
     const rows: Row[] = [];

@@ -4,9 +4,8 @@
  * Info rows (←/→, ↑/↓, Enter, Alt+← back), sub-flows expanded in place and entered, the
  * breadcrumb, the board hub with its lanes and "You are here", the history strip, zoom, fit,
  * Follow, the minimap, pan, drag to pin with the layout file on disk, Reset layout, the three
- * context menus with Step 1 frame while paused, the Inspector tabs with a code save that writes
- * the file and reloads the game (D-07) and a style step the game hot swaps in place (U10), the
- * keys and the Esc layers. The geometry
+ * context menus with Step 1 frame while paused, the two Inspector tabs with a code save that
+ * writes the file and reloads the game (D-07), the keys and the Esc layers. The geometry
  * is the browser's: camera transforms, card rects and drags are measured. Below 600 px the
  * Inspector is a drawer that starts collapsed: a test opens it before it works in it, and a card
  * the camera left outside the canvas (or under the preview float) is panned into view first.
@@ -27,9 +26,6 @@ const GAME_ROOT = fileURLToPath(new URL("../../.moku/editor-e2e/game/", import.m
 
 /** The pins file of flowView, relative to the game root. */
 const LAYOUT_FILE = ".moku/editor/layout.json";
-
-/** The text-styles file of flowView, relative to the game root. */
-const STYLES_FILE = "shared/styles/text.ts";
 
 /** The eight outcomes board/awaitIntent waits for, one hub lane each. */
 const BOARD_LANES = 8;
@@ -1020,9 +1016,8 @@ test.describe("flow · context menus", () => {
     await showFlow(tools);
     await clickCard(page, "main/settings", { button: "right" });
     await expect(menu(page)).toBeVisible();
-    expect(await menuLabels(page)).toEqual(
-      expect.arrayContaining(["Focus", "Open code", "Open styles"])
-    );
+    expect(await menuLabels(page)).toEqual(expect.arrayContaining(["Focus", "Open code"]));
+    expect(await menuLabels(page)).not.toContain("Open styles");
     expect(await menuLabels(page)).not.toContain("Add note on closed");
     await expect(menu(page).getByRole("menuitem").first()).toBeFocused();
     await page.keyboard.press("ArrowDown");
@@ -1084,28 +1079,27 @@ test.describe("flow · context menus", () => {
 });
 
 test.describe("flow · inspector", () => {
-  test("tabs Info, Code, Styles by click and arrow keys", async ({ tools }) => {
+  test("tabs Info and Code by click and arrow keys; no Styles tab", async ({ tools }) => {
     const page = tools.page;
     await showFlow(tools);
     await clickCard(page, "main/home");
     await openInspector(page);
     const tabs = inspector(page).getByRole("tab");
-    await expect(tabs).toHaveText(["Info", "Code", "Styles"]);
+    await expect(tabs).toHaveText(["Info", "Code"]);
+    await expect(inspector(page).locator("[data-flow=styles-tab]")).toHaveCount(0);
     await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
     await expect(inspector(page).locator("[data-flow=info-tab]")).toContainText(
       "rest · checkpoint"
     );
     await tabs.nth(1).click();
+    await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
     await expect(inspector(page).locator("[data-flow=code-tab]")).toBeVisible();
-    await page.keyboard.press("ArrowRight");
-    await expect(tabs.nth(2)).toHaveAttribute("aria-selected", "true");
-    await expect(inspector(page).locator("[data-flow=styles-tab]")).toBeVisible();
-    // The arrows wrap around the three tabs.
+    // The arrows wrap around the two tabs.
     await page.keyboard.press("ArrowRight");
     await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
     await expect(inspector(page).locator("[data-flow=info-tab]")).toBeVisible();
     await page.keyboard.press("ArrowLeft");
-    await expect(tabs.nth(2)).toHaveAttribute("aria-selected", "true");
+    await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
     // The clear button leaves focus.
     await inspector(page).getByRole("button", { name: "Clear" }).click();
     await expect(flow(page).locator("[data-selected]")).toHaveCount(0);
@@ -1177,49 +1171,6 @@ test.describe("flow · inspector", () => {
       );
     } finally {
       await writeFile(path.join(GAME_ROOT, file), original);
-    }
-  });
-
-  test("Styles: the size stepper writes one number and the game hot swaps it (U10)", async ({
-    tools,
-    errors
-  }) => {
-    for (const pattern of RELOAD_WARNINGS) errors.allow(pattern);
-    const page = tools.page;
-    await showFlow(tools);
-    await toBoard(page);
-    const original = (await readGameFile(STYLES_FILE)) ?? "";
-    await clickCard(page, "main/home");
-    await openInspector(page);
-    await inspector(page).getByRole("tab", { name: "Styles" }).click();
-    const tab = inspector(page).locator("[data-flow=styles-tab]");
-    await expect(tab).toContainText(STYLES_FILE);
-    // No style is preselected: pick one first.
-    await tab.getByRole("combobox").selectOption("ui.title");
-    const up = tab.getByRole("button", { name: "Increase size" }).first();
-    const value = up.locator("xpath=..").locator("[data-part=value]");
-    const before = Number(await value.textContent());
-    try {
-      await up.click();
-      await expect(value).toHaveText(String(before + 1));
-      await expect(tab.locator("[data-part=applied]")).toHaveText(
-        /^✓ Written to shared\/styles\/text\.ts:\d+ · game updated$/,
-        { timeout: 30_000 }
-      );
-      const after = (await readGameFile(STYLES_FILE)) ?? "";
-      const changed = after
-        .split("\n")
-        .filter((line, index) => line !== original.split("\n")[index]);
-      expect(changed).toHaveLength(1);
-      expect(changed[0]).toContain(String(before + 1));
-      await expect(page.locator("[data-ui=link-pill]")).toHaveAttribute("data-kind", "live", {
-        timeout: 30_000
-      });
-      await expect(flow(page).locator("[data-flow=breadcrumb] [data-part=stack]")).toHaveText(
-        "Stack main/board › board/awaitIntent"
-      );
-    } finally {
-      await writeFile(path.join(GAME_ROOT, STYLES_FILE), original);
     }
   });
 });

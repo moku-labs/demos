@@ -1,7 +1,7 @@
 /**
  * @file The tools stack of the editor scenarios: the tools page booted from the HTML the real
  * pages route serves, the tools core of `@moku-labs/editor/tools` with the speed configs, a
- * tools probe that records all eleven tools events, and the workspace mounted inside `act`.
+ * tools probe that records all ten tools events, and the workspace mounted inside `act`.
  */
 import type { AnyPluginInstance } from "@moku-labs/core";
 import { act } from "preact/test-utils";
@@ -23,8 +23,6 @@ type ToolsEvents = {
   "workspace:ran": Workspace.RanEvent;
   /** The applied density changed. */
   "workspace:density": { density: Workspace.Density };
-  /** Reference mode turned on or off. */
-  "workspace:reference": { on: boolean };
   /** Open a file in the Files workspace. */
   "workspace:open-file": { path: string; line?: number };
   /** Focus a node in the Flow workspace. */
@@ -74,7 +72,7 @@ export type ToolsOptions = {
 export type ToolsStack = {
   readonly kind: "tools";
   readonly app: ToolsApp;
-  /** All eleven tools events, in order. */
+  /** All ten tools events, in order. */
   readonly events: ToolsEvent[];
   /** The payloads of one tools event, in order. */
   eventsOf<Name extends keyof ToolsEvents>(name: Name): ToolsEvents[Name][];
@@ -112,9 +110,6 @@ function createToolsProbe(events: ToolsEvent[]) {
       },
       "workspace:density": (payload: ToolsEvents["workspace:density"]) => {
         events.push({ name: "workspace:density", payload });
-      },
-      "workspace:reference": (payload: ToolsEvents["workspace:reference"]) => {
-        events.push({ name: "workspace:reference", payload });
       },
       "workspace:open-file": (payload: ToolsEvents["workspace:open-file"]) => {
         events.push({ name: "workspace:open-file", payload });
