@@ -9,10 +9,10 @@
     "bun": ">=1.4.2"
   },
   "dependencies": {
-    "@moku-labs/common": "0.3.4",
+    "@moku-labs/common": "0.3.5",
     "@moku-labs/core": "1.7.1",
-    "@moku-labs/system": "0.3.1",
-    "@moku-labs/web": "2.4.4",
+    "@moku-labs/system": "0.3.2",
+    "@moku-labs/web": "2.4.5",
     "@tauri-apps/api": "2.11.1",
     "@tauri-apps/plugin-clipboard-manager": "2.3.3",
     "@tauri-apps/plugin-deep-link": "2.4.10",
@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.16",
-    "@moku-labs/native": "0.3.2",
+    "@moku-labs/native": "0.3.3",
     "@types/bun": "1.4.2",
     "@vitest/coverage-istanbul": "4.0.18",
     "eslint": "9.39.3",
