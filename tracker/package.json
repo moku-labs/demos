@@ -9,10 +9,10 @@
     "bun": ">=1.4.2"
   },
   "dependencies": {
-    "@moku-labs/common": "0.3.4",
-    "@moku-labs/core": "1.7.1",
-    "@moku-labs/web": "2.4.4",
-    "@moku-labs/worker": "0.20.3",
+    "@moku-labs/common": "0.3.10",
+    "@moku-labs/core": "1.7.6",
+    "@moku-labs/web": "2.4.10",
+    "@moku-labs/worker": "0.20.9",
     "preact": "10.29.2",
     "preact-render-to-string": "6.7.0"
   },
