@@ -10,7 +10,7 @@ import { GAME_NAME, shutdown, startStack } from "./helpers/stack";
 /** Three cores and a real game start for each test. */
 const TIMEOUT_MS = 30_000;
 
-/** The 20 sources of the engine's read door, sorted. */
+/** The 21 sources of the engine's read door, sorted. */
 const GAME_SOURCES = [
   "game.assets",
   "game.at",
@@ -20,6 +20,7 @@ const GAME_SOURCES = [
   "game.effects",
   "game.entities",
   "game.explain",
+  "game.filters",
   "game.graph",
   "game.history",
   "game.locate",
@@ -34,7 +35,7 @@ const GAME_SOURCES = [
   "game.ui"
 ];
 
-/** The 17 commands of the engine's write door, sorted. */
+/** The 21 commands of the engine's write door, sorted. */
 const GAME_COMMANDS = [
   "game.answer",
   "game.bookmark",
@@ -42,12 +43,16 @@ const GAME_COMMANDS = [
   "game.debug",
   "game.drag",
   "game.fill",
+  "game.filter",
+  "game.frameRate",
   "game.key",
   "game.mute",
   "game.pause",
   "game.reducedMotion",
   "game.restore",
   "game.resume",
+  "game.saveExport",
+  "game.saveImport",
   "game.step",
   "game.tap",
   "game.timeScale",
