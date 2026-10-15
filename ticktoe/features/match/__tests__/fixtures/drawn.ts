@@ -4,7 +4,7 @@
  * through every `Parent`, the way the renderer composes it (`rootPoseOf`). The order of two roots
  * is the order the renderer hangs them in their layer.
  */
-import { Box, Layer, Parent, Sprite, Transform } from "@moku-labs/game";
+import { Box, Layer, Order, Parent, Sprite, Transform } from "@moku-labs/game";
 import type { ScreenApp } from "./screen";
 import { element } from "./screen";
 
@@ -181,21 +181,34 @@ export function rootOf(app: ScreenApp, entity: number): number {
 
 /**
  * The place of an entity's root in the draw order, bottom first. The renderer draws the layers in
- * the order of the scene. In a layer that sorts by nothing, as `ui` does, it draws the roots in the
- * order it was handed them, which is the order `ui` solved them in: the order of `ui.tree()`. A
- * view with a parent is drawn inside its parent, so everything under a root shares its place.
+ * the order of the scene. In a layer that sorts by `Order`, as `ui` does, it draws the roots by
+ * their `Order` value (0 without one); the sort is stable, so roots with the same value keep the
+ * order they were handed in, which is the order `ui` solved them in: the order of `ui.tree()`. A
+ * layer that sorts by nothing draws them in that order alone. A view with a parent is drawn inside
+ * its parent, so everything under a root shares its place.
  */
 export function drawRank(app: ScreenApp, entity: number): number {
   const root = rootOf(app, entity);
   const layers = app.world.projection.layers();
   const layerName = app.world.ecs.get(root, Layer)?.name;
   const layer = layers.findIndex(entry => entry.name === layerName);
+  const sort = layers[layer]?.sort;
   const tree = app.ui.tree();
-  const roots = tree.key === undefined ? tree.children : [tree];
-  const place = roots.findIndex(node => node.key !== undefined && app.ui.find(node.key) === root);
+  const nodes = tree.key === undefined ? tree.children : [tree];
+  const roots = nodes.map(node => (node.key === undefined ? undefined : app.ui.find(node.key)));
+  const depthOf = (candidate: number | undefined): number =>
+    sort === "order" && candidate !== undefined
+      ? (app.world.ecs.get(candidate, Order)?.value ?? 0)
+      : 0;
+  const drawn = roots
+    .map((candidate, index) => ({ candidate, index, depth: depthOf(candidate) }))
+    .toSorted((a, b) => a.depth - b.depth || a.index - b.index);
+  const place = drawn.findIndex(entry => entry.candidate === root);
 
   if (layer === -1 || place === -1) throw new Error(`Entity ${entity} hangs in no layer.`);
-  if (layers[layer]?.sort !== "none") throw new Error(`Layer "${layerName}" sorts its roots.`);
+  if (sort !== "none" && sort !== "order") {
+    throw new Error(`Layer "${layerName}" sorts its roots by "${String(sort)}".`);
+  }
 
   return layer * 1000 + place;
 }

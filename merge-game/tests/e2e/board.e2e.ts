@@ -113,7 +113,16 @@ describe("timber-board — the order strip (p2)", () => {
     expect((cards[0]?.y ?? 0) + (cards[0]?.h ?? 0)).toBe(strip.y + strip.h);
     expect(cards.map(card => card.y + card.h - tray.y)).toEqual([18, 38, 18]);
     expect(nodeOf(game.app.ui.tree(), "orders")?.style.zIndex).toBe(1);
-    expect(game.app.world.ecs.get(elementOf(game, "orders"), Order)?.value).toBe(1);
+    // The strip and the tray are siblings; its zIndex 1 puts it in the band (0, 1] of Order, over
+    // the tray that comes later in the markup at zIndex 0.
+    const ecs = game.app.world.ecs;
+    const ordersEntity = elementOf(game, "orders");
+    const trayEntity = elementOf(game, "boardSlot");
+    const stripOrder = ecs.get(ordersEntity, Order)?.value ?? Number.NaN;
+
+    expect(ecs.get(ordersEntity, Parent)?.entity).toBe(ecs.get(trayEntity, Parent)?.entity);
+    expect(Math.ceil(stripOrder)).toBe(1);
+    expect(stripOrder).toBeGreaterThan(ecs.get(trayEntity, Order)?.value ?? Number.POSITIVE_INFINITY);
     expect(game.app.world.ecs.get(elementOf(game, "ordersRope"), Sprite)?.texture).toBe(
       "orders.rope"
     );
