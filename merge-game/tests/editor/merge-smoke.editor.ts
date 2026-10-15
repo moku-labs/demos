@@ -39,7 +39,7 @@ describe("merge-game helper", () => {
     await until(() => link.status().kind === "live" && link.manifest() !== undefined, "live");
     const manifest = link.manifest();
     expect(manifest?.game).toBe(MERGE_NAME);
-    expect(manifest?.sources.filter(source => source.id.startsWith("game."))).toHaveLength(20);
+    expect(manifest?.sources.filter(source => source.id.startsWith("game."))).toHaveLength(21);
     expect(game.app.flow.state().path).toBe("splash");
     await link.run("game.answer", { intent: "loaded" });
     await until(() => game.app.flow.state().path === "home", "home after loaded");

@@ -126,7 +126,8 @@ export async function closePage(): Promise<void> {
  * Runs `start` with the page hidden (`window`, `document`, `requestAnimationFrame`,
  * `cancelAnimationFrame` undefined) and puts the page back after, whatever happens. A game started
  * inside counts as headless: no real frame loop (frames move only when a test steps them), an
- * inert renderer. The start of a headless game is microtasks only, so nothing else runs meanwhile.
+ * inert renderer. The start of a headless game is microtasks only; a screen game's start yields to
+ * the event loop (timers run in the window), so nothing that draws the tools may be due meanwhile.
  *
  * @param start - Creates and starts the game.
  * @returns What `start` resolved with.

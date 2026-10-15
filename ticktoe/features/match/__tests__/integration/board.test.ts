@@ -302,8 +302,8 @@ describe("the turn pill", () => {
 });
 
 describe("what is drawn over what", () => {
-  // The roots of the layer `ui` are drawn in the order they are made, which is the order the scene
-  // lists their projections in. So this holds once the scene `stage` lists `match.hud` before
+  // The layer `ui` sorts its roots by `Order`, and a root's `Order` follows the order the scene
+  // lists its projection in. So this holds once the scene `stage` lists `match.hud` before
   // `match.tray`: the tray, with the pieces it hosts, is then drawn over the score row and the pill.
   it("draws a piece that drops into the top row in front of the score row and the pill, for its whole fall", async () => {
     const { app, stop } = await startBoard();

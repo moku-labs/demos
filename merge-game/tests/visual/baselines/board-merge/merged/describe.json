@@ -3365,6 +3365,9 @@
           "x": 0,
           "y": 0
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "boardScreen",
           "projection": "hud"
@@ -3407,7 +3410,7 @@
           "name": "ui"
         },
         "Order": {
-          "value": 0
+          "value": -1
         },
         "Shape": {
           "alpha": 1,
@@ -3453,6 +3456,9 @@
           "tint": 16777215,
           "width": 970
         },
+        "Order": {
+          "value": -0.49951171875
+        },
         "Parent": {
           "key": "boardScreen",
           "projection": "hud"
@@ -3488,6 +3494,9 @@
           "tint": 16777215,
           "width": 300
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "orders",
           "projection": "hud"
@@ -3521,6 +3530,9 @@
           "w": 48,
           "x": 139,
           "y": 597
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "card0Reward",
@@ -3560,6 +3572,9 @@
           "x": 195,
           "y": 596
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "card0Reward",
           "projection": "hud"
@@ -3585,6 +3600,9 @@
           "w": 110,
           "x": 140,
           "y": 390
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "card0Picture",
@@ -3623,6 +3641,9 @@
           "w": 56,
           "x": 229,
           "y": 475
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "card0Picture",
@@ -3663,6 +3684,9 @@
           "x": 229,
           "y": 475
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "card0Level",
           "projection": "hud"
@@ -3701,6 +3725,9 @@
           "x": 245,
           "y": 482
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "card0Level",
           "projection": "hud"
@@ -3727,6 +3754,9 @@
           "x": 125,
           "y": 534
         },
+        "Order": {
+          "value": -0.49951171875
+        },
         "Parent": {
           "key": "card0",
           "projection": "hud"
@@ -3752,6 +3782,9 @@
           "w": 160,
           "x": 115,
           "y": 365
+        },
+        "Order": {
+          "value": -0.4996337890625
         },
         "Parent": {
           "key": "card0",
@@ -3792,6 +3825,9 @@
           "x": 180,
           "y": 229
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "card0",
           "projection": "hud"
@@ -3829,6 +3865,9 @@
           "w": 112,
           "x": 139,
           "y": 596
+        },
+        "Order": {
+          "value": -0.4993896484375
         },
         "Parent": {
           "key": "card0",
@@ -3869,6 +3908,9 @@
           "x": 127,
           "y": 311
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "card0",
           "projection": "hud"
@@ -3904,6 +3946,9 @@
           "tint": 16777215,
           "width": 300
         },
+        "Order": {
+          "value": -0.4996337890625
+        },
         "Parent": {
           "key": "orders",
           "projection": "hud"
@@ -3937,6 +3982,9 @@
           "w": 48,
           "x": 498,
           "y": 617
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "card1Reward",
@@ -3976,6 +4024,9 @@
           "x": 554,
           "y": 616
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "card1Reward",
           "projection": "hud"
@@ -4001,6 +4052,9 @@
           "w": 84,
           "x": 440,
           "y": 495
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "card1Picture",
@@ -4041,6 +4095,9 @@
           "x": 460,
           "y": 501
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "card1Count",
           "projection": "hud"
@@ -4066,6 +4123,9 @@
           "w": 110,
           "x": 485,
           "y": 410
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "card1Picture",
@@ -4104,6 +4164,9 @@
           "w": 56,
           "x": 574,
           "y": 495
+        },
+        "Order": {
+          "value": -0.4996337890625
         },
         "Parent": {
           "key": "card1Picture",
@@ -4144,6 +4207,9 @@
           "x": 574,
           "y": 495
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "card1Level",
           "projection": "hud"
@@ -4182,6 +4248,9 @@
           "x": 590,
           "y": 502
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "card1Level",
           "projection": "hud"
@@ -4208,6 +4277,9 @@
           "x": 459,
           "y": 554
         },
+        "Order": {
+          "value": -0.49951171875
+        },
         "Parent": {
           "key": "card1",
           "projection": "hud"
@@ -4233,6 +4305,9 @@
           "w": 160,
           "x": 460,
           "y": 385
+        },
+        "Order": {
+          "value": -0.4996337890625
         },
         "Parent": {
           "key": "card1",
@@ -4273,6 +4348,9 @@
           "x": 525,
           "y": 249
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "card1",
           "projection": "hud"
@@ -4310,6 +4388,9 @@
           "w": 85,
           "x": 498,
           "y": 616
+        },
+        "Order": {
+          "value": -0.4993896484375
         },
         "Parent": {
           "key": "card1",
@@ -4350,6 +4431,9 @@
           "x": 469,
           "y": 331
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "card1",
           "projection": "hud"
@@ -4385,6 +4469,9 @@
           "tint": 16777215,
           "width": 300
         },
+        "Order": {
+          "value": -0.49951171875
+        },
         "Parent": {
           "key": "orders",
           "projection": "hud"
@@ -4410,6 +4497,9 @@
           "w": 48,
           "x": 828,
           "y": 597
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "card2Reward",
@@ -4449,6 +4539,9 @@
           "x": 884,
           "y": 596
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "card2Reward",
           "projection": "hud"
@@ -4474,6 +4567,9 @@
           "w": 110,
           "x": 830,
           "y": 390
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "card2Picture",
@@ -4512,6 +4608,9 @@
           "w": 56,
           "x": 919,
           "y": 475
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "card2Picture",
@@ -4552,6 +4651,9 @@
           "x": 919,
           "y": 475
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "card2Level",
           "projection": "hud"
@@ -4590,6 +4692,9 @@
           "x": 934,
           "y": 482
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "card2Level",
           "projection": "hud"
@@ -4616,6 +4721,9 @@
           "x": 824,
           "y": 534
         },
+        "Order": {
+          "value": -0.49951171875
+        },
         "Parent": {
           "key": "card2",
           "projection": "hud"
@@ -4641,6 +4749,9 @@
           "w": 160,
           "x": 805,
           "y": 365
+        },
+        "Order": {
+          "value": -0.4996337890625
         },
         "Parent": {
           "key": "card2",
@@ -4681,6 +4792,9 @@
           "x": 870,
           "y": 229
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "card2",
           "projection": "hud"
@@ -4718,6 +4832,9 @@
           "w": 114,
           "x": 828,
           "y": 596
+        },
+        "Order": {
+          "value": -0.4993896484375
         },
         "Parent": {
           "key": "card2",
@@ -4758,6 +4875,9 @@
           "x": 814,
           "y": 311
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "card2",
           "projection": "hud"
@@ -4793,6 +4913,9 @@
           "tint": 16777215,
           "width": 290
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "hudRow",
           "projection": "hud"
@@ -4818,6 +4941,9 @@
           "w": 110,
           "x": 199,
           "y": 57
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "coinPill",
@@ -4860,6 +4986,9 @@
         "Counter": {
           "value": 125
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "coinPill",
           "projection": "hud"
@@ -4900,6 +5029,9 @@
           "w": 250,
           "x": 70,
           "y": 650
+        },
+        "Order": {
+          "value": -0.499267578125
         },
         "Parent": {
           "key": "card0",
@@ -4955,6 +5087,9 @@
           "x": 112,
           "y": 693
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "deliver0Plank",
           "projection": "hud"
@@ -4990,6 +5125,9 @@
           "tint": 16777215,
           "width": 250
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "deliver0",
           "projection": "hud"
@@ -5015,6 +5153,9 @@
           "w": 250,
           "x": 415,
           "y": 670
+        },
+        "Order": {
+          "value": -0.499267578125
         },
         "Parent": {
           "key": "card1",
@@ -5070,6 +5211,9 @@
           "x": 457,
           "y": 713
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "deliver1Plank",
           "projection": "hud"
@@ -5105,6 +5249,9 @@
           "tint": 16777215,
           "width": 250
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "deliver1",
           "projection": "hud"
@@ -5130,6 +5277,9 @@
           "w": 250,
           "x": 760,
           "y": 650
+        },
+        "Order": {
+          "value": -0.499267578125
         },
         "Parent": {
           "key": "card2",
@@ -5171,6 +5321,9 @@
           "x": 802,
           "y": 693
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "deliver2Plank",
           "projection": "hud"
@@ -5205,6 +5358,9 @@
           "texture": "ui.buttons.disabled",
           "tint": 16777215,
           "width": 250
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "deliver2",
@@ -5241,6 +5397,9 @@
           "tint": 16777215,
           "width": 280
         },
+        "Order": {
+          "value": -0.4996337890625
+        },
         "Parent": {
           "key": "hudRow",
           "projection": "hud"
@@ -5266,6 +5425,9 @@
           "w": 110,
           "x": 565,
           "y": 57
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "energyPill",
@@ -5305,6 +5467,9 @@
           "x": 685,
           "y": 76
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "energyPill",
           "projection": "hud"
@@ -5330,6 +5495,9 @@
           "w": 120,
           "x": 40,
           "y": 52
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "hudRow",
@@ -5374,6 +5542,9 @@
           "x": 61,
           "y": 73
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "home",
           "projection": "hud"
@@ -5408,6 +5579,9 @@
       "components": {
         "Layer": {
           "name": "ui"
+        },
+        "Order": {
+          "value": -1
         }
       },
       "key": "hud",
@@ -5420,6 +5594,9 @@
           "w": 1080,
           "x": 0,
           "y": 40
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "boardScreen",
@@ -5469,6 +5646,9 @@
           "tint": 16777215,
           "width": 830
         },
+        "Order": {
+          "value": -0.4993896484375
+        },
         "Parent": {
           "key": "boardScreen",
           "projection": "hud"
@@ -5495,6 +5675,9 @@
           "x": 791,
           "y": 1883
         },
+        "Order": {
+          "value": -0.49951171875
+        },
         "Parent": {
           "key": "infoBar",
           "projection": "hud"
@@ -5520,6 +5703,9 @@
           "w": 120,
           "x": 182,
           "y": 1853
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "infoBar",
@@ -5559,6 +5745,9 @@
           "x": 326,
           "y": 1883
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "infoBar",
           "projection": "hud"
@@ -5584,6 +5773,9 @@
           "w": 24,
           "x": 641,
           "y": 1901
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "infoPips",
@@ -5624,6 +5816,9 @@
           "x": 675,
           "y": 1901
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "infoPips",
           "projection": "hud"
@@ -5662,6 +5857,9 @@
           "w": 24,
           "x": 709,
           "y": 1901
+        },
+        "Order": {
+          "value": -0.4996337890625
         },
         "Parent": {
           "key": "infoPips",
@@ -5702,6 +5900,9 @@
           "x": 743,
           "y": 1901
         },
+        "Order": {
+          "value": -0.49951171875
+        },
         "Parent": {
           "key": "infoPips",
           "projection": "hud"
@@ -5740,6 +5941,9 @@
           "w": 126,
           "x": 641,
           "y": 1901
+        },
+        "Order": {
+          "value": -0.4996337890625
         },
         "Parent": {
           "key": "infoBar",
@@ -5781,7 +5985,7 @@
           "y": 195
         },
         "Order": {
-          "value": 1
+          "value": 0.5003662109375
         },
         "Parent": {
           "key": "boardScreen",
@@ -5822,6 +6026,9 @@
           "x": 0,
           "y": 195
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "orders",
           "projection": "hud"
@@ -5859,6 +6066,9 @@
           "w": 120,
           "x": 920,
           "y": 52
+        },
+        "Order": {
+          "value": -0.49951171875
         },
         "Parent": {
           "key": "hudRow",
@@ -5902,6 +6112,9 @@
           "w": 79,
           "x": 941,
           "y": 73
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "settings",

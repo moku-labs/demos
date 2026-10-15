@@ -39,7 +39,7 @@ import {
 /** Every journey gets 30 s: three cores and a real game start for each one. */
 const TIMEOUT_MS = 30_000;
 
-/** The 20 game sources of the merge game's manifest (game 0.4), sorted. */
+/** The 21 game sources of the merge game's manifest (engine of moku-labs/game#65), sorted. */
 const GAME_SOURCES = [
   "game.assets",
   "game.at",
@@ -49,6 +49,7 @@ const GAME_SOURCES = [
   "game.effects",
   "game.entities",
   "game.explain",
+  "game.filters",
   "game.graph",
   "game.history",
   "game.locate",
@@ -63,7 +64,7 @@ const GAME_SOURCES = [
   "game.ui"
 ];
 
-/** The 17 game commands of the merge game's manifest (game 0.4), sorted. */
+/** The 21 game commands of the merge game's manifest (engine of moku-labs/game#65), sorted. */
 const GAME_COMMANDS = [
   "game.answer",
   "game.bookmark",
@@ -71,12 +72,16 @@ const GAME_COMMANDS = [
   "game.debug",
   "game.drag",
   "game.fill",
+  "game.filter",
+  "game.frameRate",
   "game.key",
   "game.mute",
   "game.pause",
   "game.reducedMotion",
   "game.restore",
   "game.resume",
+  "game.saveExport",
+  "game.saveImport",
   "game.step",
   "game.tap",
   "game.timeScale",
@@ -518,7 +523,7 @@ describe("journey-merge: open the editor on merge-game", () => {
       const { tools, game, root } = live;
       const { link, workspace, flowView, filesView } = tools.app;
 
-      // The real manifest: 20 game sources, 17 game commands (game 0.4) plus the editor commands.
+      // The real manifest: 21 game sources, 21 game commands (engine of moku-labs/game#65) plus the editor commands.
       const manifest: Manifest | undefined = link.manifest();
       expect(idsOf(manifest?.sources, "game.")).toEqual(GAME_SOURCES);
       expect(idsOf(manifest?.commands, "game.")).toEqual(GAME_COMMANDS);

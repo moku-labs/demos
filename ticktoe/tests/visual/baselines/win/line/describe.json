@@ -1276,6 +1276,9 @@
       "components": {
         "Layer": {
           "name": "ui"
+        },
+        "Order": {
+          "value": -4
         }
       },
       "key": "board",
@@ -1288,6 +1291,9 @@
           "w": 1080,
           "x": 0,
           "y": -240
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "matchHud",
@@ -1327,6 +1333,9 @@
           "w": 1080,
           "x": 0,
           "y": -140
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "hudStage",
@@ -1371,7 +1380,7 @@
           "name": "ui"
         },
         "Order": {
-          "value": 0
+          "value": -4
         },
         "Shape": {
           "alpha": 1,
@@ -1407,6 +1416,9 @@
           "w": 243,
           "x": 662,
           "y": -113
+        },
+        "Order": {
+          "value": -0.4996337890625
         },
         "Parent": {
           "key": "scoreRow",
@@ -1450,6 +1462,9 @@
         "Counter": {
           "value": 1
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "scoreBot",
           "projection": "match.hud"
@@ -1492,6 +1507,9 @@
         "Counter": {
           "value": 1
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "scoreBotDigit",
           "projection": "match.hud"
@@ -1533,6 +1551,9 @@
           "x": 746,
           "y": -113
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "scoreBot",
           "projection": "match.hud"
@@ -1558,6 +1579,9 @@
           "w": 243,
           "x": 419,
           "y": -113
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "scoreRow",
@@ -1601,6 +1625,9 @@
         "Counter": {
           "value": 1
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "scoreDraws",
           "projection": "match.hud"
@@ -1643,6 +1670,9 @@
         "Counter": {
           "value": 1
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "scoreDrawsDigit",
           "projection": "match.hud"
@@ -1684,6 +1714,9 @@
           "x": 473,
           "y": -113
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "scoreDraws",
           "projection": "match.hud"
@@ -1719,6 +1752,9 @@
           "tint": 16777215,
           "width": 792
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "hudTop",
           "projection": "match.hud"
@@ -1745,6 +1781,9 @@
           "w": 243,
           "x": 175,
           "y": -113
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "scoreRow",
@@ -1788,6 +1827,9 @@
         "Counter": {
           "value": 2
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "scoreYou",
           "projection": "match.hud"
@@ -1830,6 +1872,9 @@
         "Counter": {
           "value": 2
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "scoreYouDigit",
           "projection": "match.hud"
@@ -1871,6 +1916,9 @@
           "x": 254,
           "y": -113
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "scoreYou",
           "projection": "match.hud"
@@ -1906,6 +1954,9 @@
           "tint": 16777215,
           "width": 543
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "turnWinSlot",
           "projection": "match.hud"
@@ -1932,6 +1983,9 @@
           "w": 543,
           "x": 269,
           "y": 98
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "hudTop",
@@ -1971,6 +2025,9 @@
           "w": 267,
           "x": 407,
           "y": 124
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "turnWin",
@@ -2439,6 +2496,9 @@
       "components": {
         "Layer": {
           "name": "ui"
+        },
+        "Order": {
+          "value": -3
         }
       },
       "key": "board",
@@ -2456,7 +2516,7 @@
           "name": "ui"
         },
         "Order": {
-          "value": 0
+          "value": -3
         },
         "Shape": {
           "alpha": 1,
@@ -2496,6 +2556,9 @@
         "Emitter": {
           "active": true,
           "effect": "fx.confetti"
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "tray",
@@ -2551,6 +2614,9 @@
           "x": 114,
           "y": 297
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "tile0",
           "projection": "match.tray"
@@ -2588,6 +2654,9 @@
           "w": 277,
           "x": 402,
           "y": 297
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "tray",
@@ -2643,6 +2712,9 @@
           "x": 402,
           "y": 297
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "tile1",
           "projection": "match.tray"
@@ -2680,6 +2752,9 @@
           "w": 277,
           "x": 690,
           "y": 297
+        },
+        "Order": {
+          "value": -0.4996337890625
         },
         "Parent": {
           "key": "tray",
@@ -2735,6 +2810,9 @@
           "x": 690,
           "y": 297
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "tile2",
           "projection": "match.tray"
@@ -2772,6 +2850,9 @@
           "w": 277,
           "x": 114,
           "y": 585
+        },
+        "Order": {
+          "value": -0.49951171875
         },
         "Parent": {
           "key": "tray",
@@ -2827,6 +2908,9 @@
           "x": 114,
           "y": 585
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "tile3",
           "projection": "match.tray"
@@ -2868,6 +2952,9 @@
         "Emitter": {
           "active": true,
           "effect": "fx.confetti"
+        },
+        "Order": {
+          "value": -0.4993896484375
         },
         "Parent": {
           "key": "tray",
@@ -2923,6 +3010,9 @@
           "x": 402,
           "y": 585
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "tile4",
           "projection": "match.tray"
@@ -2960,6 +3050,9 @@
           "w": 277,
           "x": 690,
           "y": 585
+        },
+        "Order": {
+          "value": -0.499267578125
         },
         "Parent": {
           "key": "tray",
@@ -3015,6 +3108,9 @@
           "x": 690,
           "y": 585
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "tile5",
           "projection": "match.tray"
@@ -3052,6 +3148,9 @@
           "w": 277,
           "x": 114,
           "y": 873
+        },
+        "Order": {
+          "value": -0.4991455078125
         },
         "Parent": {
           "key": "tray",
@@ -3107,6 +3206,9 @@
           "x": 114,
           "y": 873
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "tile6",
           "projection": "match.tray"
@@ -3144,6 +3246,9 @@
           "w": 277,
           "x": 402,
           "y": 873
+        },
+        "Order": {
+          "value": -0.4990234375
         },
         "Parent": {
           "key": "tray",
@@ -3199,6 +3304,9 @@
           "x": 402,
           "y": 873
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "tile7",
           "projection": "match.tray"
@@ -3240,6 +3348,9 @@
         "Emitter": {
           "active": true,
           "effect": "fx.confetti"
+        },
+        "Order": {
+          "value": -0.4989013671875
         },
         "Parent": {
           "key": "tray",
@@ -3295,6 +3406,9 @@
           "x": 690,
           "y": 873
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "tile8",
           "projection": "match.tray"
@@ -3332,6 +3446,9 @@
           "w": 853,
           "x": 114,
           "y": 297
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "trayStage",
@@ -3375,6 +3492,9 @@
           "x": 0,
           "y": -240
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "matchTray",
           "projection": "match.tray"
@@ -3413,6 +3533,9 @@
           "w": 3456,
           "x": -1742,
           "y": -240
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parallax": {
           "at": 1
@@ -3455,6 +3578,9 @@
           "x": -2074,
           "y": -240
         },
+        "Order": {
+          "value": -0.49951171875
+        },
         "Parallax": {
           "at": 1
         },
@@ -3496,6 +3622,9 @@
           "x": -1188,
           "y": 1672
         },
+        "Order": {
+          "value": -0.4996337890625
+        },
         "Parent": {
           "key": "hillsStage",
           "projection": "stage.hills"
@@ -3534,6 +3663,9 @@
           "w": 3456,
           "x": -1908,
           "y": -240
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parallax": {
           "at": 1
@@ -3576,6 +3708,9 @@
           "x": 0,
           "y": -240
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "stageHills",
           "projection": "stage.hills"
@@ -3611,6 +3746,9 @@
       "components": {
         "Layer": {
           "name": "hills"
+        },
+        "Order": {
+          "value": -6
         }
       },
       "key": "stage.hills",
@@ -3625,10 +3763,10 @@
           "y": 0
         },
         "Layer": {
-          "name": "ui"
+          "name": "hills"
         },
         "Order": {
-          "value": 0
+          "value": -6
         },
         "Shape": {
           "alpha": 1,
@@ -3665,6 +3803,9 @@
           "x": 0,
           "y": 0
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "stageSky",
           "projection": "stage.sky"
@@ -3699,6 +3840,9 @@
       "components": {
         "Layer": {
           "name": "background"
+        },
+        "Order": {
+          "value": -7
         }
       },
       "key": "stage.sky",
@@ -3713,10 +3857,10 @@
           "y": 0
         },
         "Layer": {
-          "name": "ui"
+          "name": "background"
         },
         "Order": {
-          "value": 0
+          "value": -7
         },
         "Shape": {
           "alpha": 1,

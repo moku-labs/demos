@@ -5,7 +5,8 @@
  * each play it once as they swing in.
  */
 import type { Flow } from "@moku-labs/game";
-import { describe, expect, it, vi } from "vitest";
+import { fakeFx as engineFakeFx } from "@moku-labs/game/testing";
+import { describe, expect, it } from "vitest";
 import { startingPlayer } from "../../../../core/state";
 import { popupSound, showPopup } from "../../../../shared/flow/popup";
 import { energy } from "../../../energy/flow/energy";
@@ -15,23 +16,17 @@ import { enter } from "../../flow/enter";
 import { open } from "../../flow/open";
 
 /**
- * A node's effects as a spy: every descriptor it was given, and an answer for the popup.
+ * A node's effects as a spy: every descriptor it awaited, and an answer for the popup.
  *
  * @param answer - What an awaited popup answers.
  * @returns The fake `fx` and the list of what it was given.
  */
 function fakeFx(answer?: Flow.Answer) {
-  const given: Flow.Descriptor[] = [];
-  const fx = Object.assign(
-    vi.fn((descriptor: Flow.Descriptor) => {
-      given.push(descriptor);
+  const fake = engineFakeFx({
+    answer: descriptor => (descriptor.kind === "popup" ? answer : undefined)
+  });
 
-      return Promise.resolve(descriptor.kind === "popup" ? answer : undefined);
-    }),
-    { emit: vi.fn() }
-  );
-
-  return { fx, given };
+  return { fx: fake.fx, given: fake.awaited };
 }
 
 /**

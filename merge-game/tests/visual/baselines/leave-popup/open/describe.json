@@ -1462,6 +1462,9 @@
           "y": 0
         },
         "Escapable": true,
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "leaveScreen",
           "projection": "Leave"
@@ -1514,6 +1517,9 @@
           "tint": 16777215,
           "width": 900
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "leaveScreen",
           "projection": "Leave"
@@ -1550,6 +1556,9 @@
           "tint": 16777215,
           "width": 696
         },
+        "Order": {
+          "value": -0.49951171875
+        },
         "Parent": {
           "key": "leaveBoard",
           "projection": "Leave"
@@ -1575,6 +1584,9 @@
           "w": 12,
           "x": 246,
           "y": -1332
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "leaveBoard",
@@ -1615,6 +1627,9 @@
           "x": 246,
           "y": -1332
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "leaveBoardRopeLeft",
           "projection": "Leave"
@@ -1652,6 +1667,9 @@
           "w": 12,
           "x": 246,
           "y": -718
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "leaveBoardRopeLeft",
@@ -1691,6 +1709,9 @@
           "x": 246,
           "y": -104
         },
+        "Order": {
+          "value": -0.4996337890625
+        },
         "Parent": {
           "key": "leaveBoardRopeLeft",
           "projection": "Leave"
@@ -1728,6 +1749,9 @@
           "w": 12,
           "x": 822,
           "y": -1332
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "leaveBoard",
@@ -1768,6 +1792,9 @@
           "x": 822,
           "y": -1332
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "leaveBoardRopeRight",
           "projection": "Leave"
@@ -1805,6 +1832,9 @@
           "w": 12,
           "x": 822,
           "y": -718
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "leaveBoardRopeRight",
@@ -1844,6 +1874,9 @@
           "x": 822,
           "y": -104
         },
+        "Order": {
+          "value": -0.4996337890625
+        },
         "Parent": {
           "key": "leaveBoardRopeRight",
           "projection": "Leave"
@@ -1882,6 +1915,9 @@
           "x": 272,
           "y": 472
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "leaveBoardHeader",
           "projection": "Leave"
@@ -1907,6 +1943,9 @@
           "w": 756,
           "x": 162,
           "y": 673
+        },
+        "Order": {
+          "value": -0.4996337890625
         },
         "Parent": {
           "key": "leaveBoard",
@@ -1956,6 +1995,9 @@
           "tint": 16777215,
           "width": 366
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "leaveButtons",
           "projection": "Leave"
@@ -1985,6 +2027,9 @@
           "w": 208,
           "x": 241,
           "y": 707
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "leaveExit",
@@ -2062,6 +2107,9 @@
           "tint": 16777215,
           "width": 366
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "leaveButtons",
           "projection": "Leave"
@@ -2100,6 +2148,9 @@
           "x": 592,
           "y": 707
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "leaveStay",
           "projection": "Leave"
@@ -2125,6 +2176,9 @@
           "w": 130,
           "x": 911,
           "y": 218
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "giftWobble",
@@ -2169,6 +2223,9 @@
           "x": 995,
           "y": 212
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "gift",
           "projection": "home.screen"
@@ -2208,6 +2265,9 @@
           "x": 1012,
           "y": 217
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "giftBadge",
           "projection": "home.screen"
@@ -2233,6 +2293,9 @@
           "w": 130,
           "x": 911,
           "y": 218
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "homeTop",
@@ -2273,6 +2336,9 @@
           "x": 933,
           "y": 240
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "gift",
           "projection": "home.screen"
@@ -2311,6 +2377,9 @@
           "x": 911,
           "y": 218
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "giftCorner",
           "projection": "home.screen"
@@ -2346,6 +2415,9 @@
       "components": {
         "Layer": {
           "name": "ui"
+        },
+        "Order": {
+          "value": -1
         }
       },
       "key": "home.screen",
@@ -2358,6 +2430,9 @@
           "w": 1080,
           "x": 0,
           "y": 0
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "homeScreen",
@@ -2396,6 +2471,9 @@
           "w": 1080,
           "x": 0,
           "y": 50
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "homeTop",
@@ -2436,6 +2514,9 @@
           "x": 540,
           "y": 50
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "homeScreen",
           "projection": "home.screen"
@@ -2474,6 +2555,9 @@
           "w": 1000,
           "x": 40,
           "y": -27
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "homeMiddle",
@@ -2523,6 +2607,9 @@
           "tint": 16777215,
           "width": 290
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "homeBar",
           "projection": "home.screen"
@@ -2548,6 +2635,9 @@
           "w": 110,
           "x": 48,
           "y": 67
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "homeCoins",
@@ -2589,6 +2679,9 @@
         },
         "Counter": {
           "value": 125
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "homeCoins",
@@ -2640,6 +2733,9 @@
           "tint": 8151118,
           "width": 900
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "homeCentre",
           "projection": "home.screen"
@@ -2666,6 +2762,9 @@
           "x": 258,
           "y": 33
         },
+        "Order": {
+          "value": -0.4996337890625
+        },
         "Parent": {
           "key": "homeLogo",
           "projection": "home.screen"
@@ -2691,6 +2790,9 @@
           "w": 18,
           "x": 303,
           "y": -927
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "homeLogo",
@@ -2730,6 +2832,9 @@
           "x": 759,
           "y": -927
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "homeLogo",
           "projection": "home.screen"
@@ -2767,6 +2872,9 @@
           "w": 180,
           "x": -6,
           "y": 322
+        },
+        "Order": {
+          "value": -0.4993896484375
         },
         "Parent": {
           "key": "homeLogo",
@@ -2806,6 +2914,9 @@
           "x": 866,
           "y": -75
         },
+        "Order": {
+          "value": -0.49951171875
+        },
         "Parent": {
           "key": "homeLogo",
           "projection": "home.screen"
@@ -2843,6 +2954,9 @@
           "w": 1080,
           "x": 0,
           "y": 194
+        },
+        "Order": {
+          "value": -0.4996337890625
         },
         "Parent": {
           "key": "homeScreen",
@@ -2887,7 +3001,7 @@
           "name": "ui"
         },
         "Order": {
-          "value": 0
+          "value": -1
         },
         "Shape": {
           "alpha": 1,
@@ -2923,6 +3037,9 @@
           "w": 120,
           "x": 916,
           "y": 62
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "homeBar",
@@ -2967,6 +3084,9 @@
           "x": 937,
           "y": 83
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "homeSettings",
           "projection": "home.screen"
@@ -3004,6 +3124,9 @@
           "w": 1080,
           "x": 0,
           "y": 0
+        },
+        "Order": {
+          "value": -0.49951171875
         },
         "Parent": {
           "key": "homeScreen",
@@ -3043,6 +3166,9 @@
           "w": 960,
           "x": 60,
           "y": 443
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "homeCentre",
@@ -3091,6 +3217,9 @@
           "tint": 16777215,
           "width": 880
         },
+        "Order": {
+          "value": -0.4996337890625
+        },
         "Parent": {
           "key": "playSign",
           "projection": "home.screen"
@@ -3129,6 +3258,9 @@
           "x": 338,
           "y": 1441
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "play",
           "projection": "home.screen"
@@ -3154,6 +3286,9 @@
           "w": 48,
           "x": 240,
           "y": 1437
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "playSign",
@@ -3193,6 +3328,9 @@
           "x": 792,
           "y": 1437
         },
+        "Order": {
+          "value": -0.499755859375
+        },
         "Parent": {
           "key": "playSign",
           "projection": "home.screen"
@@ -3230,6 +3368,9 @@
           "w": 880,
           "x": 100,
           "y": 1397
+        },
+        "Order": {
+          "value": -0.4996337890625
         },
         "Parent": {
           "key": "homeCentre",
@@ -3270,6 +3411,9 @@
           "x": 38,
           "y": 1357
         },
+        "Order": {
+          "value": -0.49951171875
+        },
         "Parent": {
           "key": "playSign",
           "projection": "home.screen"
@@ -3307,6 +3451,9 @@
           "w": 170,
           "x": 876,
           "y": 1503
+        },
+        "Order": {
+          "value": -0.4993896484375
         },
         "Parent": {
           "key": "playSign",

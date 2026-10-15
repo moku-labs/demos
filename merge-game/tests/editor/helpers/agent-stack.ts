@@ -232,9 +232,11 @@ export async function reloadAgent<Game extends StartedGame>(
 ): Promise<AgentStack> {
   const old = holder.agent;
   if (old.server === undefined) throw new Error("reloadAgent needs an agent with a server");
+  // The fresh game starts first: a screen game's start yields to the event loop while the page is
+  // hidden (`withoutPage`), and the old agent's bye must not reach the tools in that window.
+  const game = await makeGame();
   await old.stop().catch(() => undefined);
   await holder.game.stop().catch(() => undefined);
-  const game = await makeGame();
   const agent = await startAgent(old.server, game, { ...old.options, bare: false });
   holder.game = game;
   holder.agent = agent;
