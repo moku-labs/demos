@@ -832,6 +832,9 @@
           "x": -1742,
           "y": -240
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parallax": {
           "at": 0
         },
@@ -872,6 +875,9 @@
           "w": 3456,
           "x": -2074,
           "y": -240
+        },
+        "Order": {
+          "value": -0.49951171875
         },
         "Parallax": {
           "at": 0
@@ -914,6 +920,9 @@
           "x": -1188,
           "y": 1672
         },
+        "Order": {
+          "value": -0.4996337890625
+        },
         "Parent": {
           "key": "hillsStage",
           "projection": "stage.hills"
@@ -952,6 +961,9 @@
           "w": 3456,
           "x": -1908,
           "y": -240
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parallax": {
           "at": 0
@@ -994,6 +1006,9 @@
           "x": 0,
           "y": -240
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "stageHills",
           "projection": "stage.hills"
@@ -1029,6 +1044,9 @@
       "components": {
         "Layer": {
           "name": "hills"
+        },
+        "Order": {
+          "value": -6
         }
       },
       "key": "stage.hills",
@@ -1043,10 +1061,10 @@
           "y": 0
         },
         "Layer": {
-          "name": "ui"
+          "name": "hills"
         },
         "Order": {
-          "value": 0
+          "value": -6
         },
         "Shape": {
           "alpha": 1,
@@ -1079,6 +1097,9 @@
       "components": {
         "Layer": {
           "name": "ui"
+        },
+        "Order": {
+          "value": -5
         }
       },
       "key": "home",
@@ -1100,6 +1121,9 @@
           "texture": "ui.pill-cream",
           "tint": 16777215,
           "width": 828
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "homeLevelsSlot",
@@ -1127,6 +1151,9 @@
           "w": 828,
           "x": 126,
           "y": 790
+        },
+        "Order": {
+          "value": -0.499267578125
         },
         "Parent": {
           "key": "homeStage",
@@ -1176,6 +1203,9 @@
           "tint": 16777215,
           "width": 556
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "homePlaySlot",
           "projection": "stage.home"
@@ -1206,6 +1236,9 @@
           "x": 434,
           "y": 1289
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "homePlay",
           "projection": "stage.home"
@@ -1231,6 +1264,9 @@
           "w": 1080,
           "x": 0,
           "y": 1255
+        },
+        "Order": {
+          "value": -0.4991455078125
         },
         "Parent": {
           "key": "homeStage",
@@ -1271,6 +1307,9 @@
           "x": 0,
           "y": -240
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "stageHome",
           "projection": "stage.home"
@@ -1310,6 +1349,9 @@
           "x": 314,
           "y": 109
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "homeTacSlot",
           "projection": "stage.home"
@@ -1335,6 +1377,9 @@
           "w": 1080,
           "x": 0,
           "y": 109
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "homeStage",
@@ -1375,6 +1420,9 @@
           "x": 354,
           "y": -122
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "homeTicSlot",
           "projection": "stage.home"
@@ -1400,6 +1448,9 @@
           "w": 1080,
           "x": 0,
           "y": -122
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "homeStage",
@@ -1440,6 +1491,9 @@
           "x": 309,
           "y": 340
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "homeToeSlot",
           "projection": "stage.home"
@@ -1465,6 +1519,9 @@
           "w": 1080,
           "x": 0,
           "y": 340
+        },
+        "Order": {
+          "value": -0.4996337890625
         },
         "Parent": {
           "key": "homeStage",
@@ -1505,6 +1562,9 @@
           "x": 98,
           "y": 196
         },
+        "Order": {
+          "value": -0.4993896484375
+        },
         "Parent": {
           "key": "homeStage",
           "projection": "stage.home"
@@ -1543,6 +1603,9 @@
           "x": 753,
           "y": -86
         },
+        "Order": {
+          "value": -0.49951171875
+        },
         "Parent": {
           "key": "homeStage",
           "projection": "stage.home"
@@ -1580,6 +1643,9 @@
           "w": 266,
           "x": 141,
           "y": 790
+        },
+        "Order": {
+          "value": -0.499755859375
         },
         "Parent": {
           "key": "levelOptions",
@@ -1626,6 +1692,9 @@
           "x": 210,
           "y": 840
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "levelEasy",
           "projection": "stage.home"
@@ -1651,6 +1720,9 @@
           "w": 266,
           "x": 673,
           "y": 790
+        },
+        "Order": {
+          "value": -0.49951171875
         },
         "Parent": {
           "key": "levelOptions",
@@ -1697,6 +1769,9 @@
           "x": 742,
           "y": 840
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "levelHard",
           "projection": "stage.home"
@@ -1735,6 +1810,9 @@
           "tint": 16777215,
           "width": 266
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "levelOptions",
           "projection": "stage.home"
@@ -1760,6 +1838,9 @@
           "w": 266,
           "x": 407,
           "y": 790
+        },
+        "Order": {
+          "value": -0.4996337890625
         },
         "Parent": {
           "key": "levelOptions",
@@ -1806,6 +1887,9 @@
           "x": 444,
           "y": 840
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "levelNormal",
           "projection": "stage.home"
@@ -1831,6 +1915,9 @@
           "w": 828,
           "x": 126,
           "y": 790
+        },
+        "Order": {
+          "value": -0.4998779296875
         },
         "Parent": {
           "key": "homeLevels",
@@ -1875,7 +1962,7 @@
           "name": "ui"
         },
         "Order": {
-          "value": 0
+          "value": -5
         },
         "Shape": {
           "alpha": 1,
@@ -1912,6 +1999,9 @@
           "x": 0,
           "y": 0
         },
+        "Order": {
+          "value": -0.4998779296875
+        },
         "Parent": {
           "key": "stageSky",
           "projection": "stage.sky"
@@ -1946,6 +2036,9 @@
       "components": {
         "Layer": {
           "name": "background"
+        },
+        "Order": {
+          "value": -7
         }
       },
       "key": "stage.sky",
@@ -1960,10 +2053,10 @@
           "y": 0
         },
         "Layer": {
-          "name": "ui"
+          "name": "background"
         },
         "Order": {
-          "value": 0
+          "value": -7
         },
         "Shape": {
           "alpha": 1,
