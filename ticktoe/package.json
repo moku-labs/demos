@@ -30,7 +30,7 @@
   "dependencies": {
     "@moku-labs/common": "0.3.5",
     "@moku-labs/core": "1.7.1",
-    "@moku-labs/game": "0.15.0",
+    "@moku-labs/game": "0.15.2",
     "@moku-labs/system": "0.3.2",
     "@tauri-apps/api": "2.12.2",
     "pixi.js": "8.22.0"
@@ -38,7 +38,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.16",
     "@moku-labs/ai": "0.16.2",
-    "@moku-labs/editor": "0.10.9",
+    "@moku-labs/editor": "0.10.12",
     "@moku-labs/native": "0.3.3",
     "@types/bun": "1.4.2",
     "@vitest/coverage-istanbul": "4.0.18",

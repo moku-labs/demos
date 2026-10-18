@@ -60,12 +60,13 @@ const GAME_COMMANDS = [
   "game.walk"
 ];
 
-/** The commands the agent adds: capture, clock, mark, overlay, record and reload, sorted. */
+/** The commands the agent adds: capture, clock, mark, overlay, perf.sections, record, reload, series and sheet, sorted. */
 const EDITOR_COMMANDS = [
   "editor.capture",
   "editor.clock",
   "editor.mark",
   "editor.overlay",
+  "editor.perf.sections",
   "editor.record",
   "editor.reload",
   "editor.series",
@@ -127,7 +128,9 @@ describe("the editor attaches to the game", () => {
       // sound and confetti, so `game.ui`, `game.sounds` and `game.effects` all answer. The editor's
       // own perf sources need the engine's frame monitor, so only the game's doors are checked.
       expect(
-        manifest?.sources.filter(source => source.id.startsWith("game.") && source.available === false)
+        manifest?.sources.filter(
+          source => source.id.startsWith("game.") && source.available === false
+        )
       ).toEqual([]);
     },
     TIMEOUT_MS

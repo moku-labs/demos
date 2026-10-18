@@ -442,10 +442,8 @@ describe("project index: where code lives", () => {
         "the Used by note"
       );
 
-      // Render: the textures card has no manifest to read.
-      workspace.show("render");
-      const render = workspace.host("render");
-      await until(() => render.textContent.includes(off), "the textures card note");
+      // Render (Mission control, editor 0.10.12) reads textures from the engine, not the project
+      // index, so it has no note to show here.
 
       // The game keeps working without the index.
       expect(await link.read("game.position")).toMatchObject({ path: "board/awaitIntent" });

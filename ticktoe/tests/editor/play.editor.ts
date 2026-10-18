@@ -31,10 +31,10 @@ describe("a command through the editor", () => {
         waiting: ["tap", "home"]
       });
       // The command went over the wire: the hub handed this run to the agent.
-      expect(server.tap.sent("agent", "run").map(message => paramsOf(message))).toContainEqual({
-        id: "game.tap",
-        input: { key: "homePlay" }
-      });
+      // The hub stamps who ran it (`from`, editor 0.10.12).
+      expect(server.tap.sent("agent", "run").map(message => paramsOf(message))).toContainEqual(
+        expect.objectContaining({ id: "game.tap", input: { key: "homePlay" } })
+      );
     },
     TIMEOUT_MS
   );
