@@ -109,13 +109,15 @@ function showLook(
 export const hoverLook = system({
   name: "hoverLook",
   phase: "input",
-  query: [Item],
-  run: (items, { world, res }) => {
+  // No query: the generators need their look, and the views that left need forgetting, also on a
+  // frame with no item, and a system whose query matches nothing does not run.
+  query: [],
+  run: (_rows, { world, res }) => {
     const player = res(AnimPlayer);
     const { shown } = res(ShownLooks);
     const seen = new Set<World.Entity>();
 
-    for (const [entity] of items) seen.add(entity);
+    for (const [entity] of world.query(Item)) seen.add(entity);
     for (const [entity] of world.query(Generator)) seen.add(entity);
 
     for (const entity of seen) showLook(world, player, shown, entity);
