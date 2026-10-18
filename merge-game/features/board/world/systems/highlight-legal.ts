@@ -27,14 +27,15 @@ export function playerOf(snapshot: Model.Snapshot): Player {
 export const highlightLegal = system({
   name: "highlightLegal",
   phase: "input",
-  // `Item` first, so the row reads `[entity, item]` and the `Held` tag stays the trailing hole.
-  query: [Item, Held],
-  run: (held, { world, snapshot }) => {
+  // `Item`, not `Item, Held`: the untag must run on the frame the carried item is dropped, and a
+  // system whose query matches nothing does not run.
+  query: [Item],
+  run: (_items, { world, snapshot }) => {
     for (const [entity] of world.query(Highlighted)) world.untag(entity, Highlighted);
 
     const state = playerOf(snapshot).merge;
 
-    for (const [, carried] of held) {
+    for (const [, carried] of world.query(Item, Held)) {
       for (const [entity, candidate] of world.query(Item)) {
         if (rules.isLegalMerge(state, carried.cell, candidate.cell, tables)) {
           world.tag(entity, Highlighted);
