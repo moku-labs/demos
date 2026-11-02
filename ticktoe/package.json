@@ -46,7 +46,7 @@
     "eslint-plugin-unicorn": "63.0.0",
     "happy-dom": "20.14.5",
     "oxlint": "1.86.0",
-    "playwright-core": "1.60.0",
+    "playwright-core": "1.63.0",
     "preact": "10.29.8",
     "sharp": "0.34.5",
     "typescript": "6.0.3",
