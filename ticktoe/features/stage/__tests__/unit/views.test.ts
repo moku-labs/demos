@@ -20,9 +20,9 @@ function playerAt(level: Player["level"]): Player {
 
 describe("what the sky reads", () => {
   it("is one thing that never changes, so the sky is never drawn again", () => {
-    const first = stageSky.from(startingPlayer, startingSession);
+    const first = stageSky.from(startingPlayer, startingSession, undefined);
 
-    expect(stageSky.from(playerAt("hard"), onBoard)).toBe(first);
+    expect(stageSky.from(playerAt("hard"), onBoard, undefined)).toBe(first);
     expect(stageSky.layer).toBe("background");
   });
 });
@@ -34,7 +34,7 @@ describe("what the hills read", () => {
     expect(hillsOf(startingSession)).toEqual({ screen: "home" });
     expect(hillsOf(onBoard)).toEqual({ screen: "board" });
     expect(hillsOf(busy)).toEqual({ screen: "board" });
-    expect(stageHills.from(startingPlayer, busy)).toEqual({ screen: "board" });
+    expect(stageHills.from(startingPlayer, busy, undefined)).toEqual({ screen: "board" });
     expect(stageHills.layer).toBe("hills");
   });
 });
@@ -54,7 +54,9 @@ describe("what Home reads", () => {
     const scored: Player = { ...playerAt("hard"), score: { you: 3, draws: 1, bot: 2 } };
 
     expect(homeOf(scored, startingSession)).toEqual([{ level: "hard", index: 2 }]);
-    expect(stageHome.from(scored, startingSession)).toEqual([{ level: "hard", index: 2 }]);
+    expect(stageHome.from(scored, startingSession, undefined)).toEqual([
+      { level: "hard", index: 2 }
+    ]);
     expect(stageHome.key?.({ level: "hard", index: 2 })).toBe("home");
     expect(stageHome.layer).toBe("ui");
   });

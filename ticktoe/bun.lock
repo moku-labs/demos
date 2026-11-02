@@ -7,7 +7,7 @@
       "dependencies": {
         "@moku-labs/common": "0.3.5",
         "@moku-labs/core": "1.7.1",
-        "@moku-labs/game": "0.15.2",
+        "@moku-labs/game": "0.15.90",
         "@moku-labs/system": "0.3.2",
         "@tauri-apps/api": "2.12.2",
         "pixi.js": "8.22.0",
@@ -15,8 +15,8 @@
       "devDependencies": {
         "@biomejs/biome": "2.4.16",
         "@moku-labs/ai": "0.16.2",
-        "@moku-labs/editor": "0.10.12",
-        "@moku-labs/native": "0.3.3",
+        "@moku-labs/editor": "0.10.19",
+        "@moku-labs/native": "0.3.13",
         "@types/bun": "1.4.2",
         "@vitest/coverage-istanbul": "4.0.18",
         "eslint-plugin-jsdoc": "65.1.0",
@@ -244,11 +244,11 @@
 
     "@moku-labs/core": ["@moku-labs/core@1.7.1", "", {}, "sha512-QBlI5U2yKNhxCgszQWdu5iRFkDLJik37tAfNqNbG2AGDwo5J/7t3vK8lLWSwH9gduXORladUEgd7Fcc+cIiQMQ=="],
 
-    "@moku-labs/editor": ["@moku-labs/editor@0.10.12", "", { "dependencies": { "elkjs": "0.12.0", "preact": "10.29.8" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1", "@moku-labs/game": ">=0.15.0", "typescript": ">=5.5" }, "bin": { "moku-editor": "dist/bin.mjs" } }, "sha512-+nBgc2hqBGsSuDj5wHLTFNUgPhrTaP7bWGnQ+KWL59Xf+kOSdMDTGtbywueNv21k6KWi/cL19c9oCXD2acZXNA=="],
+    "@moku-labs/editor": ["@moku-labs/editor@0.10.19", "", { "dependencies": { "elkjs": "0.12.0", "preact": "10.29.8" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1", "@moku-labs/game": ">=0.15.0", "typescript": ">=5.5" }, "bin": { "moku-editor": "dist/bin.mjs" } }, "sha512-+A3poUfjgkK4K4k+VXSGbg0LMY1pyElaHANIfc/aFGIacZIbZL+ciZjakq5WBbjMa75cjiQdF8nBRA5wrObzlQ=="],
 
-    "@moku-labs/game": ["@moku-labs/game@0.15.2", "", { "dependencies": { "immer": "11.1.18", "maxrects-packer": "2.7.3", "yoga-layout": "3.2.1" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1", "@moku-labs/native": "^0.3.9", "@moku-labs/system": "^0.3.1", "pixi.js": "^8.22.0", "playwright-core": ">=1.50.0", "sharp": "^0.34.0", "typescript": ">=5.5" }, "optionalPeers": ["@moku-labs/native", "@moku-labs/system", "playwright-core", "sharp", "typescript"], "bin": { "moku-game": "bin/moku-game.mjs", "moku-game-index": "bin/moku-game-index.mjs", "moku-game-assets": "bin/moku-game-assets.mjs" } }, "sha512-1SV8fQpmjSEJB09QGhbPB3j/SIAN2rRPVgw5ynd0ZrQeIAb5JdLjyuEmB+LWbjfWVtK+MViZiusAQCr3p+9nMg=="],
+    "@moku-labs/game": ["@moku-labs/game@0.15.90", "", { "dependencies": { "immer": "11.1.18", "maxrects-packer": "2.7.3", "yoga-layout": "3.2.1" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1", "@moku-labs/native": "^0.3.13", "@moku-labs/system": "^0.3.1", "pixi.js": "^8.22.0", "playwright-core": ">=1.50.0", "sharp": "^0.34.0", "typescript": ">=5.5" }, "optionalPeers": ["@moku-labs/native", "@moku-labs/system", "playwright-core", "sharp", "typescript"], "bin": { "moku-game": "bin/moku-game.mjs", "moku-game-index": "bin/moku-game-index.mjs", "moku-game-assets": "bin/moku-game-assets.mjs" } }, "sha512-FvW7EJE5B+9uS8xLG8oSNV0girS8MFJwYgw5MAXjWwqfZKLexDosnLjKBPubFUnTeos9bosAdsRhIFKNxQab7w=="],
 
-    "@moku-labs/native": ["@moku-labs/native@0.3.3", "", { "dependencies": { "@tauri-apps/cli": "^2" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1" } }, "sha512-PGPx60PPxeWhosPLCj8AkFYcZtdSJR4iruS/4GD5h0dK3K/b20+v5CXUO+UF72JVaQvMBUe862IGj76ao39Cgw=="],
+    "@moku-labs/native": ["@moku-labs/native@0.3.13", "", { "dependencies": { "@tauri-apps/cli": "^2" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1" } }, "sha512-PsBk0O40+ltOyTJFOCNwTSHusYtzXZq2nWRJywoQlHPVoVFD46I+4QoZD+pdyCnCAidno80siTK4dV/X6MH7Rw=="],
 
     "@moku-labs/system": ["@moku-labs/system@0.3.2", "", { "dependencies": { "idb-keyval": "6.3.0" }, "peerDependencies": { "@moku-labs/common": "^0.3.4", "@moku-labs/core": "^1.7.1", "@tauri-apps/api": "^2.12.0", "@tauri-apps/plugin-clipboard-manager": "^2.3.0", "@tauri-apps/plugin-deep-link": "^2.4.0", "@tauri-apps/plugin-haptics": "^2.4.0", "@tauri-apps/plugin-notification": "^2.3.0", "@tauri-apps/plugin-store": "^2.4.0" }, "optionalPeers": ["@tauri-apps/api", "@tauri-apps/plugin-clipboard-manager", "@tauri-apps/plugin-deep-link", "@tauri-apps/plugin-haptics", "@tauri-apps/plugin-notification", "@tauri-apps/plugin-store"] }, "sha512-VD8dw3+61IN1UmLMQ83JxwqELJvCImgTuCcl3miy5kjezrqKZXWs+zW1Wo8ieta8tDejOGOfbzPTGdUdDc1G7Q=="],
 

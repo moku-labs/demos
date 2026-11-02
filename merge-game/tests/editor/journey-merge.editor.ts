@@ -82,6 +82,7 @@ const GAME_COMMANDS = [
   "game.resume",
   "game.saveExport",
   "game.saveImport",
+  "game.scroll",
   "game.step",
   "game.tap",
   "game.timeScale",

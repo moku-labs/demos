@@ -4,6 +4,8 @@ updates:
   - package-ecosystem: "bun"
     directories:
       - "/atlas"
+      - "/merge-game"
+      - "/ticktoe"
       - "/todo"
       - "/tracker"
       - "/trivia"
