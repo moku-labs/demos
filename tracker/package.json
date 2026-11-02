@@ -11,7 +11,7 @@
   "dependencies": {
     "@moku-labs/common": "0.3.10",
     "@moku-labs/core": "1.7.6",
-    "@moku-labs/web": "2.4.10",
+    "@moku-labs/web": "2.4.11",
     "@moku-labs/worker": "0.20.9",
     "preact": "10.29.2",
     "preact-render-to-string": "6.7.0"
