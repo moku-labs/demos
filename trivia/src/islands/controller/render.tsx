@@ -314,6 +314,21 @@ export function render(state: Readonly<ControllerState>, ctx: ControllerContext)
 
   // Not yet on the roster: join wizard (lobby) or mid-join notice (match already running).
   if (!self) {
+    if (state.roomFull) {
+      return (
+        <div data-controller data-phase="join" data-room-full>
+          <PhoneWaitingCard
+            emoji="🙈"
+            title="This room is full"
+            subtitle={`${TRIVIA.players.max} players max`}
+          >
+            <ClayButton tone="lemon" onClick={retryConnection}>
+              Try again
+            </ClayButton>
+          </PhoneWaitingCard>
+        </div>
+      );
+    }
     if (s.match.phase !== "lobby" && state.joinedProfile === null) {
       return (
         <div data-controller data-phase={s.match.phase}>

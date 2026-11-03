@@ -248,11 +248,15 @@ export async function startControllerIsland(ctx: ControllerContext): Promise<voi
     // submitted join never lands in the synced players slice (wire loss AFTER delivery became
     // possible), re-send it; escalate to the connection-lost banner when re-sends go unanswered.
     ctx.cleanup(armJoinSelfHeal(ctx));
-  } catch {
+  } catch (error) {
     // A failed join (full / not-found / room gone after a "New code" reset / unreachable): roll back the
     // OPTIMISTIC reconnect so we don't strand the player on a stuck "Joining…" card — clearing the
     // local profile drops back to the interactive wizard, where they can re-enter or rescan a fresh QR.
+    // A full room is the one failure the wizard cannot solve, so it gets its own terminal card, and a
+    // name submitted while the rejection was on its way is dropped too.
+    const roomFull = error instanceof Error && error.message === "full";
+    if (roomFull) ctx.set({ roomFull: true });
     // eslint-disable-next-line unicorn/no-null -- the controller view layer speaks `null` for "not joined"
-    if (saved) ctx.set({ joinedProfile: null, joinToken: null });
+    if (saved || roomFull) ctx.set({ joinedProfile: null, joinToken: null });
   }
 }

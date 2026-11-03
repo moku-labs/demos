@@ -53,6 +53,12 @@ export type ControllerState = {
   left: boolean;
   /** This phone's own link status to the stage (item 4) — drives the connection-lost banner. */
   connection: ConnectionStatus;
+  /**
+   * Whether the host refused this phone because every seat is taken. Replaces the join wizard with the
+   * "This room is full" card. Optional so the e2e fixtures (which inject a full state) can leave it out;
+   * `initState` seeds it.
+   */
+  roomFull?: boolean;
 };
 
 /** The controller island context (typed per-instance state). */
