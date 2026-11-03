@@ -31,6 +31,7 @@ export function initState(): ControllerState {
     stealArmAt: null,
     leaving: false,
     left: false,
-    connection: "ok"
+    connection: "ok",
+    roomFull: false
   };
 }

@@ -493,4 +493,76 @@ test.describe("two-context WebRTC flow", () => {
       await phoneBContext.close();
     }
   });
+
+  test("a phone over the cap is told the room is full instead of hanging on Joining", async ({
+    browser
+  }) => {
+    // Regression: the `room-full` rejection only rolled back a saved identity, so a fresh sixth phone
+    // kept the interactive wizard, submitted a name, and sat on the "Joining…" card for good.
+    test.setTimeout(240_000);
+
+    const tvContext = await browser.newContext({ colorScheme: "dark", reducedMotion: "reduce" });
+    const phoneOptions = {
+      viewport: { width: 390, height: 844 },
+      colorScheme: "dark",
+      reducedMotion: "reduce"
+    } as const;
+    const seatedContexts = await Promise.all(
+      Array.from({ length: 5 }, () => browser.newContext(phoneOptions))
+    );
+    const overCapContext = await browser.newContext(phoneOptions);
+
+    const tvPage = await tvContext.newPage();
+    const seatedPages = await Promise.all(seatedContexts.map(context => context.newPage()));
+    const overCapPage = await overCapContext.newPage();
+
+    try {
+      await tvPage.goto("/");
+      await tvPage.waitForSelector("[data-stage][data-phase='lobby']", { timeout: 20_000 });
+
+      let roomCode = "";
+      for (let attempt = 0; attempt < 20; attempt++) {
+        const codeEl = tvPage.locator("[data-code]").first();
+        if (await codeEl.count()) {
+          const text = (await codeEl.textContent()) ?? "";
+          if (text && text !== "····" && text.trim().length >= 6) {
+            roomCode = text.trim();
+            break;
+          }
+        }
+        await tvPage.waitForTimeout(1000);
+      }
+
+      if (!roomCode || roomCode === "····") {
+        test.skip(
+          true,
+          "Room code not available — Hub DO may not be accessible in this environment"
+        );
+        return;
+      }
+
+      // Fill every seat, one phone at a time.
+      for (const [index, phonePage] of seatedPages.entries()) {
+        await joinPhone(phonePage, roomCode, `Player ${index + 1}`, {
+          connectTimeout: CONNECTION_TIMEOUT
+        });
+      }
+      const lobbyCount = tvPage.locator("[data-lobby-players]");
+      await expect(lobbyCount).toContainText("5 / 5 players", { timeout: CONNECTION_TIMEOUT });
+
+      // The sixth phone hears the rejection: the full card, never the wizard it could not finish.
+      await overCapPage.goto(`/code/${roomCode}`);
+      const roomFullCard = overCapPage.locator("[data-controller][data-room-full]");
+      await expect(roomFullCard).toBeVisible({ timeout: PHASE_TIMEOUT });
+      await expect(roomFullCard).toContainText("This room is full");
+      await expect(overCapPage.locator("[data-name-input]")).toHaveCount(0);
+
+      // The rejected phone took no seat.
+      await expect(lobbyCount).toContainText("5 / 5 players");
+    } finally {
+      await tvContext.close();
+      await Promise.all(seatedContexts.map(context => context.close()));
+      await overCapContext.close();
+    }
+  });
 });
