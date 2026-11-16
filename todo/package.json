@@ -11,7 +11,7 @@
   "dependencies": {
     "@moku-labs/common": "0.3.11",
     "@moku-labs/core": "1.7.6",
-    "@moku-labs/system": "0.3.7",
+    "@moku-labs/system": "0.3.8",
     "@moku-labs/web": "2.4.19",
     "@tauri-apps/api": "2.11.1",
     "@tauri-apps/plugin-clipboard-manager": "2.3.3",
